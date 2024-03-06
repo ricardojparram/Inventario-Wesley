@@ -1,0 +1,69 @@
+#body{
+    background-color: white
+}
+
+.Shade{
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.B{
+	color:#a7b754;
+}
+.errores{
+	margin: 0;
+	padding: 0;
+}
+.carLogin{
+	margin-top: 15vh;
+}
+.btn-primary{
+	background-color: #a7b754 !important;
+	border-color: #a7b754 !important;
+	--bs-btn-focus-shadow-rgb: 0 !important;
+}
+.btn-primary:hover{
+	background-color: #c4d56d !important;
+	border-color: #c4d56d !important;
+}
+.iconos{
+	/* color: #212529 !important; */
+	background-color: #a7b754 !important;
+	border-color: #a7b754 !important;
+}
+.iconos:focus{
+	color: #212529;
+    background-color: #fff;
+    border-color: #a7b754;
+    outline: 0;
+    box-shadow: none;
+}
+@media screen and (max-width: 600px){
+	.B{
+		font-size: 24px;
+	}
+	#body{
+		margin: 0;
+		padding: 0;
+	}
+	.asd{
+		font-size: 13px;
+	}
+	.p-5 {
+		padding: 1rem!important;
+	}
+	
+}
+
+.p{
+	position: absolute;
+    top: 100%;
+    z-index: 5;
+    display: none;
+    max-width: 100%;
+    padding: 0.25rem 0.5rem;
+    font-size: .875rem;
+    color: #fff;
+    background-color: rgba(220,53,69,.9);
+    border-radius: 0.375rem;
+	margin-top: 5px;
+}

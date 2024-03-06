@@ -1,0 +1,190 @@
+:root{
+    --color-in:#63685e;
+    --color-letra:#fff6f6;
+    --color-hover: #72a26c;
+}
+body{
+    background-color: #fffcf2 !important;
+}
+#sidebar {
+    background-color: var(--color-in);
+    list-style-type: circle;
+
+}
+
+.sidebar-nav .nav-link.collapsed{
+    background: none;
+    color: var(--color-letra);
+}
+
+.sidebar-nav .nav-link{
+    background: var(--color-hover);
+    color: var(--color-letra);
+}
+
+.sidebar-nav .nav-link.collapsed i, .sidebar-nav .nav-link i{
+    color: var(--color-letra);
+}
+
+.sidebar-nav .nav-link:hover{
+    color: var(--color-letra);
+    background-color:var(--color-hover);
+}
+
+.sidebar-nav .nav-link:hover > i{
+    color: var(--color-letra);
+}
+
+.sidebar-nav .nav-content a{
+    color: var(--color-letra);
+}
+.notifications {
+    width: 300px;
+    overflow-x: hidden;
+}
+/* Estilos para dispositivos móviles */
+@media (max-width: 575px) {
+  .notifications {
+    max-height: 125vw;
+    overflow-y: auto;
+  }
+}
+
+/* Estilos para tabletas */
+@media (min-width: 576px) and (max-width: 991px) {
+  .notifications {
+    max-height: 60vw;
+    overflow-y: auto;
+  }
+}
+
+/* Estilos para computadoras de escritorio */
+@media (min-width: 992px) {
+  .notifications {
+    max-height: 40vw;
+    overflow-y: auto;
+  }
+}
+
+.page-link{
+    color: #198754;
+}
+.active>.page-link{
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+}
+
+@media screen and (max-width: 600px){
+
+    .ocultar{
+        display:none;
+    }
+
+}
+
+.a-asd{
+    color: black ;
+    font-weight: 800;
+}
+
+.a-asd:hover{
+    color: #a7b754;
+}
+
+.select-asd{
+    background: transparent;
+    border: none;
+    width: 100%;
+}
+
+.iconos{
+  /* color: #212529 !important; */
+  background-color: #a7b754 !important;
+  border-color: #a7b754 !important;
+}
+.iconos:focus{
+  color: #212529;
+    background-color: #fff;
+    border-color: #a7b754;
+    outline: 0;
+    box-shadow: none;
+}
+
+.form-check-input:checked {
+    background-color:#a7b754;
+    border-color: #a7b754;
+}
+
+.form-check-input:focus {
+    border-color: #a7b754;
+    box-shadow: 0 0 0 0.25rem #a7b7548c;
+}
+
+.IVA{
+    margin: 0px 6vw;
+    font-weight: bold;
+}
+.IVA input{
+    background: transparent;
+    border: none;
+    width: 25px;
+}
+/*  SELECT BOOTSTRAP5  */
+.form-select:focus {
+    border-color: #a7b754;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgb(167 183 84) !important ;
+}
+
+/*  SELECT2 BOOTSTRAP5  */
+.select2-container--bootstrap-5.select2-container--focus .select2-selection, .select2-container--bootstrap-5.select2-container--open .select2-selection {
+    border: solid 1px#a7b754 !important;  
+    box-shadow: 0 0 0 0.25rem rgb(167 183 84) !important ;
+}
+
+.select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--highlighted {
+  background-color: #a7b754 !important;
+  color: #ffffff !important;
+}
+
+.select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--selected{
+    background-color: #a7b754 !important;
+    color: #ffffff !important;
+}
+
+.NotiButton a {
+    color: #198754;
+}
+
+@media only screen and (max-width: 375px) {
+  .NotiButton a {
+    font-size: 4vw;
+  }
+}
+
+
+@media only screen and (max-width: 600px) {
+  .NotiButton a {
+    font-size: 4vw;
+  }
+}
+
+/* For medium devices (tablets) */
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+  .NotiButton a {
+    font-size: 1.8vw;
+  }
+}
+
+/* For large devices (laptops, desktops) */
+@media only screen and (min-width: 1025px) {
+  .NotiButton a {
+    font-size: 1.2vw;
+  }
+}
+
+.NotiButton a:hover {
+    transition: all 0.5s;
+    color: #28d787 !important;
+    text-decoration: underline;
+}
