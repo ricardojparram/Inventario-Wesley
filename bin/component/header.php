@@ -11,7 +11,7 @@
 <div class="d-flex align-items-center justify-content-between">
   <a href="?url=inicio" class="logo d-flex align-items-center">
     <img src="assets/img/Logo_Medi.png" alt="">
-    <span class="d-none d-lg-block">MediSalud</span>
+    <span class="d-none d-lg-block">Wesley</span>
   </a>
   <i class="bi bi-list toggle-sidebar-btn"></i>
 </div><!-- End Logo -->
