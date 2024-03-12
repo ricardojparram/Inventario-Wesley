@@ -15,8 +15,8 @@
       die(json_encode($res));
     }
 
-    if(isset($_POST['cedula']) && isset($_POST['name']) && isset($_POST['apellido']) && isset($_POST['email']) && isset ($_POST['password']) && isset($_POST['repass'])){
-      $obj_Model->getRegistrarSistema($_POST['cedula'],$_POST['name'],$_POST['apellido'] ,$_POST['email'] ,$_POST['password'], $_POST['repass']);
+    if(isset($_POST['cedula'],$_POST['name'],$_POST['apellido'] ,$_POST['email'] ,$_POST['password'])){
+      $obj_Model->getRegistrarSistema($_POST['cedula'],$_POST['name'],$_POST['apellido'] ,$_POST['email'] ,$_POST['password']);
     } 
 
 

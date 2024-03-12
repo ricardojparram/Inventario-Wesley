@@ -34,7 +34,6 @@
 			$validCedula = $this->validarCedula();
 			if($validCedula['res'] != true) die(json_encode($validCedula));
 
-
 			$this->loginSistema();
 		}
 
@@ -61,7 +60,8 @@
 					$this->desconectarDB();
 					die(json_encode($resultado));
 				}
-
+				print_r(password_verify($this->password, $data[0]['password']));
+				die();
 				if(!password_verify($this->password, $data[0]['password'])){
 					$resultado = ['resultado' => 'Error de contraseña' , 'error' => 'Contraseña incorrecta.'];
 					$this->desconectarDB();
@@ -103,9 +103,7 @@
 				$this->cipher = parent::CIPHER();
 				$this->conectarDB();
 
-				$this->cedula = openssl_encrypt($this->cedula, $this->cipher, $this->key, 0, $this->iv);
-
-				$new = $this->con->prepare("SELECT `cedula` FROM `usuario` WHERE `status` = 1 and `cedula` = ?");
+				$new = $this->con->prepare("SELECT cedula FROM usuario WHERE status = 1 and cedula = ?");
 				$new->bindValue(1, $this->cedula);
 				$new->execute();
 				$data = $new->fetchAll();
