@@ -145,8 +145,6 @@
 
   <?php $footer->footer(); ?>
 
-  <?php $tiendaComp->car(); ?>
-
   <?php $VarComp->js() ?>
   <script src="assets/js/inicio.js"></script>
   <script src="assets/js/carrito.js"></script>
