@@ -3,12 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-03-2024 a las 19:34:40
+-- Tiempo de generación: 11-03-2024 a las 22:34:46
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
-DROP DATABASE IF EXISTS wesley;
-CREATE DATABASE wesley;
-USE wesley;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -51,6 +48,19 @@ CREATE TABLE `cambio` (
   `moneda` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cargo`
+--
+
+CREATE TABLE `cargo` (
+  `id_cargo` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `num_cargo` int(50) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -107,11 +117,77 @@ CREATE TABLE `contacto_prove` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `descargo`
+--
+
+CREATE TABLE `descargo` (
+  `id_descargo` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `num_descargo` int(11) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detalle_cargo`
+--
+
+CREATE TABLE `detalle_cargo` (
+  `id_detalle` int(11) NOT NULL,
+  `id_cargo` int(11) NOT NULL,
+  `num_cargo` int(11) NOT NULL,
+  `id_producto_sede` int(50) NOT NULL,
+  `cantidad` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detalle_descargo`
+--
+
+CREATE TABLE `detalle_descargo` (
+  `id_detalle` int(11) NOT NULL,
+  `id_descargo` int(11) NOT NULL,
+  `id_pro_dañado` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detalle_pago`
+--
+
+CREATE TABLE `detalle_pago` (
+  `id_det_pago` int(11) NOT NULL,
+  `id_pago` int(11) NOT NULL,
+  `id_forma_pago` int(11) NOT NULL,
+  `referencia` varchar(25) NOT NULL,
+  `monto_pago` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `detalle_recepcion`
 --
 
 CREATE TABLE `detalle_recepcion` (
   `id_detalle` varchar(15) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `id_producto_sede` int(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detalle_recepcion_nacional`
+--
+
+CREATE TABLE `detalle_recepcion_nacional` (
+  `id_detalle` int(11) NOT NULL,
   `cantidad` int(11) NOT NULL,
   `id_producto_sede` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -189,6 +265,18 @@ CREATE TABLE `donativo_per` (
   `id_donativo` int(11) NOT NULL,
   `cedula` varchar(15) NOT NULL,
   `id_donaciones` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `forma_pago`
+--
+
+CREATE TABLE `forma_pago` (
+  `id_forma_pago` int(11) NOT NULL,
+  `tipo_pago` varchar(15) NOT NULL,
+  `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -275,11 +363,6 @@ CREATE TABLE `modulos` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `modulos`
---
-
-
 -- --------------------------------------------------------
 
 --
@@ -293,6 +376,9 @@ CREATE TABLE `moneda` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+--
+-- Volcado de datos para la tabla `moneda`
+--
 
 
 -- --------------------------------------------------------
@@ -311,6 +397,18 @@ CREATE TABLE `pacientes` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pagos_recibidos`
+--
+
+CREATE TABLE `pagos_recibidos` (
+  `id_pago` int(11) NOT NULL,
+  `num_fact` varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `permisos`
 --
 
@@ -321,9 +419,6 @@ CREATE TABLE `permisos` (
   `nombre_accion` varchar(40) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
-
-
--- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `personal`
@@ -378,6 +473,18 @@ CREATE TABLE `producto` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `producto_dañado`
+--
+
+CREATE TABLE `producto_dañado` (
+  `id_pro_dañado` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `id_descargo` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `producto_sede`
 --
 
@@ -407,6 +514,19 @@ CREATE TABLE `proveedor` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `recepcion_nacional`
+--
+
+CREATE TABLE `recepcion_nacional` (
+  `id_rep_nacional` int(11) NOT NULL,
+  `id_proveedor` varchar(20) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  `fecha` date NOT NULL,
+  `estado_producto` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `recepcion_sede`
 --
 
@@ -428,10 +548,6 @@ CREATE TABLE `rol` (
   `nombre` varchar(20) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
-
---
--- Volcado de datos para la tabla `rol`
---
 
 -- --------------------------------------------------------
 
@@ -515,7 +631,6 @@ CREATE TABLE `usuario` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
-
 -- --------------------------------------------------------
 
 --
@@ -524,6 +639,7 @@ CREATE TABLE `usuario` (
 
 CREATE TABLE `venta` (
   `num_fact` varchar(15) NOT NULL,
+  `monto_fact` decimal(10,2) NOT NULL,
   `fecha` datetime NOT NULL DEFAULT current_timestamp(),
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
@@ -585,6 +701,12 @@ ALTER TABLE `cambio`
   ADD KEY `moneda` (`moneda`);
 
 --
+-- Indices de la tabla `cargo`
+--
+ALTER TABLE `cargo`
+  ADD PRIMARY KEY (`id_cargo`);
+
+--
 -- Indices de la tabla `clase`
 --
 ALTER TABLE `clase`
@@ -613,9 +735,46 @@ ALTER TABLE `contacto_prove`
   ADD KEY `cod_prove` (`rif_proveedor`);
 
 --
+-- Indices de la tabla `descargo`
+--
+ALTER TABLE `descargo`
+  ADD PRIMARY KEY (`id_descargo`);
+
+--
+-- Indices de la tabla `detalle_cargo`
+--
+ALTER TABLE `detalle_cargo`
+  ADD PRIMARY KEY (`id_detalle`),
+  ADD KEY `id_cargo` (`id_cargo`),
+  ADD KEY `id_producto_sede` (`id_producto_sede`);
+
+--
+-- Indices de la tabla `detalle_descargo`
+--
+ALTER TABLE `detalle_descargo`
+  ADD PRIMARY KEY (`id_detalle`),
+  ADD KEY `id_pro_dañado` (`id_pro_dañado`),
+  ADD KEY `id_descargo` (`id_descargo`);
+
+--
+-- Indices de la tabla `detalle_pago`
+--
+ALTER TABLE `detalle_pago`
+  ADD PRIMARY KEY (`id_det_pago`),
+  ADD KEY `id_pago` (`id_pago`),
+  ADD KEY `id_forma_pago` (`id_forma_pago`);
+
+--
 -- Indices de la tabla `detalle_recepcion`
 --
 ALTER TABLE `detalle_recepcion`
+  ADD PRIMARY KEY (`id_detalle`),
+  ADD KEY `id_producto_sede` (`id_producto_sede`);
+
+--
+-- Indices de la tabla `detalle_recepcion_nacional`
+--
+ALTER TABLE `detalle_recepcion_nacional`
   ADD PRIMARY KEY (`id_detalle`),
   ADD KEY `id_producto_sede` (`id_producto_sede`);
 
@@ -661,6 +820,12 @@ ALTER TABLE `donativo_pac`
 ALTER TABLE `donativo_per`
   ADD PRIMARY KEY (`id_donativo`),
   ADD KEY `id_donciones` (`id_donaciones`);
+
+--
+-- Indices de la tabla `forma_pago`
+--
+ALTER TABLE `forma_pago`
+  ADD PRIMARY KEY (`id_forma_pago`);
 
 --
 -- Indices de la tabla `historial`
@@ -713,6 +878,13 @@ ALTER TABLE `pacientes`
   ADD PRIMARY KEY (`ced_pac`);
 
 --
+-- Indices de la tabla `pagos_recibidos`
+--
+ALTER TABLE `pagos_recibidos`
+  ADD PRIMARY KEY (`id_pago`),
+  ADD KEY `num_fact` (`num_fact`);
+
+--
 -- Indices de la tabla `permisos`
 --
 ALTER TABLE `permisos`
@@ -747,6 +919,13 @@ ALTER TABLE `producto`
   ADD KEY `id_tipo` (`id_tipo`);
 
 --
+-- Indices de la tabla `producto_dañado`
+--
+ALTER TABLE `producto_dañado`
+  ADD PRIMARY KEY (`id_pro_dañado`),
+  ADD KEY `id_descargo` (`id_descargo`);
+
+--
 -- Indices de la tabla `producto_sede`
 --
 ALTER TABLE `producto_sede`
@@ -759,6 +938,12 @@ ALTER TABLE `producto_sede`
 --
 ALTER TABLE `proveedor`
   ADD PRIMARY KEY (`rif_proveedor`);
+
+--
+-- Indices de la tabla `recepcion_nacional`
+--
+ALTER TABLE `recepcion_nacional`
+  ADD PRIMARY KEY (`id_rep_nacional`);
 
 --
 -- Indices de la tabla `recepcion_sede`
@@ -846,6 +1031,9 @@ ALTER TABLE `venta_producto`
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
+--
+-- AUTO_INCREMENT de la tabla `permisos`
+--
 ALTER TABLE `permisos`
   MODIFY `id_permiso` int(11) NOT NULL AUTO_INCREMENT;
 
@@ -903,10 +1091,38 @@ ALTER TABLE `contacto_prove`
   ADD CONSTRAINT `contacto_prove_ibfk_1` FOREIGN KEY (`rif_proveedor`) REFERENCES `proveedor` (`rif_proveedor`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Filtros para la tabla `detalle_cargo`
+--
+ALTER TABLE `detalle_cargo`
+  ADD CONSTRAINT `detalle_cargo_ibfk_1` FOREIGN KEY (`id_cargo`) REFERENCES `cargo` (`id_cargo`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `detalle_cargo_ibfk_2` FOREIGN KEY (`id_producto_sede`) REFERENCES `producto_sede` (`id_producto_sede`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `detalle_descargo`
+--
+ALTER TABLE `detalle_descargo`
+  ADD CONSTRAINT `detalle_descargo_ibfk_1` FOREIGN KEY (`id_pro_dañado`) REFERENCES `producto_dañado` (`id_pro_dañado`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `detalle_descargo_ibfk_2` FOREIGN KEY (`id_descargo`) REFERENCES `descargo` (`id_descargo`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `detalle_pago`
+--
+ALTER TABLE `detalle_pago`
+  ADD CONSTRAINT `detalle_pago_ibfk_1` FOREIGN KEY (`id_pago`) REFERENCES `pagos_recibidos` (`id_pago`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `detalle_pago_ibfk_2` FOREIGN KEY (`id_forma_pago`) REFERENCES `forma_pago` (`id_forma_pago`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `detalle_recepcion`
 --
 ALTER TABLE `detalle_recepcion`
   ADD CONSTRAINT `detalle_recepcion_ibfk_1` FOREIGN KEY (`id_producto_sede`) REFERENCES `producto_sede` (`id_producto_sede`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `detalle_recepcion_nacional`
+--
+ALTER TABLE `detalle_recepcion_nacional`
+  ADD CONSTRAINT `detalle_recepcion_nacional_ibfk_1` FOREIGN KEY (`id_detalle`) REFERENCES `recepcion_nacional` (`id_rep_nacional`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `detalle_recepcion_nacional_ibfk_2` FOREIGN KEY (`id_producto_sede`) REFERENCES `producto_sede` (`id_producto_sede`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `detalle_transferencia`
@@ -955,6 +1171,12 @@ ALTER TABLE `img_producto`
   ADD CONSTRAINT `img_producto_ibfk_1` FOREIGN KEY (`cod_producto`) REFERENCES `producto` (`cod_producto`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Filtros para la tabla `pagos_recibidos`
+--
+ALTER TABLE `pagos_recibidos`
+  ADD CONSTRAINT `pagos_recibidos_ibfk_1` FOREIGN KEY (`num_fact`) REFERENCES `venta` (`num_fact`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `permisos`
 --
 ALTER TABLE `permisos`
@@ -983,6 +1205,12 @@ ALTER TABLE `producto`
   ADD CONSTRAINT `producto_ibfk_4` FOREIGN KEY (`rif_laboratorio`) REFERENCES `laboratorio` (`rif_laboratorio`),
   ADD CONSTRAINT `producto_ibfk_5` FOREIGN KEY (`id_tipoprod`) REFERENCES `tipo_producto` (`id_tipoprod`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `producto_ibfk_6` FOREIGN KEY (`id_tipo`) REFERENCES `tipo` (`id_tipo`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `producto_dañado`
+--
+ALTER TABLE `producto_dañado`
+  ADD CONSTRAINT `producto_dañado_ibfk_1` FOREIGN KEY (`id_descargo`) REFERENCES `descargo` (`id_descargo`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `producto_sede`
