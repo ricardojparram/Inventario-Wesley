@@ -46,7 +46,8 @@ INSERT INTO modulos (id_modulo, nombre, status) VALUES
 (26, 'Producto dañado', 1),
 (27, 'Tipo empleado', 1),
 (28, 'Cargo', 1),
-(29, 'Descargo', 1);
+(29, 'Descargo', 1),
+(30, 'Mantenimiento', 1);
 
 INSERT INTO permisos (id_rol, id_modulo, nombre_accion, status) VALUES
 (1, 1, 'Registrar', 1),
@@ -157,6 +158,10 @@ INSERT INTO permisos (id_rol, id_modulo, nombre_accion, status) VALUES
 (1, 29, 'Editar', 1),
 (1, 29, 'Eliminar', 1),
 (1, 29, 'Consultar', 1),
+(1, 30, 'Accion1', 1),
+(1, 30, 'Accion2', 1),
+(1, 30, 'Accion3', 1),
+(1, 30, 'Consultar', 1),
 -- siguiente rol
 (2, 1, 'Registrar', 1),
 (2, 1, 'Editar', 1),
@@ -266,6 +271,11 @@ INSERT INTO permisos (id_rol, id_modulo, nombre_accion, status) VALUES
 (2, 29, 'Editar', 1),
 (2, 29, 'Eliminar', 1),
 (2, 29, 'Consultar', 1),
+(2, 30, 'Accion1', 1),
+(2, 30, 'Accion2', 1),
+(2, 30, 'Accion3', 1),
+(2, 30, 'Consultar', 1),
+
 -- siguiente rol
 (3, 1, 'Registrar', 1),
 (3, 1, 'Editar', 1),
@@ -374,4 +384,8 @@ INSERT INTO permisos (id_rol, id_modulo, nombre_accion, status) VALUES
 (3, 29, 'Registrar', 1),
 (3, 29, 'Editar', 1),
 (3, 29, 'Eliminar', 1),
-(3, 29, 'Consultar', 1);
+(3, 29, 'Consultar', 1),
+(3, 30, 'Accion1', 1),
+(3, 30, 'Accion2', 1),
+(3, 30, 'Accion3', 1),
+(3, 30, 'Consultar', 1);
