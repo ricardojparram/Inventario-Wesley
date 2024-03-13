@@ -6,6 +6,9 @@
 -- Tiempo de generación: 04-03-2024 a las 19:34:40
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
+DROP DATABASE IF EXISTS wesley;
+CREATE DATABASE wesley;
+USE wesley;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -276,28 +279,6 @@ CREATE TABLE `modulos` (
 -- Volcado de datos para la tabla `modulos`
 --
 
-INSERT INTO `modulos` (`id_modulo`, `nombre`, `status`) VALUES
-(1, 'Clientes', 1),
-(2, 'Ventas', 1),
-(3, 'Compras', 1),
-(4, 'Metodo pago', 1),
-(5, 'Moneda', 1),
-(6, 'Producto', 1),
-(7, 'Laboratorio', 1),
-(8, 'Proveedor', 1),
-(9, 'Clase', 1),
-(10, 'Tipo', 1),
-(11, 'Presentacion', 1),
-(12, 'Reportes', 1),
-(13, 'Usuarios', 1),
-(14, 'Bitacora', 1),
-(15, 'Bancos', 1),
-(16, 'Cuentas farmacia', 1),
-(17, 'Roles', 1),
-(18, 'Empresa de Envio', 1),
-(19, 'Sedes de Envio', 1),
-(20, 'Comprobar pago', 1),
-(21, 'Envios', 1);
 
 -- --------------------------------------------------------
 
@@ -312,13 +293,7 @@ CREATE TABLE `moneda` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `moneda`
---
 
-INSERT INTO `moneda` (`id_moneda`, `nombre`, `valor`, `status`) VALUES
-(1, 'Dolar', 0, 1),
-(2, 'Euro', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -347,235 +322,6 @@ CREATE TABLE `permisos` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `permisos`
---
-
-INSERT INTO `permisos` (`id_permiso`, `id_rol`, `id_modulo`, `nombre_accion`, `status`) VALUES
-(1, 1, 1, 'Registrar', 1),
-(2, 1, 1, 'Editar', 1),
-(3, 1, 1, 'Eliminar', 1),
-(4, 1, 1, 'Consultar', 1),
-(5, 1, 2, 'Registrar', 1),
-(6, 1, 2, 'Editar', 0),
-(7, 1, 2, 'Eliminar', 1),
-(8, 1, 2, 'Consultar', 1),
-(9, 1, 3, 'Registrar', 1),
-(10, 1, 3, 'Editar', 1),
-(11, 1, 3, 'Eliminar', 1),
-(12, 1, 3, 'Consultar', 1),
-(13, 1, 4, 'Registrar', 1),
-(14, 1, 4, 'Editar', 1),
-(15, 1, 4, 'Eliminar', 1),
-(16, 1, 4, 'Consultar', 1),
-(17, 1, 5, 'Registrar', 1),
-(18, 1, 5, 'Editar', 1),
-(19, 1, 5, 'Eliminar', 1),
-(20, 1, 5, 'Consultar', 1),
-(21, 1, 6, 'Registrar', 1),
-(22, 1, 6, 'Editar', 1),
-(23, 1, 6, 'Eliminar', 1),
-(24, 1, 6, 'Consultar', 1),
-(25, 1, 7, 'Registrar', 1),
-(26, 1, 7, 'Editar', 1),
-(27, 1, 7, 'Eliminar', 1),
-(28, 1, 7, 'Consultar', 1),
-(29, 1, 8, 'Registrar', 1),
-(30, 1, 8, 'Editar', 1),
-(31, 1, 8, 'Eliminar', 1),
-(32, 1, 8, 'Consultar', 1),
-(33, 1, 9, 'Registrar', 1),
-(34, 1, 9, 'Editar', 1),
-(35, 1, 9, 'Eliminar', 1),
-(36, 1, 9, 'Consultar', 1),
-(37, 1, 10, 'Registrar', 1),
-(38, 1, 10, 'Editar', 1),
-(39, 1, 10, 'Eliminar', 1),
-(40, 1, 10, 'Consultar', 1),
-(41, 1, 11, 'Registrar', 1),
-(42, 1, 11, 'Editar', 1),
-(43, 1, 11, 'Eliminar', 1),
-(44, 1, 11, 'Consultar', 1),
-(45, 1, 12, 'Consultar', 1),
-(46, 1, 12, 'Exportar reporte', 1),
-(47, 1, 12, 'Exportar reporte estadistico', 1),
-(48, 1, 13, 'Registrar', 1),
-(49, 1, 13, 'Editar', 1),
-(50, 1, 13, 'Eliminar', 1),
-(51, 1, 13, 'Consultar', 1),
-(52, 1, 14, 'Consultar', 1),
-(53, 1, 15, 'Registrar', 1),
-(54, 1, 15, 'Editar', 1),
-(55, 1, 15, 'Eliminar', 1),
-(56, 1, 15, 'Consultar', 1),
-(57, 1, 16, 'Registrar', 1),
-(58, 1, 16, 'Editar', 1),
-(59, 1, 16, 'Eliminar', 1),
-(60, 1, 16, 'Consultar', 1),
-(61, 1, 17, 'Modificar acceso', 1),
-(62, 1, 17, 'Modificar acciones', 1),
-(63, 1, 17, 'Consultar', 1),
-(64, 1, 18, 'Registrar', 1),
-(65, 1, 18, 'Editar', 1),
-(66, 1, 18, 'Eliminar', 1),
-(67, 1, 18, 'Consultar', 1),
-(68, 1, 19, 'Registrar', 1),
-(69, 1, 19, 'Editar', 1),
-(70, 1, 19, 'Eliminar', 1),
-(71, 1, 19, 'Consultar', 1),
-(72, 1, 20, 'Consultar', 1),
-(73, 1, 21, 'Consultar', 1),
-(74, 1, 21, 'Asignar estado', 1),
-(75, 2, 1, 'Registrar', 1),
-(76, 2, 1, 'Editar', 1),
-(77, 2, 1, 'Eliminar', 1),
-(78, 2, 1, 'Consultar', 1),
-(79, 2, 2, 'Registrar', 1),
-(80, 2, 2, 'Editar', 1),
-(81, 2, 2, 'Eliminar', 1),
-(82, 2, 2, 'Consultar', 1),
-(83, 2, 3, 'Registrar', 1),
-(84, 2, 3, 'Editar', 1),
-(85, 2, 3, 'Eliminar', 1),
-(86, 2, 3, 'Consultar', 1),
-(87, 2, 4, 'Registrar', 1),
-(88, 2, 4, 'Editar', 1),
-(89, 2, 4, 'Eliminar', 1),
-(90, 2, 4, 'Consultar', 1),
-(91, 2, 5, 'Registrar', 1),
-(92, 2, 5, 'Editar', 1),
-(93, 2, 5, 'Eliminar', 1),
-(94, 2, 5, 'Consultar', 1),
-(95, 2, 6, 'Registrar', 1),
-(96, 2, 6, 'Editar', 1),
-(97, 2, 6, 'Eliminar', 1),
-(98, 2, 6, 'Consultar', 1),
-(99, 2, 7, 'Registrar', 1),
-(100, 2, 7, 'Editar', 1),
-(101, 2, 7, 'Eliminar', 1),
-(102, 2, 7, 'Consultar', 1),
-(103, 2, 8, 'Registrar', 1),
-(104, 2, 8, 'Editar', 1),
-(105, 2, 8, 'Eliminar', 1),
-(106, 2, 8, 'Consultar', 1),
-(107, 2, 9, 'Registrar', 1),
-(108, 2, 9, 'Editar', 1),
-(109, 2, 9, 'Eliminar', 1),
-(110, 2, 9, 'Consultar', 1),
-(111, 2, 10, 'Registrar', 1),
-(112, 2, 10, 'Editar', 1),
-(113, 2, 10, 'Eliminar', 1),
-(114, 2, 10, 'Consultar', 1),
-(115, 2, 11, 'Registrar', 1),
-(116, 2, 11, 'Editar', 1),
-(117, 2, 11, 'Eliminar', 1),
-(118, 2, 11, 'Consultar', 1),
-(119, 2, 12, 'Consultar', 1),
-(120, 2, 12, 'Exportar reporte', 1),
-(121, 2, 12, 'Exportar reporte estadistico', 1),
-(122, 2, 13, 'Registrar', 1),
-(123, 2, 13, 'Editar', 1),
-(124, 2, 13, 'Eliminar', 1),
-(125, 2, 13, 'Consultar', 1),
-(126, 2, 14, 'Consultar', 1),
-(127, 2, 15, 'Registrar', 1),
-(128, 2, 15, 'Editar', 1),
-(129, 2, 15, 'Eliminar', 1),
-(130, 2, 15, 'Consultar', 1),
-(131, 2, 16, 'Registrar', 1),
-(132, 2, 16, 'Editar', 1),
-(133, 2, 16, 'Eliminar', 1),
-(134, 2, 16, 'Consultar', 1),
-(135, 2, 17, 'Modificar acceso', 1),
-(136, 2, 17, 'Modificar acciones', 1),
-(137, 2, 17, 'Consultar', 1),
-(138, 2, 18, 'Registrar', 1),
-(139, 2, 18, 'Editar', 1),
-(140, 2, 18, 'Eliminar', 1),
-(141, 2, 18, 'Consultar', 1),
-(142, 2, 19, 'Registrar', 1),
-(143, 2, 19, 'Editar', 1),
-(144, 2, 19, 'Eliminar', 1),
-(145, 2, 19, 'Consultar', 1),
-(146, 2, 20, 'Consultar', 1),
-(147, 2, 20, 'Comprobar pago', 1),
-(148, 2, 21, 'Consultar', 1),
-(149, 2, 21, 'Asignar estado', 1),
-(150, 3, 1, 'Registrar', 1),
-(151, 3, 1, 'Editar', 1),
-(152, 3, 1, 'Eliminar', 1),
-(153, 3, 1, 'Consultar', 1),
-(154, 3, 2, 'Registrar', 1),
-(155, 3, 2, 'Editar', 1),
-(156, 3, 2, 'Eliminar', 1),
-(157, 3, 2, 'Consultar', 1),
-(158, 3, 3, 'Registrar', 1),
-(159, 3, 3, 'Editar', 1),
-(160, 3, 3, 'Eliminar', 1),
-(161, 3, 3, 'Consultar', 1),
-(162, 3, 4, 'Registrar', 1),
-(163, 3, 4, 'Editar', 1),
-(164, 3, 4, 'Eliminar', 1),
-(165, 3, 4, 'Consultar', 1),
-(166, 3, 5, 'Registrar', 1),
-(167, 3, 5, 'Editar', 1),
-(168, 3, 5, 'Eliminar', 1),
-(169, 3, 5, 'Consultar', 1),
-(170, 3, 6, 'Registrar', 1),
-(171, 3, 6, 'Editar', 1),
-(172, 3, 6, 'Eliminar', 1),
-(173, 3, 6, 'Consultar', 1),
-(174, 3, 7, 'Registrar', 1),
-(175, 3, 7, 'Editar', 1),
-(176, 3, 7, 'Eliminar', 1),
-(177, 3, 7, 'Consultar', 1),
-(178, 3, 8, 'Registrar', 1),
-(179, 3, 8, 'Editar', 1),
-(180, 3, 8, 'Eliminar', 1),
-(181, 3, 8, 'Consultar', 1),
-(182, 3, 9, 'Registrar', 1),
-(183, 3, 9, 'Editar', 1),
-(184, 3, 9, 'Eliminar', 1),
-(185, 3, 9, 'Consultar', 1),
-(186, 3, 10, 'Registrar', 1),
-(187, 3, 10, 'Editar', 1),
-(188, 3, 10, 'Eliminar', 1),
-(189, 3, 10, 'Consultar', 1),
-(190, 3, 11, 'Registrar', 1),
-(191, 3, 11, 'Editar', 1),
-(192, 3, 11, 'Eliminar', 1),
-(193, 3, 11, 'Consultar', 1),
-(194, 3, 12, 'Consultar', 1),
-(195, 3, 12, 'Exportar reporte', 1),
-(196, 3, 12, 'Exportar reporte estadistico', 1),
-(197, 3, 13, 'Registrar', 1),
-(198, 3, 13, 'Editar', 1),
-(199, 3, 13, 'Eliminar', 1),
-(200, 3, 13, 'Consultar', 1),
-(201, 3, 14, 'Consultar', 1),
-(202, 3, 15, 'Registrar', 1),
-(203, 3, 15, 'Editar', 1),
-(204, 3, 15, 'Eliminar', 1),
-(205, 3, 15, 'Consultar', 1),
-(206, 3, 16, 'Registrar', 1),
-(207, 3, 16, 'Editar', 1),
-(208, 3, 16, 'Eliminar', 1),
-(209, 3, 16, 'Consultar', 1),
-(210, 3, 17, 'Modificar acceso', 1),
-(211, 3, 17, 'Modificar acciones', 1),
-(212, 3, 17, 'Consultar', 1),
-(213, 3, 18, 'Registrar', 1),
-(214, 3, 18, 'Editar', 1),
-(215, 3, 18, 'Eliminar', 1),
-(216, 3, 18, 'Consultar', 1),
-(217, 3, 19, 'Registrar', 1),
-(218, 3, 19, 'Editar', 1),
-(219, 3, 19, 'Eliminar', 1),
-(220, 3, 19, 'Consultar', 1),
-(221, 3, 20, 'Consultar', 1),
-(222, 3, 20, 'Comprobar pago', 1),
-(223, 3, 21, 'Consultar', 1),
-(224, 3, 21, 'Asignar estado', 1);
 
 -- --------------------------------------------------------
 
@@ -687,12 +433,6 @@ CREATE TABLE `rol` (
 -- Volcado de datos para la tabla `rol`
 --
 
-INSERT INTO `rol` (`id_rol`, `nombre`, `status`) VALUES
-(1, 'Administrador', 1),
-(2, 'Gerente', 1),
-(3, 'Empleado', 1),
-(4, 'Cliente', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -775,15 +515,6 @@ CREATE TABLE `usuario` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
---
--- Volcado de datos para la tabla `usuario`
---
-
-INSERT INTO `usuario` (`cedula`, `nombre`, `apellido`, `correo`, `password`, `rol`, `img`, `status`) VALUES
-('123123123', 'admin', 'admin', 'admin@admin.com', '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.', 1, NULL, 1),
-('29880797', 'Ailin', 'Perez', 'duranjhoa5@gmail.com', '$2y$10$kmcloDWOIk4HNgSreXaPdes5YS1RImPYwNip4GVEQRGBnwNKeRlJK', 3, NULL, 1),
-('30395804', 'Jhoa', 'Duran', 'duranjhoa52@gmail.com', '$2y$10$/cxqYC.VN0ARUNWIlxHMHuU6ps6JPBtJx1gJIlHNizfnSmSH77hAC', 1, NULL, 1),
-('4', 'tommy', 'duran', 'I/a3j62muDU6jTXAQ31L+LtzZ6ldBEnfmObWxCu8pFQ=', '$2y$10$dnKhNNvC1HPPJxKDDaQVpOGz.vWrkUx3cZOTWgSY6NaNwrplncpZm', 1, 'assets/img/perfil/298b2f86898a210656700a947b7a6fcb.png', 1);
 
 -- --------------------------------------------------------
 
@@ -1114,6 +845,9 @@ ALTER TABLE `venta_producto`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+ALTER TABLE `permisos`
+  MODIFY `id_permiso` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `compra_producto`
