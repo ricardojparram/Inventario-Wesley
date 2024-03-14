@@ -120,7 +120,7 @@
     $metodoLi = (isset($this->permisos['Metodo pago']["Consultar"])) ?
     '<li>
         <a href="?url=metodo" class="'.$metodo.'" >
-          <i class="bi bi-circle-fill "></i><span>Metodo de pago</span>
+          <i class="bi bi-circle-fill "></i><span>Metodo de Pago</span>
         </a>
     </li>' : '';
 
