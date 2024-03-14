@@ -10,7 +10,6 @@ $(document).ready(function(){
     click++;
     
     $.ajax({
-
       type: "post",
       url: '',
       dataType: 'json',

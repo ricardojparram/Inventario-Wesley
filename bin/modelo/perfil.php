@@ -19,161 +19,135 @@ class perfil extends DBConnect{
 	private $passwordNew;
 
 	public function __construct(){
-        parent::__construct();
-    }
+		parent::__construct();
+	}
 
-    public function mostrarDatos($cedula){
-    	
-    	$this->cedula = $cedula;
+	public function mostrarDatos($cedula){
 
-    	$this->datos();
-    }
+		$this->cedula = $cedula;
 
-    private function datos(){
-    	try {
+		$this->datos();
+	}
+
+	private function datos(){
+		try {
 			parent::conectarDB();
-			$this->key = parent::KEY();
-			$this->iv = parent::IV();
-			$this->cipher = parent::CIPHER();
-    		$new = $this->con->prepare("SELECT u.cedula, u.nombre, u.apellido, u.correo, n.nombre as nivel FROM usuario u INNER JOIN rol n ON n.id_rol = u.rol WHERE u.cedula = ?");
-            $new->bindValue(1, $this->cedula);
-            $new->execute();
-            $data = $new->fetchAll(\PDO::FETCH_OBJ);
-
-			$data[0]->cedula = openssl_decrypt($data[0]->cedula, $this->cipher, $this->key, 0, $this->iv);
-			$data[0]->correo = openssl_decrypt($data[0]->correo, $this->cipher, $this->key, 0, $this->iv);
-            echo json_encode($data);
+			$new = $this->con->prepare("SELECT u.cedula, u.nombre, u.apellido, u.correo, n.nombre as nivel FROM usuario u INNER JOIN rol n ON n.id_rol = u.rol WHERE u.cedula = ?");
+			$new->bindValue(1, $this->cedula);
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 			parent::desconectarDB();
-            die();
-    	} catch(\PDOexection $error){
-            return $error;
-        }
-    }
+			die(json_encode($data));
+		} catch(\PDOexection $error){
+			return $error;
+		}
+	}
 
-    public function mostrarUsuarios(){
-    	try {
-    		parent::conectarDB();
-    		$new = $this->con->prepare("SELECT img, CONCAT(nombre, ' ', apellido) AS nombre FROM usuario
-    			WHERE status = 1
-    			ORDER BY RAND() LIMIT 4");
-    		$new->execute();
-    		$data = $new->fetchAll(\PDO::FETCH_OBJ);
-			parent::desconectarDB();
-    		echo json_encode($data);
-    		die();
-
-    	} catch (\PDOException $e) {
-    		return $e;
-    	}
-    }
-
-    public function getValidarContraseña($pass, $cedula){
-    	if(preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{8,30}$/", $pass) == false) {
-    		$resultado = ['resultado' => 'Error de contraseña' , 'error' => 'Correo inválida.'];
-    		echo json_encode($resultado);
-    		die();
-    	}
-    	if(preg_match_all("/^[0-9]{7,10}$/", $cedula) == false){
-	      $resultado = ['resultado' => 'Error de cedula' , 'error' => 'Cédula invalida.'];
-	      echo json_encode($resultado);
-	      die();
-	    }
-
-	    $this->cedulaVieja = $cedula;
-    	$this->passwordAct = $pass;
-
-    	$this->validarContraseña();
-
-    }
-
-    private function validarContraseña(){
-    	try {
+	public function mostrarUsuarios(){
+		try {
 			parent::conectarDB();
-    		$new = $this->con->prepare("SELECT password FROM usuario WHERE cedula = ? AND status = 1");
-    		$new->bindValue(1, $this->cedulaVieja);
-    		$new->execute();
-    		$data = $new->fetchAll(\PDO::FETCH_OBJ);
+			$new = $this->con->prepare("SELECT img, CONCAT(nombre, ' ', apellido) AS nombre FROM usuario
+				WHERE status = 1
+				ORDER BY RAND() LIMIT 4");
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 			parent::desconectarDB();
-    		if(password_verify($this->passwordAct, $data[0]->password)){
-    			die(json_encode(['resultado' => 'Contraseña válida.']));
-    		}else{
-    			die(json_encode(['resultado' => 'Error de contraseña', 'error' => 'Contraseña incorrecta.']));
-    		}
+			echo json_encode($data);
+			die();
 
-    	} catch (\PDOException $e){
-    		return $e;
-    	}
+		} catch (\PDOException $e) {
+			return $e;
+		}
+	}
 
-    }
+	public function getValidarContraseña($pass, $cedula){
+		if(preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{8,30}$/", $pass) == false) {
+			die(json_encode(['resultado' => 'Error de contraseña' , 'error' => 'Correo inválida.']));
+		}
+		if(preg_match_all("/^[0-9]{7,10}$/", $cedula) == false){
+			die(json_encode(['resultado' => 'Error de cedula' , 'error' => 'Cédula invalida.']));
+		}
 
-    public function getEditar($foto, $nombre, $apellido, $cedulaNueva, $correo, $cedulaVieja, $borrar = false){
+		$this->cedulaVieja = $cedula;
+		$this->passwordAct = $pass;
 
-	    if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $nombre) == false){
-	      $resultado = ['resultado' => 'Error de nombre' , 'error' => 'Nombre invalido.'];
-	      echo json_encode($resultado);
-	      die();
-	    }
-	    if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $apellido) == false){
-	      $resultado = ['resultado' => 'Error de apellido' , 'error' => 'Apellido invalido.'];
-	      echo json_encode($resultado);
-	      die();
-	    }
-	    if(preg_match_all("/^[0-9]{7,10}$/", $cedulaNueva) == false){
-	      $resultado = ['resultado' => 'Error de cedula' , 'error' => 'Cédula invalida.'];
-	      echo json_encode($resultado);
-	      die();
-	    }
-	    if(preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false){
-	      $resultado = ['resultado' => 'Error de email' , 'error' => 'Correo invalida.'];
-	      echo json_encode($resultado);
-	      die();
-	    }
+		$this->validarContraseña();
 
-	    $this->foto = $foto;
-	    $this->nombre = $nombre;
-	    $this->apellido = $apellido;
-	    $this->cedulaNueva = $cedulaNueva;
-	    $this->correo = $correo;
-	    $this->cedulaVieja = $cedulaVieja;
-	    $this->borrar = $borrar;
+	}
 
-        $this->key = parent::KEY();
-        $this->iv = parent::IV();
-        $this->cipher = parent::CIPHER();
-		
-		$this->cedulaNueva = openssl_encrypt($this->cedulaNueva, $this->cipher, $this->key, 0, $this->iv);
-		$this->correo = openssl_encrypt($this->correo, $this->cipher, $this->key, 0, $this->iv);
+	private function validarContraseña(){
+		try {
+			parent::conectarDB();
+			$new = $this->con->prepare("SELECT password FROM usuario WHERE cedula = ? AND status = 1");
+			$new->bindValue(1, $this->cedulaVieja);
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
+			parent::desconectarDB();
+			if(password_verify($this->passwordAct, $data[0]->password)){
+				die(json_encode(['resultado' => 'Contraseña válida.']));
+			}else{
+				die(json_encode(['resultado' => 'Error de contraseña', 'error' => 'Contraseña incorrecta.']));
+			}
 
-	    $resultadoEdit = $this->editarDatos();
+		} catch (\PDOException $e){
+			return $e;
+		}
 
-	    if($this->borrar != false){
-	    	$resultadoFoto = $this->borrarImagen();
-	    }
-	    if(isset($this->foto['name'])){
-	    	$resultadoFoto = $this->subirImagen();
-	    }
+	}
 
-	    echo json_encode(['edit' => $resultadoEdit, 'foto' => $resultadoFoto]);
-	    die();
+	public function getEditar($foto, $nombre, $apellido, $cedulaNueva, $correo, $cedulaVieja, $borrar = false){
+
+		if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $nombre) == false){
+			die(json_encode(['resultado' => 'Error de nombre' , 'error' => 'Nombre invalido.']));
+		}
+		if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $apellido) == false){
+			die(json_encode(['resultado' => 'Error de apellido' , 'error' => 'Apellido invalido.']));
+		}
+		if(preg_match_all("/^[0-9]{7,10}$/", $cedulaNueva) == false){
+			die(json_encode(['resultado' => 'Error de cedula' , 'error' => 'Cédula invalida.']));
+		}
+		if(preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false){
+			die(json_encode(['resultado' => 'Error de email' , 'error' => 'Correo invalida.']));
+		}
+
+		$this->foto = $foto;
+		$this->nombre = $nombre;
+		$this->apellido = $apellido;
+		$this->cedulaNueva = $cedulaNueva;
+		$this->correo = $correo;
+		$this->cedulaVieja = $cedulaVieja;
+		$this->borrar = $borrar;
+
+		$resultadoEdit = $this->editarDatos();
+
+		if($this->borrar != false){
+			$resultadoFoto = $this->borrarImagen();
+		}
+		if(isset($this->foto['name'])){
+			$resultadoFoto = $this->subirImagen();
+		}
+
+		echo json_encode(['edit' => $resultadoEdit, 'foto' => $resultadoFoto]);
+		die();
 	}
 
 	private function editarDatos(){
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("UPDATE `usuario` SET `cedula`= ?,`nombre`= ?,`apellido`= ?,`correo`= ? WHERE cedula = ?");
-            $new->bindValue(1, $this->cedulaNueva);
-            $new->bindValue(2, $this->nombre);
-            $new->bindValue(3,$this->apellido);
-            $new->bindValue(4, $this->correo);
-            $new->bindValue(5, $this->cedulaVieja);
-            $new->execute();
+			$new->bindValue(1, $this->cedulaNueva);
+			$new->bindValue(2, $this->nombre);
+			$new->bindValue(3,$this->apellido);
+			$new->bindValue(4, $this->correo);
+			$new->bindValue(5, $this->cedulaVieja);
+			$new->execute();
 			parent::desconectarDB();
-            $_SESSION['cedula'] = $this->cedulaNueva;
-            $_SESSION['nombre'] = $this->nombre;
-            $_SESSION['apellido'] = $this->apellido;
-            $_SESSION['correo'] = $this->correo;
+			$_SESSION['cedula'] = $this->cedulaNueva;
+			$_SESSION['nombre'] = $this->nombre;
+			$_SESSION['apellido'] = $this->apellido;
+			$_SESSION['correo'] = $this->correo;
 
-            return ['respuesta' => 'Editado correctamente'];;
+			return ['respuesta' => 'Editado correctamente'];;
 
 		} catch (\PDOException $error) {
 			return $error;
@@ -222,7 +196,7 @@ class perfil extends DBConnect{
 				$fotoActual = $data[0]->img;
 
 				if($fotoActual != $this->imagenPorDefecto){
-					unlink($fotoActual);				
+					if(file_exists($fotoActual)) unlink($fotoActual);
 				}
 
 				$new = $this->con->prepare('UPDATE usuario SET img = ? WHERE cedula = ?');
@@ -270,14 +244,10 @@ class perfil extends DBConnect{
 	public function getCambioContra($cedula, $passwordAct, $passwordNew, $passwordNewR){
 
 		if(preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{8,30}$/", $passwordNew) == false) {
-			$resultado = ['resultado' => 'Error de contraseña' , 'error' => 'Correo inválida.'];
-			echo json_encode($resultado);
-			die();
+			die(json_encode(['resultado' => 'Error de contraseña' , 'error' => 'Correo inválida.']));
 		}
 		if($passwordNew != $passwordNewR) {
-			$resultado = ['resultado' => 'Error de repass' , 'error' => 'Las contraseñas no coinciden.'];
-			echo json_encode($resultado);
-			die();
+			die(json_encode(['resultado' => 'Error de repass' , 'error' => 'Las contraseñas no coinciden.']));
 		}
 
 		$this->cedula = $cedula;

@@ -28,34 +28,22 @@ class usuarios extends DBConnect
   {
 
     if (preg_match_all("/^[a-zA-ZÀ-ÿ]{0,30}$/", $name) == false) {
-      $resultado = ['resultado' => 'Error de nombre', 'error' => 'Nombre invalido.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de nombre', 'error' => 'Nombre invalido.']));
     }
     if (preg_match_all("/^[a-zA-ZÀ-ÿ]{0,30}$/", $apellido) == false) {
-      $resultado = ['resultado' => 'Error de apellido', 'error' => 'Apellido invalido.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de apellido', 'error' => 'Apellido invalido.']));
     }
     if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'Error de cedula', 'error' => 'Cédula invalida.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de cedula', 'error' => 'Cédula invalida.']));
     }
     if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
-      $resultado = ['resultado' => 'Error de email', 'error' => 'Correo invalida.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de email', 'error' => 'Correo invalida.']));
     }
     if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
-      $resultado = ['resultado' => 'Error de contraseña', 'error' => 'Correo invalida.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de contraseña', 'error' => 'Correo invalida.']));
     }
     if (preg_match_all("/^[0-9]{1,2}$/", $tipoUsuario) == false) {
-      $resultado = ['resultado' => 'Error de rol', 'error' => 'rol invalido.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de rol', 'error' => 'rol invalido.']));
     }
 
     $this->cedula = $cedula;
@@ -71,13 +59,6 @@ class usuarios extends DBConnect
   private function agregarUsuario()
   {
     try {
-      $this->key = parent::KEY();
-      $this->iv = parent::IV();
-      $this->cipher = parent::CIPHER();
-
-      $this->cedula = openssl_encrypt($this->cedula, $this->cipher, $this->key, 0, $this->iv);
-      $this->email = openssl_encrypt($this->email, $this->cipher, $this->key, 0, $this->iv);
-
       parent::conectarDB();
       $new = $this->con->prepare("SELECT `cedula`, `status` FROM `usuario` WHERE `cedula` = ?");
       $new->bindValue(1, $this->cedula);
@@ -141,19 +122,12 @@ class usuarios extends DBConnect
 
     try {
       parent::conectarDB();
-      $this->key = parent::KEY();
-      $this->iv = parent::IV();
-      $this->cipher = parent::CIPHER();
-
       $query = "SELECT u.cedula as cedulaE, u.cedula, u.nombre, u.apellido, u.correo, u.rol FROM usuario u WHERE u.status = 1";
 
       $new = $this->con->prepare($query);
       $new->execute();
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
-      foreach ($data as $item) {
-        $item->cedula = openssl_decrypt($item->cedula, $this->cipher, $this->key, 0, $this->iv);
-        $item->correo = openssl_decrypt($item->correo, $this->cipher, $this->key, 0, $this->iv);
-      }
+      
       if ($bitacora)
         $this->binnacle("Usuario", $_SESSION['cedula'], "Consultó listado.");
       echo json_encode($data);
@@ -220,11 +194,6 @@ class usuarios extends DBConnect
   private function seleccionarUnico()
   {
     try {
-      parent::conectarDB();
-      $this->key = parent::KEY();
-      $this->iv = parent::IV();
-      $this->cipher = parent::CIPHER();
-
       $new = $this->con->prepare("SELECT cedula, nombre, apellido, correo, rol FROM `usuario` WHERE `usuario`.`cedula` = ?");
       $new->bindValue(1, $this->cedula);
       $new->execute();
@@ -247,34 +216,22 @@ class usuarios extends DBConnect
   {
 
     if (preg_match_all("/^[a-zA-Z]{0,30}$/", $name) == false) {
-      $resultado = ['resultado' => 'Error de nombre', 'error' => 'Nombre invalido.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de nombre', 'error' => 'Nombre invalido.']));
     }
     if (preg_match_all("/^[a-zA-Z]{0,30}$/", $apellido) == false) {
-      $resultado = ['resultado' => 'Error de apellido', 'error' => 'Apellido invalido.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de apellido', 'error' => 'Apellido invalido.']));
     }
     if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'Error de cedula', 'error' => 'Cédula invalida.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de cedula', 'error' => 'Cédula invalida.']));
     }
     if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
-      $resultado = ['resultado' => 'Error de email', 'error' => 'Correo invalida.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de email', 'error' => 'Correo invalida.']));
     }
     if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
-      $resultado = ['resultado' => 'Error de contraseña', 'error' => 'Contraseña invalida.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de contraseña', 'error' => 'Contraseña invalida.']));
     }
     if (preg_match_all("/^[0-9]{1,2}$/", $tipoUsuario) == false) {
-      $resultado = ['resultado' => 'Error de rol', 'error' => 'rol invalido.'];
-      echo json_encode($resultado);
-      die();
+      die(json_encode(['resultado' => 'Error de rol', 'error' => 'rol invalido.']));
     }
 
     $this->cedula = $cedula;
@@ -292,13 +249,6 @@ class usuarios extends DBConnect
   {
 
     try {
-      $this->key = parent::KEY();
-      $this->iv = parent::IV();
-      $this->cipher = parent::CIPHER();
-
-      $this->cedula = openssl_encrypt($this->cedula, $this->cipher, $this->key, 0, $this->iv);
-      $this->email = openssl_encrypt($this->email, $this->cipher, $this->key, 0, $this->iv);
-
       $this->password = password_hash($this->password, PASSWORD_BCRYPT);
       parent::conectarDB();
       $new = $this->con->prepare("UPDATE `usuario` SET `cedula`= ?,`nombre`= ?,`apellido`= ?,`correo`= ?,`password`=?,`rol`=? WHERE `usuario`.`cedula` = ?");
@@ -334,9 +284,6 @@ class usuarios extends DBConnect
   private function validarC()
   {
     try {
-      $this->key = parent::KEY();
-      $this->iv = parent::IV();
-      $this->cipher = parent::CIPHER();
       if ($this->cedula == " ") {
         parent::conectarDB();
         $new = $this->con->prepare("SELECT `cedula` FROM `usuario` WHERE `cedula` = ?");
@@ -355,7 +302,6 @@ class usuarios extends DBConnect
           die();
         }
       } elseif ($this->id == " ") {
-        $this->cedula = openssl_encrypt($this->cedula, $this->cipher, $this->key, 0, $this->iv);
         parent::conectarDB();
         $new = $this->con->prepare("SELECT `cedula` FROM `usuario` WHERE `status`= 1 and `cedula` = ?");
         $new->bindValue(1, $this->cedula);
@@ -371,8 +317,7 @@ class usuarios extends DBConnect
           echo json_encode($resultado);
           die();
         }
-      } elseif ($this->id != " " && $this->cedula != " " && openssl_encrypt($this->cedula, $this->cipher, $this->key, 0, $this->iv) != $this->id) {
-        $this->cedula = openssl_encrypt($this->cedula, $this->cipher, $this->key, 0, $this->iv);
+      } elseif ($this->id != " " && $this->cedula != " " && $this->cedula != $this->id) {
         parent::conectarDB();
         $new = $this->con->prepare("SELECT `cedula`, `status` FROM usuario WHERE cedula = ?");
         $new->bindValue(1, $this->cedula);
@@ -392,7 +337,8 @@ class usuarios extends DBConnect
           echo json_encode($resultado);
           die();
         }
-      } elseif (openssl_encrypt($this->cedula, $this->cipher, $this->key, 0, $this->iv) == $this->id) {
+      } elseif ($this->cedula == $this->id) {
+        
         $resultado = ['resultado' => 'Correcto'];
         echo json_encode($resultado);
         die();
@@ -418,12 +364,7 @@ class usuarios extends DBConnect
   private function validarE()
   {
     try {
-      $this->key = parent::KEY();
-      $this->iv = parent::IV();
-      $this->cipher = parent::CIPHER();
-
       parent::conectarDB();
-      $this->correo = openssl_encrypt($this->correo, $this->cipher, $this->key, 0, $this->iv);
       $new = $this->con->prepare("SELECT `correo`, `status` FROM usuario WHERE cedula <> ? and correo = ?");
       $new->bindValue(1, $this->id);
       $new->bindValue(2, $this->correo);

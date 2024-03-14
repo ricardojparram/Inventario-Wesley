@@ -25,7 +25,12 @@ body{
 .sidebar-nav .nav-link.collapsed i, .sidebar-nav .nav-link i{
     color: var(--color-letra);
 }
-
+.sidebar-nav .nav-content a i{
+    font-size: 16px !important;
+}
+.sidebar-nav .nav-content .bi-circle-fill{
+    font-size: 7px !important;
+}
 .sidebar-nav .nav-link:hover{
     color: var(--color-letra);
     background-color:var(--color-hover);
