@@ -65,8 +65,6 @@
               <tr>
                 <th scope="col">Tipos de pago</th>
 
-                <th scope="col">online</th>
-
                 <th scope="col">Opciones</th>
 
               </tr>
@@ -130,7 +128,7 @@
         <p id="error"style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>
         <div class="modal-footer">
           <button type="reset" id="close" id="cerrarRegis" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" id="enviar" class="btn btn-success">Registrar</button>
+          <button type="submit" id="enviar" class="btn btn-success">Registrar</button>
 
         </div>
 
@@ -184,7 +182,7 @@
     <p id="error2" style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>
     <div class="modal-footer">
     <button type="reset" id="closeEdit" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-      <button type="button" id="enviarEdit"class="btn btn-success">Actualizar</button>
+    <button type="submit" id="enviarEdit"class="btn btn-success">Actualizar</button>
     </div>
 
   </div>
