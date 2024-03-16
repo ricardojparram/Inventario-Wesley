@@ -3,6 +3,7 @@
   use component\initcomponents as initcomponents;
   use component\header as header;
   use component\menuLateral as menuLateral;
+  use component\footer as footer;
   use modelo\metodo as metodo;
 
     
@@ -25,38 +26,46 @@
         }
         
     if(isset($_POST['mostrar']) && isset($_POST['bitacora'])){
-        ($_POST['bitacora'] == 'true')
-        ? $objModel->getMostrarMetodo(true)
-        : $objModel->getMostrarMetodo();
+        $res = $objModel->getMostrarMetodo($_POST['bitacora']);
+        die(json_encode($res));
       }
 
 
       if(isset($_POST["metodo"])&& $permiso['Registrar'] == 1) {
-        $objModel->getAgregarMetodo($_POST["metodo"]  );  
+        $res = $objModel->getAgregarMetodo($_POST["metodo"]); 
+        die(json_encode($res)); 
       } 
 
-     if (isset($_POST["check"]) && isset($_POST["id"]) && $permiso['Editar']) {
-       $objModel->editarOnline($_POST['check'] , $_POST['id']);
-     }
+      if(isset($_POST['tipoPago'] , $_POST['validarTipoPago'] , $_POST['id']) ){
+       $res = $objModel->validarMetodo($_POST['tipoPago'] , $_POST['id']);
+       die(json_encode($res));
+      }
+
+      if (isset($_POST['validarE']) && isset($_POST['id'])){
+        $res = $objModel->validarSelect($_POST['id']);
+        die(json_encode($res));
+      }
+
 
     if (isset($_POST["eliminar"]) && isset($_POST["id"]) && $permiso['Eliminar'] == 1) {
-      $objModel->getEliminarMetodo($_POST["id"]);
+      $res = $objModel->getEliminarMetodo($_POST["id"]);
+      die(json_encode($res));
     }
 
-    if (isset($_POST["unicas"]) && isset($_POST["editar"]) && $permiso['Consultar']){
-    $objModel->mostrarunicas($_POST["unicas"]);
+    if (isset($_POST["id"]) && isset($_POST["editar"]) && $permiso['Consultar']){
+     $res = $objModel->mostrarEdit($_POST["id"]);
+     die(json_encode($res));
     }
 
-    if(isset($_POST["tipoEdit"]) && isset($_POST["unicas"]) && $permiso['Editar']) {
-      $objModel->getEditarMetodo($_POST["tipoEdit"], $_POST["unicas"]);
-
-
+    if(isset($_POST["tipoEdit"]) && isset($_POST["id"]) && $permiso['Editar']) {
+      $res = $objModel->getEditarMetodo($_POST["tipoEdit"], $_POST["id"]);
+       die(json_encode($res));
     }
 
     $VarComp = new initcomponents();
     $header = new header();
     $menu = new menuLateral($permisos);
-
+    $footer = new footer();
 
     if(file_exists("vista/interno/configuraciones/metodoVista.php")){
       require_once("vista/interno/configuraciones/metodoVista.php");

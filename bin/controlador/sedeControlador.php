@@ -10,7 +10,7 @@
 	$model = new sedeEnvio();
 
 	$permisos = $model->getPermisosRol($_SESSION['nivel']);
-	$permiso = $permisos['Sedes de Envio'];
+	$permiso = $permisos['Sedes'];
 
 	if(!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
 

@@ -149,17 +149,17 @@ $(document).ready(function(){
 				datasets: [{
 					label: "Ventas",
 					data: data.ventas,
-					borderColor: "#5EA630",
+					borderColor: "#009F96ff",
 					borderRadius: 5,
 					backgroundColor:gradient,
-					pointBackgroundColor: "#5EA630",
+					pointBackgroundColor: "#009F96ff",
 					fill: true
 				},
 				{
 					label: "Compras",
 					data: data.compras,
-					borderColor: "#A64A28",
-					pointBackgroundColor: "#A64A28",
+					borderColor: "#96BC0Cff",
+					pointBackgroundColor: "#96BC0Cff",
 					backgroundColor: gradient2,
 					fill: true
 				}]
