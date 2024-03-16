@@ -7,35 +7,26 @@ $(document).ready(function(){
 
     let mostrar, permisoModificar;
     function rellenar(bitacora = false){
-        $.ajax({
-            type: "post",
-            url: "",
-            dataType: "json",
-            data: {mostrar: "", bitacora},
-            success(data){
-                let tabla;
-                permisoModificar = (typeof permisos["Modificar acciones"] === "undefined" && typeof permisos["Modificar acceso"] === "undefined") ? 'disabled' : '';
-                data.forEach(row => {
-                    tabla += `
-                        <tr>
-                            <td>${row.nombre}</td>
-                            <td>${row.totales}</td>
-                            <td class="d-flex justify-content-center">
-                                <button type="button" id="${row.id}" ${permisoModificar} class="btn btn-dark asignar_permisos mx-2" data-bs-toggle="modal" data-bs-target="#permisos"><i class="bi bi-shield-lock-fill"></i></button>
-                            </td>
-                        </tr>`;
-                });
-                $('#tabla tbody').html(tabla);
-                mostrar = $('#tabla').DataTable({
-                    resposive: true
-                });
-            },
-            error(e){
-                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-                throw new Error('Error al mostrar listado: '+e);
-            }
+        $.post("", {mostrar: "", bitacora},function(data){
+            let tabla;
+            permisoModificar = (typeof permisos["Modificar acciones"] === "undefined" && typeof permisos["Modificar acceso"] === "undefined") ? 'disabled' : '';
+            data.forEach(row => {
+                tabla += `
+                <tr>
+                    <td>${row.nombre}</td>
+                    <td>${row.totales}</td>
+                    <td class="d-flex justify-content-center">
+                        <button type="button" id="${row.id}" ${permisoModificar} class="btn btn-dark asignar_permisos mx-2" data-bs-toggle="modal" data-bs-target="#permisos"><i class="bi bi-shield-lock-fill"></i></button>
+                    </td>
+                </tr>`; 
+            });
+            $('#tabla tbody').html(tabla);
+            mostrar = $('#tabla').DataTable({resposive:true});
+        }, 'json')
+        .fail((e)=>{
+           Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+           throw new Error('Error al mostrar listado: '+e);
         })
-
     }
 
     const icons = {
@@ -105,22 +96,36 @@ $(document).ready(function(){
             let input_permiso = $(this)[0];
             datos_permisos[i] = {id_permiso : input_permiso.id, status : input_permiso.checked}
         })
-       $.ajax({
-            method: "post", url: "", dataType: "json", data: {datos_permisos, id},
-            success(data){
-                if(data.respuesta === "ok"){
-                    Toast.fire({ icon: 'success', title: data.msg });
-                    $('.cerrar').click();
-                }else{
-                    Toast.fire({ icon: 'error', title: 'Hubo un error al modificar los permisos.' });
-                    throw new Error('Error al mostrar listado: '+data.msg);
-                }
-            },
-            error(e){
-                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-                throw new Error('Error al mostrar listado: '+e);
+        $.post("", {datos_permisos, id}, function(data){
+            if(data.respuesta === "ok"){
+                Toast.fire({ icon: 'success', title: data.msg });
+                $('.cerrar').click();
+            }else{
+                Toast.fire({ icon: 'error', title: 'Hubo un error al modificar los permisos.' });
+                throw new Error('Error al mostrar listado: '+data.msg);
             }
-       })
+        }, "json")
+        .fail(()=>{
+            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+            throw new Error('Error al mostrar listado: '+e);
+        })
+    })
+
+    $('#registrar').click((e)=>{
+        e.preventDefault();
+        let rol = $("#rol_nombre").val();
+        vrol = validarNombre($("#rol_nombre"),$("#error1") , "Error de nombre,");
+        console.log(vrol, rol)
+        if(!vrol)
+            throw new Error('Error de validacion.');
+
+        $.post('',{registrar:'', rol}, function(data){
+            console.log(data)
+        }, "json")
+        .fail((e)=>{
+            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+            throw new Error('Error al mostrar listado: '+e);
+        })
     })
 
 })

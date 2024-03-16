@@ -7,6 +7,7 @@
 	class roles extends DBConnect{
 
 		private $id_rol;
+		private $rol;
 		private $modulos;
 		private $permisos;
 		private array $roles;
@@ -30,6 +31,79 @@
 			}catch(\PDOException $e){
 				die($e);
 			}
+		}
+
+		private function validarNombreRol(){
+			try{
+				$this->conectarDB();
+				$sql = "SELECT nombre FROM rol WHERE nombre LIKE ?;";
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $this->rol);
+				$new->execute();
+				$data = $new->fetchAll(\PDO::FETCH_OBJ);
+				if(isset($data[0])){
+					return ['resultado' => 'error', 'msg' => 'El rol ya esta registrado.'];
+				}
+				return ['resultado' => 'ok', 'msg' => 'Rol valido'];
+
+			}catch(\PDOException $e){
+				die($e);
+			}
+		}
+
+		public function getAgregarRoles($rol){
+			if(preg_match_all("/^[a-zA-ZÀ-ÿ]{5,30}$/", $rol) != 1)
+				return ['resultado' => 'error','msg' => 'Nombre inválido.'];
+
+			$this->rol = $rol; 
+			$valid = $this->validarNombreRol();
+			if($valid['resultado'] !== 'ok') return $valid;
+
+			return $this->agregarRoles();
+		}
+
+		private function generarPermisosPorModulo($id_rol){
+			try {
+				$query="SELECT id_modulo,nombre_accion FROM permisos p
+						WHERE id_rol = 1 AND status = 1;";
+				$this->conectarDB();
+				$new = $this->con->prepare($query);
+				$new->execute();
+				$data = $new->fetchAll(\PDO::FETCH_OBJ);
+
+				$sql="INSERT INTO permisos(id_rol,id_modulo,nombre_accion,status)
+                      VALUES(?,?,?,0);";
+				foreach ($data as $row) {
+					$new = $this->con->prepare($sql);
+					$new->bindValue(1, $id_rol);
+					$new->bindValue(2, $row->id_modulo);
+					$new->bindValue(3, $row->nombre_accion);
+					$new->execute();
+				}
+				return true;
+			} catch (\PDOException $e) {
+				print "¡Error!: " . $e->getMessage() . "<br/>";
+				die();
+			}
+		}
+
+		private function agregarRoles(){
+			try{
+				$this->conectarDB();
+				$sql = "INSERT INTO rol(nombre, status) VALUES (?,1)";
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $this->rol);
+				$new->execute();
+				$id_rol = $this->con->lastInsertId();
+				if(!$this->generarPermisosPorModulo($id_rol)) 
+					return ['resultado' => 'error','msg'=>'Ha ocurrido un error al generar permisos.'];
+
+				return ['resultado' => 'ok','msg'=>'Se ha agregado el rol'];
+
+			}catch(\PDOException $e){
+				die($e);
+			}
+
 		}
 
 		public function mostrarRoles($bitacora){
