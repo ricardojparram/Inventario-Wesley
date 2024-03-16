@@ -3,6 +3,7 @@
   use component\initcomponents as initcomponents;
   use component\header as header;
   use component\menuLateral as menuLateral;
+  use component\footer as footer;
   use modelo\metodo as metodo;
 
     
@@ -35,6 +36,16 @@
         die(json_encode($res)); 
       } 
 
+      if(isset($_POST['tipoPago'] , $_POST['validarTipoPago'] , $_POST['id']) ){
+       $res = $objModel->validarMetodo($_POST['tipoPago'] , $_POST['id']);
+       die(json_encode($res));
+      }
+
+      if (isset($_POST['validarE']) && isset($_POST['id'])){
+        $res = $objModel->validarSelect($_POST['id']);
+        die(json_encode($res));
+      }
+
 
     if (isset($_POST["eliminar"]) && isset($_POST["id"]) && $permiso['Eliminar'] == 1) {
       $res = $objModel->getEliminarMetodo($_POST["id"]);
@@ -54,7 +65,7 @@
     $VarComp = new initcomponents();
     $header = new header();
     $menu = new menuLateral($permisos);
-
+    $footer = new footer();
 
     if(file_exists("vista/interno/configuraciones/metodoVista.php")){
       require_once("vista/interno/configuraciones/metodoVista.php");

@@ -52,7 +52,7 @@
           </div>
 
           <div class="col-6 text-end mt-3">
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registrarModal">Agregar</button>
+            <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#registrarModal">Agregar</button>
 
           </div>
         </div>
@@ -83,7 +83,11 @@
 
 </main>
 
+  <!-- Footer -->
 
+  <?php $footer->Footer();?>
+    
+  <!-- End Footer -->
 
 
 </html>
@@ -125,10 +129,10 @@
           
 
         </div>
-        <p id="error"style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>
+        <p id="error" class="error" style="color:#ff0000;text-align: center;"></p>
         <div class="modal-footer">
-          <button type="reset" id="close" id="cerrarRegis" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="submit" id="enviar" class="btn btn-success">Registrar</button>
+          <button type="reset" id="close" id="cerrarRegis" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" id="enviar" class="btn btn-registrar">Registrar</button>
 
         </div>
 
@@ -179,10 +183,10 @@
 
 
     </div>
-    <p id="error2" style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>
+    <p id="error2" class="error" style="color:#ff0000;text-align: center;"></p>
     <div class="modal-footer">
-    <button type="reset" id="closeEdit" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-    <button type="submit" id="enviarEdit"class="btn btn-success">Actualizar</button>
+    <button type="reset" id="closeEdit" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+    <button type="submit" id="enviarEdit"class="btn btn-registrar">Actualizar</button>
     </div>
 
   </div>
@@ -205,7 +209,7 @@
         <h5>Los datos serán eliminados completamente del sistema</h5>
       </div>
       <div class="modal-footer">
-        <button id="closeModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="closeModal" type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
 
         <button id="deletes" type="button" class="btn btn-danger">Borrar</button>
       </div>

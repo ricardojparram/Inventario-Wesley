@@ -143,7 +143,7 @@
 
     </main>
 
-  <?php $footer->footer(); ?>
+  <?php $footer->Footer(); ?>
 
   <?php $VarComp->js() ?>
   <script src="assets/js/inicio.js"></script>

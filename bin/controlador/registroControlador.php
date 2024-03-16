@@ -5,6 +5,10 @@
     use component\tienda as tienda;
     $obj_Model = new registro();
 
+    if(isset($_SESSION['nivel'])){
+      die('<script>window.location = "?url=inicio" </script>');
+    }
+    
     if(isset($_GET['cedula']) && isset($_GET['validar'])){
       $res = $obj_Model->getValidarCedula($_GET['cedula']);
       die(json_encode($res));
@@ -15,8 +19,8 @@
       die(json_encode($res));
     }
 
-    if(isset($_POST['cedula']) && isset($_POST['name']) && isset($_POST['apellido']) && isset($_POST['email']) && isset ($_POST['password']) && isset($_POST['repass'])){
-      $obj_Model->getRegistrarSistema($_POST['cedula'],$_POST['name'],$_POST['apellido'] ,$_POST['email'] ,$_POST['password'], $_POST['repass']);
+    if(isset($_POST['cedula'],$_POST['name'],$_POST['apellido'] ,$_POST['email'] ,$_POST['password'])){
+      $obj_Model->getRegistrarSistema($_POST['cedula'],$_POST['name'],$_POST['apellido'] ,$_POST['email'] ,$_POST['password']);
     } 
 
 

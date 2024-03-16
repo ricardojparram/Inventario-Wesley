@@ -1,10 +1,10 @@
 :root{
-    --color-in:#63685e;
-    --color-letra:#fff6f6;
-    --color-hover: #72a26c;
+    --color-in:#ffffff;
+    --color-letra:#614f4f;
+    --color-hover: #96bd0d;
 }
 body{
-    background-color: #fffcf2 !important;
+    background-color: #96bd0d0d !important;
 }
 #sidebar {
     background-color: var(--color-in);
@@ -19,20 +19,25 @@ body{
 
 .sidebar-nav .nav-link{
     background: var(--color-hover);
-    color: var(--color-letra);
+    color: #ffffff;
 }
 
 .sidebar-nav .nav-link.collapsed i, .sidebar-nav .nav-link i{
     color: var(--color-letra);
 }
-
+.sidebar-nav .nav-content a i{
+    font-size: 16px !important;
+}
+.sidebar-nav .nav-content .bi-circle-fill{
+    font-size: 7px !important;
+}
 .sidebar-nav .nav-link:hover{
-    color: var(--color-letra);
+    color: #ffffff;
     background-color:var(--color-hover);
 }
 
 .sidebar-nav .nav-link:hover > i{
-    color: var(--color-letra);
+    color: #ffffff;
 }
 
 .sidebar-nav .nav-content a{
@@ -42,6 +47,13 @@ body{
     width: 300px;
     overflow-x: hidden;
 }
+
+.alert-success {
+    --bs-alert-color: #ffffff;
+    --bs-alert-bg: #6c880b;
+    --bs-alert-border-color: #6c880b;
+}
+
 /* Estilos para dispositivos móviles */
 @media (max-width: 575px) {
   .notifications {
@@ -67,11 +79,11 @@ body{
 }
 
 .page-link{
-    color: #198754;
+    color: #009F96ff;
 }
 .active>.page-link{
-    background-color: #198754 !important;
-    border-color: #198754 !important;
+    background-color: #96bd0d !important;
+    border-color: #96bd0d !important;
 }
 
 @media screen and (max-width: 600px){
@@ -99,8 +111,8 @@ body{
 
 .iconos{
   /* color: #212529 !important; */
-  background-color: #a7b754 !important;
-  border-color: #a7b754 !important;
+  background-color: #96bd0d !important;
+  border-color: #96bd0d !important;
 }
 .iconos:focus{
   color: #212529;
@@ -129,6 +141,27 @@ body{
     border: none;
     width: 25px;
 }
+
+.btn-registrar{
+  background: #96bd0d;
+  color:#ffffff;
+}
+
+.btn-registrar:hover {
+  background: #96bd0d !important;
+  color:#ffffff;
+}
+
+.btn-registrar:focus {
+  background: #4b5e06 !important;
+  color:#ffffff;
+}
+
+ .active> .btn-registrar{
+ background: #96bd0d;
+ }
+
+
 /*  SELECT BOOTSTRAP5  */
 .form-select:focus {
     border-color: #a7b754;

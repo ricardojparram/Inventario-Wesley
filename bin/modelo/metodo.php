@@ -3,13 +3,10 @@
   namespace modelo;
   use config\connect\DBConnect as DBConnect;
 
-
   class metodo extends DBConnect{
       
     	private $metodo;
       private $id;
-      private $idedit;
-
 
       public function getMostrarMetodo($bitacora = false){
 
@@ -42,7 +39,7 @@
 
      private function validMetodo(){
       try {
-        $this->conectarDB();
+        parent::conectarDB();
         if($this->id === false) {
           $new = $this->con->prepare('SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.tipo_pago = ?');
           $new->bindValue(1, $this->metodo);
@@ -61,9 +58,40 @@
           $resultado = ['resultado' => 'metodo valido', 'res' => true];
         }
 
-        $this->desconectarDB();
+        parent::desconectarDB();
         return $resultado;
         
+      } catch (\PDOException $e) {
+        return $e;
+      }
+     }
+
+     public function validarSelect($id){
+      if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
+        return ['resultado' => 'Error de id','error' => 'id inválida.'];
+      }
+      
+      $this->id = $id;
+
+      return $this->validSelect();
+
+     }
+
+     private function validSelect(){
+      try {
+        parent::conectarDB();
+        $new = $this->con->prepare('SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.id_forma_pago = ?');
+        $new->bindValue(1,  $this->id);
+        $new->execute();
+        $data = $new->fetchAll();
+
+        parent::desconectarDB();
+
+        if(isset($data[0]["tipo_pago"])){
+          return['resultado' => 'Si existe este metodo.'];
+        }else{
+          return['resultado' => 'Error de metodo'];
+        }
       } catch (\PDOException $e) {
         return $e;
       }
@@ -76,6 +104,10 @@
        
         $this->metodo = $metodo;
 
+        $this->id = false;
+        $validarMetodo = $this->validMetodo();
+        if($validarMetodo['res'] === false){ return ['resultado' => 'error', 'msg' => 'El metodo ya está registrado.'] ;}
+
         return $this->agregarMetodo(); 
 
       }
@@ -84,7 +116,7 @@
        try{
         parent::conectarDB();
         $pk = $this->uniqueID();
-        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (5,?,1)");
+        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (3,?,1)");
 
         $new->bindValue(1 , $this->metodo);
         $new->execute();
@@ -139,7 +171,10 @@
     }
 
     $this->metodo = $metodo;
-    $this->idedit = $id;
+    $this->id = $id;
+
+     $validarMetodo = $this->validMetodo();
+     if($validarMetodo['res'] === false){ return ['resultado' => 'error', 'msg' => 'El metodo ya está registrado.'] ;}
 
     return $this->editarMetodo(); 
 
@@ -149,7 +184,7 @@
       parent::conectarDB();
       $new = $this->con->prepare("UPDATE forma_pago fp SET fp.tipo_pago = ? WHERE fp.status = 1 AND fp.id_forma_pago = ?");
       $new->bindValue(1, $this->metodo);
-      $new->bindValue(2,$this->idedit);
+      $new->bindValue(2,$this->id);
       $new->execute();
 
       $resultado = ['resultado'=> 'Editado'];

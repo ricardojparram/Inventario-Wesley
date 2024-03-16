@@ -25,7 +25,7 @@ $(document).ready(function(){
         <tr>
         <td>${row.tipo_pago}</td>
         <td class="d-flex justify-content-center">
-        <button type="button" ${editarPermiso} id="${row.id_forma_pago}" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
+        <button type="button" ${editarPermiso} id="${row.id_forma_pago}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
         <button type="button" ${eliminarPermiso} id="${row.id_forma_pago}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
         </td>
         </tr>
@@ -45,7 +45,7 @@ $(document).ready(function(){
         function(data){
           let mensaje = JSON.parse(data);
           if(mensaje.resultado === "error"){
-            div.text(mensaje.error);
+            div.text(mensaje.msg);
             input.attr("style","border-color: red;")
             input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
             return reject(false);
@@ -58,10 +58,13 @@ $(document).ready(function(){
   }
 
   let ytipo;
+  let valid;
   let click = 0;
   setInterval(()=>{ click = 0; }, 2000);
 
-  $('#tipo').keyup(()=>{ validarString($("#tipo"),$("#error"),"Error de tipo de pago") })
+  $('#tipo').keyup(()=>{ valid = validarStringLong($("#tipo"),$("#error"),"Error de tipo de pago") 
+   if (valid) validarTipoPago($("#tipo"),$("#error"))
+  })
 
   $("#enviar").click((e)=>{
     e.preventDefault()
@@ -73,10 +76,9 @@ $(document).ready(function(){
 
     if(click >= 1) throw new Error('Spam de clicks');
 
-    ytipo = validarString($("#tipo"),$("#error"),"Error de tipo de pago");
+    ytipo = validarStringLong($("#tipo"),$("#error"),"Error de tipo de pago");
 
     if (ytipo) {
-
 
       $.ajax({
 
@@ -87,12 +89,15 @@ $(document).ready(function(){
           metodo:$("#tipo").val()
         },
         success(data){
-          console.log(data.resultado);
           if (data.resultado == 'registrado correctamente') {
             mostrar.destroy();
             $("#close").click();
-            Toast.fire({ icon: 'success', title: 'metodo de pago registrado' });
+            Toast.fire({ icon: 'success', title: 'Metodo de pago registrado' });
             rellenar();
+          }else if(data.resultado === 'error'){
+            $("#error").text(data.msg);
+            $("#tipo").attr("style","border-color: red;")
+            $("#tipo").attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
           }
         }
       })
@@ -101,10 +106,33 @@ $(document).ready(function(){
   })
   
 
-$("#cerrarRegis, #cerrar").click(()=>{
-  $("#registrarModal input").attr("style","borde-color:none; backgraund-image: none;");
-  $("#error").text("");
- })
+  $(".cerrar").click(()=>{
+    $("input").attr("style","borde-color:none; backgraund-image: none;");
+    $(".error").text("");
+  })
+
+     function validarExitencia(){
+        return new Promise((resolve, reject) =>{
+            $.ajax({
+                type: "POST",
+                url: '',
+                dataType: "json",
+                data: { validarE: "existe", id},
+                success(data) {
+                if (data.resultado === "Error de metodo") {  
+                    mostrar.destroy();
+                    rellenar();
+                    $('.cerrar').click();
+                    Toast.fire({icon: 'error', title: 'Error de metodo de pago'}) // ALERTA 
+                    reject(false);
+                }else{
+                    resolve(true);
+                }
+
+            }
+        })
+      })
+    }
 
   let id;
   $(document).on('click', '.borrar', function(){
@@ -115,6 +143,8 @@ $("#cerrarRegis, #cerrar").click(()=>{
     e.preventDefault();
 
     if(click >= 1) throw new Error('Spam de clicks');
+
+     validarExitencia().then(()=>{
 
     $.ajax({
       type:"POST",
@@ -128,11 +158,14 @@ $("#cerrarRegis, #cerrar").click(()=>{
         if (data.resultado === "Eliminado"){
           $("#closeModal").click();
           mostrar.destroy();
-          Toast.fire({icon: 'error', title: 'Tipo de pago eliminado'})
+          Toast.fire({icon: 'success', title: 'Tipo de pago eliminado'})
           rellenar();
-        }
-      }
-    })
+         }
+       }
+     })
+    }).catch(() =>{
+       throw new Error('No exite.');
+   })
     click++;
   })
  
@@ -154,7 +187,9 @@ $("#cerrarRegis, #cerrar").click(()=>{
     })
   })
 
-  $("#tipoEdit").keyup(()=> {  validarString($("#tipoEdit"),$("#error2") ,"Error de Tipo de Moneda,") });
+  $("#tipoEdit").keyup(()=> {  valid = validarStringLong($("#tipoEdit"),$("#error2") ,"Error de Tipo de Moneda,")
+    if (valid){validarTipoPago($("#tipoEdit"),$("#error2"), id)}
+   });
 
 
   let ctipo; 
@@ -163,28 +198,37 @@ $("#cerrarRegis, #cerrar").click(()=>{
     
     if(click >= 1) throw new Error('Spam de clicks');
 
-    ctipo = validarString($("#tipoEdit"),$("#error2") ,"Error de Tipo de Moneda,");
-    if (ctipo){
-      $.ajax({
+    validarExitencia().then(()=>{
 
-        type:"POST",
-        url:"",
-        dataType:"json",
-        data:{
-          tipoEdit: $("#tipoEdit").val(),
-          id
+      ctipo = validarStringLong($("#tipoEdit"),$("#error2") ,"Error de Tipo de Moneda,");
+      if (ctipo){
+        $.ajax({
 
-        },
-        success(data){
-          if (data.resultado == 'Editado') {
-            mostrar.destroy();
-            $("#closeEdit").click();
-            Toast.fire({ icon: 'success', title: 'Tipo de pago registrado'});
-            rellenar();
+          type:"POST",
+          url:"",
+          dataType:"json",
+          data:{
+            tipoEdit: $("#tipoEdit").val(),
+            id
+
+          },
+          success(data){
+            if (data.resultado == 'Editado') {
+              mostrar.destroy();
+              $("#closeEdit").click();
+              Toast.fire({ icon: 'success', title: 'Tipo de pago editado'});
+              rellenar();
+            }else if(data.resultado === 'error'){
+              $("#error2").text(data.msg);
+              $("#tipoEdit").attr("style","border-color: red;")
+              $("#tipoEdit").attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
+            }
           }
-        }
-      })
-    }
+        })
+      }
+    }).catch(() =>{
+       throw new Error('No exite.');
+   })
     click++;
 
   })

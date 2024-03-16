@@ -3,6 +3,7 @@
   use component\initcomponents as initcomponents;
   use component\header as header;
   use component\menuLateral as menuLateral;
+  use component\footer as footer;
   use modelo\home as home;
 
   if(isset($_SESSION['nivel'])) {
@@ -35,6 +36,7 @@
   $VarComp = new initcomponents();
   $header = new header();
   $menu = new menuLateral($permisos);
+  $footer = new footer();
 
   if(file_exists("vista/interno/homeVista.php")){
     require_once("vista/interno/homeVista.php");

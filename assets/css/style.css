@@ -378,13 +378,22 @@ h6 {
 
 @media (min-width: 1200px) {
   .logo {
-    width: 280px;
+    width: 220px;
+  }
+}
+
+@media(max-width: 375px){
+  .logo{
+    width: 120px;
+  }
+  .logo img{
+    max-height: 70px !important;
   }
 }
 
 .logo img {
-  max-height: 26px;
-  margin-right: 6px;
+  max-height: 95px;
+  margin-right: 1px;
 }
 
 .logo span {
@@ -768,11 +777,11 @@ h6 {
 
 .sidebar-nav .nav-content a:hover,
 .sidebar-nav .nav-content a.active {
-  color: #b1d2a8;
+  color: #96bd0d;
 }
 
 .sidebar-nav .nav-content a.active i {
-  background-color: #b1d2a8;
+  background-color: #ffffff00;
 }
 
 /*--------------------------------------------------------------
@@ -839,18 +848,18 @@ h6 {
 }
 
 .dashboard .sales-card .card-icon {
-  color: #2eca6a;
-  background: #e0f8e9;
+  color: #96bd0d;
+  background: #abc4553b;
 }
 
 .dashboard .revenue-card .card-icon {
-  color: #2eca6a;
-  background: #e0f8e9;
+  color: #96bd0d;
+  background: #abc4553b;
 }
 
 .dashboard .customers-card .card-icon {
-  color: #2eca6a;
-  background: #e0f8e9;
+  color: #96bd0d;
+  background: #abc4553b;
 }
 
 /* Activity */
@@ -1246,19 +1255,19 @@ h6 {
   padding: 20px 0;
   font-size: 14px;
   transition: all 0.3s;
-  border-top: 1px solid #cddfff;
+  border-top: 1px solid #ecf1d7;
 }
 
 .footer .copyright {
   text-align: center;
-  color: #012970;
+  color: #63685e;
 }
 
 .footer .credits {
   padding-top: 5px;
   text-align: center;
   font-size: 13px;
-  color: #012970;
+  color: #63685e;
 }
 
 .modalClient{
@@ -1293,9 +1302,9 @@ h6 {
 .form-control:focus {
     color: #212529;
     background-color: #fff;
-    border-color: #a7b754;
+    border-color: #96bd0d;
     outline: 0;
-    box-shadow: 0 0 0 0.25rem #a7b754;
+    box-shadow: 0 0 0 0.25rem #96bd0d;
 }
 .form-control-sm{
   margin: 5px !important;
