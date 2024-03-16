@@ -1034,8 +1034,15 @@ ALTER TABLE `venta_producto`
 --
 -- AUTO_INCREMENT de la tabla `permisos`
 --
+ALTER TABLE `rol`
+  MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT;
+  
+--
+-- AUTO_INCREMENT de la tabla `permisos`
+--
 ALTER TABLE `permisos`
   MODIFY `id_permiso` int(11) NOT NULL AUTO_INCREMENT;
+
 
 --
 -- AUTO_INCREMENT de la tabla `compra_producto`
