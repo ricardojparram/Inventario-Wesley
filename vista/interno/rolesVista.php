@@ -137,6 +137,51 @@
 </div>
 <!-- MODAL AGREGAR FINAL -->
 
+<!-- MODAL EDITAR -->
+<div class="modal fade " id="editarRol" tabindex="-1">
+  <div class="modal-dialog modal-md ">
+    <div class="modal-content">
+      <div class="modal-header alert alert-success">
+        <h4 class="modal-title"> <strong>Editar rol</strong> </h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body ">
+
+        <form id = "editarform">
+
+          <div class="form-group col-md-12">  
+            <div class="container-fluid">
+              <div class="row">
+
+                <div class="form-group col-12 ">                          
+                  <label class="col-form-label"> <strong>Nombre del rol</strong> </label>
+                  <div class="input-group">
+                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Modifique el nombre del rol"><i class="bi bi-file-person"></i></button> 
+                    <input class="form-control" id="rol_nombre_edit" placeholder="Modifique el rol">
+                  </div>
+                  <p style="color:#ff0000;margin-left: 10px;" id="error2"></p>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <p style="color:#ff0000;text-align: center;" id="error"><?php echo (isset($respuesta)) ? $respuesta : " "; ?></p>
+        
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success " id="editar">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL EDITAR FINAL -->
+
 <!-- Modal Ḿódulos y permisos -->
 <div class="modal fade" id="permisos" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">

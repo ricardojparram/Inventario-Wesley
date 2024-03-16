@@ -22,10 +22,19 @@
 	}
 
 	if(isset($_POST['rol'], $_POST['registrar'])){
-		$res = $model->getAgregarRoles($_POST['rol']);	
+		$res = $model->getAgregarRol($_POST['rol']);	
 		die(json_encode($res));
 	}
 
+	if(isset($_POST['select'], $_POST['id'])){
+		$res = $model->getMostrarRol($_POST['id']);	
+		die(json_encode($res));
+	}
+
+	if(isset($_POST['id'], $_POST['editar'])){
+		$res = $model->getEditarRol($_POST['id'],$_POST['nombre']);	
+		die(json_encode($res));
+	}
 	if(isset($_POST['mostrar'], $_POST['bitacora'], $permiso['Consultar'])){
 		$res = $model->mostrarRoles($_POST['bitacora']);
 		die(json_encode($res));
