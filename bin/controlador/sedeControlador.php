@@ -3,14 +3,14 @@
 	use component\initcomponents as initcomponents;
 	use component\header as header;
 	use component\menuLateral as menuLateral;
-	use modelo\sedeEnvio as sedeEnvio;
+	use modelo\sede as sede;
 
 	if(!isset($_SESSION['nivel'])) die('<script> window.location = "?url=login" </script>');
 
-	$model = new sedeEnvio();
+	$model = new sede();
 
 	$permisos = $model->getPermisosRol($_SESSION['nivel']);
-	$permiso = $permisos['Sedes de Envio'];
+	$permiso = $permisos['Sedes'];
 
 	if(!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
 
@@ -61,8 +61,8 @@
 	$menu = new menuLateral($permisos);
 
 
-	if(file_exists('vista/interno/sedeEnvioVista.php')){
-		require_once('vista/interno/sedeEnvioVista.php');
+	if(file_exists('vista/interno/sedeVista.php')){
+		require_once('vista/interno/sedeVista.php');
 	}else {
 		die("La vista no existe.");
 	}

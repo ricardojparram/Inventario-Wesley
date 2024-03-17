@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sedes de envío</title>
+    <title>Sedes</title>
    <?php $VarComp->header(); ?>
     <link rel="stylesheet" href="assets/css/estiloInterno.css">
     <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
@@ -33,10 +33,10 @@
 
   <main class="main" id="main">
     <div class="pagetitle">
-      <h1>Sedes de envío</h1>
+      <h1>Sedes</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item">Gestionar sedes de envío de cada empresa</li>
+          <li class="breadcrumb-item">Gestionar sedes de envío de cada fundación</li>
         </ol>
       </nav>
 
@@ -47,7 +47,7 @@
 
         <div class="row">
           <div class="col-6">
-            <h5 class="card-title">Sedes de envío</h5>
+            <h5 class="card-title">Sedes</h5>
           </div>
 
           <div class="col-6 text-end mt-3">
@@ -308,4 +308,4 @@
     </div> 
   </div>
 </div>
-              <!-- MODAL BORRAR FINAL-->
+              

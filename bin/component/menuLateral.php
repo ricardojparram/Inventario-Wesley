@@ -228,7 +228,7 @@
     </li>' : '';
     $presentacionLi = (isset($this->permisos['Presentacion']["Consultar"])) ?
     '<li>
-      <a href="?url=medida" class="'.$presentacion.'">
+      <a href="?url=presentacion" class="'.$presentacion.'">
         <i class="bi bi-circle-fill"></i><span>Presentación</span>
       </a>
     </li>' : '';
@@ -254,7 +254,8 @@
         <a href="?url=inventario" class="'.$inventario.'">
           <i class="bi bi-box-fill"></i><span>Inventario</span>
         </a>
-    </li>' : '';
+    </li>'
+     : '';
 
     $productoDañadoLi = (isset($this->permisos['Producto dañado']["Consultar"])) ?
     '<li>
