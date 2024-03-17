@@ -1,23 +1,30 @@
 $(document).ready(function(){
 
     let permisos;
-    $.ajax({method: 'POST', url: "", dataType: 'json', data: {getPermisos:''},
-        success : (data) => permisos = data
-    }).then(() => rellenar(true));
+    $.post("",{getPermisos:''})
+    .fail(e =>{
+        Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+        throw new Error('Error al obtener permisos: '+e);
+    })
+    .then((data) => {
+        permisos = JSON.parse(data);
+        rellenar(true)
+    });
 
-    let mostrar, permisoModificar;
-    function rellenar(bitacora = false){
+    let mostrar;
+    const rellenar = (bitacora = false) => {
         $.post("", {mostrar: "", bitacora},function(data){
             let tabla;
-            permisoModificar = (typeof permisos["Modificar acciones"] === "undefined" && typeof permisos["Modificar acceso"] === "undefined") ? 'disabled' : '';
+            const permisoModificar = (!permisos["Modificar acciones"]) ? 'disabled' : '';    
             data.forEach(row => {
                 tabla += `
                 <tr>
                     <td>${row.nombre}</td>
                     <td>${row.totales}</td>
                     <td class="d-flex justify-content-center">
-                        <button type="button" id="${row.id}" ${permisoModificar} class="btn btn-dark asignar_permisos mx-2" data-bs-toggle="modal" data-bs-target="#permisos"><i class="bi bi-shield-lock-fill"></i></button>
-                        <button type="button" id="${row.id}"  class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#editarRol"><i class="bi bi-pencil"></i></button>
+                        <button type="button" ${permisoModificar} id="${row.id}" title="Asignar permisos"  class="btn btn-dark asignar_permisos mx-2" data-bs-toggle="modal" data-bs-target="#modal_permisos"><i class="bi bi-shield-lock-fill"></i></button>
+                        <button type="button" id="${row.id}" title="Editar" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#modal_editar"><i class="bi bi-pencil"></i></button>
+                        <button type="button" id="${row.id}" title="Eliminar" class="btn btn-danger eliminar mx-2" data-bs-toggle="modal" data-bs-target="#modal_borrar"><i class="bi bi-trash3"></i></button>
                     </td>
                 </tr>`; 
             });
@@ -46,10 +53,8 @@ $(document).ready(function(){
     let id 
 
     $(document).on('click', '.asignar_permisos', function() {
-        if(permisoModificar === "disabled"){
-            Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
-            throw new Error('Permiso denegado.');
-        }
+        validarPermiso(permisos["Modificar acciones"]);
+
         id = this.id; 
         $.post("",{mostrar_permisos:"", id},function(data){
             let tabla = "";
@@ -169,5 +174,24 @@ $(document).ready(function(){
         })
     })
 
+    $(document).on('click','.eliminar',function(){ id = this.id}); 
+
+    $('#borrar').click(()=>{
+        $.post('',{eliminar : '', id}, data => {
+            if(data.resultado != "ok"){
+                Toast.fire({ icon: 'error', title: data.msg });
+                throw new Error(data.msg);
+            }
+            mostrar.destroy();
+            $('.cerrar').click();
+            rellenar();
+            Toast.fire({ icon: 'success', title: data.msg })
+        }, "json")
+        .fail(e =>{
+            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+            throw new Error('Error al mostrar listado: '+e);
+        })
+
+    })
 
 })

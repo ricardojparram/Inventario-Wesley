@@ -138,7 +138,7 @@
 <!-- MODAL AGREGAR FINAL -->
 
 <!-- MODAL EDITAR -->
-<div class="modal fade " id="editarRol" tabindex="-1">
+<div class="modal fade " id="modal_editar" tabindex="-1">
   <div class="modal-dialog modal-md ">
     <div class="modal-content">
       <div class="modal-header alert alert-success">
@@ -182,8 +182,28 @@
 </div>
 <!-- MODAL EDITAR FINAL -->
 
+<!-- MODAL BORRAR -->
+<div class="modal fade" id="modal_borrar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true" style="display: none; ">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Advertencia</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Desea Borrar los datos del Rol?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+        <button id="borrar" type="button" class="btn btn-danger">Borrar</button>
+      </div>
+    </div> 
+  </div>
+</div>
+<!-- MODAL BORRAR FINAL-->
+
 <!-- Modal Ḿódulos y permisos -->
-<div class="modal fade" id="permisos" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="modal_permisos" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
     <div class="modal-content h-75">
       <div class="modal-header " style="background: var(--color-hover); border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
