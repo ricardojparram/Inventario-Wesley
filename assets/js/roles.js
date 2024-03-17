@@ -15,16 +15,18 @@ $(document).ready(function(){
     const rellenar = (bitacora = false) => {
         $.post("", {mostrar: "", bitacora},function(data){
             let tabla;
-            const permisoModificar = (!permisos["Modificar acciones"]) ? 'disabled' : '';    
+            const permisoAcciones = (!permisos["Modificar acciones"]) ? 'disabled' : '';    
+            const permisoEditar = (!permisos["Editar"]) ? 'disabled' : '';    
+            const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';    
             data.forEach(row => {
                 tabla += `
                 <tr>
                     <td>${row.nombre}</td>
                     <td>${row.totales}</td>
                     <td class="d-flex justify-content-center">
-                        <button type="button" ${permisoModificar} id="${row.id}" title="Asignar permisos"  class="btn btn-dark asignar_permisos mx-2" data-bs-toggle="modal" data-bs-target="#modal_permisos"><i class="bi bi-shield-lock-fill"></i></button>
-                        <button type="button" id="${row.id}" title="Editar" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#modal_editar"><i class="bi bi-pencil"></i></button>
-                        <button type="button" id="${row.id}" title="Eliminar" class="btn btn-danger eliminar mx-2" data-bs-toggle="modal" data-bs-target="#modal_borrar"><i class="bi bi-trash3"></i></button>
+                        <button type="button" ${permisoAcciones} id="${row.id}" title="Asignar permisos"  class="btn btn-dark asignar_permisos mx-2" data-bs-toggle="modal" data-bs-target="#modal_permisos"><i class="bi bi-shield-lock-fill"></i></button>
+                        <button type="button" ${permisoEditar} id="${row.id}" title="Editar" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#modal_editar"><i class="bi bi-pencil"></i></button>
+                        <button type="button" ${permisoEliminar} id="${row.id}" title="Eliminar" class="btn btn-danger eliminar mx-2" data-bs-toggle="modal" data-bs-target="#modal_borrar"><i class="bi bi-trash3"></i></button>
                     </td>
                 </tr>`; 
             });
@@ -92,6 +94,7 @@ $(document).ready(function(){
 
 
     $('#enviarPermisos').click(()=>{
+        validarPermiso(permisos["Modificar acciones"]);
         let datos_permisos = [];
         $('#tabla_permisos td input').each(function(i){
             let input_permiso = $(this)[0];
@@ -114,6 +117,8 @@ $(document).ready(function(){
 
     $('#registrar').click((e)=>{
         e.preventDefault();
+        validarPermiso(permisos["Registrar"]);
+
         let rol = $("#rol_nombre").val();
         vrol = validarNombre($("#rol_nombre"),$("#error1") , "Error de nombre,");
         if(!vrol)
@@ -138,6 +143,7 @@ $(document).ready(function(){
     })
 
     $(document).on('click', '.editar', function() {
+        validarPermiso(permisos["Editar"]);
         id = this.id; 
         $.post("", {select:"", id}, data => {
             $("#rol_nombre_edit").val(data[0].nombre);
@@ -150,6 +156,8 @@ $(document).ready(function(){
 
     $('#editar').click((e)=>{
         e.preventDefault();
+        validarPermiso(permisos["Editar"]);
+
         let nombre = $("#rol_nombre_edit").val();
         vrol = validarNombre($("#rol_nombre_edit"),$("#error2") , "Error de nombre,");
         if(!vrol)
@@ -174,9 +182,13 @@ $(document).ready(function(){
         })
     })
 
-    $(document).on('click','.eliminar',function(){ id = this.id}); 
+    $(document).on('click','.eliminar',function(){
+        validarPermiso(permisos["Eliminar"]);
+        id = this.id
+    }); 
 
     $('#borrar').click(()=>{
+        validarPermiso(permisos["Eliminar"]);
         $.post('',{eliminar : '', id}, data => {
             if(data.resultado != "ok"){
                 Toast.fire({ icon: 'error', title: data.msg });

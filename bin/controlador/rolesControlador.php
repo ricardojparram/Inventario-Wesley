@@ -21,22 +21,22 @@
 		die(json_encode($permisos['Roles']));
 	}
 
-	if(isset($_POST['rol'], $_POST['registrar'])){
+	if(isset($_POST['rol'], $_POST['registrar'], $permiso['Registrar'])){
 		$res = $model->getAgregarRol($_POST['rol']);	
 		die(json_encode($res));
 	}
 
-	if(isset($_POST['select'], $_POST['id'])){
+	if(isset($_POST['select'], $_POST['id'], $permiso['Editar'])){
 		$res = $model->getMostrarRol($_POST['id']);	
 		die(json_encode($res));
 	}
 
-	if(isset($_POST['id'], $_POST['editar'])){
+	if(isset($_POST['id'], $_POST['editar'], $permiso['Editar'])){
 		$res = $model->getEditarRol($_POST['id'],$_POST['nombre']);	
 		die(json_encode($res));
 	}
 
-	if(isset($_POST['id'], $_POST['eliminar'])){
+	if(isset($_POST['id'], $_POST['eliminar'], $permiso['Eliminar'])){
 		$res = $model->getEliminarRol($_POST['id']);	
 		die(json_encode($res));
 	}

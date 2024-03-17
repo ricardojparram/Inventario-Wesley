@@ -52,7 +52,15 @@
         </div>
 
         <div class="col-6 text-end mt-3">
-         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
+         <button 
+            type="button"
+            class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#Agregar"
+            <?= (isset($permiso['Registrar'])) ? "" : "disabled"?> 
+          >
+            Agregar
+          </button>
        </div>
      </div>
 
