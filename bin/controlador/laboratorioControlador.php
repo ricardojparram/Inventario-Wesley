@@ -18,26 +18,26 @@
   }
 
   if(isset($_POST['mostrar'], $permiso["Consultar"])){
-    $res = $objModel->mostrarLaboratoriosAjax($_POST['bitacora']);
+    $res = $objModel->mostrarLaboratorios($_POST['bitacora']);
     die(json_encode($res));
   }
 
-  if(isset($_POST['rif'], $_POST['direccion'], $_POST['razon'], $_POST['telefono'], $_POST['contacto'], $permiso["Registrar"])){
+  if(isset($_POST['rif'], $_POST['direccion'], $_POST['razon'],$permiso["Registrar"])){
 
-    $res= $objModel->getDatosLab($_POST['rif'], $_POST['direccion'], $_POST['razon'], $_POST['telefono'], $_POST['contacto']);
+    $res= $objModel->getRegistrarLaboratorio($_POST['rif'], $_POST['direccion'], $_POST['razon'],$permiso["Registrar"]);
     die(json_encode($res));
 
 
   }
 
-  if(isset($_POST['select'], $permiso["Editar"])){
+  if(isset($_POST['select'], $_POST['id'], $permiso["Editar"])){
     $res= $objModel->getItem($_POST['id']);
     die(json_encode($res));
   }
 
-  if(isset($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['telefonoEdit'], $_POST['contactoEdit'], $_POST['id'], $permiso["Editar"])){
+  if(isset($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['id'], $permiso["Editar"])){
 
-    $res = $objModel->getEditar($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['telefonoEdit'], $_POST['contactoEdit'], $_POST['id']);
+    $res = $objModel->getEditar($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['id'], $permiso["Editar"]);
     die(json_encode($res));
 
   }

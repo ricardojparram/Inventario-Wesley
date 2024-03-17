@@ -51,7 +51,16 @@
                 </div>
 
                 <div class="col-6 text-end mt-3">
-                  <button type="button" id="agregarModalButton" <?= (isset($permiso['Registrar'])) ? "" : "disabled"?> class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
+                  <button 
+                    type="button"
+                    id="agregarModalButton"
+                    class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#Agregar"
+                    <?= (isset($permiso['Registrar'])) ? "" : "disabled"?>
+                  >
+                    Agregar
+                  </button>
                 </div>
               </div>
 
@@ -65,8 +74,6 @@
                       <th scope="col">Rif</th>
                       <th scope="col">Razón Social</th>
                       <th scope="col">Dirección</th>                      
-                      <th scope="col">Teléfono</th>
-                      <th scope="col">Contacto</th>
                       <th scope="col">Opciones</th>
                     
                     </tr>
@@ -91,7 +98,6 @@
 </body>
 
   <?php $VarComp->js(); ?>
-
   <script src="assets/js/laboratorio.js"></script> 
 
 
@@ -100,7 +106,7 @@
 
 <!-- TODOS LOS MODAL -->
 
-<!-- MODAL AGERGAR -->
+<!-- MODAL AGREGAR -->
 <div class="modal fade " id="Agregar" tabindex="-1">
   <div class="modal-dialog modal-md ">
     <div class="modal-content">
@@ -153,29 +159,6 @@
             </div>
           </div>
           
-          <div class="form-group col-md-12">  
-            <div class="container-fluid">
-              <div class="row">
-
-                <div class="form-group col-6">                          
-                  <label class="col-form-label"> <strong>Teléfono</strong> </label>
-                  <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el número telefónico del Laboratorio"><i class="bi bi-telephone-fill"></i></button> 
-                    <input class="form-control"  id="telefono" required="" placeholder="">
-                  </div>
-                </div>
-
-                <div class="form-group col-6">                          
-                  <label class="col-form-label"> <strong>Contacto</strong> </label>
-                  <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca otro tipo de contacto del Laboratorio"><i class="bi bi-envelope"></i></button> 
-                    <input class="form-control"   id="contacto" placeholder="(opcional)">
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
 
         </div>
 
@@ -245,30 +228,6 @@
             </div>
           </div>
           
-          <div class="form-group col-md-12">  
-            <div class="container-fluid">
-              <div class="row">
-
-                <div class="form-group col-6">                          
-                  <label class="col-form-label"> <strong>Teléfono</strong> </label>
-                  <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el número telefónico del Laboratorio"><i class="bi bi-telephone-fill"></i></button> 
-                    <input class="form-control" id="telefonoEdit" required="" placeholder="">
-                  </div>
-                </div>
-
-                <div class="form-group col-6">                          
-                  <label class="col-form-label"> <strong>Contacto</strong> </label>
-                  <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca otro tipo de contacto del Laboratorio"><i class="bi bi-envelope"></i></button> 
-                    <input class="form-control"  id="contactoEdit" placeholder="(opcional)">
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
         </div>
 
         <div style="color:#ff0000;text-align: center;" id="errorEdit"></div>
