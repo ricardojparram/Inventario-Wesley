@@ -11,7 +11,7 @@ if (!isset($_SESSION['nivel'])) {
 
 $objModel = new personal();
 $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
-$permiso = $permisos['Clientes'];
+$permiso = $permisos['Personal'];
 
 if (!isset($permiso['Consultar']))
   die('<script> window.location = "?url=home" </script>');

@@ -48,7 +48,6 @@
     $usuario = ($_GET['url'] == 'usuario')? "active": "";
     $bitacora = ($_GET['url'] == 'bitacora')? "active": "";
     $roles = ($_GET['url'] == 'roles')? "active": "";
-    $mantenimiento = ($_GET['url'] == 'mantenimiento')? "active": "";
     $tipoEmpleado = ($_GET['url'] == 'tipoEmpleado')? "": "collapsed";
     $cargo = ($_GET['url'] == 'cargo')? "": "collapsed";
     $descargo = ($_GET['url'] == 'descargo')? "": "collapsed";
@@ -135,14 +134,6 @@
         </a>
     </li>' : '';
 
-    $mantenimientoLi = (isset($this->permisos['Mantenimiento']["Consultar"])) ?
-    '<li>
-        <a class="'.$mantenimiento.'" href="?url=mantenimiento">
-          <i class="bi bi-shield-shaded"></i><span>Mantenimiento</span>
-        </a>
-    </li>' : '';
-
-
     $sistemaLi = (isset($this->permisos['Roles']["Consultar"]) || isset($this->permisos['Usuarios']["consultar"]) || isset($this->permisos['Bitacora']["consultar"]) ) ?
     '<li class="nav-item">
         <a class="nav-link '.$sistemaA.'" data-bs-target="#sistema-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
@@ -155,8 +146,6 @@
             '.$bitacoraLi.'
 
             '.$usuarioLi.'
-
-            '.$mantenimientoLi.'
 
         </ul>
     </li>' : '';
@@ -286,20 +275,20 @@
           </ul>
     </li>' : '';
 
-     $donativosPacienteLi = (isset($this->permisos['Ventas']["Consultar"])) ?
+     $donativosPacienteLi = (isset($this->permisos['Donativos pacientes']["Consultar"])) ?
        '<li>
         <a href="?url=donativoPaciente" class="'.$donativoPacientes.'">
           <i class="ri-heart-add-fill"></i><span>Donativos Pacientes</span>
         </a>
      </li>' : '';
-     $donativosPersonalLi = (isset($this->permisos['Ventas']["Consultar"])) ?
+     $donativosPersonalLi = (isset($this->permisos['Donativos personal']["Consultar"])) ?
       '<li>
         <a href="?url=donativoPersonal" class="'.$donativoPersonal.'">
           <i class="ri-heart-add-fill"></i><span>Donativos Personal</span>
         </a>
     </li>' : '';
 
-      $donativosInstitucionesLi = (isset($this->permisos['Ventas']["Consultar"])) ?
+      $donativosInstitucionesLi = (isset($this->permisos['Donativos instituciones']["Consultar"])) ?
       '<li>
         <a href="?url=donativoInstituciones" class="'.$donativoInstituciones.'">
           <i class="ri-heart-add-fill"></i><span>Donativo Instituciones</span>
