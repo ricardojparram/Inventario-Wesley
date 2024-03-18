@@ -1187,7 +1187,7 @@ ALTER TABLE `permisos`
 -- Filtros para la tabla `personal`
 --
 ALTER TABLE `personal`
-  ADD CONSTRAINT `personal_ibfk_1` FOREIGN KEY (`tipo_em`) REFERENCES `tipo_empleado` (`tipo_Em`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `personal_ibfk_1` FOREIGN KEY (`tipo_em`) REFERENCES `tipo_empleado` (`tipo_em`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `personal_ibfk_2` FOREIGN KEY (`id_sede`) REFERENCES `sede` (`id_sede`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -1225,11 +1225,6 @@ ALTER TABLE `producto_sede`
 ALTER TABLE `recepcion_sede`
   ADD CONSTRAINT `recepcion_sede_ibfk_1` FOREIGN KEY (`id_recepcion`) REFERENCES `detalle_recepcion` (`id_detalle`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Filtros para la tabla `tipo_empleado`
---
-ALTER TABLE `tipo_empleado`
-  ADD CONSTRAINT `tipo_empleado_ibfk_1` FOREIGN KEY (`tipo_em`) REFERENCES `personal` (`tipo_em`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `usuario`

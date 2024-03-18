@@ -26,7 +26,7 @@
      }
 
      public function validarMetodo($metodo , $id){
-      if(preg_match_all("/[$%&|<>0-9]/", $metodo) == true){
+      if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
           return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
       }
 
@@ -98,7 +98,7 @@
      }
 
       public function getAgregarMetodo($metodo){
-        if(preg_match_all("/[$%&|<>0-9]/", $metodo) == true){
+        if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
           return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
         }
        
@@ -115,17 +115,25 @@
       private function agregarMetodo(){
        try{
         parent::conectarDB();
-        $pk = $this->uniqueID();
-        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (3,?,1)");
 
-        $new->bindValue(1 , $this->metodo);
+        do{
+        $pk = $this->uniqueNumericID();
+        $check = $this->con->prepare("SELECT COUNT(*) FROM `forma_pago` WHERE `id_forma_pago` = ?");
+        $check->bindValue(1, $pk);
+        $check->execute();
+        $count = $check->fetchColumn();
+        }while($count > 0);
+        
+        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (?,?,1)");
+
+        $new->bindValue(1 , $pk);
+        $new->bindValue(2 , $this->metodo);
         $new->execute();
         $data = $new->fetchAll();
         
         $resultado = ["resultado" => "registrado correctamente"];
-        echo json_encode($resultado);
         parent::desconectarDB();
-        die();
+        return $resultado;
 
         
       }catch(\PDOexection $error){
@@ -163,8 +171,8 @@
  }
 
   public function getEditarMetodo($metodo, $id){
-    if(preg_match_all("/[$%&|<>0-9]/", $metodo) == true){
-      return['resultado' => 'Error de metodo' , 'error' => 'metodo inválido.'];
+    if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
+      return ['resultado' => 'Error de metodo' , 'error' => 'metodo inválido.'];
     }
     if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
       return ['resultado' => 'Error de id','error' => 'id inválida.'];

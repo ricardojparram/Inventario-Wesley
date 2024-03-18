@@ -20,6 +20,45 @@
   	$objModel->getNotificacion();
   }
 
+  if(isset($_POST['getPermiso'])&& $permiso['Consultar'] == 1){
+  	die(json_encode($permiso));
+  }
+
+  if(isset($_POST['mostrar']) && isset($_POST['bitacora'])){
+  	$res = $objModel->getMostrarEmpleado($_POST['bitacora']);
+  	die(json_encode($res));
+  }
+
+  if(isset($_POST['tipoEmpleado']) && isset($_POST['validarTipoEmpleado']) && isset($_POST['id'])){
+  	$res = $objModel->validarTipoEmpleado($_POST['tipoEmpleado'] , $_POST['id']);
+  	die(json_encode($res));
+  }
+
+  if(isset($_POST['validarE']) && isset($_POST['id'])) {
+  	$res = $objModel->validarSelect($_POST['id']);
+  	die(json_encode($res));
+  }
+
+  if(isset($_POST['tipoEmpleado']) && $permiso['Registrar'] == 1) {
+  	$res = $objModel->getRegistrarEmpleado($_POST['tipoEmpleado']);
+  	die(json_encode($res));
+  }
+
+  if (isset($_POST['id']) && isset($_POST['mostrarEdit']) && $permiso['Editar'] == 1) {
+  	$res = $objModel->getMostrarEdit($_POST['id']);
+  	die(json_encode($res));
+  }
+
+  if (isset($_POST['id']) && isset($_POST['tipoEmpleadoEdit']) && $permiso['Editar'] == 1) {
+  	$res = $objModel->getEditarEmpleado($_POST['tipoEmpleadoEdit'] ,$_POST['id']);
+  	die(json_encode($res));
+  }
+
+  if(isset($_POST['eliminar']) && isset($_POST['id']) ) {
+  	$res = $objModel->getEliminarEmpleado($_POST['id']);
+  	die(json_encode($res));
+  }
+
 
   $VarComp = new initcomponents();
   $header = new header();

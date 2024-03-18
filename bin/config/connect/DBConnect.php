@@ -60,6 +60,17 @@
       return bin2hex(random_bytes(5));
     }
 
+    protected function uniqueNumericID(){
+    $randomNumber = '';
+    $length = 8; // Longitud del ID numérico deseado
+
+    for ($i = 0; $i < $length; $i++) {
+        $randomNumber .= mt_rand(0, 9); // Genera un dígito aleatorio entre 0 y 9
+      }
+
+      return $randomNumber;
+    }
+
     public function getPermisosRol($rol){
       $this->rol = $rol;
 

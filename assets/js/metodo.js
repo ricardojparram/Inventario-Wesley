@@ -5,39 +5,42 @@ $(document).ready(function(){
 
      $.ajax({method: 'POST', url: "", dataType: 'json', data: {getPermisos:''},
         success(permisos){
-          registrarPermiso = (typeof permisos.Editar === 'undefined') ? 'disabled' : ''; 
+          registrarPermiso = (typeof permisos.Registrar === 'undefined') ? 'disabled' : ''; 
           editarPermiso = (typeof permisos.Editar === 'undefined') ? 'disabled' : '';
           eliminarPermiso = (typeof permisos.Eliminar === 'undefined') ? 'disabled' : '';
         }
     }).then(() => rellenar(true));
 
  
-  function rellenar(bitacora = false){
-   $.ajax({
-    type: "POST",
-    url: "",
-    dataType: "json",
-    data: {mostrar: "metodo" , bitacora},
-    success(data){
-      let tabla;
-      data.forEach(row =>{           
-        tabla += `
-        <tr>
-        <td>${row.tipo_pago}</td>
-        <td class="d-flex justify-content-center">
-        <button type="button" ${editarPermiso} id="${row.id_forma_pago}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
-        <button type="button" ${eliminarPermiso} id="${row.id_forma_pago}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
-        </td>
-        </tr>
-        `;
+     function rellenar(bitacora = false){
+       $.ajax({
+        type: "POST",
+        url: "",
+        dataType: "json",
+        data: {mostrar: "metodo" , bitacora},
+        success(data){
+          let tabla;
+          data.forEach(row =>{           
+            tabla += `
+            <tr>
+            <td>${row.tipo_pago}</td>
+            <td class="d-flex justify-content-center">
+            <button type="button" ${editarPermiso} id="${row.id_forma_pago}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
+            <button type="button" ${eliminarPermiso} id="${row.id_forma_pago}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
+            </td>
+            </tr>
+            `;
+          })
+          $('#tbody').html(tabla);
+          mostrar = $('#tabla').DataTable({
+            resposive : true
+          })
+        }, error(e){
+          Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+          throw new Error('Error al mostrar listado: '+e);
+        }
       })
-       $('#tbody').html(tabla);
-        mostrar = $('#tabla').DataTable({
-          resposive : true
-        })
-    }
-   })
-  }
+     }
 
   function validarTipoPago(input , div , id = false){
     return new Promise((resolve , reject)=>{
@@ -91,9 +94,12 @@ $(document).ready(function(){
         success(data){
           if (data.resultado == 'registrado correctamente') {
             mostrar.destroy();
-            $("#close").click();
-            Toast.fire({ icon: 'success', title: 'Metodo de pago registrado' });
             rellenar();
+            $('#user').trigger('reset'); 
+            $("#close").click();
+            $("#tipo").attr("style","borde-color:none; backgraund-image: none;");
+            $("#error").text("");
+            Toast.fire({ icon: 'success', title: 'Metodo de pago registrado' , showCloseButton: true });
           }else if(data.resultado === 'error'){
             $("#error").text(data.msg);
             $("#tipo").attr("style","border-color: red;")
@@ -107,6 +113,7 @@ $(document).ready(function(){
   
 
   $(".cerrar").click(()=>{
+    $('#user').trigger('reset');
     $("input").attr("style","borde-color:none; backgraund-image: none;");
     $(".error").text("");
   })
@@ -123,7 +130,7 @@ $(document).ready(function(){
                     mostrar.destroy();
                     rellenar();
                     $('.cerrar').click();
-                    Toast.fire({icon: 'error', title: 'Error de metodo de pago'}) // ALERTA 
+                    Toast.fire({icon: 'error', title: 'Error de metodo de pago', showCloseButton: true }) // ALERTA 
                     reject(false);
                 }else{
                     resolve(true);
@@ -158,7 +165,7 @@ $(document).ready(function(){
         if (data.resultado === "Eliminado"){
           $("#closeModal").click();
           mostrar.destroy();
-          Toast.fire({icon: 'success', title: 'Tipo de pago eliminado'})
+          Toast.fire({icon: 'success', title: 'Tipo de pago eliminado' , showCloseButton: true})
           rellenar();
          }
        }
@@ -187,7 +194,7 @@ $(document).ready(function(){
     })
   })
 
-  $("#tipoEdit").keyup(()=> {  valid = validarStringLong($("#tipoEdit"),$("#error2") ,"Error de Tipo de Moneda,")
+  $("#tipoEdit").keyup(()=> {  valid = validarStringLong($("#tipoEdit"),$("#error2") ,"Error de tipo pago")
     if (valid){validarTipoPago($("#tipoEdit"),$("#error2"), id)}
    });
 
@@ -200,7 +207,7 @@ $(document).ready(function(){
 
     validarExitencia().then(()=>{
 
-      ctipo = validarStringLong($("#tipoEdit"),$("#error2") ,"Error de Tipo de Moneda,");
+      ctipo = validarStringLong($("#tipoEdit"),$("#error2") ,"Error de tipo pago");
       if (ctipo){
         $.ajax({
 
@@ -216,7 +223,7 @@ $(document).ready(function(){
             if (data.resultado == 'Editado') {
               mostrar.destroy();
               $("#closeEdit").click();
-              Toast.fire({ icon: 'success', title: 'Tipo de pago editado'});
+              Toast.fire({ icon: 'success', title: 'Tipo de pago editado' , showCloseButton: true});
               rellenar();
             }else if(data.resultado === 'error'){
               $("#error2").text(data.msg);
