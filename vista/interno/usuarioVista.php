@@ -71,16 +71,6 @@
                       <th scope="col">Opciones</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th scope="col">Cedula</th>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Apellido</th>
-                      <th scope="col">Correo</th>
-                      <th scope="col">Nivel</th>
-                      <th scope="col">Opciones</th>
-                    </tr>
-                  </tfoot>
                   <tbody id="tbody">
                   </tbody>
                 </table>
@@ -141,7 +131,7 @@
                       <div class="row mb-1">
                         <label for="inputText" class="col-sm-3 col-form-label"><strong>Nivel</strong></label>
                         <div class="input-group">
-                          <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="La contraseña debe tener como mínimo 8 carácteres. Admite cualquier tipo de carácter(a-zA-Z0-9!@#$%^&*)"><i class="bi bi-sort-up"></i></button>
+                          <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija un nivel para el Usuario"><i class="bi bi-sort-up"></i></button>
                         <select  name= "tipoUsuario" class="form-select" id="select">
                           <option selected disabled>Niveles</option>
                           <?php if(isset($mostrarN)){

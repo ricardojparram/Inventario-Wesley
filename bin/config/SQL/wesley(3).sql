@@ -765,10 +765,10 @@ CREATE TABLE `transferencia` (
 --
 
 CREATE TABLE `usuario` (
-  `cedula` varchar(15) NOT NULL,
+  `cedula` varchar(30) NOT NULL,
   `nombre` varchar(20) NOT NULL,
   `apellido` varchar(20) NOT NULL,
-  `correo` varchar(50) NOT NULL,
+  `correo` varchar(100) NOT NULL,
   `password` varchar(70) NOT NULL,
   `rol` int(11) NOT NULL,
   `img` varchar(120) DEFAULT NULL,
@@ -780,10 +780,7 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`cedula`, `nombre`, `apellido`, `correo`, `password`, `rol`, `img`, `status`) VALUES
-('123123123', 'admin', 'admin', 'admin@admin.com', '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.', 1, NULL, 1),
-('29880797', 'Ailin', 'Perez', 'duranjhoa5@gmail.com', '$2y$10$kmcloDWOIk4HNgSreXaPdes5YS1RImPYwNip4GVEQRGBnwNKeRlJK', 3, NULL, 1),
-('30395804', 'Jhoa', 'Duran', 'duranjhoa52@gmail.com', '$2y$10$/cxqYC.VN0ARUNWIlxHMHuU6ps6JPBtJx1gJIlHNizfnSmSH77hAC', 1, NULL, 1),
-('4', 'tommy', 'duran', 'I/a3j62muDU6jTXAQ31L+LtzZ6ldBEnfmObWxCu8pFQ=', '$2y$10$dnKhNNvC1HPPJxKDDaQVpOGz.vWrkUx3cZOTWgSY6NaNwrplncpZm', 1, 'assets/img/perfil/298b2f86898a210656700a947b7a6fcb.png', 1);
+('O9OnH0ox4pHUYNZMrowa2Q==', 'admin', 'admin', 'mE/+zG67/LRq502a/iv4tA==', '$2y$10$bCcSDXQ65T.b9pnF1/pehOwIQ1OZcV.PeAENqRE/iWoeb6C4oaVJu', 1, NULL, 1);
 
 -- --------------------------------------------------------
 
