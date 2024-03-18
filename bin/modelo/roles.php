@@ -7,6 +7,7 @@
 	class roles extends DBConnect{
 
 		private $id_rol;
+		private $rol;
 		private $modulos;
 		private $permisos;
 		private array $roles;
@@ -15,6 +16,7 @@
 			parent::__construct();	
 			$this->getRoles();
 		}
+
 
 		private function getRoles(){
 			try{
@@ -32,19 +34,196 @@
 			}
 		}
 
+		private function validarNombreRol(){
+			try{
+				$this->conectarDB();
+				$sql = "SELECT nombre FROM rol WHERE nombre LIKE ?;";
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $this->rol);
+				$new->execute();
+				$data = $new->fetchAll(\PDO::FETCH_OBJ);
+				if(isset($data[0])){
+					return ['resultado' => 'error', 'msg' => 'El rol ya esta registrado.'];
+				}
+				return ['resultado' => 'ok', 'msg' => 'Rol valido'];
+
+			}catch(\PDOException $e){
+				die($e);
+			}
+		}
+
+		public function getAgregarRol($rol){
+			if(preg_match_all("/^[a-zA-ZÀ-ÿ]{5,30}$/", $rol) != 1)
+				return ['resultado' => 'error','msg' => 'Nombre inválido.'];
+
+			$this->rol = $rol; 
+			$valid = $this->validarNombreRol();
+			if($valid['resultado'] !== 'ok') return $valid;
+
+			return $this->agregarRol();
+		}
+
+		private function generarPermisosPorModulo($id_rol){
+			try {
+				$this->conectarDB();
+				$sql = "INSERT INTO permisos (id_rol, id_modulo, nombre_accion, status)
+						SELECT ?, id_modulo, nombre_accion, 0
+						FROM permisos
+						WHERE id_rol = 1 AND status = 1;";	
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $id_rol);
+				return $new->execute();
+
+			} catch (\PDOException $e) {
+				print "¡Error!: " . $e->getMessage() . "<br/>";
+				die();
+			}
+		}
+
+		private function agregarRol(){
+			try{
+				$this->conectarDB();
+				$sql = "INSERT INTO rol(nombre, status) VALUES (?,1)";
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $this->rol);
+				$new->execute();
+				$id_rol = $this->con->lastInsertId();
+				if(!$this->generarPermisosPorModulo($id_rol)) 
+					return ['resultado' => 'error','msg'=>'Ha ocurrido un error al generar permisos.'];
+
+				return ['resultado' => 'ok','msg'=>'Se ha agregado el rol'];
+
+			}catch(\PDOException $e){
+				die($e);
+			}
+
+		}
+
+		public function getEditarRol($id_rol, $rol){
+			if(preg_match_all("/^[0-9]{1,10}$/", $id_rol) != 1)
+				return ['resultado' => 'error', 'error' => 'Id inválida.'];
+
+			if(preg_match_all("/^[a-zA-ZÀ-ÿ]{5,30}$/", $rol) != 1)
+				return ['resultado' => 'error','msg' => 'Nombre inválido.'];
+
+			$this->id_rol = $id_rol;
+			$this->rol = $rol;
+			$valid = $this->validarNombreRol();
+			if($valid['resultado'] !== 'ok') return $valid;
+
+			return $this->editarRol();
+		}
+
+		private function editarRol(){
+			try {
+				$this->conectarDB();
+				$sql = "UPDATE rol SET nombre = ? WHERE id_rol = ?";
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $this->rol);
+				$new->bindValue(2, $this->id_rol);
+				if(!$new->execute()) return ['resultado' => 'error', 'msg' => 'Ha ocurrido un error en la base de datos.'];
+
+				return [
+					'resultado' => 'ok',
+					'msg' => "Se ha editado el rol {$this->roles[$this->id_rol]}."
+				];
+
+				
+			} catch (\PDOException $e) {
+				print "¡Error!: " . $e->getMessage() . "<br/>";
+				die();
+			}
+		}
+
+		private function validarRolConUsuarios(){
+			try {
+				$this->conectarDB();
+				$sql = "SELECT * FROM usuario WHERE rol = ? AND status = 1";
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $this->id_rol);
+				$new->execute();
+				$data = $new->fetchAll(\PDO::FETCH_ASSOC);
+				return isset($data[0]);
+
+			} catch (\PDOException $e) {
+				print "¡Error!: " . $e->getMessage() . "<br/>";
+				die();
+			}
+		}
+
+		public function getEliminarRol($id_rol){
+			if($_SESSION['nivel'] === $id_rol)
+				return ['resultado' => 'error', 'msg' => 'No puede eliminar su propio rol.'];
+			if(preg_match_all("/^[0-9]{1,10}$/", $id_rol) != 1)
+				return ['resultado' => 'error', 'error' => 'Id inválida.'];
+
+			$this->id_rol = $id_rol;
+			if($this->validarRolConUsuarios())
+				return ['resultado' => 'error', 'msg' => 'Este rol tiene usuarios activos.'];
+			
+			return $this->eliminarRol();
+		}
+
+		public function eliminarRol(){
+			try {
+
+				$this->conectarDB();
+				$sql = "UPDATE rol SET status = 0 WHERE id_rol = ?;";
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $this->id_rol);
+
+				if(!$new->execute()) return ['resultado' => 'error', 'msg' => 'Ha ocurrido un error en la base de datos.'];
+
+				return [
+					'resultado' => 'ok',
+					'msg' => "Se ha eliminado el rol {$this->roles[$this->id_rol]}."
+				];
+				
+			} catch (\PDOException $e) {
+				print "¡Error!: " . $e->getMessage() . "<br/>";
+				die();
+			}
+		}
+
+		public function getMostrarRol($id_rol){
+			if(preg_match_all("/^[0-9]{1,10}$/", $id_rol) != 1)
+				return ['resultado' => 'error', 'error' => 'Id inválida.'];
+			
+			$this->id_rol = $id_rol; 
+			return $this->mostrarRol();
+		}
+
+		private function mostrarRol(){
+
+			try{
+				$this->conectarDB();
+				$sql = 'SELECT nombre FROM rol WHERE status =1 AND id_rol=?;';
+				$new = $this->con->prepare($sql);
+				$new->bindValue(1, $this->id_rol);
+				$new->execute();
+				$data = $new->fetchAll(\PDO::FETCH_OBJ);
+
+				$this->desconectarDB();
+				return $data;
+
+			}catch(\PDOException $e){
+				die($e);
+			}
+		}
+
 		public function mostrarRoles($bitacora){
 
 			try{
 				$this->conectarDB();
 				$sql = 'SELECT * FROM(
-							SELECT r.id_rol as id, r.nombre, COUNT(*) as totales FROM rol r
+							SELECT r.id_rol as id, r.nombre, COUNT(*) as totales, r.status FROM rol r
 							INNER JOIN usuario u
 							ON u.rol = r.id_rol
 						    GROUP BY r.id_rol
 						    UNION
-						    SELECT r.id_rol, r.nombre, 0 as totales FROM rol r
+						    SELECT r.id_rol, r.nombre, 0 as totales, r.status FROM rol r
 						) as tabla
-						WHERE tabla.id != 1
+						WHERE tabla.id != 1 AND tabla.status != 0
 						GROUP BY tabla.id;';
 				$new = $this->con->prepare($sql);
 				$new->execute();
@@ -59,9 +238,9 @@
 		}
 
 		public function getPermisos($id){
-			if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
+			if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1)
 				return ['resultado' => 'error', 'error' => 'Id inválida.'];
-			}
+
 			$this->id_rol = $id;
 
 			return $this->mostrarPermisos();

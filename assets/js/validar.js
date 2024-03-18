@@ -599,3 +599,10 @@
 	const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
 	const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
+// Alerta permiso denegado
+const validarPermiso = permiso => {
+	if(!permiso){
+		Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
+		throw new Error('Permiso denegado.');
+	}
+}
