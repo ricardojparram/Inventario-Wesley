@@ -3,7 +3,8 @@
 		nombre: /^[a-zA-ZÀ-ÿ ]{0,30}$/,
 		correo: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
 		direccion: /^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#/,.-]){7,160}$/,
-		cedula: /^[0-9]{7,10}$/,
+		cedula: /^[JEV]-\d{7,10}$/,
+		cedula_old: /^[0-9]{7,10}$/,
 		fecha: /^([0-9]{4}\-[0-9]{2}\-[0-9]{2})$/,
 		numero: /^([0-9]+\.+[0-9]|[0-9])+$/,
 		string: /^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9/#\s,.-]){3,50}$/,
@@ -255,23 +256,19 @@
 
 	function validarCedula(input, div, mensaje){
 		parametro = input.val();
+		let valid = expresiones.cedula.test(parametro)
 		if (parametro == null || parametro == "") {
 			div.text(mensaje+" debe introducir datos.") 
 			input.attr("style","border-color: red;") 
 			input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");              
 			return false
-		}else if (isNaN(parametro)) {
-			div.text(mensaje+" debe ser solo números.") 
-			input.attr("style","border-color: red;")
-			input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");       
-			return false
-		}else if (parametro.length < 7 || parametro.length > 10) {
+		}else if (parametro.length < 9 || parametro.length > 12) {
 			div.text(mensaje+" debe entre 7 y 10 caracteres.")
 			input.attr("style","border-color: red;")
 			input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");        
 			return false
-		}else if (parametro < 1000000){
-			div.text(mensaje+" cédula inválida.") 
+		}else if (!valid){
+			div.text(mensaje+" dato inválido.") 
 			input.attr("style","border-color: red;")
 			input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");              
 			return false 
