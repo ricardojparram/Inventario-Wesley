@@ -27,37 +27,38 @@ if (isset($_POST['getPermisos'], $permiso["Consultar"])) {
 }
 
 if (isset($_GET['validar'])) {
-	$objModel->getValidarC($_GET['cedula'], $_GET['idVal']);
-	//var_dump($_GET['cedula'], $_GET['idVal']);
-	//die();
+	$res = $objModel->getValidarC($_GET['cedula'], $_GET['idVal']);
+	die(json_encode($res));
 }
 
 if (isset($_GET['validarE'])) {
-	$objModel->getValidarE($_GET['correo'], $_GET['idVal']);
-	//var_dump($_GET['correo'], $_GET['idVal']);
-	//die();
+	$res = $objModel->getValidarE($_GET['correo'], $_GET['idVal']);
+	die(json_encode($res));
 }
 
 if (isset($_POST['mostrar'], $permiso["Consultar"])) {
-	($_POST['bitacora'] == 'true')
-		? $objModel->getMostrarUsuario(true)
-		: $objModel->getMostrarUsuario();
+	$res = $objModel->getMostrarUsuario($_POST['bitacora']);
+	die(json_encode($res));
 }
 
 if (isset($_POST['cedula']) && isset($_POST['name']) && isset($_POST['apellido']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['tipoUsuario']) && isset($permiso["Registrar"])) {
-	$objModel->getAgregarUsuario($_POST['cedula'], $_POST['name'], $_POST['apellido'], $_POST['email'], $_POST['password'], $_POST['tipoUsuario']);
+	$res = $objModel->getAgregarUsuario($_POST['cedula'], $_POST['name'], $_POST['apellido'], $_POST['email'], $_POST['password'], $_POST['tipoUsuario']);
+	die(json_encode($res));
 }
 
 if (isset($_POST['eliminar']) && isset($_POST['cedulaDel']) && isset($permiso["Eliminar"])) {
-	$objModel->getEliminar($_POST['cedulaDel']);
+	$res = $objModel->getEliminar($_POST['cedulaDel']);
+	die(json_encode($res));
 }
 
 if (isset($_POST['select']) && isset($_POST['id']) && isset($permiso["Editar"])) {
-	$objModel->getUnico($_POST['id']);
+	$res = $objModel->getUnico($_POST['id']);
+	die(json_encode($res));
 }
 
 if (isset($_POST['cedulaEdit']) && isset($_POST['nameEdit']) && isset($_POST['apellidoEdit']) && isset($_POST['emailEdit']) && isset($_POST['passwordEdit']) && isset($_POST['tipoUsuarioEdit']) && isset($_POST['id']) && isset($permiso["Editar"])) {
-	$objModel->getEditar($_POST['cedulaEdit'], $_POST['nameEdit'], $_POST['apellidoEdit'], $_POST['emailEdit'], $_POST['passwordEdit'], $_POST['tipoUsuarioEdit'], $_POST['id']);
+	$res = $objModel->getEditar($_POST['cedulaEdit'], $_POST['nameEdit'], $_POST['apellidoEdit'], $_POST['emailEdit'], $_POST['passwordEdit'], $_POST['tipoUsuarioEdit'], $_POST['id']);
+	die(json_encode($res));
 }
 
 $VarComp = new initcomponents();

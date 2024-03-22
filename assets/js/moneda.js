@@ -74,6 +74,7 @@ $(document).ready(function () {
 				dataType: 'JSON',
 				data: { moneda: 'registrar', name },
 				success(data) {
+					console.log(tabla)
 					tabla2.destroy();
 					$('#cerrarR').click();
 					mostrar();
@@ -123,6 +124,7 @@ $(document).ready(function () {
 				data: { nameEdit, id },
 				success(data) {
 					console.log(data)
+					console.log(tabla)
 					tabla2.destroy();
 					$('#cerrarA').click();
 					mostrar();
@@ -156,6 +158,7 @@ $(document).ready(function () {
 			},
 			success(data) {
 				console.log(data)
+				console.log(tabla)
 				tabla2.destroy();
 				$('#cerrar').click();
 				mostrar();
@@ -168,20 +171,11 @@ $(document).ready(function () {
 
 	let tabla
 	let idHistory
-
-	$(document).on('click', '.history', function () {
-
-		idHistory = this.id;
-
-
-		console.log(idHistory)
-		rellenar(idHistory)
-		tabla.destroy();
-	})
-	
-	function rellenar(idHistory) {
-		selectMoneda()
-		$.ajax({
+	async function rellenar(idHistory) {
+		
+		if(typeof tabla !== 'undefined') tabla.destroy();
+		$('#selectMoneda').val(idHistory)
+		await $.ajax({
 			type: "POST",
 			url: '',
 			dataType: 'json',
@@ -215,12 +209,19 @@ $(document).ready(function () {
 
 	}
 
+	$(document).on('click', '.history', async function () {
+
+		idHistory = this.id;
+
+		await rellenar(idHistory)
+		;
+	})
 
 
 	selectMoneda();
 	let selectOp
-	function selectMoneda() {
-		$.ajax({
+	async function selectMoneda() {
+		await $.ajax({
 			type: "POST",
 			url: '',
 			dataType: 'json',
@@ -238,8 +239,8 @@ $(document).ready(function () {
 		})
 	}
 	let resultado
-	$(document).on('click', '#agregarMoneda', function (){
-		
+	$(document).on('click', '#agregarMoneda', async function (){
+		await selectMoneda();
 		$('#selectMoneda').val(idHistory)
 	})
 
@@ -276,7 +277,6 @@ $(document).ready(function () {
 
 				},
 				success(data) {
-					tabla.destroy();
 					tabla2.destroy();
 					$("#close").click();
 					Toast.fire({ icon: 'success', title: 'Tipo de cambio registrado' })
@@ -310,7 +310,6 @@ $(document).ready(function () {
 			},
 			success(consul) {
 				tabla2.destroy();
-				tabla.destroy();
 				$("#closeDel").click();
 				Toast.fire({ icon: 'error', title: 'Tipo de moneda eliminado' })
 				mostrar()
@@ -375,7 +374,6 @@ $(document).ready(function () {
 
 			},
 			success(data) {
-				tabla.destroy()
 				tabla2.destroy();
 				if (etipo == true && ecambio == true) {
 
@@ -396,15 +394,6 @@ $(document).ready(function () {
 
 	})
 
-
-
-	// $('#cerrar').click(()=> {
-	// 	if (click >= 1) throw new Error('Spam de clicks');
-	// 	tabla.destroy()
-	// 	click++
-	// })
-
-	
 
 
 })
