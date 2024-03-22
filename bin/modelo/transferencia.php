@@ -18,7 +18,7 @@
           $new = $this->con->prepare($sql);
           $new->execute();
           $data = $new->fetchAll(\PDO::FETCH_OBJ);
-          if($bitacora == "true") $this->binnacle("Transferencia",$_SESSION['cedula'],"Consultó listado.");
+          // if($bitacora == "true") $this->binnacle("Transferencia",$_SESSION['cedula'],"Consultó listado.");
           $this->desconectarDB();
           return $data;
 

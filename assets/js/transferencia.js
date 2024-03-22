@@ -1,23 +1,31 @@
-$(document).ready(function(){
-	let mostrar
-	let registrarPermiso, editarPermiso, eliminarPermiso;
-	$.getJSON("getPermisos", function(permisos){
-			registrarPermiso = (typeof permisos.Editar === 'undefined') ? 'disabled' : ''; 
-			editarPermiso = (typeof permisos.Editar === 'undefined') ? 'disabled' : '';
-			eliminarPermiso = (typeof permisos.Eliminar === 'undefined') ? 'disabled' : '';
-	}).then(() => rellenar(true));
+$(document).ready(function () {
+  let mostrar;
+  let registrarPermiso, editarPermiso, eliminarPermiso;
+  console.log("sdg");
+  $.post(
+    "",
+    { getPermisos: "" },
+    function (permisos) {
+      registrarPermiso =
+        typeof permisos.Editar === "undefined" ? "disabled" : "";
+      editarPermiso = typeof permisos.Editar === "undefined" ? "disabled" : "";
+      eliminarPermiso =
+        typeof permisos.Eliminar === "undefined" ? "disabled" : "";
+    },
+    "json",
+  ).then(() => rellenar(true));
 
-	function rellenar(bitacora = false){ 
-	    $.post("",{mostrar: "", bitacora},function(data){
-	        let tabla;
-	        JSON.parse(data).forEach(row => {
-	            tabla += `
+  function rellenar(bitacora = false) {
+    $.post("", { mostrar: "", bitacora }, function (data) {
+      let tabla;
+      JSON.parse(data).forEach((row) => {
+        tabla += `
 	                <tr>
-	                    <td>${row.rif}</th>
-	                    <td scope="col">${row.razon_social}</td>
-	                    <td scope="col">${row.direccion}</td>                      
-	                    <td scope="col">${row.telefono}</td>
-	                    <td scope="col">${(row.contacto == null) ? '' : row.contacto}</td>
+	                    <td>${row.id_transferencia}</th>
+	                    <td scope="col">${row.id_sede}</td>
+	                    <td scope="col">${row.id_lote}</td>                      
+	                    <td scope="col">${row.cantidad}</td>
+	                    <td scope="col">${row.fecha ? row.fecha : ""}</td>
 	                    <td >
 	                    	<span class="d-flex justify-content-center">
 	                    		<button type="button" ${editarPermiso} class="btn btn-success editar mx-2" id="${row.cod_lab}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button>
@@ -25,12 +33,12 @@ $(document).ready(function(){
 	                    	</span>
 	                    </td>
 	                </tr>`;
-	        });
-	        $('#tableMostrar tbody').html(tabla);
-	        mostrar = $('#tableMostrar').DataTable({resposive: true});
-	    }).fail((e)=>{
-	    	Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-	    	throw new Error('Error al mostrar listado: '+e);
-	    })
-    }
-})
+      });
+      $("#tabla tbody").html(tabla);
+      mostrar = $("#tabla").DataTable({ resposive: true });
+    }).fail((e) => {
+      Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
+      throw new Error("Error al mostrar listado: " + e);
+    });
+  }
+});

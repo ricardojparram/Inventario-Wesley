@@ -15,13 +15,17 @@
 	if(!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
 
 	if(isset($_POST['notificacion'])) {
-		$objModel->getNotificacion();
+		$model->getNotificacion();
 	}
 
 	if(isset($_POST['getPermisos'], $permiso['Consultar'])){
 		die(json_encode($permiso));
 	}
 
+	if(isset($_POST['mostrar'], $permiso["Consultar"])){
+    $res = $model->mostrarTransferencias($_POST['bitacora']);
+		die(json_encode($res));
+	}
 
 	$VarComp = new initcomponents();
 	$header = new header();
