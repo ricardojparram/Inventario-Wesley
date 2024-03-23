@@ -60,28 +60,13 @@
               <div class="table-responsive">
                 <table class="table table-bordered" id="tabla" width="100%" cellspacing="0">
                   <thead>
-
                     <tr>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Apellido</th>
-                      <th scope="col">Cedula</th>
-                      <th scope="col">Direccion</th>
-                      <th scope="col">Telefono</th>
-                      <th scope="col">Correo</th>
+                      <th scope="col">Transferencia</th>
+                      <th scope="col">Sede</th>
+                      <th scope="col">Fecha</th>
                       <th scope="col">Opciones</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Apellido</th>
-                      <th scope="col">Cedula</th>
-                      <th scope="col">Direccion</th>
-                      <th scope="col">Telefono</th>
-                      <th scope="col">Correo</th>
-                      <th scope="col">Opciones</th>
-                    </tr>
-                  </tfoot>
                   <tbody id="tbody">
                     
                     
@@ -100,6 +85,6 @@
 </body>
 
  <?php $VarComp->js();?>
-
+<script type="text/javascript" src="assets/js/transferencia.js"></script>
  
 </html>
