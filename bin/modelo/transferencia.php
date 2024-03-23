@@ -37,14 +37,14 @@ class transferencia extends DBConnect {
 
     return $this->mostrarDetalle();
   }
-  private function mostrarDetalle() : array{
+  private function mostrarDetalle(): array{
     try {
       $this->conectarDB();
       $sql = "SELECT s.nombre as nombre_sede, ps.lote, p.cod_producto, dt.cantidad, ps.fecha_vencimiento FROM detalle_transferencia dt
               INNER JOIN transferencia t ON dt.id_detalle = t.id_transferencia
               INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_lote
               INNER JOIN producto p ON p.cod_producto = ps.cod_producto 
-              INNER JOIN sede s ON s.id_sede = ps.id_sede
+              INNER JOIN sede s ON s.id_sede = t.id_sede
               WHERE t.id_transferencia = ?;";
       $new = $this->con->prepare($sql); 
       $new->bindValue(1, $this->id_transferencia);

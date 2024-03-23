@@ -42,7 +42,7 @@ $(document).ready(function () {
     id = this.id;
     $.post("", { detalle: '', id_transferencia: id }, res => {
       let tabla = "";
-      $("Detalle h5").html(res.)
+      $("#Detalle h5").html(res[0].nombre_sede)
       res.forEach(row => {
         tabla += `
           <tr>
