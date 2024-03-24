@@ -14,8 +14,15 @@ $permiso = $permisos['Transferencia'];
 
 if (!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
 
+$sedes = $model->mostrarSedes();
+
 if (isset($_POST['notificacion'])) {
 	$model->getNotificacion();
+}
+
+if (isset($_POST['select_producto'])) {
+	$res = $model->mostrarProductos();
+	die(json_encode($res));
 }
 
 if (isset($_POST['mostrar'], $_POST['bitacora'], $permiso['Consultar'])) {
