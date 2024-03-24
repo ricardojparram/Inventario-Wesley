@@ -4,7 +4,6 @@
 	use component\header as header;
 	use component\menuLateral as menuLateral;
 	use modelo\transferencia;
-
 	if(!isset($_SESSION['nivel'])) die('<script> window.location = "?url=login" </script>');
 
 	$model = new transferencia();
@@ -15,7 +14,12 @@
 	if(!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
 
 	if(isset($_POST['notificacion'])) {
-		$objModel->getNotificacion();
+		$model->getNotificacion();
+	}
+
+	if(isset($_POST['mostrar'], $_POST['bitacora'], $permiso['Consultar'])) {
+		$res = $model->mostrarTransferencias($_POST['bitacora']);
+    die(json_encode($res));
 	}
 
 	if(isset($_POST['getPermisos'], $permiso['Consultar'])){

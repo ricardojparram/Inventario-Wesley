@@ -11,14 +11,17 @@
       private $cantidad;
       private $fecha;
 
-      public function mostrarTransferencias($bitacora){
+      public function mostrarTransferencias($bitacora): array{
+
         try{
           $this->conectarDB();
-          $sql = "SELECT id_transferencia, id_sede, id_lote, cantidad, fecha FROM transferencia WHERE status = 1";
+          $sql = "SELECT t.id_transferencia, s.nombre as nombre_sede, t.fecha FROM transferencia t 
+                  INNER JOIN sede s ON t.id_sede = s.id_sede
+                  WHERE t.status = 1;";
           $new = $this->con->prepare($sql);
           $new->execute();
           $data = $new->fetchAll(\PDO::FETCH_OBJ);
-          if($bitacora == "true") $this->binnacle("Transferencia",$_SESSION['cedula'],"Consultó listado.");
+          // if($bitacora == "true") $this->binnacle("Transferencia",$_SESSION['cedula'],"Consultó listado.");
           $this->desconectarDB();
           return $data;
 
@@ -27,7 +30,7 @@
         }
       } 
 
-      public function getDatosLab($rif, $direccion, $razon, $telefono, $contacto){
+      public function getDatosLab($rif, $direccion, $razon, $telefono, $contacto): array{
 
         if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1){
           return ['resultado' => 'error','msg' => 'Rif inválido.'];
@@ -59,7 +62,7 @@
 
       }
 
-      private function registrarLab(){
+      private function registrarLab(): array{
 
         try{
           $this->conectarDB();
@@ -79,16 +82,16 @@
           $resultado = ['resultado' => 'ok', 'msg' => "Laboratorio registrado."];
           $this->binnacle("Laboratorio",$_SESSION['cedula'],"Registró laboratorio.");
           $this->desconectarDB();
-          return $resultado;            
+          return $resultado;
 
         }catch(\PDOException $error){
-          print "¡Error!: " . $e->getMessage() . "<br/>";
+          print "¡Error!: " . $error->getMessage() . "<br/>";
           die();
         } 
 
       }
 
-      public function getRif($rif, $idLab){
+      public function getRif($rif,$idLab): array{
 
         if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1){
           return ['resultado' => 'error','msg' => 'Rif inválido.'];
@@ -117,7 +120,7 @@
           $new->execute();
           $data = $new->fetchAll();
 
-          $resultado;
+          $resultado = [];
           if(isset($data[0]['rif'])){
             $resultado = ['resultado' => 'error', 'msg' => 'El rif ya está registrado.', 'res' => false];
           }else{
@@ -126,7 +129,7 @@
           $this->desconectarDB();
           return $resultado;
 
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
           print "¡Error!: " . $e->getMessage() . "<br/>";
           die();
         }
@@ -222,7 +225,7 @@
           return $resultado;
 
         }catch(\PDOException $error){
-          print "¡Error!: " . $e->getMessage() . "<br/>";
+          print "¡Error!: " . $error->getMessage() . "<br/>";
           die();
         }
 
