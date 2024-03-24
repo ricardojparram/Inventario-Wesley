@@ -8,6 +8,10 @@
     <?php $VarComp->header(); ?>
     <link rel="stylesheet" href="assets/css/estiloInterno.css">
     <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="assets/css/chosen.min.css">
+    <link rel="stylesheet" href="assets/css/select2.min.css">
+    <link rel="stylesheet" href="assets/css/select2-bootstrap-5-theme.min.css">
+    <link rel="stylesheet" href="assets/css/select2-bootstrap-5-theme.rtl.min.css">
 </head>
 <body>
 <!-- ======= Header ======= -->
@@ -50,7 +54,7 @@
                   <h5 class="card-title">Donaciones Registradas</h5>
                 </div>
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar" id="agregarModalButton">Agregar</button>
                 </div>
               </div>
 
@@ -62,26 +66,13 @@
                   <thead>
 
                     <tr>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Apellido</th>
-                      <th scope="col">Cedula</th>
-                      <th scope="col">Direccion</th>
-                      <th scope="col">Telefono</th>
-                      <th scope="col">Correo</th>
+                      <th scope="col">Cedula Paciente</th>
+                      <th scope="col">Productos</th>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Beneficiario</th>
                       <th scope="col">Opciones</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Apellido</th>
-                      <th scope="col">Cedula</th>
-                      <th scope="col">Direccion</th>
-                      <th scope="col">Telefono</th>
-                      <th scope="col">Correo</th>
-                      <th scope="col">Opciones</th>
-                    </tr>
-                  </tfoot>
                   <tbody id="tbody">
                     
                     
@@ -93,6 +84,168 @@
 
             </div>
           </div>
+
+          <!-- MODAL DE PRODUCTOS -->
+          <div class="modal fade" id="detalleDonacion" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-md">
+              <div class="modal-content">
+                <div class="modal-header alert alert-success">
+                  <h5 class="modal-title"><strong id="DonacionTitle"></strong></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <table class="table table-hover">
+                    <thead>
+                      <th>Producto</th>
+                      <th>Cantidad</th>
+                      <th>Cantidad Unitaria</th>
+                    </thead>
+                    <tbody id="bodyDetalle">
+
+                    </tbody>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal" id="cerrarDetalles">Cerrar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- FINAL MODAL DE PRODUCTOS -->
+
+          <div class="modal fade" id="Agregar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header alert alert-success">
+                  <h3 class="modal-title"> <strong>Registrar Donacion por Paciente</strong> </h3>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body ">
+                  <form id = "agregarform">
+
+                    <div class="form-group col-md-12">  
+                      <div class="container-fluid">
+                        <div class="row">
+
+                          <div class="form-group col-md-6">                          
+                            <label for="inputText" class="col-sm-3 col-form-label"><strong>Paciente</strong></label>
+                            <div class="input-group">
+                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una cédula registrada en el sistema."><i class="bi bi-person-fill"></i></button>
+                              <select class="form-control select2" id="cedula">
+                                <option value="0" selected disabled>Pacientes</option>
+                              </select> 
+                            </div>
+                            <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>
+                          </div>
+
+                          <div class="form-group col-md-6">  
+                            <label class="col-form-label"><strong>Nombre y Apellido</strong></label>
+                            <div class="input-group">
+                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Segun la cedula se mostra el nombre y apellido del Paciente"><i class="bi bi-people"></i></button> 
+                              <input class="form-control iva" disabled type="text" id="nombre"/>
+                            </div>
+                            <p class="error" style="color:#ff0000;text-align: center;" id="error4"></p>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div> 
+
+                    <div class="form-group col-md-12">  
+                      <div class="container-fluid">
+                        <div class="row">
+
+                          <div class="form-group col-md-4">                          
+                            <label class="col-form-label"> <strong>Sede</strong> </label>
+                            <div class="input-group">
+                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el beneficiario"><i class="bi bi-hospital"></i></button> 
+                              <select class="form-control select2" id="sedes">
+                                <option value="0" selected disabled>Sedes</option>
+                              </select>
+                            </div>
+                            <p class="error" style="color:#ff0000;text-align: center;" id="error3"></p>
+                          </div>
+
+
+                          <div class="form-group col-md-4">                          
+                            <label class="col-form-label"> <strong>Fecha</strong> </label>
+                            <div class="input-group">
+                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la fecha de donacion"><i class="bi bi-calendar"></i></button> 
+                               <input class="form-control" type="date" id="fecha"/>
+                            </div>
+                            <p class="error" style="color:#ff0000;text-align: center;" id="error5"></p>
+                          </div>
+
+
+                          <div class="form-group col-md-4">                          
+                            <label class="col-form-label"> <strong>Beneficiario</strong> </label>
+                            <div class="input-group">
+                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el beneficiario"><i class="bi bi-cash"></i></button> 
+                              <input type="text" class="form-control" id="beneficiario" >
+                            </div>
+                            <p class="error" style="color:#ff0000;text-align: center;" id="error3"></p>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+
+                      <div class="form-group col-md my-3">  
+                        <div class="container-fluid">
+                          <div class="row">
+                            <div class="table-responsive-md table-body form-group col-12">
+
+                              <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th></th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Unidades</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="ASD">
+                                  <tr>
+                                    <td width="1%"><a class="removeRow a-asd" href="#"><i class="bi bi-trash-fill"></i></a></td>
+                                    <td width='25%'> 
+                                      <select class="select-productos select-asd" name="productos">
+                                        <option></option>
+                                      </select>
+                                    </td>
+                                    <td width='15%' class="cantidad"><input class="select-asd stock" type="number" value=""/></td>
+                                    <td width='15%' class="cantUnitaria"><input class="select-asd unidad" type="number" value="" /></td>
+                                  </tr>
+                                </tbody>
+                              </table>
+
+                              <p class="filaProductos error" style="color:#ff0000;text-align: center;"></p>
+
+                              <a class="newRow a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva fila</a> <br>
+                              <div class="text-end pt-4">
+                                <p class="text-end" id="montos"></p>
+                                <p class="text-end" id="montos2"></p>
+                                <p class="text-end"id="cambio"></p>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <p id="pValid" class="error" style="color:#ff0000;text-align: center;"></p>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary cerrar" id="cerrar" data-bs-dismiss="modal">Cancelar</button>
+                      <button type="submit" class="btn btn-registrar " id="registrar">Registrar</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
           
 
   </main>
@@ -100,6 +253,8 @@
 </body>
 
  <?php $VarComp->js();?>
-
+<script src="assets/js/chosen.jquery.min.js"></script>
+<script src="assets/js/select2.full.min.js"></script>
+<script src="assets/js/donativoPaciente.js"></script>
  
 </html>

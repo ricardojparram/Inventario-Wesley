@@ -50,7 +50,7 @@
                   <h5 class="card-title">Donaciones Registradas</h5>
                 </div>
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
                 </div>
               </div>
 
@@ -62,26 +62,13 @@
                   <thead>
 
                     <tr>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Apellido</th>
                       <th scope="col">Cedula</th>
-                      <th scope="col">Direccion</th>
-                      <th scope="col">Telefono</th>
-                      <th scope="col">Correo</th>
+                      <th scope="col">Productos</th>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Beneficiario</th>
                       <th scope="col">Opciones</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Apellido</th>
-                      <th scope="col">Cedula</th>
-                      <th scope="col">Direccion</th>
-                      <th scope="col">Telefono</th>
-                      <th scope="col">Correo</th>
-                      <th scope="col">Opciones</th>
-                    </tr>
-                  </tfoot>
                   <tbody id="tbody">
                     
                     
