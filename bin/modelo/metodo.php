@@ -116,7 +116,7 @@
        try{
         parent::conectarDB();
         $pk = $this->uniqueID();
-        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (3,?,1)");
+        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (4,?,1)");
 
         $new->bindValue(1 , $this->metodo);
         $new->execute();

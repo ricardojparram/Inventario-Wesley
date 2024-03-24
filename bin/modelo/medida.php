@@ -3,33 +3,33 @@ namespace modelo;
 use config\connect\DBConnect as DBConnect;
 
 
-class tipo extends DBConnect{
+class medida extends DBConnect{
 
-	private $tipo;
-	private $id;
-	private $idedit;
+	private $id_medida;
+	private $nombre;
+	private $status;
 
 	function __construct(){
 		parent::__construct();
 	}
 
-	public function getAgregarTipo($tipo){
-		if(preg_match_all("/^[a-zA-Z]{0,30}$/", $tipo) == false){
+	public function getAgregarMedida($medida){
+		if(preg_match_all("/^[a-zA-Z]{0,30}$/", $medida) == false){
             $resultado = ['resultado' => 'Error de nombre' , 'error' => 'Nombre inválido.'];
             echo json_encode($resultado);
             die();
         }
 
-        $this->tipo = $tipo;
+        $this->medida = $medida;
 
-        $this->agregarTipo();
+        $this->AgregarMedida();
 	}
 
- private function agregarTipo(){
+ private function agregarMedida(){
  	try{
     parent::conectarDB();
- 		$new = $this->con->prepare("INSERT INTO `tipo`(`cod_tipo`, `des_tipo`, `status`) VALUES (DEFAULT,?,1)");
- 		$new->bindValue(1, $this->tipo);
+ 		$new = $this->con->prepare("INSERT INTO `medida`(`id_medida`, `nombre`, `status`) VALUES (DEFAULT,?,1)");
+ 		$new->bindValue(1, $this->medida);
  		$new->execute();
  		$data = $new->fetchAll();
 
@@ -41,11 +41,11 @@ class tipo extends DBConnect{
  		return $error;
  	}
  }
- public function getMostrarTipo(){
+ public function getMostrarMedida(){
 
    	try{
       parent::conectarDB();
-     $new = $this->con->prepare("SELECT `cod_tipo`, `des_tipo`, `status` FROM tipo t WHERE t.status = 1;");
+     $new = $this->con->prepare("SELECT `m.id_medida`,`m.nombre`, `m.status`FROM `medida m` WHERE m.status = 1");
      $new->execute();
      $data = $new->fetchAll();
      echo json_encode($data);

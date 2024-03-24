@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tipo de producto</title>
+    <title>Medida de producto</title>
    <?php $VarComp->header(); ?>
     <link rel="stylesheet" href="assets/css/estiloInterno.css">
     <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
@@ -37,7 +37,7 @@
       
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><h1> Tipo de producto</h1></li>
+          <li class="breadcrumb-item"><h1> Medida de producto</h1></li>
         </ol>
       </nav>
 
@@ -48,11 +48,11 @@
             
               <div class="row">
                 <div class="col-6">
-                  <h5 class="card-title">Tipo</h5>
+                  <h5 class="card-title">Medida</h5>
                 </div>
 
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#basicModal">Agregar</button>
                 </div>
               </div>
 
@@ -63,7 +63,7 @@
                   <div class="modal-content">
 
                     <div class="modal-header alert alert-success">
-                      <h4 class="modal-title"><strong>Registrar Tipo de producto</strong></h4>
+                      <h4 class="modal-title"><strong>Registrar Medida de producto</strong></h4>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -75,7 +75,7 @@
                       <div class="container-fluid">
                         <div class="row">
                             <div class="form-group col-lg-6">
-                              <label class="col-form-label"> <strong>Tipo*</strong> </label>
+                              <label class="col-form-label"> <strong>Medida*</strong> </label>
                               <input id="tipNom" type="text" class="form-control" required="" placeholder="Tipo de producto">
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                    <p id="error" style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>     
                     <div class="modal-footer">
                       <button id="closeAg" id="closeRegis" type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                      <button id="enviar" type="submit" class="btn btn-success">Registrar</button>
+                      <button id="enviar" type="submit" class="btn btn-registrar">Registrar</button>
                       </div>
                     </div>
                   </form>
