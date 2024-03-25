@@ -191,18 +191,18 @@
                         <tr>
                           <td width="1%"><a class="eliminarFila a-asd" role="button"><i class="bi bi-trash-fill"></i></a></td>
                           <td width='30%'>
-                            <select class="select-productos select-asd" name="TipoPago">
+                            <select class="select-productos select-asd" name="producto">
                               <option></option>
                             </select>
                           </td>
-                          <td width='15%' class="precioPorTipo"><input class="select-asd precio-tipo" type="number" value="" /></td>
+                          <td class="cantidad"><input class="select-asd" type="number" value="" /></td>
                         </tr>
 
                       </tbody>
                     </table>
 
                     <p class="filaTipoPago error" style="color:#ff0000;text-align: center;"></p>
-                    <a class="agregarFila a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva fila</a> <br>
+                    <a class="agregarFila a-asd" role="button"></i> Nueva fila</a> <br>
 
                   </div>
                 </div>

@@ -382,11 +382,12 @@ h6 {
   }
 }
 
-@media(max-width: 375px){
-  .logo{
+@media(max-width: 375px) {
+  .logo {
     width: 120px;
   }
-  .logo img{
+
+  .logo img {
     max-height: 70px !important;
   }
 }
@@ -1270,43 +1271,46 @@ h6 {
   color: #63685e;
 }
 
-.modalClient{
-    float: right;
-    margin-bottom: 8px;
+.modalClient {
+  float: right;
+  margin-bottom: 8px;
 }
 
 
 /*--------------------------------------------------------------
 # inputs
 --------------------------------------------------------------*/
-.iconos{
+.iconos {
   /* color: #212529 !important; */
   background-color: #a7b754 !important;
   border-color: #a7b754 !important;
 }
-.iconos:focus{
+
+.iconos:focus {
   color: #212529;
-    background-color: #fff;
-    border-color: #a7b754;
-    outline: 0;
-    box-shadow: none;
+  background-color: #fff;
+  border-color: #a7b754;
+  outline: 0;
+  box-shadow: none;
 }
 
-.form-switch .form-check-input:focus{
+.form-switch .form-check-input:focus {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='rgb(167, 183, 84)'/></svg>") !important;
 }
-.form-switch .form-check-input:checked{
+
+.form-switch .form-check-input:checked {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='%23fff'/></svg>") !important;
 }
 
 .form-control:focus {
-    color: #212529;
-    background-color: #fff;
-    border-color: #96bd0d;
-    outline: 0;
-    box-shadow: 0 0 0 0.25rem #96bd0d;
+  color: #212529;
+  background-color: #fff;
+  border-color: #96bd0d;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem #96bd0d;
 }
-.form-control-sm{
+
+.form-control-sm {
   margin: 5px !important;
 }
 
@@ -1319,3 +1323,11 @@ h6 {
 /*--------------------------------------------------------------
 subtitulo
 --------------------------------------------------------------*/
+.input-error {
+  border: solid 1px;
+  border-color: red;
+  background-image: url(../img/Triangulo_exclamacion.png);
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
