@@ -115,7 +115,6 @@
       private function agregarMetodo(){
        try{
         parent::conectarDB();
-
         do{
         $pk = $this->uniqueNumericID();
         $check = $this->con->prepare("SELECT COUNT(*) FROM `forma_pago` WHERE `id_forma_pago` = ?");

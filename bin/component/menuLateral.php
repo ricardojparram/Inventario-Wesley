@@ -153,7 +153,7 @@
     $metodoLi = (isset($this->permisos['Metodo pago']["Consultar"])) ?
     '<li>
         <a href="?url=metodo" class="'.$metodo.'" >
-          <i class="bi bi-circle-fill "></i><span>Metodo de pago</span>
+          <i class="bi bi-circle-fill "></i><span>Metodo de Pago</span>
         </a>
     </li>' : '';
 
@@ -217,7 +217,7 @@
     </li>' : '';
     $presentacionLi = (isset($this->permisos['Presentacion']["Consultar"])) ?
     '<li>
-      <a href="?url=medida" class="'.$presentacion.'">
+      <a href="?url=presentacion" class="'.$presentacion.'">
         <i class="bi bi-circle-fill"></i><span>Presentación</span>
       </a>
     </li>' : '';
@@ -243,7 +243,8 @@
         <a href="?url=inventario" class="'.$inventario.'">
           <i class="bi bi-box-fill"></i><span>Inventario</span>
         </a>
-    </li>' : '';
+    </li>'
+     : '';
 
     $productoDañadoLi = (isset($this->permisos['Producto dañado']["Consultar"])) ?
     '<li>

@@ -26,13 +26,14 @@
     
 
 	if(isset($_POST["mostrar"]) && isset($_POST['bitacora'])){
-		($_POST['bitacora'] == 'true')
-		? $objModel->getMostrarTipo(true)
-		: $objModel->getMostrarTipo();
+		$res = $objModel->getMostrarTipo($_POST['bitacora']= false);
+		die(json_encode($res));
+		
 	}
 
 	if (isset($_POST["tipo"]) && $permiso['Registrar'] == 1){
-		$objModel->getAgregarTipo($_POST["tipo"]);
+		$res = $objModel->getAgregarTipo($_POST["tipo"]);
+	 	die(json_encode($res));
 
 	}
 

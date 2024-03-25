@@ -75,7 +75,7 @@
                       <div class="container-fluid">
                         <div class="row">
                             <div class="form-group col-lg-6">
-                              <label class="col-form-label"> <strong>Tipo*</strong> </label>
+                              <label class="col-form-label"> <strong>Tipo</strong> </label>
                               <input id="tipNom" type="text" class="form-control" required="" placeholder="Tipo de producto">
                             </div>
                         </div>

@@ -29,7 +29,7 @@ class clase extends DBConnect{
     private function agregarClase(){
     	try {
             parent::conectarDB();
-    		$new = $this->con->prepare("INSERT INTO `clase`(`cod_clase`, `des_clase`, `status`) VALUES (DEFAULT,?,1)");
+    		$new = $this->con->prepare("INSERT INTO `clase`(`id_clase`, `nombre_c`, `status`) VALUES (5,?,1)");
     		$new->bindValue(1, $this->clase);
             $new->execute();
             $data = $new->fetchAll();
@@ -68,7 +68,7 @@ class clase extends DBConnect{
     private function eliminarClase(){
     	try {
             parent::conectarDB();
-    		$new = $this->con->prepare("UPDATE `clase` SET `status`= 0 WHERE cod_clase = ?"); //
+    		$new = $this->con->prepare("UPDATE `clase` SET `status`= 0 WHERE id_clase = ?"); //
             $new->bindValue(1, $this->id);
             $new->execute();
             $resultado = ['resultado' => 'Eliminado'];
@@ -89,7 +89,7 @@ class clase extends DBConnect{
     private function item(){
     	try {
             parent::conectarDB();
-    		$new = $this->con->prepare("SELECT * FROM clase WHERE cod_clase = ?");
+    		$new = $this->con->prepare("SELECT * FROM clase WHERE id_clase = ?");
             $new->bindValue(1, $this->id);
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
@@ -117,7 +117,7 @@ class clase extends DBConnect{
     private function editarClase(){
     	try {
             parent::conectarDB();
-    		$new = $this->con->prepare("UPDATE `clase` SET `des_clase`= ? WHERE `cod_clase` = ?");
+    		$new = $this->con->prepare("UPDATE `clase` SET `nombre_c`= ? WHERE `id_clase` = ?");
     		$new->bindValue(1, $this->clase);
     		$new->bindValue(2, $this->idEdit);
             $new->execute();

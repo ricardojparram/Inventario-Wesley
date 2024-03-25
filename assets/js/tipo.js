@@ -25,10 +25,10 @@ function rellenar(bitacora = false){
 
 		tabla += `
 		<tr>
-		<td>${row.des_tipo}</td>
+		<td>${row.nombre_t}</td>
 		<td class="d-flex justify-content-center">
-		<button type="button" ${editarPermiso} id="${row.cod_tipo}" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
-		<button type="button" ${eliminarPermiso} id="${row.cod_tipo}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
+		<button type="button" ${editarPermiso} id="${row.id_tipo}" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
+		<button type="button" ${eliminarPermiso} id="${row.id_tipo}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
 		</td>
 		</tr>
 		`;
@@ -61,17 +61,12 @@ $("#enviar").click((e)=>{
 
  	},
  	success(data){
- 		console.log(ytipo)
- 		if(ytipo == true){
+ 	
  			mostrar.destroy()
  		
  		$("#closeAg").click();
  		Toast.fire({ icon: 'success', title:' Tipo de Producto registrado'})
        rellenar();
-
- 	}else{
- 		e.preventDefault()
- 	   }
 
 
    }
