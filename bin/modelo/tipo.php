@@ -45,7 +45,7 @@ class tipo extends DBConnect{
 
    	try{
       parent::conectarDB();
-     $new = $this->con->prepare("SELECT `cod_tipo`, `des_tipo`, `status` FROM tipo t WHERE t.status = 1;");
+     $new = $this->con->prepare("SELECT `cod_tipo`, `des_tipo`, `status` FROM tipo t WHERE t.status = 1");
      $new->execute();
      $data = $new->fetchAll();
      echo json_encode($data);
