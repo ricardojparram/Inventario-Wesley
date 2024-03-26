@@ -44,6 +44,15 @@ if (isset($_GET['detalle'], $_GET["id_transferencia"], $permiso['Consultar'])) {
 	die(json_encode($res));
 }
 
+if (isset($_POST['registrar'], $_POST["sede"], $_POST['fecha'], $_POST["productos"], $permiso['Registrar'])) {
+	$res = $model->getAgregarTransferencia($_POST["sede"], $_POST['fecha'], $_POST["productos"]);
+	die(json_encode($res));
+}
+
+if (isset($_POST['eliminar'], $_POST["id"], $permiso['Registrar'])) {
+	$res = $model->getEliminarTransferencia($_POST["id"]);
+	die(json_encode($res));
+}
 
 
 $VarComp = new initcomponents();

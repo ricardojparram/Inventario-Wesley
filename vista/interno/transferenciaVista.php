@@ -166,7 +166,7 @@
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Fecha en la que se hace la transferencia"><i class="bi bi-calendar2-date"></i></button>
                     <input class="form-control" type="date" id="fecha" />
                   </div>
-                  <p class="error" style="color:#ff0000;text-align: center;" id="error4"></p>
+                  <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
                 </div>
 
               </div>
@@ -212,7 +212,7 @@
 
           </div>
 
-          <p id="pValid" class="error" style="color:#ff0000;text-align: center;"></p>
+          <p id="error_productos" class="error" style="color:#ff0000;text-align: center;"></p>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary cerrar" id="cerrar" data-bs-dismiss="modal">Cancelar</button>
             <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
@@ -224,3 +224,24 @@
 </div>
 
 <!-- FINAL MODAL DE AGREGAR -->
+
+<!-- INICIO MODAL DE ELIMINAR -->
+<div class="modal fade" id="Eliminar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="staticBackdropLabel">¿Estás seguro?</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h5>Los datos serán anulados del sistema.</h5>
+      </div>
+      <div class="modal-footer">
+        <button id="close" type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="anular">Anular</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL MODAL ELIMINAR -->
