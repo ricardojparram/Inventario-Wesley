@@ -616,8 +616,6 @@ CREATE TABLE detalle_recepcion (
 CREATE TABLE transferencia (
   id_transferencia int(11) AUTO_INCREMENT PRIMARY KEY,
   id_sede int(11) NOT NULL,
-  id_lote varchar(15) NOT NULL,
-  cantidad int(11) DEFAULT NULL,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
@@ -629,11 +627,11 @@ CREATE TABLE transferencia (
 --
 
 CREATE TABLE detalle_transferencia (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
-  id_lote int(50) NOT NULL,
+  id_transferencia int(11) AUTO_INCREMENT PRIMARY KEY,
+  id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
-  FOREIGN KEY (id_detalle) REFERENCES transferencia (id_transferencia) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (id_lote) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (id_transferencia) REFERENCES transferencia (id_transferencia) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
