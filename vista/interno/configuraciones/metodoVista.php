@@ -52,7 +52,7 @@
           </div>
 
           <div class="col-6 text-end mt-3">
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registrarModal">Agregar</button>
+            <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#registrarModal">Agregar</button>
 
           </div>
         </div>
@@ -64,8 +64,6 @@
 
               <tr>
                 <th scope="col">Tipos de pago</th>
-
-                <th scope="col">online</th>
 
                 <th scope="col">Opciones</th>
 
@@ -85,13 +83,11 @@
 
 </main>
 
+  <!-- Footer -->
 
-
-
-</html>
-
-
-
+  <?php $footer->Footer();?>
+    
+  <!-- End Footer -->
 
 
 
@@ -116,7 +112,7 @@
                  <div class="form-group col-lg-7">
                   <label class="col-form-label"><strong>Método de Pago*</strong></label> 
                   <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content=""><i class="bi bi-credit-card"></i></button> 
+                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="El metodo de Pago debe tener como mínimo 4 carácteres"><i class="bi bi-credit-card"></i></button> 
                     <input id="tipo" class="form-control" required="" placeholder="Método de Pago" >
                   </div>
                   
@@ -127,10 +123,10 @@
           
 
         </div>
-        <p id="error"style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>
+        <p id="error" class="error" style="color:#ff0000;text-align: center;"></p>
         <div class="modal-footer">
-          <button type="reset" id="close" id="cerrarRegis" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" id="enviar" class="btn btn-success">Registrar</button>
+          <button type="reset" id="close" id="cerrarRegis" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" id="enviar" class="btn btn-registrar">Registrar</button>
 
         </div>
 
@@ -153,44 +149,37 @@
     </div>
     <div class="modal-body">
 
-
       <div class="modal-body ">
         <form>
+          <div class="form-group col-md-12">  
+            <div class="container-fluid">
+              <div class="row">
 
+               <div class="form-group col-lg-6">
+                <label class="col-form-label"> <strong>Método de Pago*</strong> </label>
+                <div class="input-group">
 
-        <div class="form-group col-md-12">  
-          <div class="container-fluid">
-            <div class="row">
+                  <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content=""><i class="bi bi-credit-card"></i></button> 
 
-             <div class="form-group col-lg-6">
-              <label class="col-form-label"> <strong>Método de Pago*</strong> </label>
-              <div class="input-group">
+                  <input id="tipoEdit" class="form-control" required="" >
 
-                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content=""><i class="bi bi-currency-exchange"></i></button> 
-
-                <input id="tipoEdit" class="form-control" required="" >
-
+                </div>
               </div>
-
             </div>
           </div>
         </div>
-      
+
+       </div>
+        <p id="error2" class="error" style="color:#ff0000;text-align: center;"></p>
+        <div class="modal-footer">
+          <button type="reset" id="closeEdit" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" id="enviarEdit"class="btn btn-registrar">Actualizar</button>
+        </div>
 
       </div>
-
-
-    </div>
-    <p id="error2" style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>
-    <div class="modal-footer">
-    <button type="reset" id="closeEdit" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-      <button type="button" id="enviarEdit"class="btn btn-success">Actualizar</button>
-    </div>
-
+    </form>
+   </div>
   </div>
-  </form>
-</div>
-</div>
 </div>
 
 
@@ -207,7 +196,7 @@
         <h5>Los datos serán eliminados completamente del sistema</h5>
       </div>
       <div class="modal-footer">
-        <button id="closeModal" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="closeModal" type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
 
         <button id="deletes" type="button" class="btn btn-danger">Borrar</button>
       </div>
@@ -223,8 +212,6 @@
 
 <!-- Production version -->
 <script src="assets/js/popper.min.js"></script>
-
-
 
 
 

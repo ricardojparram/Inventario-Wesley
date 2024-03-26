@@ -269,8 +269,8 @@ $(document).ready(function () {
 
 	//Validacion para la Cedula 
 	let val
-	function validarC(valor, input, div) {
-		val = (input.val() == undefined) ? " " : input.val()
+	function validarC(valor, input, div, prefijo) {
+		val = (input.val() == undefined) ? " " : prefijo.val()+"-"+input.val()
 		return new Promise((resolve, reject) => {
 			$.getJSON('', {
 				cedula: val,

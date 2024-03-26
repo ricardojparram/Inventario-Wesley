@@ -243,6 +243,12 @@
 
   </main><!-- End #main -->
 
+  <!-- Footer -->
+
+  <?php $footer->Footer();?>
+    
+  <!-- End Footer -->
+
 </body>
 <?php $VarComp->js();?>
 

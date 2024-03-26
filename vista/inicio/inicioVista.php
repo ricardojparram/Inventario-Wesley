@@ -143,9 +143,7 @@
 
     </main>
 
-  <?php $footer->footer(); ?>
-
-  <?php $tiendaComp->car(); ?>
+  <?php $footer->Footer(); ?>
 
   <?php $VarComp->js() ?>
   <script src="assets/js/inicio.js"></script>

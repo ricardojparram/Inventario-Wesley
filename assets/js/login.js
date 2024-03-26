@@ -2,7 +2,7 @@ $(document).ready(function(){
 
   let timeoutId;
   $("#cedula").keyup(()=>{ 
-    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,");
+    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,", "V");
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function() {
       if(valid) validarCedulaBD();
@@ -39,7 +39,6 @@ $(document).ready(function(){
         }else{
           vpassword = true;
         }
-        
 
         if(vcedula === true && vpassword === true){
 
@@ -49,7 +48,7 @@ $(document).ready(function(){
             icon: 'success',
           })
           setTimeout(function(){
-            location = '?url=login'
+            window.location = '?url=login'
           }, 1600);
 
         }

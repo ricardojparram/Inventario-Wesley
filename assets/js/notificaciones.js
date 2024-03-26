@@ -10,7 +10,7 @@ $(document).ready(function(){
     $.ajax({ type: 'POST', url:  '?url=notificaciones', dataType: 'json', data: {notificacionRegistrar : ''},
       success(data){
         if (data.resultado === 'notificaciones registradas.'){
-          throw new Error('notificaciones registradas');
+          console.log('notificaciones registradas');
         }
         
       }

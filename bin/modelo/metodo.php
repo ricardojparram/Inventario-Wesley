@@ -3,191 +3,237 @@
   namespace modelo;
   use config\connect\DBConnect as DBConnect;
 
-
   class metodo extends DBConnect{
       
     	private $metodo;
       private $id;
-      private $idedit;
-      private $check;
 
+      public function getMostrarMetodo($bitacora = false){
 
+        try{
+          parent::conectarDB();
+          $new = $this->con->prepare("SELECT fp.id_forma_pago , fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1");
+          $new->execute();
+          $data = $new->fetchAll(\PDO::FETCH_OBJ);
+          parent::desconectarDB();
+          return $data;
+          
+        }catch(\PDOexection $error){
 
-     
-     public function getAgregarMetodo($metodo){
-       if(preg_match_all("/[$%&|<>0-9]/", $metodo) == true){
-        $resultado = ['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];
-        echo json_encode($resultado);
-        die();
+         return $error;
+
+       }
+     }
+
+     public function validarMetodo($metodo , $id){
+      if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
+          return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
       }
 
-      
+      $this->id = ($id === 'false') ? false : $id;
       $this->metodo = $metodo;
 
-      $this->agregarMetodo(); 
-
-    }
-
-    private function agregarMetodo(){
-     try{
-      parent::conectarDB();
-      $new = $this->con->prepare("INSERT INTO `tipo_pago`(`id_tipo_pago`, `des_tipo_pago`, `online`, `status`) VALUES (DEFAULT,?,0,1)");
-
-      $new->bindValue(1 , $this->metodo);
-      $new->execute();
-      $data = $new->fetchAll();
-      
-      $resultado = ["resultado" => "registrado correctamente"];
-      echo json_encode($resultado);
-      parent::desconectarDB();
-      die();
-
-      
-    }catch(\PDOexection $error){
-     return $error;
-    }
-
-    }
-    public function getMostrarMetodo($bitacora = false){
-
-      try{
-      parent::conectarDB();
-       $new = $this->con->prepare("SELECT * FROM tipo_pago t WHERE t.status = 1");
-       $new->execute();
-       $data = $new->fetchAll(\PDO::FETCH_OBJ);
-       echo json_encode($data);
-      parent::desconectarDB();
-      die();
-
-
-     }catch(\PDOexection $error){
-
-       return $error;
+      return $this->validMetodo();
 
      }
-    }
 
-    public function getEliminarMetodo($id){
+     private function validMetodo(){
+      try {
+        parent::conectarDB();
+        if($this->id === false) {
+          $new = $this->con->prepare('SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.tipo_pago = ?');
+          $new->bindValue(1, $this->metodo);
+        }else{
+          $new = $this->con->prepare('SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.tipo_pago = ? AND fp.id_forma_pago != ?');
+          $new->bindValue(1, $this->metodo);
+          $new->bindValue(2, $this->id);
+        }
+
+        $new->execute();
+        $data = $new->fetchAll();
+
+        if(isset($data[0]['tipo_pago'])) {
+          $resultado = ['resultado' => 'error', 'msg' => 'El metodo ya está registrado.', 'res' => false];
+        }else{
+          $resultado = ['resultado' => 'metodo valido', 'res' => true];
+        }
+
+        parent::desconectarDB();
+        return $resultado;
+        
+      } catch (\PDOException $e) {
+        return $e;
+      }
+     }
+
+     public function validarSelect($id){
+      if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
+        return ['resultado' => 'Error de id','error' => 'id inválida.'];
+      }
+      
       $this->id = $id;
 
-      $this->eliminarMetodo();
-    }
+      return $this->validSelect();
 
-    private function eliminarMetodo(){
-     
-     try{
-      parent::conectarDB();
-      $new = $this->con->prepare("UPDATE `tipo_pago` SET `status` = '0' WHERE `id_tipo_pago` = ?");
-      $new->bindValue(1,$this->id);
-      $new->execute();
-      $resultado = ['resultado' => 'Eliminado'];
-      echo json_encode($resultado);
-      parent::desconectarDB();
-      die();
-     } 
-     catch (\PDOexception $error) {
-      return $error;
      }
 
-    }
+     private function validSelect(){
+      try {
+        parent::conectarDB();
+        $new = $this->con->prepare('SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.id_forma_pago = ?');
+        $new->bindValue(1,  $this->id);
+        $new->execute();
+        $data = $new->fetchAll();
 
-    public function mostrarunicas($unicas){
-      $this->id = $unicas;
+        parent::desconectarDB();
 
-      $this->unicas();
-
-  }
-
-
-   public function editarOnline($check , $id){
-
-      if(preg_match_all("/^[0-9]{1,10}$/", $check) != 1){
-        echo json_encode(['resultado' => 'Error de check','error' => 'check inválida.']);
-        die();
+        if(isset($data[0]["tipo_pago"])){
+          return['resultado' => 'Si existe este metodo.'];
+        }else{
+          return['resultado' => 'Error de metodo'];
+        }
+      } catch (\PDOException $e) {
+        return $e;
       }
+     }
+
+      public function getAgregarMetodo($metodo){
+        if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
+          return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
+        }
+       
+        $this->metodo = $metodo;
+
+        $this->id = false;
+        $validarMetodo = $this->validMetodo();
+        if($validarMetodo['res'] === false){ return ['resultado' => 'error', 'msg' => 'El metodo ya está registrado.'] ;}
+
+        return $this->agregarMetodo(); 
+
+      }
+
+      private function agregarMetodo(){
+       try{
+        parent::conectarDB();
+
+        do{
+        $pk = $this->uniqueNumericID();
+        $check = $this->con->prepare("SELECT COUNT(*) FROM `forma_pago` WHERE `id_forma_pago` = ?");
+        $check->bindValue(1, $pk);
+        $check->execute();
+        $count = $check->fetchColumn();
+        }while($count > 0);
+        
+        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (?,?,1)");
+
+        $new->bindValue(1 , $pk);
+        $new->bindValue(2 , $this->metodo);
+        $new->execute();
+        $data = $new->fetchAll();
+        
+        $resultado = ["resultado" => "registrado correctamente"];
+        parent::desconectarDB();
+        return $resultado;
+
+        
+      }catch(\PDOexection $error){
+       return $error;
+     }
+
+   }
+
+
+    public function mostrarEdit($id){
 
       if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-        echo json_encode(['resultado' => 'Error de id','error' => 'id inválida.']);
-        die();
+        return ['resultado' => 'Error de id','error' => 'id inválida.'];
       }
-
       $this->id = $id;
-      $this->check = $check;
 
-      $this->editOnline();
-
-   }
-
-   private function editOnline(){
-    try {
-      parent::conectarDB();
-      $new = $this->con->prepare("UPDATE tipo_pago t SET t.online = ? WHERE t.id_tipo_pago = ? ");
-      $new->bindValue(1, $this->check);
-      $new->bindValue(2, $this->id);
-      $new->execute();
-
-      $resultado = ['resultado'=> 'check editado'];
-
-      echo json_encode($resultado);
-
-      parent::desconectarDB($resultado);
-      die();
-      
-    } catch (PDOexception $e) {
-      return $e;
-    }
-
-   }
-
-
-
-    private function unicas(){
-      try{
-        parent::conectarDB();
-        $new = $this->con->prepare("SELECT `id_tipo_pago`, `des_tipo_pago`, `status` FROM `tipo_pago` WHERE id_tipo_pago = ?");
-        $new->bindValue(1, $this->id);
-        $new->execute();
-        $data = $new->fetchAll(\PDO::FETCH_OBJ);
-        echo json_encode($data);
-        parent::desconectarDB();
-        die();
-      }catch (\PDOexception $error) {
-       return $error;
-      }
+      return $this->selectEdit();
 
   }
-    public function getEditarMetodo($metodo, $unicas){
-      if(preg_match_all("/[$%&|<>0-9]/", $metodo) == true){
-              $resultado = ['resultado' => 'Error de metodo' , 'error' => 'metodo inválido.'];
-              echo json_encode($resultado);
-              die();
-    }
-    $this->metodo = $metodo;
-    $this->idedit = $unicas;
 
-        $this->editarMetodo(); 
+
+   private function selectEdit(){
+    try{
+      parent::conectarDB();
+      $new = $this->con->prepare("SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.id_forma_pago = ?");
+      $new->bindValue(1, $this->id);
+      $new->execute();
+      $data = $new->fetchAll(\PDO::FETCH_OBJ);
+      parent::desconectarDB();
+      return $data;
+    }catch (\PDOexception $error) {
+     return $error;
+   }
+
+ }
+
+  public function getEditarMetodo($metodo, $id){
+    if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
+      return ['resultado' => 'Error de metodo' , 'error' => 'metodo inválido.'];
+    }
+    if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
+      return ['resultado' => 'Error de id','error' => 'id inválida.'];
+    }
+
+    $this->metodo = $metodo;
+    $this->id = $id;
+
+     $validarMetodo = $this->validMetodo();
+     if($validarMetodo['res'] === false){ return ['resultado' => 'error', 'msg' => 'El metodo ya está registrado.'] ;}
+
+    return $this->editarMetodo(); 
 
   }
   private function editarMetodo(){
     try{
-  parent::conectarDB();
-  $new = $this->con->prepare("UPDATE `tipo_pago` SET `des_tipo_pago`= ? WHERE id_tipo_pago = ?");
-  $new->bindValue(1, $this->metodo);
-  $new->bindValue(2,$this->idedit);
-  $new->execute();
+      parent::conectarDB();
+      $new = $this->con->prepare("UPDATE forma_pago fp SET fp.tipo_pago = ? WHERE fp.status = 1 AND fp.id_forma_pago = ?");
+      $new->bindValue(1, $this->metodo);
+      $new->bindValue(2,$this->id);
+      $new->execute();
 
-        
-  $resultado = ['resultado'=> 'Editado'];
-  $this->binnacle("Metodo",$_SESSION['cedula'],"Editó un Valor de metodo.");
-  echo json_encode($resultado);
+      $resultado = ['resultado'=> 'Editado'];
+      $this->binnacle("Metodo",$_SESSION['cedula'],"Editó un Valor de metodo.");
 
-  parent::desconectarDB();
-  die();
+      parent::desconectarDB();
+      return $resultado;
 
-  }catch(\PDOexception $error){
-    return$error;
+    }catch(\PDOexception $error){
+      return$error;
+    }
+
   }
 
-}
+    public function getEliminarMetodo($id){
+      if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
+      return ['resultado' => 'Error de id','error' => 'id inválida.'];
+      }
+      $this->id = $id;
+
+      return $this->eliminarMetodo();
+    }
+
+    private function eliminarMetodo(){
+
+     try{
+      parent::conectarDB();
+
+      $new = $this->con->prepare("UPDATE forma_pago fp SET fp.status = 0 WHERE fp.id_forma_pago = ?");
+      $new->bindValue(1,$this->id);
+      $new->execute();
+      $resultado = ['resultado' => 'Eliminado'];
+      parent::desconectarDB();
+
+      return $resultado;
+    } 
+    catch (\PDOexception $error) {
+      return $error;
+    }
+
+  }
+
 }
 ?>
