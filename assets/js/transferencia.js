@@ -1,14 +1,20 @@
 $(document).ready(function () {
   let mostrar;
-  let registrarPermiso, editarPermiso, eliminarPermiso;
-  $.getJSON("", { getPermisos: "" }, function (permisos) {
-    registrarPermiso = permisos.Editar ? "" : "disabled";
-    editarPermiso = permisos.Editar ? "" : "disabled";
-    eliminarPermiso = permisos.Eliminar ? "" : "disabled";
-  }).then(() => rellenar(true));
+  $.getJSON("", { getPermisos: '' })
+    .fail(e => {
+      Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+      throw new Error('Error al obtener permisos: ' + e);
+    })
+    .then((data) => {
+      permisos = data;
+      rellenar(true)
+    });
 
   function rellenar(bitacora = false) {
     $.getJSON("", { mostrar: "", bitacora }, function (data) {
+      const permisoEditar = (!permisos["Editar"]) ? 'disabled' : '';
+      const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';
+
       let tabla = data.reduce((acc, row) => {
         return (acc += `
         <tr>
@@ -17,9 +23,9 @@ $(document).ready(function () {
           <td scope="col">${row.fecha || ""}</td>
           <td >
             <span class="d-flex justify-content-center">
-              <button type="button" ${editarPermiso} title="Editar" class="btn btn-success editar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button>
-              <button type="button" ${eliminarPermiso} title="Eliminar" class="btn btn-danger borrar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Borrar"><i class="bi bi-trash3"></i></button>
-              <button type="button" ${eliminarPermiso} title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+              <!-- <button type="button" ${permisoEditar} title="Editar" class="btn btn-success editar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button> -->
+              <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
+              <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
             </span>
           </td>
         </tr>`);
@@ -76,20 +82,25 @@ $(document).ready(function () {
 
   let productosRepetidos, productos;
   function validarProductosRepetidos() {
+    let validacion = [];
     productos = Object.values(document.querySelectorAll('.select-productos')).map(item => {
       return item.value;
     });
     productosRepetidos = productos.filter((elemento, index) => productos.indexOf(elemento) !== index);
     $(".select-productos").each(function () {
-      if (this.value == "") return;
-      if (productosRepetidos.includes(this.value)) {
-        $(this).attr('valid', false);
+      if (this.value === "") {
         $(this).closest('td').find('div.chosen-container').addClass('input-error')
+        validacion.push(false);
+      }
+      if (productosRepetidos.includes(this.value)) {
+        $(this).closest('td').find('div.chosen-container').addClass('input-error')
+        validacion.push(false);
       } else {
-        $(this).attr('valid', true);
         $(this).closest('td').find('div.chosen-container').removeClass('input-error')
+        validacion.push(true);
       }
     })
+    return !validacion.includes(false);
   }
 
   const mostrarInventarioProducto = (item) => {
@@ -103,10 +114,11 @@ $(document).ready(function () {
   const filaPlantilla = `
   <tr>
     <td width="1%"><a class="eliminarFila a-asd" role="button"><i class="bi bi-trash-fill"></i></a></td>
-    <td width='30%'>
+    <td width='30%' class="position-relative">
       <select class="select-productos select-asd" name="producto">
         <option></option>
       </select>
+      <span class="d-none floating-error">error</span>
     </td>
     <td class="cantidad"><input class="select-asd" type="number" value="" /></td>
   </tr>`;
@@ -134,5 +146,57 @@ $(document).ready(function () {
     $(this).closest("tr").remove();
     validarProductosRepetidos();
   });
+
+  const getProductos = () => {
+    return Object.values(document.querySelectorAll('.select-productos')).map(item => {
+      let cantidad = $(item).closest('tr').find('.cantidad input').val();
+      return { id_producto: item.value, cantidad };
+    });
+  }
+
+  $('#registrar').click(function (e) {
+    e.preventDefault();
+
+    let valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,");
+    let valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
+    let valid_productos = validarProductosRepetidos();
+
+    if (!valid_sede || !valid_fecha || !valid_productos) return;
+
+    productos = getProductos();
+    let data = {
+      registrar: '',
+      sede: $("#sede").val(),
+      fecha: $("#fecha").val(),
+      productos,
+    };
+
+    $.post("", data, function (res) {
+      Toast.fire({ icon: "success", title: res.msg });
+      mostrar.destroy();
+      $('.cerrar').click();
+      rellenar();
+    }, "json").fail((e) => {
+      Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+      throw new Error(e.responseJSON.msg);
+    });
+  })
+
+  $(document).on('click', '.eliminar', function () {
+    validarPermiso(permisos["Eliminar"]);
+    id = this.id
+  });
+
+  $('#anular').click(function () {
+    $.post("", { eliminar: '', id }, function (res) {
+      Toast.fire({ icon: "success", title: res.msg });
+      mostrar.destroy();
+      $('.cerrar').click();
+      rellenar();
+    }, "json").fail((e) => {
+      Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+      throw new Error(e.responseJSON.msg);
+    });
+  })
 
 });

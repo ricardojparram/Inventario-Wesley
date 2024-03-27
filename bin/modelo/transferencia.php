@@ -13,6 +13,7 @@ class transferencia extends DBConnect {
   private $id_lote;
   private $cantidad;
   private $fecha;
+  private $productos;
 
   public function mostrarSedes() {
     try {
@@ -87,8 +88,8 @@ class transferencia extends DBConnect {
     try {
       $this->conectarDB();
       $sql = "SELECT s.nombre as nombre_sede, ps.lote, p.cod_producto, dt.cantidad, ps.fecha_vencimiento FROM detalle_transferencia dt
-              INNER JOIN transferencia t ON dt.id_detalle = t.id_transferencia
-              INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_lote
+              INNER JOIN transferencia t ON dt.id_transferencia = t.id_transferencia
+              INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
               INNER JOIN producto p ON p.cod_producto = ps.cod_producto 
               INNER JOIN sede s ON s.id_sede = t.id_sede
               WHERE t.id_transferencia = ?;";
@@ -103,22 +104,73 @@ class transferencia extends DBConnect {
     }
   }
 
-  public function getAgregarTransferencia($id_sede, $fecha): array {
-    if (preg_match_all("/^[0-9]{1,10}$/", $id_sede) != 1)
+  public function getAgregarTransferencia($id_sede, $fecha, $productos): array {
+    if (preg_match_all("/^[0-9]{1,10}$/", $id_sede) != 1) {
+      http_response_code(400);
       return ['resultado' => 'error', 'msg' => 'Id invalida.'];
+    }
 
-    if ($this->validarFecha($fecha) !== true)
+    if ($this->validarFecha($fecha) !== true) {
+      http_response_code(400);
       return ['resultado' => 'error', 'msg' => 'Fecha inválida'];
+    }
+
+    if (!is_array($productos)) {
+      http_response_code(400);
+      return ['resultado' => 'error', 'error' => 'Productos inválidos'];
+    }
 
 
+    $this->fecha = $fecha;
+    $this->productos = $productos;
     $this->id_sede = $id_sede;
+
+    return $this->agregarTransferencia();
   }
   private function agregarTransferencia(): array {
     try {
       $this->conectarDB();
-      $sql = '';
+      $sql = "INSERT INTO transferencia (id_sede, fecha, status) VALUES (?,?,1)";
       $new = $this->con->prepare($sql);
-      return $new->bindValue(1, $this->id_transferencia);
+      $new->bindValue(1, $this->id_sede);
+      $new->bindValue(2, $this->fecha);
+      $new->execute();
+      $this->id_transferencia = $this->con->lastInsertId();
+
+      $sql = "INSERT INTO detalle_transferencia(id_transferencia, id_producto_sede, cantidad) VALUES (?,?,?)";
+      foreach ($this->productos as $producto) {
+        $new = $this->con->prepare($sql);
+        $new->bindValue(1, $this->id_transferencia);
+        $new->bindValue(2, $producto['id_producto']);
+        $new->bindValue(3, $producto['cantidad']);
+        $new->execute();
+      }
+      $this->desconectarDB();
+      return ['resultado' => 'ok', 'msg' => 'Se ha registrado la transferencia correctamente.'];
+    } catch (\PDOException $e) {
+      return ['error' => $e->getMessage()];
+    }
+  }
+
+  public function getEliminarTransferencia($id_transferencia): array {
+    if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
+      http_response_code(400);
+      return ['resultado' => 'error', 'msg' => 'Id invalida.'];
+    }
+
+    $this->id_transferencia = $id_transferencia;
+
+    return $this->eliminarTransferencia();
+  }
+
+  private function eliminarTransferencia() {
+    try {
+      $sql = "UPDATE transferencia SET status = 0 WHERE id_transferencia = ?";
+      $new = $this->con->prepare($sql);
+      $new->bindValue(1, $this->id_transferencia);
+      $new->execute();
+      $this->desconectarDB();
+      return ['resultado' => 'ok', 'msg' => 'Se ha eliminado la transferencia correctamente.'];
     } catch (\PDOException $e) {
       return ['error' => $e->getMessage()];
     }

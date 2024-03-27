@@ -45,7 +45,7 @@ class donativoPaciente extends DBConnect{
 		try {
 		parent::conectarDB();
 		
-		$new = $this->con->prepare('SELECT d.id_donaciones , dd.cantidad , tp.nombrepro FROM det_donacion dd INNER JOIN donaciones d ON d.id_donaciones = dd.id_donaciones INNER JOIN producto p ON p.cod_producto = dd.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod WHERE d.status = 1 AND d.id_donaciones = ?');
+		$new = $this->con->prepare('SELECT d.id_donaciones , dd.cantidad , tp.nombrepro FROM det_donacion dd INNER JOIN donaciones d ON d.id_donaciones = dd.id_donaciones INNER JOIN producto_sede ps ON ps.id_producto_sede = dd.id_producto_sede INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod WHERE d.status = 1 AND d.id_donaciones = ?');
 		$new->bindValue(1, $this->id);
 		$new->execute();
 
@@ -80,7 +80,7 @@ class donativoPaciente extends DBConnect{
 	public function selectProductos(){
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare('SELECT ps.id_producto_sede, tp.nombrepro , ps.lote , ps.id_sede , ps.fecha_vencimiento , ps.cantidad FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede WHERE p.status = 1 AND s.status = 1 ORDER BY ps.fecha_vencimiento');
+			$new = $this->con->prepare('SELECT ps.id_producto_sede, tp.nombrepro , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede WHERE p.status = 1 AND s.status = 1 ORDER BY ps.fecha_vencimiento');
 
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
@@ -125,7 +125,7 @@ class donativoPaciente extends DBConnect{
 		try {
 			parent::conectarDB();
 
-			$new = $this->con->prepare('SELECT ps.cantidad , (pres.cantidad * ps.cantidad) AS unidades , (ps.cantidad * pres.cantidad) - COALESCE(SUM(dd.cantidad), 0) AS unidades_restantes FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN presentacion pres ON p.cod_pres = pres.cod_pres LEFT JOIN det_donacion dd ON dd.cod_producto = p.cod_producto WHERE p.status = 1 AND ps.id_producto_sede = ?');
+			$new = $this->con->prepare('SELECT ps.cantidad , (pres.cantidad * ps.cantidad) AS unidades , (ps.cantidad * pres.cantidad) - COALESCE(SUM(dd.cantidad), 0) AS unidades_restantes FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN presentacion pres ON p.cod_pres = pres.cod_pres INNER JOIN det_donacion dd ON dd.id_producto_sede = ps.id_producto_sede WHERE p.status = 1 AND ps.id_producto_sede = ?');
 
 			$new->bindValue(1 ,$this->id);
 			$new->execute();
@@ -167,30 +167,24 @@ class donativoPaciente extends DBConnect{
 		try {
 		parent::conectarDB();
 
-		/* Registrar donación*/
 		$new = $this->con->prepare('INSERT INTO `donaciones`(`id_donaciones`, `beneficiario`, `fecha`, `status`) VALUES (DEFAULT , ? , DEFAULT , 1)');
 		$new->bindValue(1 , $this->beneficiario);
 		$new->execute();
 
 		$this->id = $this->con->lastInsertId();
 
-		/* Registrar paciente */
 
 		$new = $this->con->prepare('INSERT INTO `donativo_pac`(`id_donativopac`, `ced_pac`, `id_donaciones`) VALUES (DEFAULT , ? , ?)');
 		$new->bindValue(1 , $this->paciente);
 		$new->bindValue(2, $this->id);
 		$new->execute();
 
-		/* Registrar Detalle de donación */
 
 		foreach ($this->datos as $dato) {
-			$res = $this->con->prepare('SELECT ps.cod_producto FROM producto_sede ps WHERE ps.id_producto_sede = ?');
-			$res->bindValue(1 , $dato['producto']);
-			$res->execute();
-			$this->producto = $res->fetchColumn();
+			$this->producto = $dato['producto'];
 			$this->unidades = $dato['unidades'];
 
-			$new = $this->con->prepare('INSERT INTO `det_donacion`(`id_detalle`, `cod_producto`, `cantidad`, `id_donaciones`) VALUES (DEFAULT , ? , ? , ?)');
+			$new = $this->con->prepare('INSERT INTO `det_donacion`(`id_detalle`, `id_producto_sede`, `cantidad`, `id_donaciones`) VALUES (DEFAULT , ? , ? , ?)');
 			$new->bindValue(1 , $this->producto);
 			$new->bindValue(2 , $this->unidades);
 			$new->bindValue(3 , $this->id);
@@ -199,7 +193,7 @@ class donativoPaciente extends DBConnect{
 
 		parent::desconectarDB();
         
-        return 'Chale ya sirve';
+        return ['resultado' => 'registrado con exito'];
 			
 		} catch (\PDOException $e) {
 			return $e;

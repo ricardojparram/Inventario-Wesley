@@ -289,7 +289,6 @@ $(document).ready(function(){
      });
 
 
-    /* Validar antes de registro */
 
     $('#cedula').change(()=>{ validarSelec2($('#cedula'),$(".select2-selection"), $('#error1') , 'Error de cedula');  })
     $('#beneficiario').keyup(()=> { validarStringLong($('#beneficiario'),  $('#error2') , 'Error de beneficiario'); });
@@ -299,7 +298,6 @@ $(document).ready(function(){
      let cedula , beneficiario , sede, producto;
      setInterval(()=>{click = 0}, 2000);
 
-     /* Registrar Donacion */
      $('#registrar').click(function(e) {
      	e.preventDefault();
 
@@ -339,8 +337,20 @@ $(document).ready(function(){
      	 		dataType: 'json',
      	 		data: {cedulaPaciente: $('#cedula').val(), beneficiario: $('#beneficiario').val() , datos },
      	 		success(data){
-
-     	 		}
+     	 		if(data.resultado == 'registrado con exito'){
+	     	 		mostrar.destroy();
+	     	 		rellenar();  
+		            $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
+		            $('#Agregar .select2-selection').attr("style","borden-color:none;","borden-color:none;");
+		            $('.error').text(" ");
+		            $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
+		            $('#error').text('');
+		            $('.removeRow').click();
+		            $('.cerrar').click(); 
+		            addNewRow();
+		            Toast.fire({ icon: 'success', title: 'Donacion registrada' , showCloseButton: true });
+     	 		 }
+     	 	   }
      	 	})
      	 	.fail(function() {
      	 		console.log("error");
