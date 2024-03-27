@@ -47,8 +47,7 @@ $(document).ready(function(){
           let mensaje = JSON.parse(data);
           if(mensaje.resultado === "error"){
             div.text(mensaje.msg);
-            input.attr("style","border-color: red;")
-            input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
+            input.addClass('input-error');
             return reject(false);
           }else{
             div.text(" ");
@@ -96,13 +95,12 @@ $(document).ready(function(){
           rellenar();
           $('#user').trigger('reset'); 
           $("#close").click();
-          $("#tipoEmpleado").attr("style","borde-color:none; backgraund-image: none;");
+          $("#tipoEmpleado").removeClass('input-error');
           $("#error").text("");
           Toast.fire({ icon: 'success', title: 'Tipo empleado registrado', showCloseButton: true });
         }else if(data.resultado === 'error'){
             $("#error").text(data.msg);
-            $("#tipoEmpleado").attr("style","border-color: red;")
-            $("#tipoEmpleado").attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
+            $("#tipoEmpleado").addClass('input-error');
         }
       }
     })
@@ -192,8 +190,7 @@ $(document).ready(function(){
                 rellenar();
               }else if(data.resultado === 'error'){
               $("#error2").text(data.msg);
-              $("#tipoEmpladoEdit").attr("style","border-color: red;")
-              $("#tipoEmpladoEdit").attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
+              $("#tipoEmpladoEdit").addClass('input-error');
              }
             }
           })

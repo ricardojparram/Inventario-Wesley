@@ -47,6 +47,16 @@
         $res = $objModel->selectProductos();
         die(json_encode($res));
       }
+
+      if(isset($_GET['producto']) && isset($_GET['filas'])) {
+        $res = $objModel->detallesProductoFila($_GET['producto']);
+        die(json_encode($res));
+      }
+
+      if(isset($_POST['cedulaPaciente']) && isset($_POST['beneficiario']) && isset($_POST['datos']) && $permiso['Registrar']) {
+        $res = $objModel->getRegistrarDonacion($_POST['cedulaPaciente'], $_POST['beneficiario'] , $_POST['datos']);
+        die(json_encode($res));
+      }
       
 
      $VarComp = new initcomponents();

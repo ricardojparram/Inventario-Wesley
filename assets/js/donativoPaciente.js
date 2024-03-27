@@ -1,6 +1,5 @@
 $(document).ready(function(){
 	
-	fechaHoy($('#fecha'));
 	let mostrar;
 	let permiso , editarPermiso , eliminarPermiso, registrarPermiso;
 
@@ -51,175 +50,307 @@ $(document).ready(function(){
 		})
 	}
 
-	  let id;
+	let id;
+
+  // Ver Detalles de donaciones
 
   $(document).on('click', '.detalleD' , function(){
 
        id = this.id; // id = id
        $.post('',{detalleD : 'detalle Donacion' , id}, function(data){
-        let lista = JSON.parse(data);
-        let tabla;
+       	let lista = JSON.parse(data);
+       	let tabla;
 
-        lista.forEach(row=>{
-          tabla += `
-          <tr>
-          <td>${row.nombrepro}</td>
-          <td>${row.cantidad}</td>
-          <td>${row.cantidad}</td>                      
-          </tr>
-          `  
-        })
-        $('#DonacionTitle').text(`Numero de Donacion #${lista[0].id_donaciones}.`);
-        $('#bodyDetalle').html(tabla);
-      })
+       	lista.forEach(row=>{
+       		tabla += `
+       		<tr>
+       		<td>${row.nombrepro}</td>
+       		<td>${row.cantidad}</td>                
+       		</tr>
+       		`  
+       	})
+       	$('#DonacionTitle').text(`Numero de Donacion #${lista[0].id_donaciones}.`);
+       	$('#bodyDetalle').html(tabla);
+       })
 
-     })
+   })
 
+ 		// Funcion select Pacientes
+ 		selectPacientes();
+ 		function selectPacientes() {
+ 			$.ajax({
+ 				type: 'POST',
+ 				url: '',
+ 				dataType: 'json',
+ 				data: { selectPacientes: 'paciente' },
+ 				success(data) {
+ 					$('#cedula').select2({
+ 						data: data.map(function(item) {
+ 							return { id: item.ced_pac, text: item.ced_pac};
+ 						}),
+ 						theme: 'bootstrap-5',
+ 						dropdownParent: $('#Agregar .modal-body'),
+ 						width: '80%'
+ 					});
+ 					$('#cedula').on('change', function() {
+ 						let selectedCedula = $(this).val();
+ 						let paciente = data.find(item => item.ced_pac === selectedCedula)
+ 						if (paciente) {
+ 							let nombreApellido = paciente.nombre + ' ' + paciente.apellido;
+ 							$('#beneficiario').val(nombreApellido);
+ 						}
+ 					});
+ 				}
+ 			});
 
-        selectPacientes();
-        function selectPacientes() {
-        	$.ajax({
-        		type: 'POST',
-        		url: '',
-        		dataType: 'json',
-        		data: { selectPacientes: 'paciente' },
-        		success(data) {
-        		$('#cedula').select2({
-        			data: data.map(function(item) {
-        				return { id: item.ced_pac, text: item.ced_pac};
-        			}),
-        			theme: 'bootstrap-5',
-        			dropdownParent: $('#Agregar .modal-body'),
-        			width: '80%'
-        		});
-        		$('#cedula').on('change', function() {
-        			let selectedCedula = $(this).val();
-        			let paciente = data.find(item => item.ced_pac === selectedCedula)
-        			if (paciente) {
-        				let nombreApellido = paciente.nombre + ' ' + paciente.apellido;
-        				$('#nombre').val(nombreApellido);
-        			}
-        		});
-        	}
-        });
+ 		}
+    	// Funcion select Sedes
+    	selectSedes(); 
+    	function selectSedes(){
+    		$.ajax({
+    			type: 'POST',
+    			url: '',
+    			dataType: 'json',
+    			data: { selectSedes: 'sedes' },
+    			success(data) {
+    				let selectSedes = $('#sede').select2({
+    					data: data.map(function(item) {
+    						return { id: item.id_sede, text: item.nombre};
+    					}),
+    					theme: 'bootstrap-5',
+    					dropdownParent: $('#Agregar .modal-body'),
+    					width: '50%'
+    				});
 
-    }
-
-    	selectSedes()
-	    function selectSedes(){
-	    	$.ajax({
-	    		type: 'POST',
-	    		url: '',
-	    		dataType: 'json',
-	    		data: { selectSedes: 'sedes' },
-	    		success(data) {
-	    		 let selectSedes = $('#sedes').select2({
-	    			data: data.map(function(item) {
-	    				return { id: item.id_sede, text: item.nombre};
-	    			}),
-	    			theme: 'bootstrap-5',
-	    			dropdownParent: $('#Agregar .modal-body'),
-	    			width: '50%'
-	    		});
-
-	    	}
-	    });
-	}
+    			}
+    		});
+    	}
 
       //  fila que se inserta
-      let newRow = `<tr>
-      <td width="1%"><a class="removeRow a-asd" href="#"><i class="bi bi-trash-fill"></i></a></td>
-      <td width='25%'> 
-      <select class="select-productos select-asd" name="productos">
-      <option></option>
-      </select>
-      </td>
-      <td width='15%' class="cantidad"><input class="select-asd stock" type="number" value=""/></td>
-      <td width='15%' class="cantUnitaria"><input class="select-asd unidad" type="number" value="" /></td>
+
+      const newRow = `
+      <tr>
+      	<td width="1%"><a class="removeRow a-asd" href="#"><i class="bi bi-trash-fill"></i></a></td>
+	      <td width='25%'> 
+		     <select class="select-productos select-asd" name="productos">
+		       <option></option>
+		     </select>
+	       </td>
+	      <td width='15%' class="cantidad"><input class="select-asd stock" type="number" value=""/></td>
+	     <td width='15%' class="unidades"><input class="select-asd unidad" type="number" value="" /></td>
       </tr>`;
 
       // Validar filas
-
       function validarFila(filas, error) {
       	let filaExiste = $(filas).find('tr').length > 0;
+        $(error).text(filaExiste? '' : 'No debe haber filas vacías')
+        return filaExiste;
+      }
 
-      		if (filaExiste) {
-      			$(error).text('');
-      		} else {
-      			$(error).text('No debe haber filas vacías.');
-      		}
+    // Funcion de select para productos 
+    selectProductos()
+    function selectProductos(){
+    	$.ajax({
+    		url: '',
+    		method: 'POST',
+    		dataType: 'json',
+    		data: {
+    			selectProductos: "productos"
+    		},
+    		success(data){
+    			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.nombrepro} ${row.lote}</option>`).join('');
 
-      		return filaExiste;
-      	}
+    			$('.select-productos').each(function(){
+    				if(this.children.length == 1){
+    					$(this).append(option);
+    					$(this).chosen({
+    						width: '30vw',
+    						placeholder_text_single: "Selecciona un producto",
+    						search_contains: true
+    					});
+    				}
+    			})
 
-    // Funcion select para productos multifila
-      selectProductos()
-      function selectProductos(){
-	  	$.ajax({
-	  		url: '',
-	  		method: 'POST',
-	  		dataType: 'json',
-	  		data: {
-	  			selectProductos: "productos"
-	  		},
-	  		success(data){
-	  			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.nombrepro} ${row.lote}</option>`).join('');
+    		}
+    	})
+    }
 
-	  			$('.select-productos').each(function(){
-	  				if(this.children.length == 1){
-	  					$(this).append(option);
-	  					$(this).chosen({
-	  						width: '30vw',
-	  						placeholder_text_single: "Selecciona un producto",
-	  						search_contains: true
-	  					});
-	  				}
-	  			})
+    // Validar producto vacios
 
-	  		}
-	  	})
+    function validarProductos(filas, productos, error , mensaje) {
+    	let vproductos = true;
+
+    	$(filas).each(function () {
+    		let producto = $(this).find(productos).val();
+    		if (producto == "" || producto == null) {
+    			vproductos = false;
+    			$(error).text(mensaje);
+    		} else {
+    			$(error).text('');
+    			vproductos = true;
+    		}
+    	});
+
+    	return vproductos;
+    }
+
+
+	// Validar producto repetidos
+
+	let productosRepetidos, productos;
+	function validarProductosRepetidos() {
+		productos = Object.values(document.querySelectorAll('.select-productos')).map(item => {
+			return item.value;
+		});
+		productosRepetidos = productos.filter((elemento, index) => productos.indexOf(elemento) !== index);
+		$(".select-productos").each(function () {
+			if (this.value == "") return;
+			if (productosRepetidos.includes(this.value)) {
+				$(this).attr('valid', false);
+				$(this).closest('td').find('div.chosen-container').addClass('select-error')
+			} else {
+				$(this).attr('valid', true);
+				$(this).closest('td').find('div.chosen-container').removeClass('select-error')
+			}
+		})
 	}
 
-
-
-	$('#ASD').on('change', '.select-productos', function(){
-		let selectedValues = [];
-		$('.select-productos').each(function(){
-			let value = $(this).val();
-				if(value !== ''){
-					if(selectedValues.includes(value)){
-						$(this).closest('tr').attr('style', 'border-color: red;')
-						$(this).val('');
-					} else {
-						$(this).closest('tr').attr('style', 'border-color: none')
-						selectedValues.push(value);
-					}
-				}
-			});
+	let cantidadStock , stock , select , unidades 
+	productoSeleccionado();
+	function productoSeleccionado(){
+		$('.select-productos').change(function() {
+			select = $(this);
+			producto = $(this).val();
+			cantidadStock = select.closest('tr').find('.cantidad input');
+			unidades = select.closest('tr').find('.unidades input');
+			fillData();
 		});
+	}
 
-	 let producto , select , cantidad ,  stock;
+	function fillData(){
+		$.getJSON('', {producto , filas : 'select fila'}, function(data) {
+			stock = data[0].cantidad;
+			unidad = data[0].unidades_restantes;
+			cantidadStock.val(stock);
+			unidades.val(unidad);
+			unidades.attr('placeholder', unidad);
+			validarUnidades(unidades , unidad);
+		});
+	}
 
-	 function productoSeleccionado(){
+	function validarUnidades(input, max){
+		$(input).keyup(()=>{
+			stock = Number(max);
+			num = Number(input.val());
+			if(num > stock || num == 0 || num < 1 || !Number.isInteger(num)){
+				input.css({"border" : "solid 1px", "border-color" : "red"})
+				input.attr("valid", "false");
+				$('#pValid').text('Cantidad inválida.');
+			}else{
+				input.css({'border': 'none'})
+				input.attr("valid", "true");
+				$('#pValid').text(' ');
+			}
+		})
+	}
 
-	 }
+	 validUnidades = () => {
+		let unidadValue = $('.unidad').val();
+		let isValidUnidad = !$('.unidad').is('[valid="false"]') && unidadValue !== "" && unidadValue !== '0';
 
-      function addNewRow(){
-  	  $('#ASD').append(newRow);
-  	  	validarFila($('#ASD') ,$('.filaProductos'));
-      }
+		$('#pValid').text(isValidUnidad ? '' : 'Cantidad inválida.');
+		return isValidUnidad;
+	}
+
+    // Funcion de agregar fila 
+    function addNewRow(){
+    	$('#ASD').append(newRow);
+    	validarFila($('#ASD') ,$('.filaProductos'));
+    	selectProductos();  
+    	productoSeleccionado();
+    }
 
      // Agregar fila para insertar producto a donar
      $('.newRow').on('click',function(e){
-     	addNewRow();
-     	selectProductos();       
+     	addNewRow();   
+     });
+
+     // Evento de cambio en los productos 
+     $(document).on("change", ".select-productos", function () {
+     	validarProductos($('.table-body tbody tr'),$(".select-productos"), $('.filaProductos') , 'No debe haber productos vacios');
+     	validarProductosRepetidos();
      });
 
      // ELiminar fila
      $('body').on('click','.removeRow', function(e){
-        $(this).closest('tr').remove();
-        validarFila($('#ASD') ,$('.filaProductos'));
+     	$(this).closest('tr').remove();
+     	validarProductosRepetidos();
+     	validarFila($('#ASD') ,$('.filaProductos'));
      });
 
 
-})
+    /* Validar antes de registro */
+
+    $('#cedula').change(()=>{ validarSelec2($('#cedula'),$(".select2-selection"), $('#error1') , 'Error de cedula');  })
+    $('#beneficiario').keyup(()=> { validarStringLong($('#beneficiario'),  $('#error2') , 'Error de beneficiario'); });
+    $('#sede').change(()=>{ validarSelec2($('#sede'),$(".select2-selection"), $('#error3') , 'Error de sede');  })
+    
+     let click = 0;
+     let cedula , beneficiario , sede, producto;
+     setInterval(()=>{click = 0}, 2000);
+
+     /* Registrar Donacion */
+     $('#registrar').click(function(e) {
+     	e.preventDefault();
+
+     	 if(click >= 1){ throw new Error('Spam de clicks');}
+
+     	 /* Validaciones para registrar*/
+
+     	 let repetidos = true;
+     	 let datos = [];
+
+     	 cedula = validarSelec2($('#cedula'),$(".select2-selection"), $('#error1') , 'Error de cedula');
+     	 beneficiario = validarStringLong($('#beneficiario'),  $('#error2') , 'Error de beneficiario');
+     	 sede = validarSelec2($('#sede'),$(".select2-selection"), $('#error3') , 'Error de sede');
+     	 filasValidas = validarFila($('#ASD') ,$('.filaProductos'));
+     	 producto = validarProductos($('.table-body tbody tr'),$(".select-productos"), $('.filaProductos') , 'No debe haber productos vacios');
+     	 repetidos = $('.select-productos').is('[valid="false"]')? false : true;
+     	 unidades = validUnidades();
+
+
+     	 if (cedula && beneficiario && sede && filasValidas && repetidos && producto && unidades){
+
+     	 	$('.table-body tbody tr').each(function(){
+     	 		productos = $(this).find('.select-productos').val();
+     	 		unidades = $(this).find('.unidad').val();
+
+     	 		let productoObj = {
+     	 			producto : productos,
+     	 			unidades: unidades
+     	 		};
+
+     	 		datos.push(productoObj);
+     	 	});
+
+     	 	$.ajax({
+     	 		url: '',
+     	 		type: 'POST',
+     	 		dataType: 'json',
+     	 		data: {cedulaPaciente: $('#cedula').val(), beneficiario: $('#beneficiario').val() , datos },
+     	 		success(data){
+
+     	 		}
+     	 	})
+     	 	.fail(function() {
+     	 		console.log("error");
+     	 	})
+
+          
+     	 }
+
+     	 click++;
+     });
+
+
+ })
