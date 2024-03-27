@@ -189,6 +189,23 @@ class transferencia extends DBConnect {
       $new = $this->con->prepare($sql);
       $new->bindValue(1, $this->id_transferencia);
       $new->execute();
+
+      $sql = "SELECT dt.id_producto_sede, dt.cantidad, ps.cantidad as inventario FROM detalle_transferencia dt
+      INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
+      WHERE dt.id_transferencia = ?;";
+      $new = $this->con->prepare($sql);
+      $new->bindValue(1, $this->id_transferencia);
+      $new->execute();
+      $this->productos = $new->fetchAll(\PDO::FETCH_OBJ);
+
+      foreach ($this->productos as $producto) {
+        $inventario = intval($producto->cantidad) + intval($producto->inventario);
+
+        $new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
+        $new->bindValue(1, $inventario);
+        $new->bindValue(2, $producto->id_producto_sede);
+        $new->execute();
+      }
       $this->desconectarDB();
       return ['resultado' => 'ok', 'msg' => 'Se ha eliminado la transferencia correctamente.'];
     } catch (\PDOException $e) {
