@@ -190,18 +190,22 @@
                       <tbody id="tablaSeleccionarProductos">
                         <tr>
                           <td width="1%"><a class="eliminarFila a-asd" role="button"><i class="bi bi-trash-fill"></i></a></td>
-                          <td width='30%'>
+                          <td width='30%' class="position-relative">
                             <select class="select-productos select-asd" name="producto">
                               <option></option>
                             </select>
+                            <span class="d-none floating-error">error</span>
                           </td>
-                          <td class="cantidad"><input class="select-asd" type="number" value="" /></td>
+                          <td class="cantidad position-relative">
+                            <input class="select-asd" type="number" value="" />
+                            <span class="d-none floating-error">error</span>
+                          </td>
                         </tr>
 
                       </tbody>
                     </table>
 
-                    <p class="filaTipoPago error" style="color:#ff0000;text-align: center;"></p>
+                    <p class="filaTipoPago error" id="error" style="color:#ff0000;text-align: center;"></p>
                     <a class="agregarFila a-asd" role="button"></i> Nueva fila</a> <br>
 
                   </div>
