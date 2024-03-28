@@ -30,6 +30,11 @@ if (isset($_GET['datosTransferencia'], $_GET["id"], $permiso['Consultar'])) {
     die(json_encode($res));
 }
 
+if (isset($_POST['registrar'], $_POST["transferencia"], $_POST['fecha'], $_POST["productos"], $permiso['Registrar'])) {
+    $res = $model->getAgregarRecepcion($_POST["transferencia"], $_POST['fecha'], $_POST["productos"]);
+    die(json_encode($res));
+}
+
 
 $VarComp = new initcomponents();
 $header = new header();

@@ -78,4 +78,77 @@ class recepcion extends DBConnect {
             return ['error' => $e->getMessage()];
         }
     }
+    private function mostrarProductoInventario(): array {
+        try {
+            $this->conectarDB();
+            $sql = "SELECT cantidad FROM producto_sede WHERE id_producto_sede = ?;";
+            $new = $this->con->prepare($sql);
+            $new->bindValue(1, $this->id_producto);
+            $new->execute();
+            $this->desconectarDB();
+            return $new->fetchAll(\PDO::FETCH_OBJ);
+        } catch (\PDOException $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public function getAgregarRecepcion($id_transferencia, $fecha, $productos): array {
+        if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
+            http_response_code(400);
+            return ['resultado' => 'error', 'msg' => 'Id invalida.'];
+        }
+
+        if ($this->validarFecha($fecha) !== true) {
+            http_response_code(400);
+            return ['resultado' => 'error', 'msg' => 'Fecha inválida'];
+        }
+
+        if (!is_array($productos)) {
+            http_response_code(400);
+            return ['resultado' => 'error', 'error' => 'Productos inválidos'];
+        }
+
+
+        $this->fecha = $fecha;
+        $this->productos = $productos;
+        $this->id_transferencia = $id_transferencia;
+
+        return $this->agregarRecepcion();
+    }
+
+    private function agregarRecepcion(): array {
+        try {
+            $this->conectarDB();
+            $sql = "INSERT INTO recepcion_sede(id_transferencia, fecha, status) VALUES (?,?,1)";
+            $new = $this->con->prepare($sql);
+            $new->bindValue(1, $this->id_transferencia);
+            $new->bindValue(2, $this->fecha);
+            $new->execute();
+            $this->id_recepcion = $this->con->lastInsertId();
+
+            $sql = "INSERT INTO detalle_transferencia(id_transferencia, id_producto_sede, cantidad) VALUES (?,?,?)";
+            foreach ($this->productos as $producto) {
+                $this->id_producto = $producto['id_producto'];
+                [$data] = $this->mostrarProductoInventario();
+                $this->conectarDB();
+                $new = $this->con->prepare($sql);
+                $new->bindValue(1, $this->id_recepcion);
+                $new->bindValue(2, $this->id_producto);
+                $new->bindValue(3, $producto['cantidad']);
+                $new->execute();
+
+                $inventario = intval($data->cantidad) - intval($producto['cantidad']);
+
+                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
+                $new->bindValue(1, $inventario);
+                $new->bindValue(2, $this->id_producto);
+                $new->execute();
+            }
+
+            $this->desconectarDB();
+            return ['resultado' => 'ok', 'msg' => 'Se ha registrado la transferencia correctamente.'];
+        } catch (\PDOException $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
 }

@@ -46,7 +46,7 @@ $(document).ready(function () {
                 return acc += `
                 <tr>
                     <td width='30%' class="position-relative">
-                        <select class="select-productos select-asd" name="producto">
+                        <select disabled class="select-productos select-asd" name="producto">
                             <option selected value="${row.id_producto_sede}">${row.lote}</option>
                         </select>
                     </td>
@@ -58,9 +58,47 @@ $(document).ready(function () {
             }, "");
             $('#tablaProductos').html(filas);
         }).fail(e => {
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: ' + e);
+            Toast.fire({ icon: 'error', title: e.responseJSON.msg || 'Ha ocurrido un error.' });
+            throw new Error(e.responseJSON.msg);
         })
+    })
+
+    const getProductos = () => {
+        return Object.values(document.querySelectorAll('.select-productos')).map(item => {
+            let cantidad = $(item).closest('tr').find('.cantidad input').val();
+            return { id_producto: item.value, cantidad };
+        });
+    }
+    let valid_sede, valid_fecha;
+    $('#sede').change(() => valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,"))
+    // $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
+
+    $('#registrar').click(function (e) {
+        e.preventDefault();
+
+        valid_fecha = true // validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
+        let valid_productos = validarProductosRepetidos(false);
+        let valid_cantidad = validarInventario();
+
+        if (!valid_fecha || !valid_productos || !valid_cantidad) return;
+
+        productos = getProductos();
+        let data = {
+            registrar: '',
+            transferencia: id,
+            fecha: $("#fecha").val(),
+            productos,
+        };
+
+        $.post("", data, function (res) {
+            Toast.fire({ icon: "success", title: res.msg });
+            mostrar.destroy();
+            $('.cerrar').click();
+            rellenar();
+        }, "json").fail((e) => {
+            Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+            throw new Error(e.responseJSON.msg);
+        });
     })
 
 
