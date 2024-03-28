@@ -589,7 +589,7 @@ CREATE TABLE producto_sede (
 CREATE TABLE recepcion_sede (
   id_recepcion int(11) AUTO_INCREMENT PRIMARY KEY,
   id_transferencia int(11) NOT NULL,
-  fecha date NOT NULL,
+  fecha datetime NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -600,11 +600,11 @@ CREATE TABLE recepcion_sede (
 --
 
 CREATE TABLE detalle_recepcion (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
+  id_recepcion int(11) NOT NULL,
   cantidad int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (id_detalle) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
