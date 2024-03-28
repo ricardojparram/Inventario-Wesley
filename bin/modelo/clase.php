@@ -29,7 +29,7 @@ class clase extends DBConnect{
     private function agregarClase(){
     	try {
             parent::conectarDB();
-    		$new = $this->con->prepare("INSERT INTO `clase`(`id_clase`, `nombre_c`, `status`) VALUES (5,?,1)");
+    		$new = $this->con->prepare("INSERT INTO `clase`(`id_clase`, `nombre_c`, `status`) VALUES (DEFAULT ,?,1)");
     		$new->bindValue(1, $this->clase);
             $new->execute();
             $data = $new->fetchAll();
@@ -43,13 +43,12 @@ class clase extends DBConnect{
     	}
     }
 
-    public function mostrarClase(){
+    public function mostrarClase($bitacora = false){
     	try {
             parent::conectarDB();
-    		$query = "SELECT * FROM clase c WHERE c.status = 1";
-            $new = $this->con->prepare($query);
+            $new = $this->con->prepare("SELECT c.id_clase, c.nombre_c  FROM  clase c  WHERE c.status = 1");
             $new->execute();
-            $data = $new->fetchAll(\PDO::FETCH_OBJ);
+            $data = $new->fetchAll();
             echo json_encode($data);
             parent::desconectarDB();
             die();
@@ -68,7 +67,7 @@ class clase extends DBConnect{
     private function eliminarClase(){
     	try {
             parent::conectarDB();
-    		$new = $this->con->prepare("UPDATE `clase` SET `status`= 0 WHERE id_clase = ?"); //
+    		$new = $this->con->prepare("UPDATE clase SET status = 0 WHERE id_clase = ?");
             $new->bindValue(1, $this->id);
             $new->execute();
             $resultado = ['resultado' => 'Eliminado'];
@@ -104,29 +103,26 @@ class clase extends DBConnect{
     public function getEditarClase($clase, $id){
     	if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $clase) == false){
             $resultado = ['resultado' => 'Error de nombre' , 'error' => 'Nombre inválido.'];
-            echo json_encode($resultado);
-            die();
+            
         }
 
         $this->clase = $clase;
         $this->idEdit = $id;
 
-        $this->editarClase();
+        return $this->editarClase();
     }
 
     private function editarClase(){
     	try {
             parent::conectarDB();
-    		$new = $this->con->prepare("UPDATE `clase` SET `nombre_c`= ? WHERE `id_clase` = ?");
+    		$new = $this->con->prepare("UPDATE `clase` SET `nombre_c` = ?  WHERE  id_clase = ?");
     		$new->bindValue(1, $this->clase);
     		$new->bindValue(2, $this->idEdit);
             $new->execute();
             $data = $new->fetchAll();
 
             $resultado = ['resultado' => 'Editado correctamente.'];
-              echo json_encode($resultado);
               parent::desconectarDB();
-              die();
     	} catch (\PDOException $error) {
     		return $error;
     	}

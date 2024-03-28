@@ -101,7 +101,7 @@ $("#delete").click((e)=>{
 			if (tipoE.resultado === "Eliminado"){
 				mostrar.destroy();
 				$("#cerrar").click();
-				Toast.fire({icon: 'error', title:'tipo de Producto eliminado'})
+				Toast.fire({icon: 'success', title:'Tipo de Producto eliminado'})
 				rellenar();
 			}else{
 				console.log("No se elimino");
@@ -124,7 +124,7 @@ $(document).on('click', '.editar', function(){
 
 		success(log){
 			console.log(log);
-			$("#tipNomEdit").val(log[0].des_tipo);
+			$("#tipNomEdit").val(log[0].nombre_t);
 		}
 
 

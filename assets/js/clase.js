@@ -95,18 +95,17 @@ $(document).ready(function(){
     	})
 
 
-    /* --- EDITAR --- */
+    
 	let idedit;
-    // SELECCIONA ITEM
+
     $(document).on('click', '.editar', function() {
-        idedit = this.id; // se obtiene el id del botón, previamente le puse de id el codigo en rellenar()
+        idedit = this.id; 
         
-       	// RELLENA LOS INPUTS
        		$.ajax({
        			method: "post",
        			url: "",
        			dataType: "json",
-		        data: {item: "lol", idedit}, // id : id
+		        data: {item: "lol", idedit}, 
 		        success(data){
 		        	$("#claseEdit").val(data[0].nombre_c);
 		        }
@@ -130,16 +129,33 @@ $(document).ready(function(){
 			},
 			success(data){
 				if (eclase) {
-					mostrar.destroy(); 
-					rellenar();  
+					mostrar.destroy();  
 				  	$('#closeEdit').click(); 
-				    Toast.fire({ icon: 'success', title: 'Clase actualizada' }) 
+				    Toast.fire({ icon: 'success', title: 'Clase actualizada' })
+					rellenar(); 
+				}else{
+					e.preventDefault()
 				}
 			}
-		})
+	})
 	}
 	})
-    
+  
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

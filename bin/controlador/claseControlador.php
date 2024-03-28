@@ -36,11 +36,13 @@
 	}
 
 	if(isset($_POST["idedit"]) && isset($_POST["item"]) && $permiso['Consultar'] == 1){
-		$objModel->getItem($_POST["idedit"]);
+		$res = $objModel->getItem($_POST["idedit"]);
+		die(json_encode ($res));
 	}
 
 	if(isset($_POST["claseEdit"]) && isset($_POST["idedit"]) && $permiso['Editar'] == 1) {
-		$objModel->getEditarClase($_POST["claseEdit"], $_POST["idedit"]);
+		$res = $objModel->getEditarClase($_POST["claseEdit"], $_POST["idedit"]);
+		die(json_encode ($res));
 	}
 
 	$VarComp = new initcomponents();

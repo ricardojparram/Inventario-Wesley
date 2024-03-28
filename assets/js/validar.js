@@ -255,23 +255,19 @@
 
 	function validarCedula(input, div, mensaje){
 		parametro = input.val();
+		let valid = expresiones.cedula.test(parametro)
 		if (parametro == null || parametro == "") {
 			div.text(mensaje+" debe introducir datos.") 
 			input.attr("style","border-color: red;") 
 			input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");              
-			return false
-		}else if (isNaN(parametro)) {
-			div.text(mensaje+" debe ser solo números.") 
-			input.attr("style","border-color: red;")
-			input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");       
 			return false
 		}else if (parametro.length < 7 || parametro.length > 10) {
 			div.text(mensaje+" debe entre 7 y 10 caracteres.")
 			input.attr("style","border-color: red;")
 			input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");        
 			return false
-		}else if (parametro < 1000000){
-			div.text(mensaje+" cédula inválida.") 
+		}else if (!valid){
+			div.text(mensaje+" dato inválido.") 
 			input.attr("style","border-color: red;")
 			input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");              
 			return false 
@@ -599,3 +595,10 @@
 	const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
 	const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
+// Alerta permiso denegado
+const validarPermiso = permiso => {
+	if(!permiso){
+		Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
+		throw new Error('Permiso denegado.');
+	}
+}

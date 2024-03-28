@@ -100,7 +100,7 @@ $(document).ready(function () {
 									if (result.resultado === 'Registrado correctamente.') {
 										tabla.destroy();
 										$("#cerrarRegis").click();
-										Toast.fire({ icon: 'success', title: 'Cliente Registrado' })
+										Toast.fire({ icon: 'success', title: 'Usuario Registrado' })
 										refrescar();
 									} else {
 										tabla.destroy();
@@ -149,14 +149,18 @@ $(document).ready(function () {
 						$("#cerrarModalDel").click();
 						Toast.fire({ icon: 'error', title: 'Usuario Eliminado' })
 						refrescar();
-					} else {
-						tabla.destroy();
-						$("#errorDel").text("El Usuario no Pudo Ser Eliminado");
-						refrescar();
 					}
+					if (data.resultado === "Error") {
+						$("#errorDel").text(data.msj);
+					}
+					else {
+					   tabla.destroy();
+					   $("#errorDel").text("El Usuario no Pudo Ser Eliminado");
+					   refrescar();
+				   }
 				}
-			})
 		})
+	})
 		click++
 	})
 
@@ -229,7 +233,7 @@ $(document).ready(function () {
 									if (edit.resultado === "Editado") {
 										tabla.destroy();
 										$("#cerrarRegisEdit").click();
-										Toast.fire({ icon: 'success', title: 'Cliente Actualizado' })
+										Toast.fire({ icon: 'success', title: 'Usuario Actualizado' })
 										refrescar();
 									} else {
 										tabla.destroy();

@@ -26,9 +26,9 @@
     
 
 	if(isset($_POST["mostrar"]) && isset($_POST['bitacora'])){
-		$res = $objModel->getMostrarTipo($_POST['bitacora']= false);
-		die(json_encode($res));
-		
+		($_POST['bitacora'] == 'true')
+		? $objModel->getMostrarTipo(true)
+		: $objModel->getMostrarTipo();
 	}
 
 	if (isset($_POST["tipo"]) && $permiso['Registrar'] == 1){
@@ -41,10 +41,12 @@ if (isset($_POST["borrar"]) && isset($_POST["id"]) && $permiso['Eliminar'] == 1)
 	$objModel->getEliminarTipo($_POST["id"]);
 }
  if (isset($_POST["editar"]) && isset($_POST["tipoedit"]) && $permiso['Consultar'] == 1){
- 	$objModel->mostrarlot($_POST["tipoedit"]);
+ 	$res = $objModel->mostrarlot($_POST["tipoedit"]);
+	die(json_encode($res));
  }
  if(isset($_POST["tipoEditar"]) && isset($_POST["tipoedit"]) && $permiso['Editar'] ==1){
- 	$objModel->getEditarTipo($_POST["tipoEditar"], $_POST["tipoedit"]);
+ 	$res = $objModel->getEditarTipo($_POST["tipoEditar"], $_POST["tipoedit"]);
+	die(json_encode($res));
  }
 
 	$VarComp = new initcomponents();

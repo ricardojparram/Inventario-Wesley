@@ -19,8 +19,7 @@
 		$objModel->getNotificacion();
 	}
 
-	$selectEmpresa = $model->selectEmpresas();
-	$selectEstados = $model->selectEstados();
+	
 
 	if(isset($_POST['getPermisos'], $permiso['Consultar'])){
 		die(json_encode($permiso));
