@@ -9,4 +9,8 @@ trait validar {
         $d = DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
     }
+    public function http_error($code, $error) {
+        http_response_code($code);
+        return ['resultado' => 'error', 'msg' => $error];
+    }
 }
