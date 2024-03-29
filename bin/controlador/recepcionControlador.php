@@ -21,6 +21,11 @@ if (isset($_GET['getPermisos'], $permiso['Consultar'])) {
 }
 
 if (isset($_GET['mostrar'], $_GET['bitacora'], $permiso['Consultar'])) {
+    $res = $model->mostrarRecepciones($_GET['bitacora']);
+    die(json_encode($res));
+}
+
+if (isset($_GET['mostrarTransferencias'], $_GET['bitacora'], $permiso['Consultar'])) {
     $res = $model->mostrarTransferencias($_GET['bitacora']);
     die(json_encode($res));
 }
@@ -30,8 +35,13 @@ if (isset($_GET['datosTransferencia'], $_GET["id"], $permiso['Consultar'])) {
     die(json_encode($res));
 }
 
-if (isset($_POST['registrar'], $_POST["transferencia"], $_POST['fecha'], $_POST["productos"], $permiso['Registrar'])) {
-    $res = $model->getAgregarRecepcion($_POST["transferencia"], $_POST['fecha'], $_POST["productos"]);
+if (isset($_POST['registrar'], $_POST["sede"], $_POST["transferencia"], $_POST['fecha'], $_POST["productos"], $permiso['Registrar'])) {
+    $res = $model->getAgregarRecepcion($_POST["transferencia"], $_POST["sede"], $_POST['fecha'], $_POST["productos"]);
+    die(json_encode($res));
+}
+
+if (isset($_POST['eliminar'], $_POST["id"], $permiso['Eliminar'])) {
+    $res = $model->getEliminarRecepcion($_POST["id"]);
     die(json_encode($res));
 }
 

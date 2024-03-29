@@ -11,7 +11,7 @@ $(document).ready(function () {
         });
 
     function rellenar(bitacora = false) {
-        $.getJSON("", { mostrar: "", bitacora }, function (data) {
+        $.getJSON("", { mostrarTransferencias: "", bitacora }, function (data) {
             // const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';
 
             let tabla = data.reduce((acc, row) => {
@@ -36,13 +36,14 @@ $(document).ready(function () {
         });
     }
 
-    let id = "";
+    let id = "", datos_transferencia = {};
     $(document).on('click', ".registrar", function () {
         id = this.id;
         $.getJSON("", { datosTransferencia: '', id }, function (res) {
             $('#sede').val(res.transferencia.id_sede);
             $("#fecha").val(res.transferencia.fecha);
             const filas = res.productos.reduce((acc, row) => {
+                datos_transferencia[row.id_producto_sede] = row.cantidad;
                 return acc += `
                 <tr>
                     <td width='30%' class="position-relative">
@@ -63,6 +64,20 @@ $(document).ready(function () {
         })
     })
 
+    // const validarCantidad = (input) => {
+    //     let cantidad_transferencia = datos_transferencia[input.closest('tr').find('.select-productos').val()];
+    //     let cantidad = input.val();
+    //     let $error = input.next();
+    //     console.log(cantidad_transferencia)
+    //     if (cantidad > cantidad_transferencia) {
+    //         $error.html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
+    //             .removeClass("d-none");
+    //         return false;
+    //     }
+    // }
+    // $(document).on('change', ".cantidad input", function () {
+    //     validarCantidad($(this));
+    // })
     const getProductos = () => {
         return Object.values(document.querySelectorAll('.select-productos')).map(item => {
             let cantidad = $(item).closest('tr').find('.cantidad input').val();
@@ -71,21 +86,21 @@ $(document).ready(function () {
     }
     let valid_sede, valid_fecha;
     $('#sede').change(() => valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,"))
-    // $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
+    $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
 
     $('#registrar').click(function (e) {
         e.preventDefault();
 
-        valid_fecha = true // validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
-        let valid_productos = validarProductosRepetidos(false);
-        let valid_cantidad = validarInventario();
+        valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
+        valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,");
 
-        if (!valid_fecha || !valid_productos || !valid_cantidad) return;
+        if (!valid_fecha || !valid_sede) return;
 
         productos = getProductos();
         let data = {
             registrar: '',
             transferencia: id,
+            sede: $("#sede").val(),
             fecha: $("#fecha").val(),
             productos,
         };

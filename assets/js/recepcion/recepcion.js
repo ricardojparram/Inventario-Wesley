@@ -18,14 +18,13 @@ $(document).ready(function () {
             let tabla = data.reduce((acc, row) => {
                 return (acc += `
           <tr>
-            <td>${row.id_transferencia}</th>
+            <td>${row.id_recepcion}</th>
             <td scope="col">${row.nombre_sede}</td>
             <td scope="col">${row.fecha || ""}</td>
             <td >
               <span class="d-flex justify-content-center">
-                <!-- <button type="button" ${permisoEditar} title="Editar" class="btn btn-success editar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button> -->
-                <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
-                <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+                <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${row.id_recepcion}" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
+                <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_recepcion}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
               </span>
             </td>
           </tr>`);
@@ -37,5 +36,24 @@ $(document).ready(function () {
             throw new Error("Error al mostrar listado: " + e);
         });
     }
+
+    let id;
+
+    $(document).on('click', '.eliminar', function () {
+        validarPermiso(permisos["Eliminar"]);
+        id = this.id
+    });
+
+    $('#anular').click(function () {
+        $.post("", { eliminar: '', id }, function (res) {
+            Toast.fire({ icon: "success", title: res.msg });
+            mostrar.destroy();
+            $('.cerrar').click();
+            rellenar();
+        }, "json").fail((e) => {
+            Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+            throw new Error(e.responseJSON.msg);
+        });
+    })
 
 })
