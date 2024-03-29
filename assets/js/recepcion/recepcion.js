@@ -38,6 +38,26 @@ $(document).ready(function () {
     }
 
     let id;
+    $(document).on("click", ".detalle", function () {
+        id = this.id;
+        $.getJSON("", { detalle: "", id_recepcion: id }, (res) => {
+            let tabla = "";
+            $("#Detalle h5").html(res[0].nombre_sede);
+            res.forEach((row) => {
+                tabla += `
+              <tr>
+                <td>${row.lote}</th>
+                <td>${row.id_producto_sede}</th>
+                <td>${row.cantidad}</td>
+                <td>${row.fecha_vencimiento ? row.fecha_vencimiento : ""}</td>
+              </tr>`;
+            });
+            $("#tabla_detalle tbody").html(tabla || "");
+        }).fail((e) => {
+            Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
+            throw new Error("Error al mostrar detalles: " + e);
+        });
+    });
 
     $(document).on('click', '.eliminar', function () {
         validarPermiso(permisos["Eliminar"]);

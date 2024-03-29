@@ -185,3 +185,32 @@
 </div>
 
 <!-- FINAL MODAL DE AGREGAR -->
+
+<!-- MODAL DE MOSTRAR DETALLES -->
+<div class="modal fade" id="Detalle" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header alert alert-success">
+                <h5 class="modal-title"><strong class="detalle_titulo"></strong></h5>
+                <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="modal-body">
+                <table id="tabla_detalle" class="table table-hover">
+                    <thead>
+                        <th>Lote</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Vencimiento</th>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FINAL MODAL DE MOSTRAR DETALLES -->

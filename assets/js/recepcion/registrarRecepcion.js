@@ -16,17 +16,17 @@ $(document).ready(function () {
 
             let tabla = data.reduce((acc, row) => {
                 return (acc += `
-          <tr>
-            <td>${row.id_transferencia}</th>
-            <td scope="col">${row.nombre_sede}</td>
-            <td scope="col">${row.fecha || ""}</td>
-            <td >
-              <span class="d-flex justify-content-center">
-                <button type="button" title="Registrar recepcion" class="btn btn-success registrar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Registrar"><i class="bi bi-clipboard2-plus-fill"></i></button>
-                <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
-              </span>
-            </td>
-          </tr>`);
+            <tr>
+                <td>${row.id_transferencia}</th>
+                <td scope="col">${row.nombre_sede}</td>
+                <td scope="col">${row.fecha || ""}</td>
+                <td >
+                <span class="d-flex justify-content-center">
+                    <button type="button" title="Registrar recepcion" class="btn btn-success registrar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Registrar"><i class="bi bi-clipboard2-plus-fill"></i></button>
+                    <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+                </span>
+                </td>
+            </tr>`);
             }, "");
             $("#tabla tbody").html(tabla || "");
             mostrar = $("#tabla").DataTable({ resposive: true });
@@ -115,6 +115,27 @@ $(document).ready(function () {
             throw new Error(e.responseJSON.msg);
         });
     })
+
+    $(document).on("click", ".detalle", function () {
+        id = this.id;
+        $.getJSON("?url=transferencia", { detalle: "", id_transferencia: id }, (res) => {
+            let tabla = "";
+            $("#Detalle h5").html(res[0].nombre_sede);
+            res.forEach((row) => {
+                tabla += `
+              <tr>
+                <td>${row.lote}</th>
+                <td>${row.id_producto_sede}</th>
+                <td>${row.cantidad}</td>
+                <td>${row.fecha_vencimiento ? row.fecha_vencimiento : ""}</td>
+              </tr>`;
+            });
+            $("#tabla_detalle tbody").html(tabla || "");
+        }).fail((e) => {
+            Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
+            throw new Error("Error al mostrar detalles: " + e);
+        });
+    });
 
 
 })

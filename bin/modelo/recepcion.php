@@ -62,12 +62,36 @@ class recepcion extends DBConnect {
             return ['error' => $e->getMessage()];
         }
     }
+    public function getMostrarDetalle($id_recepcion) {
+        if (preg_match_all("/^[0-9]{1,10}$/", $id_recepcion) != 1)
+            return $this->http_error(400, 'Producto invalido.');
+
+        $this->id_recepcion = $id_recepcion;
+        return $this->mostrarDetalle();
+    }
+    private function mostrarDetalle() {
+        try {
+            $this->conectarDB();
+            $sql = "SELECT s.nombre as nombre_sede, ps.lote, ps.id_producto_sede, p.cod_producto, dr.cantidad, ps.fecha_vencimiento FROM detalle_recepcion dr
+                    INNER JOIN recepcion_sede r ON r.id_recepcion = dr.id_recepcion
+                    INNER JOIN transferencia t ON r.id_transferencia = t.id_transferencia
+                    INNER JOIN producto_sede ps ON ps.id_producto_sede = dr.id_producto_sede
+                    INNER JOIN producto p ON p.cod_producto = ps.cod_producto 
+                    INNER JOIN sede s ON s.id_sede = t.id_sede
+                    WHERE r.id_recepcion = ?;";
+            $new = $this->con->prepare($sql);
+            $new->bindValue(1, $this->id_recepcion);
+            $new->execute();
+            $this->desconectarDB();
+            return $new->fetchAll(\PDO::FETCH_OBJ);
+        } catch (\PDOException $e) {
+            return $this->http_error(500, $e->getMessage());
+        }
+    }
 
     public function getDatosTransferencia($id_transferencia): array {
-        if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
-            http_response_code(400);
-            return ['resultado' => 'error', 'msg' => 'Producto invalido.'];
-        }
+        if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1)
+            return $this->http_error(400, 'Producto invalido.');
 
         $this->id_transferencia = $id_transferencia;
         return $this->datosTransferencia();
@@ -173,7 +197,7 @@ class recepcion extends DBConnect {
                     $new = $this->con->prepare($sql);
                     $new->bindValue(':sede', $this->id_sede);
                     $new->bindValue(':cantidad', $producto['cantidad']);
-                    $new->bindValue(':id_producto_sede', $this->id_sede);
+                    $new->bindValue(':id_producto_sede', $this->id_producto);
                     $new->execute();
                     $this->id_producto = $this->con->lastInsertId();
                 }
@@ -240,6 +264,22 @@ class recepcion extends DBConnect {
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id_recepcion);
             $new->execute();
+
+            $sql = "SELECT ps.id_producto_sede, dr.cantidad, ps.cantidad as inventario FROM detalle_recepcion dr
+                    INNER JOIN producto_sede ps ON ps.id_producto_sede = dr.id_producto_sede
+                    WHERE id_recepcion = ?;";
+            $new = $this->con->prepare($sql);
+            $new->bindValue(1, $this->id_recepcion);
+            $new->execute();
+            $detalle_recepcion = $new->fetchAll(\PDO::FETCH_OBJ);
+            foreach ($detalle_recepcion as $producto) {
+                $inventario = intval($producto->cantidad) - intval($producto->inventario);
+                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
+                $new->bindValue(1, $inventario);
+                $new->bindValue(2, $producto->id_producto_sede);
+                $new->execute();
+            }
+
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha anulado la recepcion correctamente.'];
         } catch (\PDOException $e) {

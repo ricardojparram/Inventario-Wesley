@@ -30,6 +30,11 @@ if (isset($_GET['mostrarTransferencias'], $_GET['bitacora'], $permiso['Consultar
     die(json_encode($res));
 }
 
+if (isset($_GET['detalle'], $_GET["id_recepcion"], $permiso['Consultar'])) {
+    $res = $model->getMostrarDetalle($_GET['id_recepcion']);
+    die(json_encode($res));
+}
+
 if (isset($_GET['datosTransferencia'], $_GET["id"], $permiso['Consultar'])) {
     $res = $model->getDatosTransferencia($_GET["id"]);
     die(json_encode($res));
