@@ -1,288 +1,56 @@
-<?php 
-   
-    namespace modelo;
-    use config\connect\DBConnect as DBConnect;
-   
-    class recepcionNacional extends DBConnect{
+<?php
 
-      private $recepcion_nacional;
-      private $proveedor;
-      private $fecha;
-      private $estado_producto;
- 
-      public function mostrarRecepciones($bitacora){
-        try{
-          $this->conectarDB();
-          $sql = "SELECT l.rif, l.razon_social, l.direccion, cl.telefono, cl.contacto, l.cod_lab FROM laboratorio l
-                  INNER JOIN contacto_lab cl ON cl.cod_lab = l.cod_lab
-                  WHERE l.status = 1;";
-          $new = $this->con->prepare($sql);
-          $new->execute();
-          $data = $new->fetchAll(\PDO::FETCH_OBJ);
-          if($bitacora == "true") $this->binnacle("Laboratorio",$_SESSION['cedula'],"Consultó listado.");
-          $this->desconectarDB();
-          return $data;
+namespace modelo;
 
-        }catch(\PDOException $e){
-          return ['error' => $e->getMessage()];
-        }
-      } 
+use config\connect\DBConnect as DBConnect;
+use utils\validar;
 
-      public function getDatosLab($rif, $direccion, $razon, $telefono, $contacto){
+class recepcionNacional extends DBConnect {
+  use validar;
+  private $id_rep_nacional;
+  private $proveedor;
+  private $fecha;
+  private $estado_producto;
 
-        if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1){
-          return ['resultado' => 'error','msg' => 'Rif inválido.'];
-        }
-        if(preg_match_all("/^[a-zA-ZÀ-ÿ]{5,30}$/", $razon) != 1){
-          return ['resultado' => 'error','msg' => 'Nombre inválido.'];
-        }
-        if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){7,160}$/', $direccion) != 1){
-          return ['resultado' => 'error','msg' => 'Direccion inválida.'];
-        }
-        if(preg_match_all("/^[0-9]{10,30}$/", $telefono) != 1){
-          return ['resultado' => 'error','msg' => 'Telefono inválido.'];
-        }
-        if(preg_match_all("/^[^';]*$/", $contacto) != 1){
-          return ['resultado' => 'error','msg' => 'Contacto inválido.'];
-        }
-
-        $this->rif = $rif;
-        $this->direccion = $direccion;
-        $this->razon = $razon;
-        $this->telefono = $telefono;
-        $this->contacto = $contacto;
-
-        $this->idedit = false;
-        $validarRif = $this->validarRif();
-        if($validarRif['res'] === false) return ["resultado" => "error", "msg" => "Rif ya registrado"];
-
-        return $this->registrarLab();
-
-      }
-
-      private function registrarLab(){
-
-        try{
-          $this->conectarDB();
-          $pk = $this->uniqueID();
-          $new = $this->con->prepare("INSERT INTO laboratorio(cod_lab,rif,direccion,razon_social,status) VALUES(?,?,?,?,1)");
-          $new->bindValue(1, $pk);
-          $new->bindValue(2, $this->rif); 
-          $new->bindValue(3, $this->direccion); 
-          $new->bindValue(4, $this->razon);
-          $new->execute();
-
-          $new = $this->con->prepare("INSERT INTO contacto_lab(id_contacto_lab, telefono, contacto, cod_lab) VALUES (DEFAULT, ?, ?, ?)");
-          $new->bindValue(1, $this->telefono);
-          $new->bindValue(2, $this->contacto);
-          $new->bindValue(3, $pk);
-          $new->execute();
-          $resultado = ['resultado' => 'ok', 'msg' => "Laboratorio registrado."];
-          $this->binnacle("Laboratorio",$_SESSION['cedula'],"Registró laboratorio.");
-          $this->desconectarDB();
-          return $resultado;            
-
-        }catch(\PDOException $error){
-          print "¡Error!: " . $e->getMessage() . "<br/>";
-          die();
-        } 
-
-      }
-
-      public function getRif($rif, $idLab){
-
-        if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1){
-          return ['resultado' => 'error','msg' => 'Rif inválido.'];
-        }
-
-        $this->idedit = ($idLab === "false") ? false : $idLab;
-        $this->rif = $rif;
-
-        return $this->validarRif();
-      }
-
-      private function validarRif(){
-
-        try {
-          $this->conectarDB();
-
-          if($this->idedit === false){
-            $new = $this->con->prepare('SELECT rif FROM laboratorio WHERE status = 1 and rif = ?');
-            $new->bindValue(1, $this->rif);
-          }else{
-            $new = $this->con->prepare('SELECT rif FROM laboratorio WHERE status = 1 and rif = ? AND cod_lab != ?');
-            $new->bindValue(1, $this->rif);
-            $new->bindValue(2, $this->idedit);
-          }
-          
-          $new->execute();
-          $data = $new->fetchAll();
-
-          $resultado;
-          if(isset($data[0]['rif'])){
-            $resultado = ['resultado' => 'error', 'msg' => 'El rif ya está registrado.', 'res' => false];
-          }else{
-            $resultado = ['resultado' => 'Rif válido.', 'res' => true];
-          }
-          $this->desconectarDB();
-          return $resultado;
-
-        } catch (PDOException $e) {
-          print "¡Error!: " . $e->getMessage() . "<br/>";
-          die();
-        }
-
-      }
-
-
-      public function getItem($id){
-
-        if(preg_match_all("/^[a-fA-F0-9]{10}$/", $id) != 1){
-          return ['resultado' => 'error','msg' => 'Id inválida.'];
-        }
-
-        $this->id = $id;
-
-        return $this->selectItem();
-      }
-
-      private function selectItem(){
-
-        try{
-          $this->conectarDB();
-          $sql = "SELECT * FROM laboratorio l 
-          INNER JOIN contacto_lab cl ON l.cod_lab = cl.cod_lab 
-          WHERE l.status = 1 and l.cod_lab = ? ;";
-          $new = $this->con->prepare($sql);
-          $new->bindValue(1, $this->id);
-          $new->execute();
-          $data = $new->fetchAll(\PDO::FETCH_OBJ);
-          $this->desconectarDB();
-          return $data;
-
-        }catch(\PDOException $e){
-          print "¡Error!: " . $e->getMessage() . "<br/>";
-          die();
-        }
-
-      }
-
-      public function getEditar($rif, $direccion, $razon, $telefono, $contacto, $id){
-
-        if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1){
-          return ['resultado' => 'error','msg' => 'Rif inválido.'];
-        }
-        if(preg_match_all("/^[a-zA-ZÀ-ÿ]{5,30}$/", $razon) != 1){
-          return ['resultado' => 'error','msg' => 'Nombre inválido.'];
-        }
-        if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\"\/,.-]){7,160}$/', $direccion) != 1){
-          return ['resultado' => 'error','msg' => 'Direccion inválida.'];
-        }
-        if(preg_match_all("/^[0-9]{10,30}$/", $telefono) != 1){
-          return ['resultado' => 'error','msg' => 'Telefono inválido.'];
-        }
-        if(preg_match_all("/^[a-fA-F0-9]{10}$/", $id) != 1){
-          return ['resultado' => 'error','msg' => 'Id inválida.'];
-        }
-        if(preg_match_all("/^[^';]*$/", $contacto) != 1){
-          return ['resultado' => 'error','msg' => 'Contacto inválido.'];
-        }
-
-        $this->rif = $rif;
-        $this->direccion = $direccion;
-        $this->razon = $razon;
-        $this->telefono = $telefono;
-        $this->contacto = $contacto;
-        $this->idedit = $id;
-
-        $validarRif = $this->validarRif();
-        if($validarRif['res'] === false) return ["resultado" => "error", "msg" => "Rif ya registrado"];
-
-        return $this->editarLaboratorio();
-      }
-
-      private function editarLaboratorio(){
-
-        try{
-          $this->conectarDB();
-          $sql = "UPDATE laboratorio l
-          INNER JOIN contacto_lab cl ON l.cod_lab = cl.cod_lab
-          SET l.rif = ? , l.direccion = ? , l.razon_social = ? , cl.telefono = ?, cl.contacto = ?
-          WHERE l.cod_lab = ?";
-          $new = $this->con->prepare($sql);
-          $new->bindValue(1, $this->rif);
-          $new->bindValue(2, $this->direccion);
-          $new->bindValue(3, $this->razon);
-          $new->bindValue(4, $this->telefono);
-          $new->bindValue(5, $this->contacto);
-          $new->bindValue(6, $this->idedit);
-          $new->execute();
-          $resultado = ['resultado' => 'ok', "msg" => "Laboratorio editado correctamente."];
-          $this->binnacle("Laboratorio",$_SESSION['cedula'],"Editó laboratorio.");
-          $this->desconectarDB();
-          return $resultado;
-
-        }catch(\PDOException $error){
-          print "¡Error!: " . $e->getMessage() . "<br/>";
-          die();
-        }
-
-      } 
-
-
-      public function getEliminar($id){
-        if(preg_match_all("/^[a-fA-F0-9]{10}$/", $id) != 1){
-          return ['resultado' => 'error','msg' => 'Id inválida.'];
-        }
-
-        $this->id = $id;
-
-        return $this->eliminarLaboratorio();
-      }
-
-      private function eliminarLaboratorio(){
-        try{
-          $this->conectarDB();
-          $new = $this->con->prepare("UPDATE laboratorio SET status = 0 WHERE laboratorio.cod_lab = ?; ");
-          $new->bindValue(1, $this->id);
-          $new->execute();
-          $resultado = ['resultado' => 'ok', 'msg' => "Laboratorio eliminado correctamente."];
-          $this->binnacle("Laboratorio",$_SESSION['cedula'],"Eliminó laboratorio.");
-          $this->desconectarDB();
-          return $resultado;
-
-        }catch(\PDOException $e){
-          print "¡Error!: " . $e->getMessage() . "<br/>";
-          die();
-        }
-
-      }
-
-      public function getIdLaboratorioByRif($rif){
-        if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1){
-          return ['resultado' => 'error','msg' => 'Rif inválido.'];
-        }
-        $this->rif = $rif;
-
-        return $this->gettingIdTest();
-      }
-
-      private function gettingIdTest(){
-        try {
-
-          $this->conectarDB();
-          $sql = "SELECT cod_lab FROM laboratorio WHERE rif = ? AND status = 1";
-          $new = $this->con->prepare($sql);
-          $new->bindValue(1, $this->rif);
-          $new->execute();
-          [$data] = $new->fetchAll(\PDO::FETCH_OBJ);
-          
-          return ['resultado' => "ok", "id"=> $data->cod_lab];
-
-        } catch (\PDOException $e) {
-          die($e);
-        }
-      }
+  public function mostrarRecepciones($bitacora) {
+    try {
+      $this->conectarDB();
+      $sql = "SELECT rn.id_rep_nacional, p.razon_social, rn.fecha FROM recepcion_nacional rn
+              INNER JOIN proveedor p ON p.rif_proveedor = rn.id_proveedor;
+              WHERE rn.status = 1;";
+      $new = $this->con->prepare($sql);
+      $new->execute();
+      // if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
+      $this->desconectarDB();
+      return $new->fetchAll(\PDO::FETCH_OBJ);;
+    } catch (\PDOException $e) {
+      return ['error' => $e->getMessage()];
+    }
   }
 
-?>
+  public function getMostrarDetalle($id_rep_nacional) {
+    if (preg_match_all("/^[0-9]{1,10}$/", $id_rep_nacional) != 1)
+      return $this->http_error(400, 'Producto invalido.');
+
+    $this->id_rep_nacional = $id_rep_nacional;
+
+    return $this->mostrarDetalle();
+  }
+  private function mostrarDetalle() {
+    try {
+      $this->conectarDB();
+      $sql = "SELECT drn.cantidad, p.razon_social, ps.presentacion_producto, ps.lote, ps.fecha_vencimiento FROM recepcion_nacional rn
+      INNER JOIN detalle_recepcion_nacional drn ON drn.id_rep_nacional = rn.id_rep_nacional
+      INNER JOIN proveedor p ON p.rif_proveedor = rn.id_proveedor
+      INNER JOIN vw_producto_sede_detallado ps ON ps.id_producto_sede = drn.id_producto_sede
+      WHERE rn.id_rep_nacional = ?;";
+      $new = $this->con->prepare($sql);
+      $new->bindValue(1, $this->id_rep_nacional);
+      $new->execute();
+      $this->desconectarDB();
+      return $new->fetchAll(\PDO::FETCH_OBJ);
+    } catch (\PDOException $e) {
+      return ['error' => $e->getMessage()];
+    }
+  }
+}
