@@ -60,11 +60,13 @@ $(document).ready(function () {
     });
 
     fechaHoy($("#fecha"));
+    $(".cantidad input").inputmask("cantidad");
+    $(".fecha input").inputmask("fecha");
 
     const mostrarProductos = () => {
         $.getJSON("", { select_producto: "" }, (data) => {
             let option = data.reduce((acc, row) => {
-                return (acc += `<option value="${row.id_producto_sede}">${row.lote}</option>`);
+                return (acc += `<option value="${row.cod_producto}">${row.presentacion_producto}</option>`);
             }, "");
             $(".select-productos").each(function () {
                 if (this.children.length == 1) {
@@ -84,7 +86,6 @@ $(document).ready(function () {
     const validarProductosRepetidos = (status = true) => {
         let validacion = [];
         let $select = document.querySelectorAll('.select-productos');
-        console.log($select.length)
         if ($select.length < 1) {
             $('#error').html('No hay filas.');
             return false
@@ -97,7 +98,6 @@ $(document).ready(function () {
         productosRepetidos = productos.filter((elemento, index) => productos.indexOf(elemento) !== index);
         $(".select-productos").each(function () {
             if (this.value === "" || this.value === null) {
-                console.log(this);
                 if (status != true) {
                     $(this).closest('td').find('div.chosen-container').addClass('input-error')
                 }
@@ -112,6 +112,22 @@ $(document).ready(function () {
         })
         return !validacion.includes(false);
     }
+    const validarProductos = () => {
+        let validacion = [];
+        $("input.select-asd").each(function () {
+            if (this.value === "" || this.value === null) {
+                console.log(this);
+                $(this).addClass('input-error')
+                validacion.push(false);
+            } else if ($(this).hasClass('vencimiento')) {
+                validarFecha($(this), $('.floating-error'), 'Error de fecha,');
+            } else {
+                $(this).removeClass('input-error')
+                validacion.push(true);
+            }
+        })
+        return !validacion.includes(false);
+    }
 
     const mostrarInventarioProducto = (item) => {
         let $cantidad = $(item).closest('tr').find('.cantidad input');
@@ -121,39 +137,27 @@ $(document).ready(function () {
         })
     }
 
-    const validarInventario = async (item) => {
-        let $cantidad = $(item);
-        let $error = $(item).next();
-        let producto_inventario = $cantidad.closest('tr').find('.select-productos').val();
-        let cantidad = item.value;
-        let valid = false;
-        if (!Number.isInteger(Number(cantidad))) return false;
-        await $.getJSON('', { producto_inventario }, function (data) {
-            if (cantidad > data[0].cantidad) {
-                $error.html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
-                    .removeClass("d-none");
-                valid = false;
-            } else {
-                $error.addClass("d-none");
-                valid = true;
-            }
-        })
-        return valid;
-    }
-
     const filaPlantilla = `
     <tr>
-      <td width="1%"><a class="eliminarFila a-asd" role="button"><i class="bi bi-trash-fill"></i></a></td>
-      <td width='30%' class="position-relative">
-        <select class="select-productos select-asd" name="producto">
-          <option></option>
-        </select>
-        <span class="d-none floating-error">error</span>
-      </td>
-      <td class="cantidad position-relative">
-        <input class="select-asd" type="number" value="" />
-        <span class="d-none floating-error">error</span>
-      </td>
+        <td width="1%"><a class="eliminarFila a-asd" role="button"><i class="bi bi-trash-fill"></i></a></td>
+        <td width='30%' class="position-relative">
+            <select class="select-productos select-asd" name="producto">
+            <option></option>
+            </select>
+            <span class="d-none floating-error">error</span>
+        </td>
+        <td class="lote position-relative">
+            <input class="select-asd" type="text" value="" />
+            <span class="d-none floating-error">error</span>
+        </td>
+        <td class="cantidad position-relative">
+            <input class="select-asd" type="text" value="" />
+            <span class="d-none floating-error">error</span>
+        </td>
+        <td class="fecha position-relative">
+            <input class="select-asd vencimiento" type="text" value="" />
+            <span class="d-none floating-error">error</span>
+        </td>
     </tr>`;
 
     const agregarFila = () => {
@@ -166,6 +170,8 @@ $(document).ready(function () {
     $(".agregarFila").on("click", function (e) {
         agregarFila();
         validarProductosRepetidos();
+        $(".cantidad input").inputmask("cantidad");
+        $(".fecha input").inputmask("fecha");
     });
 
     /* Evento de cambio en los productos */
@@ -176,7 +182,7 @@ $(document).ready(function () {
 
     /* Evento de cambio en la cantidad*/
     $(document).on("change", ".cantidad input", function () {
-        validarInventario(this)
+        // validarInventario(this)
     });
 
     /* Evento Eliminar fila */
@@ -188,26 +194,29 @@ $(document).ready(function () {
     const getProductos = () => {
         return Object.values(document.querySelectorAll('.select-productos')).map(item => {
             let cantidad = $(item).closest('tr').find('.cantidad input').val();
-            return { id_producto: item.value, cantidad };
+            let lote = $(item).closest('tr').find('.lote input').val();
+            let fecha_vencimiento = $(item).closest('tr').find('.fecha input').val();
+            return { id_producto: item.value, lote, cantidad, fecha_vencimiento };
         });
     }
     let valid_sede, valid_fecha;
-    $('#sede').change(() => valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,"))
+    // $('#proveedor').change(() => valid_proveedor = validarCedula($('#sede'), $('#error1'), "Error de sede,"))
     $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
     $('#registrar').click(function (e) {
         e.preventDefault();
 
-        valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,");
+        // valid_proveedor = validarNumero($('#sede'), $('#error1'), "Error de sede,");
         valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
         let valid_productos = validarProductosRepetidos(false);
-        let valid_cantidad = validarInventario();
-
-        if (!valid_sede || !valid_fecha || !valid_productos || !valid_cantidad) return;
+        let valid_lotes_cantidad = validarProductos();
 
         productos = getProductos();
+        console.log(productos)
+        if (/*!valid_proveedor ||*/ !valid_fecha || !valid_productos || !valid_lotes_cantidad) return;
+
         let data = {
             registrar: '',
-            sede: $("#sede").val(),
+            proveedor: $("#proveedor").val(),
             fecha: $("#fecha").val(),
             productos,
         };

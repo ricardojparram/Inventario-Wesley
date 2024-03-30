@@ -9,6 +9,7 @@
   <?php $VarComp->header(); ?>
   <link rel="stylesheet" href="assets/css/estiloInterno.css">
   <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet" href="assets/css/chosen.min.css">
 </head>
 
 <body>
@@ -88,6 +89,7 @@
 
 <?php $VarComp->js(); ?>
 
+<script src="assets/js/chosen.jquery.min.js"></script>
 <script src="assets/js/recepcionNacional.js"></script>
 
 </html>
@@ -129,7 +131,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header alert alert-success">
-        <h3 class="modal-title"> <strong>Registrar Transferencia</strong> </h3>
+        <h3 class="modal-title"> <strong>Registrar Recepcion Nacional</strong> </h3>
         <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
       </div>
 
@@ -141,16 +143,16 @@
               <div class="row">
 
                 <div class="form-group col-md-6">
-                  <label for="sede" class="col-sm-3 col-form-label"><strong>Sede</strong></label>
+                  <label for="sede" class="col-sm-3 col-form-label"><strong>Proveedor</strong></label>
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione la sede que recibirá los productos."><i class="bi bi-person-fill"></i></button>
-                    <select class="form-control select2" placeholder="Sede de recepcion" id="sede">
-                      <option value="0" selected disabled>Sede de recepción</option>
+                    <select class="form-control select2" placeholder="Proveedor de los productos" id="proveedor">
+                      <option value="0" selected disabled>Proveedor</option>
                       <?php
-                      if (isset($sedes)) {
-                        foreach ($sedes as $sede) {
+                      if (isset($proveedores)) {
+                        foreach ($proveedores as $proveedor) {
                       ?>
-                          <option value="<?= $sede->id_sede; ?>" class="opcion"><?= $sede->nombre; ?></option>
+                          <option value="<?= $proveedor->rif_proveedor; ?>" class="opcion"><?= "$proveedor->razon_social $proveedor->rif_proveedor"; ?></option>
                       <?php
                         }
                       }
@@ -165,7 +167,7 @@
                   <label class="col-form-label" for="fecha"><strong>Fecha</strong></label>
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Fecha en la que se hace la transferencia"><i class="bi bi-calendar2-date"></i></button>
-                    <input class="form-control" type="date" id="fecha" />
+                    <input class="form-control" disabled type="date" id="fecha" />
                   </div>
                   <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
                 </div>
@@ -185,7 +187,9 @@
                         <tr>
                           <th></th>
                           <th>Producto</th>
+                          <th>Lote</th>
                           <th>Cantidad</th>
+                          <th>Vencimiento</th>
                         </tr>
                       </thead>
                       <tbody id="tablaSeleccionarProductos">
@@ -197,8 +201,16 @@
                             </select>
                             <span class="d-none floating-error">error</span>
                           </td>
+                          <td class="lote position-relative">
+                            <input class="select-asd" type="text" value="" />
+                            <span class="d-none floating-error">error</span>
+                          </td>
                           <td class="cantidad position-relative">
-                            <input class="select-asd" type="number" value="" />
+                            <input class="select-asd" type="text" value="" />
+                            <span class="d-none floating-error">error</span>
+                          </td>
+                          <td class="fecha position-relative">
+                            <input class="select-asd  vencimiento" type="text" value="" />
                             <span class="d-none floating-error">error</span>
                           </td>
                         </tr>
