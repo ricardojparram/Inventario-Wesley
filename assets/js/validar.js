@@ -5,6 +5,7 @@ const expresiones = {
 	direccion: /^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#/,.-]){7,160}$/,
 	cedula: /^[0-9]{7,10}$/,
 	fecha: /^([0-9]{4}\-[0-9]{2}\-[0-9]{2})$/,
+	fechaES: /^([0-9]{2}\/[0-9]{2}\/[0-9]{4})$/,
 	datetime: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/,
 	numero: /^([0-9]+\.+[0-9]|[0-9])+$/,
 	string: /^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9/#\s,.-]){3,50}$/,
@@ -477,21 +478,26 @@ function validarSelec2(input, select, div, mensaje) {
 
 function validarFecha(input, div, mensaje) {
 	parametro = input.val();
-	let valid = (input.attr('type') == "datetime-local")
-		? expresiones.datetime.test(parametro)
-		: expresiones.fecha.test(parametro);
+	let valid = {
+		'date': expresiones.fecha.test(parametro),
+		"datetime-local": expresiones.datetime.test(parametro),
+		"text": expresiones.fechaES.test(parametro)
+	}
 
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir una fecha")
-		input.attr("style", "border-color: red;")
+		// input.attr("style", "border-color: red;")
+		input.addClass('input-error');
 		return false
-	} else if (!valid) {
-		div.text(mensaje + " introdusca una fecha")
-		input.attr("style", "border-color: red;")
+	} else if (!valid[input.attr('type')]) {
+		div.text(mensaje + " introduzca una fecha")
+		// input.attr("style", "border-color: red;")
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
+		// input.attr("style", "border-color: none;")
+		input.removeClass('input-error');
 		return true
 	}
 }
