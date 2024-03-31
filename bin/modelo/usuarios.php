@@ -28,27 +28,27 @@ class usuarios extends DBConnect
   {
 
     if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $name) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Nombre invalido.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
       return $resultado;
     }
     if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $apellido) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Apellido invalido.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
       return $resultado;
     }
     if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Cédula invalida.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Cédula invalida.'];
       return $resultado;
     }
     if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Correo invalida.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
       return $resultado;
     }
     if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Correo invalida.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
       return $resultado;
     }
     if (preg_match_all("/^[0-9]{1,2}$/", $tipoUsuario) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'rol invalido.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'rol invalido.'];
       return $resultado;
     }
 
@@ -107,7 +107,7 @@ class usuarios extends DBConnect
         parent::desconectarDB();
         
       } else {
-        $resultado = ['resultado' => 'error', 'error' => 'error desconocido.'];
+        $resultado = ['resultado' => 'Error', 'error' => 'error desconocido.'];
       }
       return $resultado;
       
@@ -125,7 +125,7 @@ class usuarios extends DBConnect
 
     try {
       parent::conectarDB();
-      $query = "SELECT u.cedula as cedulaE, u.cedula, u.nombre, u.apellido, u.correo, u.rol FROM usuario u WHERE u.status = 1";
+      $query = "SELECT u.cedula, u.nombre, u.apellido, u.correo, r.nombre as rol FROM usuario u INNER JOIN rol r ON u.rol = r.id_rol WHERE u.status = 1";
 
       $new = $this->con->prepare($query);
       $new->execute();
@@ -201,13 +201,14 @@ class usuarios extends DBConnect
   private function seleccionarUnico()
   {
     try {
+      parent::conectarDB();
       $new = $this->con->prepare("SELECT cedula, nombre, apellido, correo, rol FROM `usuario` WHERE `usuario`.`cedula` = ?");
       $new->bindValue(1, $this->cedula);
       $new->execute();
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
 
-      $data[0]->cedula = openssl_decrypt($data[0]->cedula, $this->cipher, $this->key, 0, $this->iv);
-      $data[0]->correo = openssl_decrypt($data[0]->correo, $this->cipher, $this->key, 0, $this->iv);
+      // $data[0]->cedula = openssl_decrypt($data[0]->cedula, $this->cipher, $this->key, 0, $this->iv);
+      // $data[0]->correo = openssl_decrypt($data[0]->correo, $this->cipher, $this->key, 0, $this->iv);
       
       parent::desconectarDB();
 
@@ -223,27 +224,29 @@ class usuarios extends DBConnect
   {
 
     if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $name) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Nombre invalido.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
       return $resultado;
     }
     if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $apellido) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Apellido invalido.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
       return $resultado;
     }
     if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Cédula invalida.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Cédula invalida.'];
       return $resultado;
     }
     if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Correo invalida.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
       return $resultado;
     }
-    if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'Contraseña invalida.'];
-      return $resultado;
+    if ($password != "") {
+      if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
+        $resultado = ['resultado' => 'Error', 'error' => 'Contraseña invalida.'];
+        return $resultado;
+      }
     }
     if (preg_match_all("/^[0-9]{1,2}$/", $tipoUsuario) == false) {
-      $resultado = ['resultado' => 'error', 'error' => 'rol invalido.'];
+      $resultado = ['resultado' => 'Error', 'error' => 'rol invalido.'];
       return $resultado;
     }
 
@@ -262,16 +265,21 @@ class usuarios extends DBConnect
   {
 
     try {
-      $this->password = password_hash($this->password, PASSWORD_BCRYPT);
       parent::conectarDB();
-      $new = $this->con->prepare("UPDATE `usuario` SET `cedula`= ?,`nombre`= ?,`apellido`= ?,`correo`= ?,`password`=?,`rol`=? WHERE `usuario`.`cedula` = ?");
+      if ($this->password != "") {
+        $this->password = password_hash($this->password, PASSWORD_BCRYPT);
+        $new = $this->con->prepare("UPDATE `usuario` SET `password`=? WHERE `usuario`.`cedula` = ?");
+        $new->bindValue(1, $this->password);
+        $new->bindValue(2, $this->id);
+        $new->execute();
+      }
+      $new = $this->con->prepare("UPDATE `usuario` SET `cedula`= ?,`nombre`= ?,`apellido`= ?,`correo`= ?,`rol`=? WHERE `usuario`.`cedula` = ?");
       $new->bindValue(1, $this->cedula);
       $new->bindValue(2, $this->name);
       $new->bindValue(3, $this->apellido);
       $new->bindValue(4, $this->email);
-      $new->bindValue(5, $this->password);
-      $new->bindValue(6, $this->rol);
-      $new->bindValue(7, $this->id);
+      $new->bindValue(5, $this->rol);
+      $new->bindValue(6, $this->id);
       $new->execute();
       $resultado = ['resultado' => 'Editado'];
       $this->binnacle("Usuario", $_SESSION['cedula'], "Editó un usuario");
