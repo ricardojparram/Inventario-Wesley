@@ -30,7 +30,7 @@ class recepcionNacional extends DBConnect {
   }
 
   public function getMostrarDetalle($id_rep_nacional) {
-    if (preg_match_all("/^[0-9]{1,10}$/", $id_rep_nacional) != 1)
+    if (!$this->validarString('entero', $id_rep_nacional))
       return $this->http_error(400, 'Producto invalido.');
 
     $this->id_rep_nacional = $id_rep_nacional;
@@ -106,10 +106,16 @@ class recepcionNacional extends DBConnect {
     //   return $this->http_error(400, 'Transferencia inválida.');
 
     $fecha =  date('Y-m-d', strtotime($fecha));
-    if ($this->validarFecha($fecha, 'Y-m-d') !== true)
+    if (!$this->validarFecha($fecha, 'Y-m-d'))
       return $this->http_error(400, 'Fecha inválida.');
 
-    if (!is_array($productos))
+    $estructura_productos = [
+      'id_producto' => 'string',
+      'fecha_vencimiento' => 'string',
+      'lote' => 'string',
+      'cantidad' => 'string'
+    ];
+    if (!$this->validarEstructuraArray($productos, $estructura_productos, true))
       return $this->http_error(400, 'Productos inválidos.');
 
     $this->id_proveedor = $id_proveedor;
@@ -176,8 +182,8 @@ class recepcionNacional extends DBConnect {
   }
 
   public function getEliminarRecepcionNacional($id_rep_nacional): array {
-    if (preg_match_all("/^[0-9]{1,10}$/", $id_rep_nacional) != 1)
-      return $this->http_error(400, 'Transferencia inválida.');
+    if (!$this->validarString('entero', $id_rep_nacional))
+      return $this->http_error(400, 'Recepción nacional inválida.');
 
     $this->id_rep_nacional = $id_rep_nacional;
 
