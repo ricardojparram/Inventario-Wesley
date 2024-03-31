@@ -4,6 +4,39 @@ INSERT INTO moneda (id_moneda, nombre, valor, status) VALUES
 (1, 'Dolar', 0, 1),
 (2, 'Euro', 0, 1);
 
+INSERT INTO sede (id_sede, nombre, telefono, direccion, status) VALUES
+(1, 'Sede Cabudare (Principal)', '04127774522', 'Cabudare', 1),
+(2, 'Sede Coro', '04121381283', 'Coro', 1),
+(3, 'Sede Lara', '04121020312', 'La Rotaria', 1);
+
+INSERT INTO clase (id_clase, nombre_c, status) VALUES
+(1, 'Antiinflamatorio', 1),
+(2, 'Antidepresivo', 1);
+
+INSERT INTO tipo_producto (id_tipoprod, nombrepro, status) VALUES
+(1, 'Acetaminofén', 1),
+(2, 'Omeprazol', 1),
+(3, 'Ibuprofeno', 1);
+
+INSERT INTO tipo (id_tipo, nombre_t, status) VALUES
+(1, 'Pediatrico', 1),
+(2, 'Adulto', 1);
+
+INSERT INTO medida (id_medida, nombre, status) VALUES
+(1, 'mg', 1),
+(2, 'ml', 1);
+
+INSERT INTO presentacion (cod_pres, cantidad, id_medida, peso, status) VALUES
+(1, 12, 1, 20.00, 1),
+(2, 10, 1, 200.00, 1);
+
+INSERT INTO producto (cod_producto, id_tipoprod, ubicacion, composicion, posologia, id_tipo, id_clase, cod_pres, status) VALUES
+('1', 1, 'Pastillo A1', ' C8H9NO2', 'La dosis habitual es de 325 mg a 650 mg. Tómelo con una frecuencia de 4 a 6 horas, según sea necesario, hasta 4 veces en un período de 24 horas. La dosis máxima puede variar entre 3,000 mg y 4,000 mg', 2, 1, 1, 1),
+('2', 3, 'Pastillo B2', 'C13H18O2', 'En adultos y adolescentes de 14 a 18 años se toma un comprimido (600 mg) cada 6 a 8 horas, dependiendo de la intensidad del cuadro y de la respuesta al tratamiento.', 2, 1, 2, 1);
+
+INSERT INTO producto_sede (id_producto_sede, cod_producto, lote, fecha_vencimiento, id_sede, cantidad) VALUES
+(1, '2', '000001', '2026-03-25', 1, 200),
+(2, '1', '000002', '2024-05-17', 1, 300);
 
 INSERT INTO rol (id_rol, nombre, status) VALUES
 (1, 'Administrador', 1),

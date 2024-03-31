@@ -30,13 +30,14 @@ $(document).ready(function () {
           </td>
         </tr>`);
       }, "");
-      $("#tabla tbody").html(tabla ? tabla : "");
+      $("#tabla tbody").html(tabla || "");
       mostrar = $("#tabla").DataTable({ resposive: true });
     }).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
     });
   }
+
   let id;
   $(document).on("click", ".detalle", function () {
     id = this.id;
@@ -81,18 +82,28 @@ $(document).ready(function () {
   };
 
   let productosRepetidos, productos;
-  function validarProductosRepetidos() {
+  const validarProductosRepetidos = (status = true) => {
     let validacion = [];
+    let $select = document.querySelectorAll('.select-productos');
+    console.log($select.length)
+    if ($select.length < 1) {
+      $('#error').html('No hay filas.');
+      return false
+    } else {
+      $('#error').html('');
+    }
     productos = Object.values(document.querySelectorAll('.select-productos')).map(item => {
       return item.value;
     });
     productosRepetidos = productos.filter((elemento, index) => productos.indexOf(elemento) !== index);
     $(".select-productos").each(function () {
-      if (this.value === "") {
-        $(this).closest('td').find('div.chosen-container').addClass('input-error')
+      if (this.value === "" || this.value === null) {
+        console.log(this);
+        if (status != true) {
+          $(this).closest('td').find('div.chosen-container').addClass('input-error')
+        }
         validacion.push(false);
-      }
-      if (productosRepetidos.includes(this.value)) {
+      } else if (productosRepetidos.includes(this.value)) {
         $(this).closest('td').find('div.chosen-container').addClass('input-error')
         validacion.push(false);
       } else {
@@ -104,11 +115,31 @@ $(document).ready(function () {
   }
 
   const mostrarInventarioProducto = (item) => {
-    $cantidad = $(item).closest('tr').find('.cantidad input');
-    producto_inventario = item.value;
+    let $cantidad = $(item).closest('tr').find('.cantidad input');
+    let producto_inventario = item.value;
     $.getJSON('', { producto_inventario }, function (data) {
       $cantidad.val(data[0].cantidad);
     })
+  }
+
+  const validarInventario = async (item) => {
+    let $cantidad = $(item);
+    let $error = $(item).next();
+    let producto_inventario = $cantidad.closest('tr').find('.select-productos').val();
+    let cantidad = item.value;
+    let valid = false;
+    if (!Number.isInteger(Number(cantidad))) return false;
+    await $.getJSON('', { producto_inventario }, function (data) {
+      if (cantidad > data[0].cantidad) {
+        $error.html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
+          .removeClass("d-none");
+        valid = false;
+      } else {
+        $error.addClass("d-none");
+        valid = true;
+      }
+    })
+    return valid;
   }
 
   const filaPlantilla = `
@@ -120,7 +151,10 @@ $(document).ready(function () {
       </select>
       <span class="d-none floating-error">error</span>
     </td>
-    <td class="cantidad"><input class="select-asd" type="number" value="" /></td>
+    <td class="cantidad position-relative">
+      <input class="select-asd" type="number" value="" />
+      <span class="d-none floating-error">error</span>
+    </td>
   </tr>`;
 
   const agregarFila = () => {
@@ -132,13 +166,18 @@ $(document).ready(function () {
   /* Evento Agregar fila */
   $(".agregarFila").on("click", function (e) {
     agregarFila();
-
+    validarProductosRepetidos();
   });
 
   /* Evento de cambio en los productos */
   $(document).on("change", ".select-productos", function () {
     validarProductosRepetidos();
     mostrarInventarioProducto(this);
+  });
+
+  /* Evento de cambio en la cantidad*/
+  $(document).on("change", ".cantidad input", function () {
+    validarInventario(this)
   });
 
   /* Evento Eliminar fila */
@@ -153,15 +192,18 @@ $(document).ready(function () {
       return { id_producto: item.value, cantidad };
     });
   }
-
+  let valid_sede, valid_fecha;
+  $('#sede').change(() => valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,"))
+  $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
   $('#registrar').click(function (e) {
     e.preventDefault();
 
-    let valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,");
-    let valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
-    let valid_productos = validarProductosRepetidos();
+    valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,");
+    valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
+    let valid_productos = validarProductosRepetidos(false);
+    let valid_cantidad = validarInventario();
 
-    if (!valid_sede || !valid_fecha || !valid_productos) return;
+    if (!valid_sede || !valid_fecha || !valid_productos || !valid_cantidad) return;
 
     productos = getProductos();
     let data = {

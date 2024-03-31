@@ -30,7 +30,7 @@ if (isset($_GET['select_producto'])) {
 }
 
 if (isset($_GET['producto_inventario'], $permiso['Consultar'])) {
-	$res = $model->mostrarProductoInventario($_GET['producto_inventario']);
+	$res = $model->getMostrarProductoInventario($_GET['producto_inventario']);
 	die(json_encode($res));
 }
 

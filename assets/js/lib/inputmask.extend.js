@@ -10,10 +10,10 @@ Inputmask.extendDefinitions({
   'a': {
     validator: "[ A-Za-zA-ZÀ-ÿ\u00f1\u00d1]",
   },
-  'x' : {
+  'x': {
     validator: "[ a-zA-ZÀ-ÿ0-9#/,.-]",
   },
-  'V' : {
+  'V': {
     validator: "[JEVjev]",
     casing: "upper"
   }
@@ -28,12 +28,21 @@ Inputmask.extendAliases({
     mask: "J-9{7,10}",
     placeholder: " ",
   },
-  'direccion' : {
+  'direccion': {
     mask: "Ax{7,200}",
     placeholder: " ",
   },
-  'cedula' : {
+  'cedula': {
     mask: "V-9{7,10}",
     placeholder: "V-12345789"
+  },
+  'cantidad': {
+    mask: "9{1,10}",
+    placeholder: " "
+  },
+  'fecha': {
+    alias: "datetime",
+    placeholder: "dd/mm/aaaa",
+    inputFormat: "dd/mm/yyyy"
   }
 });

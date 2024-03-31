@@ -588,7 +588,7 @@ CREATE TABLE detalle_pago (
 CREATE TABLE recepcion_sede (
   id_recepcion int(11) AUTO_INCREMENT PRIMARY KEY,
   id_transferencia int(11) NOT NULL,
-  fecha date NOT NULL,
+  fecha datetime NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -599,11 +599,11 @@ CREATE TABLE recepcion_sede (
 --
 
 CREATE TABLE detalle_recepcion (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
+  id_recepcion int(11) NOT NULL,
   cantidad int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (id_detalle) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -654,9 +654,7 @@ CREATE TABLE cargo (
 --
 
 CREATE TABLE detalle_cargo (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
   id_cargo int(11) NOT NULL,
-  num_cargo int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
   FOREIGN KEY (id_cargo) REFERENCES cargo (id_cargo) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -673,9 +671,9 @@ CREATE TABLE detalle_cargo (
 
 CREATE TABLE recepcion_nacional (
   id_rep_nacional int(11) AUTO_INCREMENT PRIMARY KEY,
-  id_proveedor varchar(20) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  id_proveedor varchar(20) NOT NULL,
   fecha date NOT NULL,
-  estado_producto varchar(20) NOT NULL
+  status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -686,10 +684,10 @@ CREATE TABLE recepcion_nacional (
 --
 
 CREATE TABLE detalle_recepcion_nacional (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
+  id_rep_nacional int(11) NOT NULL,
   cantidad int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
-  FOREIGN KEY (id_detalle) REFERENCES recepcion_nacional (id_rep_nacional) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (id_rep_nacional) REFERENCES recepcion_nacional (id_rep_nacional) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
