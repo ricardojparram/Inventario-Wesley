@@ -19,34 +19,30 @@ class transferencia extends DBConnect {
   public function mostrarSedes() {
     try {
       $this->conectarDB();
-      $sql = "SELECT id_sede, nombre FROM sede WHERE status = 1";
+      $sql = "SELECT id_sede, nombre FROM sede WHERE status = 1 AND id_sede != 1";
       $new = $this->con->prepare($sql);
       $new->execute();
       return $new->fetchAll(\PDO::FETCH_OBJ);
     } catch (\PDOException $e) {
-      return ['error' => $e->getMessage()];
+      return $this->http_error(500, $e->getMessage());
     }
   }
-  public function validarFecha($date, $format = 'Y-m-d') {
-    $d = DateTime::createFromFormat($format, $date);
-    return $d && $d->format($format) == $date;
-  }
-  /* TO DO: Realizar una buena query para traer los datos del producto. */
   public function mostrarProductos() {
     try {
       $this->conectarDB();
-      $sql = "SELECT id_producto_sede, lote FROM producto_sede WHERE id_sede = 1;";
+      $sql = "SELECT id_producto_sede, presentacion_producto, fecha_vencimiento, cantidad FROM vw_producto_sede_detallado
+              WHERE id_sede = 1 AND cantidad > 0;";
       $new = $this->con->prepare($sql);
       $new->execute();
       return $new->fetchAll(\PDO::FETCH_OBJ);
     } catch (\PDOException $e) {
-      return ['error' => $e->getMessage()];
+      return $this->http_error(500, $e->getMessage());
     }
   }
 
   public function getMostrarProductoInventario($id_producto) {
-    if (preg_match_all("/^[0-9]{1,10}$/", $id_producto) != 1)
-      return ['resultado' => 'error', 'msg' => 'Id invalida.'];
+    if (!$this->validarString('entero', $id_producto))
+      return $this->http_error(400, 'Id inválida.');
 
     $this->id_producto = $id_producto;
 
@@ -62,7 +58,7 @@ class transferencia extends DBConnect {
       $this->desconectarDB();
       return $new->fetchAll(\PDO::FETCH_OBJ);
     } catch (\PDOException $e) {
-      return ['error' => $e->getMessage()];
+      return $this->http_error(500, $e->getMessage());
     }
   }
 
@@ -80,14 +76,12 @@ class transferencia extends DBConnect {
       $this->desconectarDB();
       return $data;
     } catch (\PDOException $e) {
-      return ['error' => $e->getMessage()];
+      return $this->http_error(500, $e->getMessage());
     }
   }
   public function getMostrarDetalle($id_transferencia): array {
-    if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
-      http_response_code(400);
-      return ['resultado' => 'error', 'msg' => 'Producto invalido.'];
-    }
+    if (!$this->validarString('entero', $id_transferencia))
+      return $this->http_error(400, 'Id inválida.');
 
     $this->id_transferencia = $id_transferencia;
 
@@ -96,11 +90,10 @@ class transferencia extends DBConnect {
   private function mostrarDetalle(): array {
     try {
       $this->conectarDB();
-      $sql = "SELECT s.nombre as nombre_sede, ps.lote, p.cod_producto, dt.cantidad, ps.fecha_vencimiento FROM detalle_transferencia dt
+      $sql = "SELECT s.nombre as nombre_sede, ps.presentacion_producto, ps.lote, dt.cantidad, ps.fecha_vencimiento FROM detalle_transferencia dt
               INNER JOIN transferencia t ON dt.id_transferencia = t.id_transferencia
-              INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
-              INNER JOIN producto p ON p.cod_producto = ps.cod_producto 
               INNER JOIN sede s ON s.id_sede = t.id_sede
+              INNER JOIN vw_producto_sede_detallado ps ON ps.id_producto_sede = dt.id_producto_sede
               WHERE t.id_transferencia = ?;";
       $new = $this->con->prepare($sql);
       $new->bindValue(1, $this->id_transferencia);
@@ -109,26 +102,23 @@ class transferencia extends DBConnect {
       $this->desconectarDB();
       return $data;
     } catch (\PDOException $e) {
-      return ['error' => $e->getMessage()];
+      return $this->http_error(500, $e->getMessage());
     }
   }
 
   public function getAgregarTransferencia($id_sede, $fecha, $productos): array {
-    if (preg_match_all("/^[0-9]{1,10}$/", $id_sede) != 1) {
-      http_response_code(400);
-      return ['resultado' => 'error', 'msg' => 'Id invalida.'];
-    }
+    if (!$this->validarString('entero', $id_sede))
+      return $this->http_error(400, 'Sede inválida.');
 
-    if ($this->validarFecha($fecha) !== true) {
-      http_response_code(400);
-      return ['resultado' => 'error', 'msg' => 'Fecha inválida'];
-    }
+    if (!$this->validarFecha($fecha))
+      return $this->http_error(400, 'Fecha inválida.');
 
-    if (!is_array($productos)) {
-      http_response_code(400);
-      return ['resultado' => 'error', 'error' => 'Productos inválidos'];
-    }
-
+    $estructura_productos = [
+      'id_producto' => 'string',
+      'cantidad' => 'string'
+    ];
+    if (!$this->validarEstructuraArray($productos, $estructura_productos, true))
+      return $this->http_error(400, 'Productos inválidos.');
 
     $this->fecha = $fecha;
     $this->productos = $productos;
@@ -168,7 +158,7 @@ class transferencia extends DBConnect {
       $this->desconectarDB();
       return ['resultado' => 'ok', 'msg' => 'Se ha registrado la transferencia correctamente.'];
     } catch (\PDOException $e) {
-      return ['error' => $e->getMessage()];
+      return $this->http_error(500, $e->getMessage());
     }
   }
 
@@ -209,7 +199,7 @@ class transferencia extends DBConnect {
       $this->desconectarDB();
       return ['resultado' => 'ok', 'msg' => 'Se ha eliminado la transferencia correctamente.'];
     } catch (\PDOException $e) {
-      return ['error' => $e->getMessage()];
+      return $this->http_error(500, $e->getMessage());
     }
   }
 }
