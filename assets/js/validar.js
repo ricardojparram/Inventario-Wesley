@@ -602,8 +602,10 @@ const Toast = Swal.mixin({
 
 // INICIALIZADOR DE POPPERS
 
-const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+$(document).ready(function () {
+	const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+	const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+})
 
 // Alerta permiso denegado
 const validarPermiso = permiso => {
