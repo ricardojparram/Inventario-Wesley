@@ -31,8 +31,8 @@ $(document).ready(function () {
 							<td>${row.correo}</td>
 							<td>${row.rol} </td>
 							<td class="d-flex justify-content-center">
-							<button type="button" ${editarPermiso} class="btn btn-success editar mx-2" id="${row.cedulaE}" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i></button>
-							<button type="button" ${eliminarPermiso} class="btn btn-danger eliminar mx-2" id="${row.cedulaE}" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi-trash3"></i></button>
+							<button type="button" ${editarPermiso} class="btn btn-registrar editar mx-2" id="${row.cedula}" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i></button>
+							<button type="button" ${eliminarPermiso} class="btn btn-danger eliminar mx-2" id="${row.cedula}" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi-trash3"></i></button>
 								</td>
 						</tr>`;
 				});
@@ -45,20 +45,33 @@ $(document).ready(function () {
 	}
 
 
-	let click = 0;
+	let timeout, click = 0;
 	setInterval(() => { click = 0; }, 2000);
 
 	$("#name").keyup(() => { validarNombre($("#name"), $("#errorNom"), "Error de Nombre,") });
 	$("#apellido").keyup(() => { validarNombre($("#apellido"), $("#errorApe"), "Error de Apellido,") });
 	$("#password").keyup(() => { validarContraseña($("#password"), $("#errorContra"), "Error de Contraseña,") });
 	$("#select").change(() => { validarSelect($("#select"), $("#errorNivel"), "Error de Nivel,") })
+	$("#preDocument").change(() => {
+        let valid = validarCedula($("#cedula"), $("#errorCed"), "Error de Documento,", $("#preDocument"))
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            if (valid) {validarC(" ",$("#cedula") , $("#errorCed"), $("#preDocument")) }
+        },700)
+    })
 	$("#cedula").keyup(() => {
-		let valid = validarCedula($("#cedula"), $("#errorCed"), "Error de cédula,")
-		if (valid) { validarC(" ", $("#cedula"), $("#errorCed")); }
+		let valid = validarCedula($("#cedula"), $("#errorCed"), "Error de Documento,", $("#preDocument"))
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            if (valid) {validarC(" ",$("#cedula") , $("#errorCed"), $("#preDocument")) }
+        },700)
 	});
 	$("#email").keyup(() => {
-		let valid = validarCorreo($("#email"), $("#errorEmail"), "Error de correo,")
-		if (valid) { validarE(" ", $("#email"), $("#errorEmail")); }
+		let valid = validarCorreo($("#email"), $("#errorEmail"), "Error de Correo,")
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            if (valid) {validarE(" ", $("#email"), $("#errorEmail"))}
+        },700)
 	});
 
 
@@ -76,9 +89,9 @@ $(document).ready(function () {
 		correo = validarCorreo($("#email"), $("#errorEmail"), "Error de Correo,");
 		lastName = validarNombre($("#apellido"), $("#errorApe"), "Error de Apellido,");
 		nombre = validarNombre($("#name"), $("#errorNom"), "Error de Nombre,");
-		dni = validarCedula($("#cedula"), $("#errorCed"), "Error de Cedula,");
+		dni = validarCedula($("#cedula"), $("#errorCed"), "Error de Cedula,", $("#preDocument"));
 		if (dni) {
-			validarC(" ", $("#cedula"), $("#errorCed")).then(() => {
+			validarC(" ",$("#cedula") , $("#errorCed"), $("#preDocument")).then(() => {
 				if (correo) {
 					validarE(" ", $("#email"), $("#errorEmail")).then(() => {
 
@@ -96,7 +109,6 @@ $(document).ready(function () {
 									tipoUsuario: $("#select").val(),
 								},
 								success(result) {
-									console.log(result);
 									if (result.resultado === 'Registrado correctamente.') {
 										tabla.destroy();
 										$("#cerrarRegis").click();
@@ -143,24 +155,21 @@ $(document).ready(function () {
 					cedulaDel
 				},
 				success(data) {
-					console.log(data);
 					if (data.resultado === "Eliminado") {
 						tabla.destroy();
 						$("#cerrarModalDel").click();
 						Toast.fire({ icon: 'error', title: 'Usuario Eliminado' })
 						refrescar();
-					}
-					if (data.resultado === "Error") {
+					}else if (data.resultado === "Error") {
 						$("#errorDel").text(data.msj);
-					}
-					else {
+					}else {
 					   tabla.destroy();
 					   $("#errorDel").text("El Usuario no Pudo Ser Eliminado");
 					   refrescar();
 				   }
 				}
+			})
 		})
-	})
 		click++
 	})
 
@@ -185,15 +194,34 @@ $(document).ready(function () {
 		})
 	})
 
-	$("#cedulaEdit").keyup(() => { 
-		let valid = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Cedula,") 
-		if (valid) {validarC(id,$("#cedulaEdit"), $("#errorCedEdit"))}});
+
+	$("#preDocumentEdit").change(() => {
+        let valid = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"))
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            if (valid) {validarC(id,$("#cedulaEdit") , $("#errorCedEdit"), $("#preDocumentEdit")) }
+        },700)
+    })
+	$("#cedulaEdit").keyup(() => {
+		let valid = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"))
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            if (valid) {validarC(id,$("#cedulaEdit") , $("#errorCedEdit"), $("#preDocumentEdit")) }
+        },700)
+	});
+	$("#emailEdit").keyup(() => {
+		let valid = validarCorreo($("#emailEdit"), $("#errorEmailEdit"), "Error de Correo,")
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            if (valid) {validarE(id, $("#emailEdit"), $("#errorEmailEdit"))}
+        },700)
+	});
 	$("#nameEdit").keyup(() => { validarNombre($("#nameEdit"), $("#errorNomEdit"), "Error de Nombre,") });
 	$("#apellidoEdit").keyup(() => { validarNombre($("#apellidoEdit"), $("#errorApeEdit"), "Error de Apellido,") });
-	$("#emailEdit").keyup(() => { 
-		let valid = validarCorreo($("#emailEdit"), $("#errorEmailEdit"), "Error de Correo,") 
-		if (valid) {validarE(id, $("#emailEdit"), $("#errorEmailEdit"))}});
-	$("#passwordEdit").keyup(() => { validarContraseña($("#passwordEdit"), $("#errorContraEdit"), "Error de Contraseña,") });
+	$("#passwordEdit").keyup(() => {
+		if ($("#passwordEdit").val() == "") {
+		$("#passwordEdit").attr("style","border-color: none; background-image: none"),  $("#errorContraEdit").text(" ")}
+		else{validarContraseña($("#passwordEdit"), $("#errorContraEdit"), "Error de Contraseña,");}})
 	$("#selectEdit").keyup(() => { validarSelect($("#selectEdit"), $("#errorNivelEdit"), "Error de Nivel,") });
 
 	$("#enviarEdit").click((e) => {
@@ -205,13 +233,13 @@ $(document).ready(function () {
 		}
 
 		let tipo = validarSelect($("#selectEdit"), $("#errorNivelEdit"), "Error de Nivel,");
-		let contra = validarContraseña($("#passwordEdit"), $("#errorContraEdit"), "Error de Contraseña,");
+		let contra = ($("#passwordEdit").val() == "") ? true : validarContraseña($("#passwordEdit"), $("#errorContraEdit"), "Error de Contraseña,");
 		let correo = validarCorreo($("#emailEdit"), $("#errorEmailEdit"), "Error de Correo,");
 		let lastName = validarNombre($("#apellidoEdit"), $("#errorApeEdit"), "Error de Apellido,");
 		let nombre = validarNombre($("#nameEdit"), $("#errorNomEdit"), "Error de Nombre,");
-		let dni = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Cedula,");
+		let dni = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"));
 		if (dni) {
-			validarC(id,$("#cedulaEdit"), $("#errorCedEdit")).then(() => {
+			validarC(id,$("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit")).then(() => {
 				if (correo) {
 					validarE(id, $("#emailEdit"), $("#errorEmailEdit")).then(() => {
 
@@ -237,7 +265,7 @@ $(document).ready(function () {
 										refrescar();
 									} else {
 										tabla.destroy();
-										$("#error2").text(user.resultado + ", " + user.error)
+										$("#error2").text(edit.resultado + ", " + edit.error)
 										refrescar();
 									}
 								}
@@ -269,8 +297,8 @@ $(document).ready(function () {
 
 	//Validacion para la Cedula 
 	let val
-	function validarC(valor, input, div) {
-		val = (input.val() == undefined) ? " " : input.val()
+	function validarC(valor, input, div, prefijo) {
+		val = (input.val() == undefined) ? " " : prefijo.val()+"-"+input.val()
 		return new Promise((resolve, reject) => {
 			$.getJSON('', {
 				cedula: val,
@@ -278,7 +306,6 @@ $(document).ready(function () {
 				validar: 'xd'
 			},
 				function (valid) {
-					console.log(valid)
 					if (valid.resultado === "Error") {
 						div.text("Error de Cedula, " + valid.msj);
 						input.attr("style", "border-color: red;");
@@ -302,7 +329,6 @@ $(document).ready(function () {
 				validarE: 'lol'
 			},
 				function (valid) {
-					console.log(valid)
 					if (valid.resultado === "Error") {
 						div.text("Error de Correo, " + valid.msj);
 						input.attr("style", "border-color: red;");

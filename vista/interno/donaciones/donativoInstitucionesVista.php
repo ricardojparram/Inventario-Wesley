@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donativos Intituciones</title>
-    <?php $VarComp->header(); ?>
-    <link rel="stylesheet" href="assets/css/estiloInterno.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donativos Intituciones</title>
+  <?php $VarComp->header(); ?>
+  <link rel="stylesheet" href="assets/css/estiloInterno.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
 </head>
+
 <body>
-<!-- ======= Header ======= -->
+  <!-- ======= Header ======= -->
 
-      <?php 
-      
-        $header->Header();
-                
-      ?>
-      
-<!-- End Header -->
+  <?php
+
+  $header->Header();
+
+  ?>
+
+  <!-- End Header -->
 
 
-<!-- ======= Sidebar ======= -->
+  <!-- ======= Sidebar ======= -->
 
-      <?php 
-      
-        $menu->Menu();
-                
-      ?>
-         
+  <?php
+
+  $menu->Menu();
+
+  ?>
+
   <!-- End Sidebar-->
 
   <main class="main" id="main">
@@ -42,51 +44,64 @@
 
     </div>
 
-  <div class="card">
-            <div class="card-body">
+    <div class="card">
+      <div class="card-body">
 
-              <div class="row">
-                <div class="col-6">
-                  <h5 class="card-title">Donaciones Registradas</h5>
-                </div>
-                <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
-                </div>
-              </div>
-
-              
-              <!-- Table with stripped rows -->
-        
-              <div class="table-responsive">
-                <table class="table table-bordered" id="tabla" width="100%" cellspacing="0">
-                  <thead>
-
-                    <tr>
-                      <th scope="col">Institución</th>
-                      <th scope="col">Productos</th>
-                      <th scope="col">Fecha</th>
-                      <th scope="col">Beneficiario</th>
-                      <th scope="col">Opciones</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody">
-                    
-                    
-                    
-                  </tbody>
-                </table>
-              </div>
-              <!-- End Table with stripped rows -->
-
-            </div>
+        <div class="row">
+          <div class="col-6">
+            <h5 class="card-title">Donaciones Registradas</h5>
           </div>
-          
+          <div class="col-6 text-end mt-3">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
+          </div>
+        </div>
+
+
+        <!-- Table with stripped rows -->
+
+        <div class="table-responsive">
+          <table class="table table-bordered" id="tabla" width="100%" cellspacing="0">
+            <thead>
+
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Cedula</th>
+                <th scope="col">Direccion</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Opciones</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Cedula</th>
+                <th scope="col">Direccion</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Opciones</th>
+              </tr>
+            </tfoot>
+            <tbody id="tbody">
+
+
+
+            </tbody>
+          </table>
+        </div>
+        <!-- End Table with stripped rows -->
+
+      </div>
+    </div>
+
 
   </main>
 
 </body>
 
- <?php $VarComp->js();?>
+<?php $VarComp->js(); ?>
 
- 
+
 </html>

@@ -4,6 +4,7 @@ INSERT INTO moneda (id_moneda, nombre, valor, status) VALUES
 (1, 'Dolar', 0, 1),
 (2, 'Euro', 0, 1);
 
+<<<<<<< HEAD
 INSERT INTO sede (id_sede, nombre, telefono, direccion, status) VALUES
 (1, 'Sede Cabudare (Principal)', '04127774522', 'Cabudare', 1),
 (2, 'Sede Coro', '04121381283', 'Coro', 1),
@@ -37,11 +38,18 @@ INSERT INTO producto (cod_producto, id_tipoprod, ubicacion, composicion, posolog
 INSERT INTO producto_sede (id_producto_sede, cod_producto, lote, fecha_vencimiento, id_sede, cantidad) VALUES
 (1, '2', '000001', '2026-03-25', 1, 200),
 (2, '1', '000002', '2024-05-17', 1, 300);
+=======
+>>>>>>> victor
 
 INSERT INTO rol (id_rol, nombre, status) VALUES
 (1, 'Administrador', 1),
 (2, 'Gerente', 1),
+<<<<<<< HEAD
 (3, 'Empleado', 1);
+=======
+(3, 'Empleado', 1),
+(4, 'Cliente', 1);
+>>>>>>> victor
 
 INSERT INTO usuario (cedula, nombre, apellido, correo, password, rol, img, status) VALUES
 ('123123123', 'admin', 'admin', 'admin@admin.com', '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.', 1, NULL, 1),
@@ -142,10 +150,15 @@ INSERT INTO permisos (id_rol, id_modulo, nombre_accion, status) VALUES
 (1, 16, 'Editar', 1),
 (1, 16, 'Eliminar', 1),
 (1, 16, 'Consultar', 1),
+<<<<<<< HEAD
 (1, 17, 'Modificar acciones', 1),
 (1, 17, 'Registrar', 1),
 (1, 17, 'Editar', 1),
 (1, 17, 'Eliminar', 1),
+=======
+(1, 17, 'Modificar acceso', 1),
+(1, 17, 'Modificar acciones', 1),
+>>>>>>> victor
 (1, 17, 'Consultar', 1),
 (1, 18, 'Registrar', 1),
 (1, 18, 'Editar', 1),
@@ -257,10 +270,15 @@ INSERT INTO permisos (id_rol, id_modulo, nombre_accion, status) VALUES
 (2, 16, 'Editar', 1),
 (2, 16, 'Eliminar', 1),
 (2, 16, 'Consultar', 1),
+<<<<<<< HEAD
 (2, 17, 'Modificar acciones', 1),
 (2, 17, 'Registrar', 1),
 (2, 17, 'Editar', 1),
 (2, 17, 'Eliminar', 1),
+=======
+(2, 17, 'Modificar acceso', 1),
+(2, 17, 'Modificar acciones', 1),
+>>>>>>> victor
 (2, 17, 'Consultar', 1),
 (2, 18, 'Registrar', 1),
 (2, 18, 'Editar', 1),
@@ -373,10 +391,15 @@ INSERT INTO permisos (id_rol, id_modulo, nombre_accion, status) VALUES
 (3, 16, 'Editar', 1),
 (3, 16, 'Eliminar', 1),
 (3, 16, 'Consultar', 1),
+<<<<<<< HEAD
 (3, 17, 'Modificar acciones', 1),
 (3, 17, 'Registrar', 1),
 (3, 17, 'Editar', 1),
 (3, 17, 'Eliminar', 1),
+=======
+(3, 17, 'Modificar acceso', 1),
+(3, 17, 'Modificar acciones', 1),
+>>>>>>> victor
 (3, 17, 'Consultar', 1),
 (3, 18, 'Registrar', 1),
 (3, 18, 'Editar', 1),

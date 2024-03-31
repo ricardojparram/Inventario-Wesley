@@ -381,15 +381,19 @@ h6 {
   }
 }
 
+@media(max-width: 375px){
+  .logo{
+    width: 120px;
+  }
+  .logo img{
+    max-height: 70px !important;
+  }
+}
+
 @media (max-width: 375px) {
   .logo {
     width: 120px;
   }
-
-  .logo img {
-    max-height: 70px !important;
-  }
-}
 
 .logo img {
   max-height: 95px;
@@ -1299,11 +1303,11 @@ h6 {
 }
 
 .form-control:focus {
-  color: #212529;
-  background-color: #fff;
-  border-color: #96bd0d;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem #96bd0d;
+    color: #212529;
+    background-color: #fff;
+    border-color: #96bd0d;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem #96bd0d;
 }
 
 .form-control-sm {
