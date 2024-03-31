@@ -110,47 +110,6 @@ CREATE TABLE cambio (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla descargo
---
-
-CREATE TABLE descargo (
-  id_descargo int(11) AUTO_INCREMENT PRIMARY KEY,
-  fecha datetime NOT NULL DEFAULT current_timestamp(),
-  num_descargo int(11) NOT NULL,
-  status tinyint(1) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla producto_dañado
---
-
-CREATE TABLE producto_dañado (
-  id_pro_dañado int(11) AUTO_INCREMENT PRIMARY KEY,
-  cantidad smallint(10) UNSIGNED NOT NULL,
-  id_descargo int(11) NOT NULL,
-  FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla detalle_descargo
---
-
-CREATE TABLE detalle_descargo (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
-  id_descargo int(11) NOT NULL,
-  id_pro_dañado int(11) NOT NULL,
-  cantidad int(11) NOT NULL,
-  FOREIGN KEY (id_pro_dañado) REFERENCES producto_dañado (id_pro_dañado) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla tipo_producto
 --
 
@@ -321,6 +280,48 @@ CREATE TABLE producto_sede (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla descargo
+--
+
+CREATE TABLE descargo (
+  id_descargo int(11) AUTO_INCREMENT PRIMARY KEY,
+  fecha datetime NOT NULL DEFAULT current_timestamp(),
+  num_descargo int(11) NOT NULL,
+  status tinyint(1) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla producto_dañado
+--
+
+-- CREATE TABLE producto_dañado (
+--   id_pro_dañado int(11) AUTO_INCREMENT PRIMARY KEY,
+--   cantidad smallint(10) UNSIGNED NOT NULL,
+--   id_descargo int(11) NOT NULL,
+--   FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla detalle_descargo
+--
+
+CREATE TABLE detalle_descargo (
+  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
+  id_descargo int(11) NOT NULL,
+  id_producto_sede int(50) NOT NULL,
+  cantidad int(11) NOT NULL,
+  FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
 
 --
 -- Estructura de tabla para la tabla compra
