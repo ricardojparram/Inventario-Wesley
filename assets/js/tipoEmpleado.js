@@ -115,6 +115,7 @@ $(document).ready(function(){
    $(".cerrar").click(()=>{
     $('#user').trigger('reset');
     $("input").attr("style","borde-color:none; backgraund-image: none;");
+    $("input").removeClass('input-error')
     $(".error").text("");
   })
 
@@ -153,15 +154,15 @@ $(document).ready(function(){
       dataType: 'json',
       data: {mostrarEdit : 'editar', id},
       success(data){
-        $('#tipoEmpladoEdit').val(data[0].nombre_e);
+        $('#tipoEmpleadoEdit').val(data[0].nombre_e);
       }
 
     })
   })
   
-  $('#tipoEmpladoEdit').keyup(()=>{
-    valid = validarStringLong($("#tipoEmpladoEdit"),$("#error2"),"Error de tipo empleado");
-    if(valid) validarTipoEmpleado($("#tipoEmpladoEdit"),$("#error2"), id);
+  $('#tipoEmpleadoEdit').keyup(()=>{
+    valid = validarStringLong($("#tipoEmpleadoEdit"),$("#error2"),"Error de tipo empleado");
+    if(valid) validarTipoEmpleado($("#tipoEmpleadoEdit"),$("#error2"), id);
   })
 
   let tipoEmpleadoEdit;
@@ -173,7 +174,7 @@ $(document).ready(function(){
 
       validarExitencia().then(()=>{
 
-      tipoEmpleadoEdit = validarStringLong($("#tipoEmpladoEdit"),$("#error2"),"Error de tipo empleado");
+      tipoEmpleadoEdit = validarStringLong($("#tipoEmpleadoEdit"),$("#error2"),"Error de tipo empleado");
 
         if(tipoEmpleadoEdit){
 
@@ -181,7 +182,7 @@ $(document).ready(function(){
           type:"POST",
           url:"",
           dataType:"json",
-          data:{ tipoEmpleadoEdit: $("#tipoEmpladoEdit").val(), id },
+          data:{ tipoEmpleadoEdit: $("#tipoEmpleadoEdit").val(), id },
             success(data){
               if (data.resultado == 'Editado') {
                 mostrar.destroy();
@@ -190,7 +191,7 @@ $(document).ready(function(){
                 rellenar();
               }else if(data.resultado === 'error'){
               $("#error2").text(data.msg);
-              $("#tipoEmpladoEdit").addClass('input-error');
+              $("#tipoEmpleadoEdit").addClass('input-error');
              }
             }
           })

@@ -109,18 +109,18 @@ class tipoEmpleado extends DBConnect{
   		}
   	}
 
-  	public function validarSelect($id){
+  	public function validarExistencia($id){
   		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
   			return ['resultado' => 'Error de id','error' => 'id inválida.'];
   		}
 
   		$this->id = $id;
 
-  		return $this->validSelect();
+  		return $this->validExistencia();
 
   	}
 
-  	private function validSelect(){
+  	private function validExistencia(){
   		try {
   			parent::conectarDB();
   			$new = $this->con->prepare('SELECT te.nombre_e FROM tipo_empleado te WHERE te.status = 1 AND te.tipo_em = ?');

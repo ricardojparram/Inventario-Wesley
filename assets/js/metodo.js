@@ -113,6 +113,7 @@ $(document).ready(function(){
   $(".cerrar").click(()=>{
     $('#user').trigger('reset');
     $("input").attr("style","borde-color:none; backgraund-image: none;");
+    $("input").removeClass('input-error');
     $(".error").text("");
   })
 

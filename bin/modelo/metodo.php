@@ -66,18 +66,18 @@
       }
      }
 
-     public function validarSelect($id){
+     public function validarExitencia($id){
       if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
         return ['resultado' => 'Error de id','error' => 'id inválida.'];
       }
       
       $this->id = $id;
 
-      return $this->validSelect();
+      return $this->validExistencia();
 
      }
 
-     private function validSelect(){
+     private function validExistencia(){
       try {
         parent::conectarDB();
         $new = $this->con->prepare('SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.id_forma_pago = ?');

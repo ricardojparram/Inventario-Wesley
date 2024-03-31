@@ -57,7 +57,17 @@
         $res = $objModel->getRegistrarDonacion($_POST['cedulaPaciente'], $_POST['beneficiario'] , $_POST['datos']);
         die(json_encode($res));
       }
-      
+
+      if(isset($_POST['validarE']) && isset($_POST['id'])) {
+        $res = $objModel->validarExistencia($_POST['id']);
+        die(json_encode($res));
+      }
+
+      if (isset($_POST['eliminar']) && isset($_POST['id']) && $permiso['Eliminar']) {
+        $res = $objModel->getEliminarDonacion($_POST['id']);
+        die(json_encode($res));
+      }
+
 
      $VarComp = new initcomponents();
      $header = new header();

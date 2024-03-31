@@ -54,7 +54,7 @@
                   <h5 class="card-title">Donaciones Registradas</h5>
                 </div>
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar" id="agregarModalButton">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#agregar" id="agregarModalButton">Agregar</button>
                 </div>
               </div>
 
@@ -85,6 +85,27 @@
             </div>
           </div>
 
+          
+          <!-- Modal delete-->
+
+          <div class="modal fade" id="borrar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3 class="modal-title" id="staticBackdropLabel">¿Estás seguro?</h3>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <h5>Los datos serán anulados del sistema.</h5>
+                </div>
+                <div class="modal-footer">
+                  <button id="close" type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-danger" id="delete">Anular</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- MODAL DE PRODUCTOS -->
           <div class="modal fade" id="detalleDonacion" tabindex="-1">
             <div class="modal-dialog modal-dialog-scrollable modal-md">
@@ -112,7 +133,8 @@
           </div>
           <!-- FINAL MODAL DE PRODUCTOS -->
 
-          <div class="modal fade" id="Agregar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+           <!-- MODAL REGISTRAR DONACION -->
+          <div class="modal fade" id="agregar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header alert alert-success">
@@ -226,6 +248,7 @@
                 </div>
               </div>
             </div>
+
           
 
   </main>

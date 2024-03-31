@@ -1,12 +1,11 @@
 $(document).ready(function(){
 	
 	let mostrar;
-	let permiso , editarPermiso , eliminarPermiso, registrarPermiso;
+	let permiso , eliminarPermiso, registrarPermiso;
 
 	$.ajax({method: 'POST' , url: '' , dataType: 'json' , data: {getPermiso: '' },
 		success(permisos){
 			registrarPermiso = (typeof permisos.Registrar === 'undefined') ? 'disabled' : '';
-			editarPermiso = (typeof permisos.Editar === 'undefined') ? 'disabled' : '';
 			eliminarPermiso = (typeof permisos.Eliminar === 'undefined') ? 'disabled' : '';
 		}
 	}).then(()=> { rellenar(true) });
@@ -38,8 +37,7 @@ $(document).ready(function(){
 						data: null,
 						render: function(data, type, row) {
 							return `
-							<button type="button" ${editarPermiso} id="${row.id_donaciones}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
-							<button type="button" ${eliminarPermiso} id="${row.id_donaciones}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi-trash3"></i></button>
+							<button type="button" ${eliminarPermiso} id="${row.id_donaciones}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#borrar"><i class="bi bi-trash3"></i></button>
 							`;
 						}
 					}
@@ -89,7 +87,7 @@ $(document).ready(function(){
  							return { id: item.ced_pac, text: item.ced_pac};
  						}),
  						theme: 'bootstrap-5',
- 						dropdownParent: $('#Agregar .modal-body'),
+ 						dropdownParent: $('#agregar .modal-body'),
  						width: '80%'
  					});
  					$('#cedula').on('change', function() {
@@ -118,7 +116,7 @@ $(document).ready(function(){
     						return { id: item.id_sede, text: item.nombre};
     					}),
     					theme: 'bootstrap-5',
-    					dropdownParent: $('#Agregar .modal-body'),
+    					dropdownParent: $('#agregar .modal-body'),
     					width: '50%'
     				});
 
@@ -136,7 +134,7 @@ $(document).ready(function(){
 		       <option></option>
 		     </select>
 	       </td>
-	      <td width='15%' class="cantidad"><input class="select-asd stock" type="number" value=""/></td>
+	      <td width='15%' class="cantidad"><input class="select-asd stock" disabled type="number" value=""/></td>
 	     <td width='15%' class="unidades"><input class="select-asd unidad" type="number" value="" /></td>
       </tr>`;
 
@@ -341,7 +339,7 @@ $(document).ready(function(){
 	     	 		mostrar.destroy();
 	     	 		rellenar();  
 		            $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
-		            $('#Agregar .select2-selection').attr("style","borden-color:none;","borden-color:none;");
+		            $('#agregar .select2-selection').attr("style","borden-color:none;","borden-color:none;");
 		            $('.error').text(" ");
 		            $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
 		            $('#error').text('');
@@ -360,6 +358,65 @@ $(document).ready(function(){
      	 }
 
      	 click++;
+     });
+
+     function validarExitencia(){
+     	return new Promise((resolve, reject) =>{
+     		$.ajax({
+     			type: "POST",
+     			url: '',
+     			dataType: "json",
+     			data: { validarE: "existe", id},
+     			success(data) {
+     				if (data.resultado === "Error de donacion") {  
+     					mostrar.destroy();
+     					rellenar();
+     					$('.cerrar').click();
+                       Toast.fire({icon: 'error', title: 'Error de Donacion', showCloseButton: true }) // ALERTA 
+                       reject(false);
+                   }else{
+                   	resolve(true);
+                   }
+
+               }
+           })
+     	})
+     }
+
+     $(document).on('click', '.borrar' , function(){
+     	id = this.id;
+     })
+
+     $('#delete').click(function(e) {
+     	e.preventDefault();
+
+     	if(click >= 1){ throw new Error('Spam de clicks');}
+
+     	validarExitencia().then(()=>{
+
+     		$.ajax({
+     			url: '',
+     			type: 'POST',
+     			dataType: 'json',
+     			data: {eliminar: 'eliminar', id},
+     			success(data){
+     			  if (data.resultado === 'Eliminado'){
+		            $("#close").click();
+		            mostrar.destroy();
+		            Toast.fire({icon: 'success', title: 'Donacion eliminada', showCloseButton: true })
+		            rellenar();
+		          }
+     			}
+
+     		}).fail(function() {
+     			console.log("error");
+     		})
+
+     	}).catch(()=>{
+     		throw new Error('No exite.');
+     	})
+
+     	click++;
      });
 
 

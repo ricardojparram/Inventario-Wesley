@@ -42,7 +42,7 @@
    }
 
    if (isset($_POST['validarE']) && isset($_POST['id'])){
-    $res = $objModel->validarSelect($_POST['id']);
+    $res = $objModel->validarExitencia($_POST['id']);
     die(json_encode($res));
   }
 
