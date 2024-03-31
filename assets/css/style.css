@@ -394,17 +394,18 @@ h6 {
   .logo {
     width: 120px;
   }
+}
 
 .logo img {
-  max-height: 95px;
-  margin-right: 1px;
+  max-height: 95px !important;
+  margin-right: 1px !important;
 }
 
 .logo span {
-  font-size: 26px;
-  font-weight: 700;
-  color: #50643c;
-  font-family: "Nunito", sans-serif;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: #50643c !important;
+  font-family: "Nunito", sans-serif !important;
 }
 
 .header {
