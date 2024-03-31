@@ -4,9 +4,11 @@ namespace modelo;
 
 use config\connect\DBConnect as DBConnect;
 use utils\validar;
+use utils\fechas;
 
 class recepcionNacional extends DBConnect {
   use validar;
+  use fechas;
   private $id_rep_nacional;
   private $id_proveedor;
   private $fecha;
@@ -105,7 +107,7 @@ class recepcionNacional extends DBConnect {
     // if (preg_match_all("/^[0-9]{1,10}$/", $id_proveedor) != 1)
     //   return $this->http_error(400, 'Transferencia inválida.');
 
-    $fecha =  date('Y-m-d', strtotime($fecha));
+    $fecha = $this->convertirFecha($fecha, 'd/m/Y');
     if (!$this->validarFecha($fecha, 'Y-m-d'))
       return $this->http_error(400, 'Fecha inválida.');
 
@@ -142,7 +144,7 @@ class recepcionNacional extends DBConnect {
           'lote' => $lote,
           'cantidad' => $cantidad
         ] = $producto;
-        $fecha_vencimiento = date('Y-m-d', strtotime($fecha));
+        $fecha_vencimiento = $this->convertirFecha($fecha, 'd/m/Y');
 
         $producto_sede = $this->verificarExistenciaDelLote($cod_producto, $lote, $fecha_vencimiento);
         if (isset($producto_sede->id_producto_sede)) {
