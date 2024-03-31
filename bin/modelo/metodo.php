@@ -116,18 +116,9 @@
        try{
         parent::conectarDB();
 
-        do{
-        $pk = $this->uniqueNumericID();
-        $check = $this->con->prepare("SELECT COUNT(*) FROM `forma_pago` WHERE `id_forma_pago` = ?");
-        $check->bindValue(1, $pk);
-        $check->execute();
-        $count = $check->fetchColumn();
-        }while($count > 0);
-        
-        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (?,?,1)");
+        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (DEFAULT,?,1)");
 
-        $new->bindValue(1 , $pk);
-        $new->bindValue(2 , $this->metodo);
+        $new->bindValue(1 , $this->metodo);
         $new->execute();
         $data = $new->fetchAll();
         

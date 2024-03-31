@@ -84,18 +84,9 @@ class tipoEmpleado extends DBConnect{
   	private function registrarEmpleado(){
   		try {
   		parent::conectarDB();
-
-        do{
-        $pk = $this->uniqueNumericID();
-        $check = $this->con->prepare("SELECT COUNT(*) FROM `tipo_empleado` WHERE `tipo_em` = ?");
-        $check->bindValue(1, $pk);
-        $check->execute();
-        $count = $check->fetchColumn();
-        }while($count > 0);
-
-  		$new = $this->con->prepare('INSERT INTO `tipo_empleado`(`tipo_em`, `nombre_e`, `status`) VALUES (? ,? ,1 )');
-  		$new->bindValue(1, $pk);
-  		$new->bindValue(2, $this->tipoEmpleado);
+      
+  		$new = $this->con->prepare('INSERT INTO `tipo_empleado`(`tipo_em`, `nombre_e`, `status`) VALUES (DEFAULT ,? ,1 )');
+  		$new->bindValue(1, $this->tipoEmpleado);
   		$new->execute();
   		$data = $new->fetchAll();
 
