@@ -23,7 +23,7 @@ class recepcionNacional extends DBConnect {
       $new->execute();
       // if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
       $this->desconectarDB();
-      return $new->fetchAll(\PDO::FETCH_OBJ);;
+      return $new->fetchAll(\PDO::FETCH_OBJ);
     } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
