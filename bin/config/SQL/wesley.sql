@@ -655,9 +655,7 @@ CREATE TABLE cargo (
 --
 
 CREATE TABLE detalle_cargo (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
   id_cargo int(11) NOT NULL,
-  num_cargo int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
   FOREIGN KEY (id_cargo) REFERENCES cargo (id_cargo) ON DELETE CASCADE ON UPDATE CASCADE,
