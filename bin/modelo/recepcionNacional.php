@@ -104,10 +104,9 @@ class recepcionNacional extends DBConnect {
     }
   }
   public function getAgregarRecepcionNacional($id_proveedor, $fecha, $productos): array {
-    // if (preg_match_all("/^[0-9]{1,10}$/", $id_proveedor) != 1)
-    //   return $this->http_error(400, 'Transferencia inválida.');
+    if (!$this->validarString('rif', $id_proveedor))
+      return $this->http_error(400, 'Proveedor inválido.');
 
-    $fecha = $this->convertirFecha($fecha, 'd/m/Y');
     if (!$this->validarFecha($fecha, 'Y-m-d'))
       return $this->http_error(400, 'Fecha inválida.');
 
