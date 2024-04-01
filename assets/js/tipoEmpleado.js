@@ -297,8 +297,7 @@ $(document).ready(function () {
           let mensaje = JSON.parse(data);
           if (mensaje.resultado === "error") {
             div.text(mensaje.msg);
-            input.attr("style", "border-color: red;")
-            input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+            input.addClass('input-error');
             return reject(false);
           } else {
             div.text(" ");
@@ -347,13 +346,12 @@ $(document).ready(function () {
             rellenar();
             $('#user').trigger('reset');
             $("#close").click();
-            $("#tipoEmpleado").attr("style", "borde-color:none; backgraund-image: none;");
+            $("#tipoEmpleado").removeClass('input-error');
             $("#error").text("");
             Toast.fire({ icon: 'success', title: 'Tipo empleado registrado', showCloseButton: true });
           } else if (data.resultado === 'error') {
             $("#error").text(data.msg);
-            $("#tipoEmpleado").attr("style", "border-color: red;")
-            $("#tipoEmpleado").attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+            $("#tipoEmpleado").addClass('input-error');
           }
         }
       })
@@ -368,6 +366,7 @@ $(document).ready(function () {
   $(".cerrar").click(() => {
     $('#user').trigger('reset');
     $("input").attr("style", "borde-color:none; backgraund-image: none;");
+    $("input").removeClass('input-error')
     $(".error").text("");
   })
 
@@ -406,15 +405,15 @@ $(document).ready(function () {
       dataType: 'json',
       data: { mostrarEdit: 'editar', id },
       success(data) {
-        $('#tipoEmpladoEdit').val(data[0].nombre_e);
+        $('#tipoEmpleadoEdit').val(data[0].nombre_e);
       }
 
     })
   })
 
-  $('#tipoEmpladoEdit').keyup(() => {
-    valid = validarStringLong($("#tipoEmpladoEdit"), $("#error2"), "Error de tipo empleado");
-    if (valid) validarTipoEmpleado($("#tipoEmpladoEdit"), $("#error2"), id);
+  $('#tipoEmpleadoEdit').keyup(() => {
+    valid = validarStringLong($("#tipoEmpleadoEdit"), $("#error2"), "Error de tipo empleado");
+    if (valid) validarTipoEmpleado($("#tipoEmpleadoEdit"), $("#error2"), id);
   })
 
   let tipoEmpleadoEdit;
@@ -426,7 +425,7 @@ $(document).ready(function () {
 
     validarExitencia().then(() => {
 
-      tipoEmpleadoEdit = validarStringLong($("#tipoEmpladoEdit"), $("#error2"), "Error de tipo empleado");
+      tipoEmpleadoEdit = validarStringLong($("#tipoEmpleadoEdit"), $("#error2"), "Error de tipo empleado");
 
       if (tipoEmpleadoEdit) {
 
@@ -434,7 +433,7 @@ $(document).ready(function () {
           type: "POST",
           url: "",
           dataType: "json",
-          data: { tipoEmpleadoEdit: $("#tipoEmpladoEdit").val(), id },
+          data: { tipoEmpleadoEdit: $("#tipoEmpleadoEdit").val(), id },
           success(data) {
             if (data.resultado == 'Editado') {
               mostrar.destroy();
@@ -443,8 +442,7 @@ $(document).ready(function () {
               rellenar();
             } else if (data.resultado === 'error') {
               $("#error2").text(data.msg);
-              $("#tipoEmpladoEdit").attr("style", "border-color: red;")
-              $("#tipoEmpladoEdit").attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+              $("#tipoEmpleadoEdit").addClass('input-error');
             }
           }
         })
