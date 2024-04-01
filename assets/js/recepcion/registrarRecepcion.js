@@ -68,7 +68,6 @@ $(document).ready(function () {
     //     let cantidad_transferencia = datos_transferencia[input.closest('tr').find('.select-productos').val()];
     //     let cantidad = input.val();
     //     let $error = input.next();
-    //     console.log(cantidad_transferencia)
     //     if (cantidad > cantidad_transferencia) {
     //         $error.html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
     //             .removeClass("d-none");
@@ -136,6 +135,16 @@ $(document).ready(function () {
             throw new Error("Error al mostrar detalles: " + e);
         });
     });
+
+    $('.cerrar').click(() => {
+        $('#agregarform').trigger('reset');
+        $('.eliminarFila').click();
+        $('#Agregar input').removeClass('input-error');
+        $('#Agregar select').removeClass('input-error');
+        $('.error').text('');
+        agregarFila()
+        fechaHoy($('#fecha'));
+    })
 
 
 })

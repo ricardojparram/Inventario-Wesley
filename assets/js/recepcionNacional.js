@@ -116,7 +116,6 @@ $(document).ready(function () {
         let validacion = [];
         $("input.select-asd").each(function () {
             if (this.value === "" || this.value === null) {
-                console.log(this);
                 $(this).addClass('input-error')
                 validacion.push(false);
             } else if ($(this).hasClass('vencimiento')) {
@@ -199,20 +198,19 @@ $(document).ready(function () {
             return { id_producto: item.value, lote, cantidad, fecha_vencimiento };
         });
     }
-    let valid_sede, valid_fecha;
-    // $('#proveedor').change(() => valid_proveedor = validarCedula($('#sede'), $('#error1'), "Error de sede,"))
+    let valid_proveedor, valid_fecha;
+    $('#proveedor').change(() => valid_proveedor = validarRif($('#proveedor'), $('#error1'), "Error de proveedor,"))
     $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
     $('#registrar').click(function (e) {
         e.preventDefault();
 
-        // valid_proveedor = validarNumero($('#sede'), $('#error1'), "Error de sede,");
+        valid_proveedor = validarRif($('#proveedor'), $('#error1'), "Error de proveedor,");
         valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
         let valid_productos = validarProductosRepetidos(false);
         let valid_lotes_cantidad = validarProductos();
 
         productos = getProductos();
-        console.log(productos)
-        if (/*!valid_proveedor ||*/ !valid_fecha || !valid_productos || !valid_lotes_cantidad) return;
+        if (!valid_proveedor || !valid_fecha || !valid_productos || !valid_lotes_cantidad) return;
 
         let data = {
             registrar: '',
@@ -247,6 +245,16 @@ $(document).ready(function () {
             Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
             throw new Error(e.responseJSON.msg);
         });
+    })
+
+    $('.cerrar').click(() => {
+        $('#agregarform').trigger('reset');
+        $('.eliminarFila').click();
+        $('#Agregar input').removeClass('input-error');
+        $('#Agregar select').removeClass('input-error');
+        $('.error').text('');
+        agregarFila()
+        fechaHoy($('#fecha'));
     })
 
 });
