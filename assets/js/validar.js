@@ -22,23 +22,19 @@ function validarNombre(input, div, mensaje) {
 
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!valid) {
 		div.text(mensaje + " el nombre debe ser solo letras")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length < 3) {
 		div.text(mensaje + " el nombre debe tener mínimo 3 carácteres.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "background-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
@@ -48,23 +44,19 @@ function validarDireccion(input, div, mensaje) {
 	let valid = expresiones.direccion.test(parametro);
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir la dirección.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!valid) {
 		div.text(mensaje + " debe intruducir una dirección válida")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length > 158) {
 		div.text(mensaje + " direccion demasiada larga")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "background-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
@@ -74,22 +66,18 @@ function validarStringLong(input, div, mensaje) {
 	let valid = expresiones.string.test(parametro);
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!isNaN(parametro)) {
 		div.text(mensaje + " debe llevar letras")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length < 4) {
 		div.text(mensaje + " debe introducir mínimo 4 carácteres.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else if (!valid) {
 		div.text(mensaje + " carácteres no validos")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else {
 		div.text(" ");
 		input.attr("style", "border-color: none;")
@@ -105,26 +93,21 @@ function validarStringLength(input, div, mensaje, length) {
 	console.log(valid, parametro)
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!isNaN(parametro)) {
 		div.text(mensaje + " debe llevar letras")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length < 4) {
 		div.text(mensaje + " debe introducir mínimo 4 carácteres.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else if (parametro.length > length) {
 		div.text(mensaje + " carácteres no validos")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else if (!valid) {
 		div.text(mensaje + " carácteres no validos")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else {
 		div.text(" ");
 		input.attr("style", "border-color: none;")
@@ -137,18 +120,15 @@ function validarString(input, div, mensaje) {
 	parametro = input.val();
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!isNaN(parametro)) {
 		div.text(mensaje + " debe ser solo letras")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "background-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
@@ -158,18 +138,15 @@ function validarNumero(input, div, mensaje) {
 	let valid = expresiones.numero.test(parametro)
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (isNaN(parametro)) {
 		div.text(mensaje + " debe ser solo números.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!valid) {
 		div.text(mensaje + " debe ser positivo.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else {
 		div.text(" ");
 		input.attr("style", "border-color: none;")
@@ -182,18 +159,15 @@ function validarPostal(input, div, mensaje) {
 	parametro = input.val();
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (isNaN(parametro)) {
 		div.text(mensaje + " debe ser solo números.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length != 4) {
 		div.text(mensaje + " codigo postal invalido.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
@@ -209,22 +183,18 @@ function validarVC(input, div, mensaje) {
 	let valid = expresiones.numero.test(parametro)
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (isNaN(parametro)) {
 		div.text(mensaje + " debe ser solo números.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro == 0) {
 		div.text(mensaje + " no puede ser 0.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else if (!valid) {
 		div.text(mensaje + " debe ser positivo.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else {
 		div.text(" ");
 		input.attr("style", "border-color: none;")
@@ -238,23 +208,19 @@ function validarTelefono(input, div, mensaje) {
 	parametro = input.val();
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (isNaN(parametro)) {
 		div.text(mensaje + " debe ser solo números.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length < 10) {
 		div.text(mensaje + " debe introducir maximo 10 carácteres.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "background-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
@@ -270,33 +236,27 @@ function validarCedula(input, div, mensaje, prefijo) {
 
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} if (!documento.hasOwnProperty(prefijo)) {
 		div.text(mensaje + " nacionalidad invalida.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (isNaN(parametro) && (prefijo == "V" || prefijo == "J")) {
 		div.text(mensaje + " debe ser solo números.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length > documento[prefijo].maxLength || parametro.length < documento[prefijo].minLength) {
 		div.text(mensaje + " debe entre " + documento[prefijo].minLength + " y " + documento[prefijo].maxLength + " caracteres.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro < 1000000 && (prefijo == "V" || prefijo == "J")) {
 		div.text(mensaje + " documento inválidoS.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!documento[prefijo].expresion.test(parametro)) {
 		div.text(mensaje + " documento inválido.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
@@ -310,7 +270,7 @@ function validarRif(input, div, mensaje) {
 	parametro = input.val();
 	let valid = expresiones.rif.test(parametro);
 	if (parametro == null || parametro == "") {
-		div.text(" ");
+		div.text(mensaje + " no puede estar vacío.");
 		input.addClass('input-error');
 		return true
 	} else if (!valid) {
@@ -329,18 +289,15 @@ function validarContraseña(input, div, mensaje) {
 	parametro = input.val();
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length < 8) {
 		div.text(mensaje + " debe tener un mínimo de 8 caracteres.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "background-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
@@ -350,18 +307,15 @@ function validarRepContraseña(input, div, inputDos) {
 	parametroDos = inputDos.val();
 	if (parametro == null || parametro == "") {
 		div.text("Debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro != parametroDos) {
 		div.text("Las contraseñas deben coincidir.");
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "background-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
@@ -372,14 +326,12 @@ function validarCorreo(input, div, mensaje) {
 
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	}
 	if (!valid) {
 		div.text(mensaje + " debe introducir un correo válido.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 
 	} else {
@@ -403,8 +355,7 @@ function validarCorreoOp(input, div, mensaje) {
 	}
 	if (!valid) {
 		div.text(mensaje + " debe introducir un correo válido.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 
 	} else {
@@ -424,13 +375,11 @@ function validarTelefonoOp(input, div, mensaje) {
 		return true
 	} else if (isNaN(parametro)) {
 		div.text(mensaje + " debe ser solo números.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (parametro.length < 10) {
 		div.text(mensaje + " debe introducir mínimo 10 carácteres.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
@@ -445,22 +394,18 @@ function validarCodBank(input, div, mensaje) {
 	let valid = expresiones.numero.test(parametro)
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (isNaN(parametro)) {
 		div.text(mensaje + " debe ser solo números.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!valid) {
 		div.text(mensaje + " debe ser positivo.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else if (parametro.length < 4) {
 		div.text(mensaje + " debe ser mayor que 3.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else {
 		div.text(" ");
 		input.attr("style", "border-color: none;")
@@ -474,13 +419,11 @@ function validarBanco(input, div, mensaje) {
 	let valid = expresiones.cuentaBank.test(parametro)
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " debe introducir datos.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else if (!valid) {
 		div.text(mensaje + " debe ser un banco valido.")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 	} else {
 		div.text(" ");
 		input.attr("style", "border-color: none;")
@@ -493,8 +436,7 @@ function validarSelect(input, div, mensaje) {
 	parametro = input.val();
 	if (parametro == null || parametro == "") {
 		div.text(mensaje + " seleccione una opción")
-		input.attr("style", "border-color: red;")
-		input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
