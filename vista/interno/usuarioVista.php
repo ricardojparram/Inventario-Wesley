@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
               </div>
 
 
@@ -88,15 +88,20 @@
                     <div class="modal-body">
                      <form method="POST">
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Cedula</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>N° Documento</strong></label>
                         <div class="input-group">
-                          <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="La cédula debe tener 6 o más carácteres, solo números(0-9)."><i class="bi bi-person-fill"></i></button>
+                          <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija el tipo de nacionalidad (V, J, E) e introduzca el numero de documento."><i class="bi bi-card-text"></i></button>
+                          <select class="input-group-text " id="preDocument">
+                                    <option value="V">V</option>
+                                    <option value="E">E</option>
+                                    <option value="J">J</option>
+                                </select>
                           <input type="text" class="form-control" name="cedula" id="cedula" placeholder="Cédula">
                         </div>
                         <p class="m-0" id="errorCed" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Nombre</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Nombre</strong></label>
                         <div class="input-group">
                           <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="El nombre debe tener 3 o más letras(a-z, A-Z)"><i class="bi bi-people-fill"></i></button>
                           <input type="text" class="form-control" name="name" id="name" placeholder="Nombre">
@@ -104,15 +109,15 @@
                         <p class="m-0" id="errorNom" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Apellido</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Apellido</strong></label>
                         <div class="input-group">
-                            <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="El apellido debe tener 3 o más letras(a-z, A-Z)"><i class="bi bi-people"></i></button>
+                          <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="El apellido debe tener 3 o más letras(a-z, A-Z)"><i class="bi bi-people"></i></button>
                           <input type="text" class="form-control" name="apellido" id="apellido" placeholder="Apellido">
                         </div>
                         <p class="m-0" id="errorApe" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Correo</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Correo</strong></label>
                         <div class="input-group">
                           <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca un correo electrónico válido. 
                             Ej: usuario@mail.es"><i class="ri-at-line"></i></button>
@@ -121,7 +126,7 @@
                         <p class="m-0" id="errorEmail" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Contraseña</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Contraseña</strong></label>
                         <div class="input-group">
                           <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="La contraseña debe tener como mínimo 8 carácteres. Admite cualquier tipo de carácter(a-zA-Z0-9!@#$%^&*)"><i class="bi bi-key-fill"></i></button>
                           <input type="password" class="form-control" name="password" id="password" placeholder="Contraseña">
@@ -129,7 +134,7 @@
                         <p class="m-0" id="errorContra" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Nivel</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Nivel</strong></label>
                         <div class="input-group">
                           <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija un nivel para el Usuario"><i class="bi bi-sort-up"></i></button>
                         <select  name= "tipoUsuario" class="form-select" id="select">
@@ -167,15 +172,20 @@
                     <div class="modal-body">
                      <form method="POST">
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Cedula</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>N° Documento</strong></label>
                         <div class="input-group">
-                          <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="La cédula debe tener 6 o más carácteres, solo números(0-9)."><i class="bi bi-person-fill"></i></button>
+                          <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija el tipo de nacionalidad (V, J, E) e introduzca el numero de documento."><i class="bi bi-card-text"></i></button>
+                          <select class="input-group-text " id="preDocumentEdit">
+                            <option value="V">V</option>
+                            <option value="E">E</option>
+                            <option value="J">J</option>
+                          </select>
                           <input type="text" class="form-control" name="cedulaEdit" id="cedulaEdit" placeholder="Cédula">
                         </div>
                         <p class="m-0" id="errorCedEdit" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Nombre</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Nombre</strong></label>
                         <div class="input-group">
                           <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="El nombre debe tener 3 o más letras(a-z, A-Z)"><i class="bi bi-people-fill"></i></button>
                           <input type="text" class="form-control" name="nameEdit" id="nameEdit" placeholder="Nombre">
@@ -183,7 +193,7 @@
                         <p class="m-0" id="errorNomEdit" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Apellido</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Apellido</strong></label>
                         <div class="input-group">
                             <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="El apellido debe tener 3 o más letras(a-z, A-Z)"><i class="bi bi-people"></i></button>
                           <input type="text" class="form-control" name="apellidoEdit" id="apellidoEdit" placeholder="Apellido">
@@ -191,7 +201,7 @@
                         <p class="m-0" id="errorApeEdit" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Correo</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Correo</strong></label>
                         <div class="input-group">
                           <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca un correo electrónico válido. 
                             Ej: usuario@mail.es"><i class="ri-at-line"></i></button>
@@ -200,7 +210,7 @@
                         <p class="m-0" id="errorEmailEdit" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Contraseña</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Contraseña</strong></label>
                         <div class="input-group">
                           <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="La contraseña debe tener como mínimo 8 carácteres. Admite cualquier tipo de carácter(a-zA-Z0-9!@#$%^&*)"><i class="bi bi-key-fill"></i></button>
                           <input type="password" class="form-control" name="passwordEdit" id="passwordEdit" placeholder="Contraseña">
@@ -208,7 +218,7 @@
                         <p class="m-0" id="errorContraEdit" style="color:#ff0000;text-align: center;"></p>
                       </div>
                       <div class="row mb-1">
-                        <label for="inputText" class="col-sm-3 col-form-label"><strong>Nivel</strong></label>
+                        <label for="inputText" class="col-form-label"><strong>Nivel</strong></label>
                         <div class="input-group">
                           <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="La contraseña debe tener como mínimo 8 carácteres. Admite cualquier tipo de carácter(a-zA-Z0-9!@#$%^&*)"><i class="bi bi-sort-up"></i></button>
                         <select  name= "tipoUsuarioEdit" class="form-select" id="selectEdit">

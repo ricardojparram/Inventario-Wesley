@@ -2,7 +2,7 @@ $(document).ready(function(){
 
   let timeoutId;
   $("#cedula").keyup(()=>{ 
-    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,");
+    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,", "V");
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function() {
       if(valid) validarCedulaBD();
