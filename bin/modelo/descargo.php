@@ -124,7 +124,7 @@ class descargo extends DBConnect {
                 $this->id_producto = $cod_producto;
                 $producto_sede = $this->verificarExistenciaDelLote();
 
-                $inventario = intval($producto_sede->cantidad) + intval($cantidad);
+                $inventario = intval($producto_sede->cantidad) - intval($cantidad);
                 $sql = "UPDATE producto_sede SET cantidad = :inventario 
                         WHERE id_producto_sede = :id_producto_sede";
                 $new = $this->con->prepare($sql);
@@ -174,7 +174,7 @@ class descargo extends DBConnect {
             $new->execute();
             $detalle_descargo = $new->fetchAll(\PDO::FETCH_OBJ);
             foreach ($detalle_descargo as $producto) {
-                $inventario = intval($producto->cantidad) - intval($producto->inventario);
+                $inventario = intval($producto->cantidad) + intval($producto->inventario);
                 $new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
                 $new->bindValue(1, $inventario);
                 $new->bindValue(2, $producto->id_producto_sede);

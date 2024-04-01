@@ -14,16 +14,15 @@ $(document).ready(function () {
         $.getJSON("", { mostrar: "", bitacora }, function (data) {
             const permisoEditar = (!permisos["Editar"]) ? 'disabled' : '';
             const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';
-            console.log(data)
             let tabla = data.reduce((acc, row) => {
                 return (acc += `
                 <tr>
-                    <td scope="col">${row.num_cargo}</td>
+                    <td scope="col">${row.num_descargo}</td>
                     <td scope="col">${row.fecha || ""}</td>
                     <td>
                         <span class="d-flex justify-content-center">
-                            <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${row.id_cargo}" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
-                            <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_cargo}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+                            <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${row.id_descargo}" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
+                            <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_descargo}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
                         </span>
                     </td>
                 </tr>`);
@@ -41,7 +40,7 @@ $(document).ready(function () {
         id = this.id;
         $.getJSON("", { detalle: "", id }, (res) => {
             let tabla = "";
-            $(".detalle_titulo").html(`Cargo: ${res[0].num_cargo}`);
+            $(".detalle_titulo").html(`Descargo: ${res[0].num_descargo}`);
             res.forEach((row) => {
                 tabla += `
             <tr>
@@ -60,7 +59,7 @@ $(document).ready(function () {
 
     fechaHoy($("#fecha"));
     $(".cantidad input").inputmask("cantidad");
-    $("#num_cargo").inputmask("cantidad");
+    $("#num_descargo").inputmask("cantidad");
 
     const mostrarProductos = () => {
         $.getJSON("", { select_producto: "" }, (data) => {
@@ -186,23 +185,22 @@ $(document).ready(function () {
         });
     }
     let valid_sede, valid_fecha;
-    $('#num_cargo').change(() => valid_cargo = validarNumero($('#num_cargo'), $('#error1'), "Error de cargo,"))
+    $('#num_descargo').change(() => valid_descargo = validarNumero($('#num_descargo'), $('#error1'), "Error de descargo,"))
     $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
     $('#registrar').click(function (e) {
         e.preventDefault();
 
-        valid_cargo = validarNumero($('#num_cargo'), $('#error1'), "Error de cargo,");
+        valid_descargo = validarNumero($('#num_descargo'), $('#error1'), "Error de de descargo,");
         valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
         let valid_productos = validarProductosRepetidos(false);
         let valid_lotes_cantidad = validarProductos();
 
         productos = getProductos();
-        console.log(productos)
-        if (!valid_cargo || !valid_fecha || !valid_productos || !valid_lotes_cantidad) return;
+        if (!valid_descargo || !valid_fecha || !valid_productos || !valid_lotes_cantidad) return;
 
         let data = {
             registrar: '',
-            num_cargo: $("#num_cargo").val(),
+            num_descargo: $("#num_descargo").val(),
             fecha: $("#fecha").val(),
             productos,
         };
@@ -233,6 +231,16 @@ $(document).ready(function () {
             Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
             throw new Error(e.responseJSON.msg);
         });
+    })
+
+    $('.cerrar').click(() => {
+        $('#agregarform').trigger('reset');
+        $('.eliminarFila').click();
+        $('#Agregar input').removeClass('input-error');
+        $('#Agregar select').removeClass('input-error');
+        $('.error').text('');
+        agregarFila()
+        fechaHoy($('#fecha'));
     })
 
 });
