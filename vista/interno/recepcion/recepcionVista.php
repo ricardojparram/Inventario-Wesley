@@ -90,7 +90,7 @@
 <?php $VarComp->js(); ?>
 <script src="assets/js/chosen.jquery.min.js"></script>
 <script src="assets/js/select2.full.min.js"></script>
-<script type="text/javascript" src="assets/js/recepcion/registrarRecepcion.js"></script>
+<script type="text/javascript" src="assets/js/recepcion/recepcion.js"></script>
 
 </html>
 <!-- MODAL DE MOSTRAR DETALLES -->

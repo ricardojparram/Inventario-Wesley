@@ -110,47 +110,6 @@ CREATE TABLE cambio (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla descargo
---
-
-CREATE TABLE descargo (
-  id_descargo int(11) AUTO_INCREMENT PRIMARY KEY,
-  fecha datetime NOT NULL DEFAULT current_timestamp(),
-  num_descargo int(11) NOT NULL,
-  status tinyint(1) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla producto_dañado
---
-
-CREATE TABLE producto_dañado (
-  id_pro_dañado int(11) AUTO_INCREMENT PRIMARY KEY,
-  cantidad smallint(10) UNSIGNED NOT NULL,
-  id_descargo int(11) NOT NULL,
-  FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla detalle_descargo
---
-
-CREATE TABLE detalle_descargo (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
-  id_descargo int(11) NOT NULL,
-  id_pro_dañado int(11) NOT NULL,
-  cantidad int(11) NOT NULL,
-  FOREIGN KEY (id_pro_dañado) REFERENCES producto_dañado (id_pro_dañado) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla tipo_producto
 --
 
@@ -291,6 +250,78 @@ CREATE TABLE img_producto (
 
 -- --------------------------------------------------------
 
+--
+-- Estructura de tabla para la tabla sede
+--
+
+CREATE TABLE sede (
+  id_sede int(11) AUTO_INCREMENT PRIMARY KEY,
+  nombre varchar(50) NOT NULL,
+  telefono varchar(15) NOT NULL,
+  direccion varchar(200) NOT NULL,
+  status tinyint(1) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla producto_sede
+--
+
+CREATE TABLE producto_sede (
+  id_producto_sede int(50) AUTO_INCREMENT PRIMARY KEY,
+  cod_producto varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  lote varchar(15) NOT NULL,
+  fecha_vencimiento date NOT NULL,
+  id_sede int(11) NOT NULL,
+  cantidad int(11) NOT NULL,
+  FOREIGN KEY (id_sede) REFERENCES sede (id_sede) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (cod_producto) REFERENCES producto (cod_producto) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla descargo
+--
+
+CREATE TABLE descargo (
+  id_descargo int(11) AUTO_INCREMENT PRIMARY KEY,
+  fecha datetime NOT NULL DEFAULT current_timestamp(),
+  num_descargo int(11) NOT NULL,
+  status tinyint(1) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla producto_dañado
+--
+
+-- CREATE TABLE producto_dañado (
+--   id_pro_dañado int(11) AUTO_INCREMENT PRIMARY KEY,
+--   cantidad smallint(10) UNSIGNED NOT NULL,
+--   id_descargo int(11) NOT NULL,
+--   FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla detalle_descargo
+--
+
+CREATE TABLE detalle_descargo (
+  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
+  id_descargo int(11) NOT NULL,
+  id_producto_sede int(50) NOT NULL,
+  cantidad int(11) NOT NULL,
+  FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
 
 --
 -- Estructura de tabla para la tabla compra
@@ -313,11 +344,11 @@ CREATE TABLE compra (
 
 CREATE TABLE compra_producto (
   id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
-  cod_producto varchar(15) NOT NULL,
+  id_producto_sede int(50) NOT NULL,
   orden_compra varchar(15) NOT NULL,
   cantidad int(12) NOT NULL,
   precio_compra decimal(10,2) NOT NULL,
-  FOREIGN KEY (cod_producto) REFERENCES producto (cod_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (orden_compra) REFERENCES compra (orden_compra) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
@@ -342,11 +373,11 @@ CREATE TABLE donaciones (
 
 CREATE TABLE det_donacion (
   id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
-  cod_producto varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  id_producto_sede int(50) NOT NULL,
   cantidad int(12) NOT NULL,
   id_donaciones int(11) NOT NULL,
   FOREIGN KEY (id_donaciones) REFERENCES donaciones (id_donaciones) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (cod_producto) REFERENCES producto (cod_producto) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -407,20 +438,6 @@ CREATE TABLE donativo_int (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla sede
---
-
-CREATE TABLE sede (
-  id_sede int(11) AUTO_INCREMENT PRIMARY KEY,
-  nombre varchar(50) NOT NULL,
-  telefono varchar(15) NOT NULL,
-  direccion varchar(200) NOT NULL,
-  status tinyint(1) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla tipo_empleado
 --
 
@@ -473,6 +490,7 @@ CREATE TABLE pacientes (
 CREATE TABLE venta (
   num_fact varchar(15) PRIMARY KEY,
   monto_fact decimal(10,2) NOT NULL,
+  monto_dolares decimal(10,2) NOT NULL,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
@@ -486,10 +504,10 @@ CREATE TABLE venta (
 CREATE TABLE venta_producto (
   id_venta_p int(11) AUTO_INCREMENT PRIMARY KEY,
   num_fact varchar(15) NOT NULL,
-  cod_producto varchar(15) NOT NULL,
+  id_producto_sede int(50) NOT NULL,
   cantidad smallint(5) UNSIGNED NOT NULL,
   precio_actual decimal(10,2) NOT NULL,
-  FOREIGN KEY (cod_producto) REFERENCES producto (cod_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (num_fact) REFERENCES venta (num_fact) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
@@ -566,30 +584,13 @@ CREATE TABLE detalle_pago (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla producto_sede
---
-
-CREATE TABLE producto_sede (
-  id_producto_sede int(50) AUTO_INCREMENT PRIMARY KEY,
-  cod_producto varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
-  lote varchar(15) NOT NULL,
-  fecha_vencimiento date NOT NULL,
-  id_sede int(11) NOT NULL,
-  cantidad int(11) NOT NULL,
-  FOREIGN KEY (id_sede) REFERENCES sede (id_sede) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (cod_producto) REFERENCES producto (cod_producto) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla recepcion_sede
 --
 
 CREATE TABLE recepcion_sede (
   id_recepcion int(11) AUTO_INCREMENT PRIMARY KEY,
   id_transferencia int(11) NOT NULL,
-  fecha date NOT NULL,
+  fecha datetime NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -600,11 +601,11 @@ CREATE TABLE recepcion_sede (
 --
 
 CREATE TABLE detalle_recepcion (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
+  id_recepcion int(11) NOT NULL,
   cantidad int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (id_detalle) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -655,9 +656,7 @@ CREATE TABLE cargo (
 --
 
 CREATE TABLE detalle_cargo (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
   id_cargo int(11) NOT NULL,
-  num_cargo int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
   FOREIGN KEY (id_cargo) REFERENCES cargo (id_cargo) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -674,9 +673,9 @@ CREATE TABLE detalle_cargo (
 
 CREATE TABLE recepcion_nacional (
   id_rep_nacional int(11) AUTO_INCREMENT PRIMARY KEY,
-  id_proveedor varchar(20) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  id_proveedor varchar(20) NOT NULL,
   fecha date NOT NULL,
-  estado_producto varchar(20) NOT NULL
+  status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -687,10 +686,10 @@ CREATE TABLE recepcion_nacional (
 --
 
 CREATE TABLE detalle_recepcion_nacional (
-  id_detalle int(11) AUTO_INCREMENT PRIMARY KEY,
+  id_rep_nacional int(11) NOT NULL,
   cantidad int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
-  FOREIGN KEY (id_detalle) REFERENCES recepcion_nacional (id_rep_nacional) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (id_rep_nacional) REFERENCES recepcion_nacional (id_rep_nacional) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

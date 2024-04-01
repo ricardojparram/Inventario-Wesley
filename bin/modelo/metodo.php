@@ -66,18 +66,18 @@
       }
      }
 
-     public function validarSelect($id){
+     public function validarExitencia($id){
       if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
         return ['resultado' => 'Error de id','error' => 'id inválida.'];
       }
       
       $this->id = $id;
 
-      return $this->validSelect();
+      return $this->validExistencia();
 
      }
 
-     private function validSelect(){
+     private function validExistencia(){
       try {
         parent::conectarDB();
         $new = $this->con->prepare('SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.id_forma_pago = ?');
@@ -115,18 +115,10 @@
       private function agregarMetodo(){
        try{
         parent::conectarDB();
-        do{
-        $pk = $this->uniqueNumericID();
-        $check = $this->con->prepare("SELECT COUNT(*) FROM `forma_pago` WHERE `id_forma_pago` = ?");
-        $check->bindValue(1, $pk);
-        $check->execute();
-        $count = $check->fetchColumn();
-        }while($count > 0);
-        
-        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (?,?,1)");
 
-        $new->bindValue(1 , $pk);
-        $new->bindValue(2 , $this->metodo);
+        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (DEFAULT,?,1)");
+
+        $new->bindValue(1 , $this->metodo);
         $new->execute();
         $data = $new->fetchAll();
         

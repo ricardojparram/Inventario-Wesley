@@ -54,7 +54,7 @@
                   <h5 class="card-title">Donaciones Registradas</h5>
                 </div>
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar" id="agregarModalButton">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#agregar" id="agregarModalButton">Agregar</button>
                 </div>
               </div>
 
@@ -85,6 +85,27 @@
             </div>
           </div>
 
+          
+          <!-- Modal delete-->
+
+          <div class="modal fade" id="borrar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3 class="modal-title" id="staticBackdropLabel">¿Estás seguro?</h3>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <h5>Los datos serán anulados del sistema.</h5>
+                </div>
+                <div class="modal-footer">
+                  <button id="close" type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-danger" id="delete">Anular</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- MODAL DE PRODUCTOS -->
           <div class="modal fade" id="detalleDonacion" tabindex="-1">
             <div class="modal-dialog modal-dialog-scrollable modal-md">
@@ -98,7 +119,6 @@
                     <thead>
                       <th>Producto</th>
                       <th>Cantidad</th>
-                      <th>Cantidad Unitaria</th>
                     </thead>
                     <tbody id="bodyDetalle">
 
@@ -113,7 +133,8 @@
           </div>
           <!-- FINAL MODAL DE PRODUCTOS -->
 
-          <div class="modal fade" id="Agregar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+           <!-- MODAL REGISTRAR DONACION -->
+          <div class="modal fade" id="agregar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header alert alert-success">
@@ -139,13 +160,13 @@
                             <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>
                           </div>
 
-                          <div class="form-group col-md-6">  
-                            <label class="col-form-label"><strong>Nombre y Apellido</strong></label>
+                          <div class="form-group col-md-6">                          
+                            <label class="col-form-label"> <strong>Beneficiario</strong> </label>
                             <div class="input-group">
-                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Segun la cedula se mostra el nombre y apellido del Paciente"><i class="bi bi-people"></i></button> 
-                              <input class="form-control iva" disabled type="text" id="nombre"/>
+                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el beneficiario"><i class="bi bi-cash"></i></button> 
+                              <input type="text" class="form-control" id="beneficiario" >
                             </div>
-                            <p class="error" style="color:#ff0000;text-align: center;" id="error4"></p>
+                            <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
                           </div>
 
                         </div>
@@ -156,36 +177,17 @@
                       <div class="container-fluid">
                         <div class="row">
 
-                          <div class="form-group col-md-4">                          
+                          <div class="form-group col-md-12">                          
                             <label class="col-form-label"> <strong>Sede</strong> </label>
                             <div class="input-group">
                               <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el beneficiario"><i class="bi bi-hospital"></i></button> 
-                              <select class="form-control select2" id="sedes">
+                              <select class="form-control select2" id="sede">
                                 <option value="0" selected disabled>Sedes</option>
                               </select>
                             </div>
                             <p class="error" style="color:#ff0000;text-align: center;" id="error3"></p>
                           </div>
 
-
-                          <div class="form-group col-md-4">                          
-                            <label class="col-form-label"> <strong>Fecha</strong> </label>
-                            <div class="input-group">
-                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la fecha de donacion"><i class="bi bi-calendar"></i></button> 
-                               <input class="form-control" type="date" id="fecha"/>
-                            </div>
-                            <p class="error" style="color:#ff0000;text-align: center;" id="error5"></p>
-                          </div>
-
-
-                          <div class="form-group col-md-4">                          
-                            <label class="col-form-label"> <strong>Beneficiario</strong> </label>
-                            <div class="input-group">
-                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el beneficiario"><i class="bi bi-cash"></i></button> 
-                              <input type="text" class="form-control" id="beneficiario" >
-                            </div>
-                            <p class="error" style="color:#ff0000;text-align: center;" id="error3"></p>
-                          </div>
 
                         </div>
                       </div>
@@ -215,8 +217,8 @@
                                         <option></option>
                                       </select>
                                     </td>
-                                    <td width='15%' class="cantidad"><input class="select-asd stock" type="number" value=""/></td>
-                                    <td width='15%' class="cantUnitaria"><input class="select-asd unidad" type="number" value="" /></td>
+                                    <td width='15%' class="cantidad"><input class="select-asd stock" disabled type="number" value=""/></td>
+                                    <td width='15%' class="unidades"><input class="select-asd unidad" type="number" value="" /></td>
                                   </tr>
                                 </tbody>
                               </table>
@@ -246,6 +248,7 @@
                 </div>
               </div>
             </div>
+
           
 
   </main>

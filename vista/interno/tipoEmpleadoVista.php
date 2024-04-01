@@ -149,7 +149,7 @@
 
                       <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content=""><i class="ri-user-2-fill"></i></button> 
 
-                      <input id="tipoEmpladoEdit" class="form-control" required="" placeholder="Tipo de Empleado">
+                      <input id="tipoEmpleadoEdit" class="form-control" required="" placeholder="Tipo de Empleado">
 
                     </div>
                   </div>
