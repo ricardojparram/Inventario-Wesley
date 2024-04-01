@@ -35,6 +35,7 @@
     $presentacion = ($_GET['url'] == 'presentacion')? "active" : "" ;
     $inventario = ($_GET['url'] == 'inventario')? "active" : "" ;
     $productoDañado = ($_GET['url'] == 'productoDañado')? "active" : "" ;
+    $tipoProducto = ($_GET['url'] == 'tipo') ? "active" : "" ;
     $clase = ($_GET['url'] == 'clase')? "active" : "" ;
     $tipo = ($_GET['url'] == 'tipo')? "active" : "" ;
     $medida = ($_GET['url'] == 'medida')? "active" : "" ;
@@ -197,6 +198,13 @@
         </a>
     </li>' : '';
 
+    $tipoProductoLi = (isset($this ->permisos['Tipo']["consultar"]))?
+    '<li>
+    <a href="?url=tipoProducto" class="'.$tipoProducto.'">
+      <i class="bi bi-circle-fill"></i><span>TipoProducto</span>
+    </a>
+    </li>' : '';
+
     $claseLi = (isset($this->permisos['Clase']["Consultar"])) ?
     '<li>
       <a href="?url=clase" class="'.$clase.'">
@@ -209,6 +217,7 @@
         <i class="bi bi-circle-fill"></i><span>Tipo</span>
       </a>
     </li>' : '';
+
     $medidaLi = (isset($this->permisos['Medida']["Consultar"])) ?
     '<li>
       <a href="?url=medida" class="'.$medida.'">
@@ -221,12 +230,14 @@
         <i class="bi bi-circle-fill"></i><span>Presentación</span>
       </a>
     </li>' : '';
-    $categoriaLi = (isset($this->permisos['Clase']["Consultar"]) || isset($this->permisos['Medida']["Consultar"]) || isset($this->permisos['Tipo']["Consultar"])) ?
+    $categoriaLi = ( isset($this->permiso['TipoProducto']["Consultar"])||isset($this->permisos['Clase']["Consultar"]) || isset($this->permisos['Medida']["Consultar"]) || isset($this->permisos['Tipo']["Consultar"])) ?
     '<li>
         <a href="#" class="'.$categoria.'">
           <i class="bi bi-tags"></i><span>Categoría</span>
         </a>
         <ul>
+          '.$tipoProductoLi.'
+
           '.$claseLi.'
 
           '.$tipoLi.'
