@@ -26,7 +26,7 @@
      }
 
      public function validarMetodo($metodo , $id){
-      if(preg_match_all("/[$%&|<>0-9]/", $metodo) == true){
+      if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
           return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
       }
 
@@ -66,18 +66,18 @@
       }
      }
 
-     public function validarSelect($id){
+     public function validarExitencia($id){
       if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
         return ['resultado' => 'Error de id','error' => 'id inválida.'];
       }
       
       $this->id = $id;
 
-      return $this->validSelect();
+      return $this->validExistencia();
 
      }
 
-     private function validSelect(){
+     private function validExistencia(){
       try {
         parent::conectarDB();
         $new = $this->con->prepare('SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1 AND fp.id_forma_pago = ?');
@@ -98,7 +98,7 @@
      }
 
       public function getAgregarMetodo($metodo){
-        if(preg_match_all("/[$%&|<>0-9]/", $metodo) == true){
+        if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
           return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
         }
        
@@ -115,17 +115,16 @@
       private function agregarMetodo(){
        try{
         parent::conectarDB();
-        $pk = $this->uniqueID();
-        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (3,?,1)");
+
+        $new = $this->con->prepare("INSERT INTO `forma_pago`(`id_forma_pago`, `tipo_pago`, `status`) VALUES (DEFAULT,?,1)");
 
         $new->bindValue(1 , $this->metodo);
         $new->execute();
         $data = $new->fetchAll();
         
         $resultado = ["resultado" => "registrado correctamente"];
-        echo json_encode($resultado);
         parent::desconectarDB();
-        die();
+        return $resultado;
 
         
       }catch(\PDOexection $error){
@@ -163,8 +162,8 @@
  }
 
   public function getEditarMetodo($metodo, $id){
-    if(preg_match_all("/[$%&|<>0-9]/", $metodo) == true){
-      return['resultado' => 'Error de metodo' , 'error' => 'metodo inválido.'];
+    if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
+      return ['resultado' => 'Error de metodo' , 'error' => 'metodo inválido.'];
     }
     if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
       return ['resultado' => 'Error de id','error' => 'id inválida.'];

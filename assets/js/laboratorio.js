@@ -12,15 +12,12 @@ $(document).ready(function () {
     });
 
   function rellenar(bitacora = false) {
-    $.post(
-      "",
-      { mostrar: "", bitacora },
-      (data) => {
-        let tabla;
-        const permisoEditar = !permisos["Editar"] ? "disabled" : "";
-        const permisoEliminar = !permisos["Eliminar"] ? "disabled" : "";
-        data.forEach((row) => {
-          tabla += `
+    $.post("", { mostrar: "", bitacora }, (data) => {
+      let tabla;
+      const permisoEditar = !permisos["Editar"] ? "disabled" : "";
+      const permisoEliminar = !permisos["Eliminar"] ? "disabled" : "";
+      data.forEach((row) => {
+        tabla += `
     			<tr>
 	    			<td>${row.rif_laboratorio}</th>
 	    			<td scope="col">${row.razon_social}</td>
@@ -32,12 +29,12 @@ $(document).ready(function () {
 		    			</span>
 	    			</td>
     			</tr>`;
-        });
-        $("#tableMostrar tbody").html(tabla ? tabla : "");
-        mostrar = $("#tableMostrar").DataTable({
-          resposive: true,
-        });
-      },
+      });
+      $("#tableMostrar tbody").html(tabla ? tabla : "");
+      mostrar = $("#tableMostrar").DataTable({
+        resposive: true,
+      });
+    },
       "json",
     ).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
@@ -45,29 +42,21 @@ $(document).ready(function () {
     });
   }
 
-  function validarRif(input, div, edit = false) {
+  function validarRifBD(input, div, edit = false) {
     if (input.val() === edit) return true;
-    $.post(
-      "",
-      { rif: input.val(), validar: "rif", edit },
-      function (data) {
-        if (data.resultado === "error") {
-          div.text(data.msg);
-          input.attr("style", "border-color: red;");
-          input.attr(
-            "style",
-            "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);",
-          );
-        }
-      },
-      "json",
-    );
+    $.getJSON("", { rif: input.val(), validar: "rif", edit })
+      .fail(e => {
+        console.log(e)
+        div.text(e.responseJSON.msg);
+        input.addClass('input-error');
+      })
   }
-
+  $("#rif").inputmask("rif");
   $("#rif").keyup(() => {
-    let valid = validarCedula($("#rif"), $("#error"), "Error de RIF,");
-    if (valid) validarRif($("#rif"), $("#error"));
+    let valid = validarRif($("#rif"), $("#error"), "Error de RIF,");
+    if (valid) validarRifBD($("#rif"), $("#error"));
   });
+  $("#razon").inputmask("nombre");
   $("#razon").keyup(() => {
     validarNombre($("#razon"), $("#error"), "Error de nombre,");
   });
@@ -87,7 +76,7 @@ $(document).ready(function () {
     if (click >= 1) throw new Error("Spam de clicks");
 
     let vrif, vnombre, vdireccion, vtelefono;
-    validarCedula($("#rif"), $("#error"), "Error de RIF,");
+    validarRif($("#rif"), $("#error"), "Error de RIF,");
     vnombre = validarNombre($("#razon"), $("#error"), "Error de nombre,");
     vdireccion = validarDireccion(
       $("#direccion"),
@@ -147,10 +136,12 @@ $(document).ready(function () {
     });
   });
 
+  $("#rifEdit").inputmask("rif");
   $("#rifEdit").keyup(() => {
-    let valid = validarCedula($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
-    if (valid) validarRif($("#rifEdit"), $("#errorEdit"), id);
+    let valid = validarRif($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
+    if (valid) validarRifBD($("#rifEdit"), $("#errorEdit"), id);
   });
+  $("#razonEdit").inputmask("nombre");
   $("#razonEdit").keyup(() => {
     validarNombre($("#razonEdit"), $("#errorEdit"), "Error de nombre,");
   });
@@ -168,7 +159,7 @@ $(document).ready(function () {
     if (click >= 1) throw new Error("spaaam");
 
     let vrif, vnombre, vdireccion, vtelefono;
-    vrif = validarCedula($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
+    vrif = validarRif($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
     vnombre = validarNombre(
       $("#razonEdit"),
       $("#errorEdit"),

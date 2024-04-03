@@ -29,6 +29,11 @@
     ?>
        
 <!-- End Sidebar-->
+<style>
+    .input-group-text{
+        appearance: none;
+    }
+</style>
 <main class="main" id="main">
     <div class="pagetitle">
         <h1>Personal</h1>
@@ -46,7 +51,7 @@
                     <h5 class="card-title">Personal Registrado</h5>
                 </div>
                 <div class="col-6 text-end mt-3">
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
+                    <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#basicModal" id="agregarModalButton">Agregar</button>
                 </div>
             </div>
 
@@ -55,7 +60,7 @@
                   <thead>
 
                     <tr>
-                      <th scope="col">Cedula</th>
+                      <th scope="col">N° Documento</th>
                       <th scope="col">Nombre</th>
                       <th scope="col">Apellido</th>
                       <th scope="col">T. Empleado</th>
@@ -94,7 +99,7 @@
                         <div class="col-lg-6">
                             <label for="inputText" class="col-form-label"><strong>Apellido</strong></label>
                             <div class="input-group">
-                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="El nombre debe tener 3 o más letras(a-z, A-Z)"><i class="bi bi-people-fill"></i></button>
+                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="El apellido debe tener 3 o más letras(a-z, A-Z)"><i class="bi bi-people-fill"></i></button>
                                 <input type="text" class="form-control" placeholder="Apellido" id="ape">
                             </div>
                             <p class="m-0" id="errorApe" style="color:#ff0000;text-align: center;"></p>
@@ -102,14 +107,15 @@
                     </div>
                     <div class="row form-group col-md-12">
                         <div class="col-lg-6">
-                            <label for="inputText" class="col-form-label"><strong>Documento</strong></label>
+                            <label for="inputText" class="col-form-label"><strong>N° Documento</strong></label>
                             <div class="input-group ">
-                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover"data-bs-placement="top" data-bs-content="La cédula debe tener 7 o más carácteres, solo números(0-9)."><i class="bi bi-people"></i></button>
-                                <select class="input-group-text" style="appearance: none;">
+                            <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija el tipo de nacionalidad (V, J, E) e introduzca el numero de documento."><i class="bi bi-card-text"></i></button>
+                                <select class="input-group-text" id="preDocument">
                                     <option value="V">V</option>
                                     <option value="E">E</option>
+                                    <option value="J">J</option>
                                 </select>
-                                <input type="text" class="form-control" placeholder="Cedula" id="cedu">
+                                <input type="text" class="form-control" placeholder="N° Documento" id="cedu">
                             </div>
                             <p class="m-0" id="errorCedu" style="color:#ff0000;text-align: center;"></p>
                         </div>
@@ -190,7 +196,7 @@
                 </div>
                 <div class="modal-footer">
                   <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" id="cerrarRegis">Cerrar</button>
-                  <button type="button" class="btn btn-success" id="enviar">Registrar</button>
+                  <button type="button" class="btn btn-registrar" id="enviar">Registrar</button>
                 </div>
             </form>
         </div>
@@ -227,10 +233,15 @@
                     </div>
                     <div class="row form-group col-md-12">
                         <div class="col-lg-6">
-                            <label for="inputText" class="col-form-label"><strong>Cedula</strong></label>
+                            <label for="inputText" class="col-form-label"><strong>N° Documento</strong></label>
                             <div class="input-group ">
-                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover"data-bs-placement="top" data-bs-content="La cédula debe tener 7 o más carácteres, solo números(0-9)."><i class="bi bi-people"></i></button>
-                                <input type="text" class="form-control" placeholder="Cedula" id="ceduEdit">
+                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija el tipo de nacionalidad (V, J, E) e introduzca el numero de documento."><i class="bi bi-card-text"></i></button>
+                                <select class="input-group-text " id="preDocumentEdit">
+                                    <option value="V">V</option>
+                                    <option value="E">E</option>
+                                    <option value="J">J</option>
+                                </select>
+                                <input type="text" class="form-control" placeholder="N° Documento" id="ceduEdit">
                             </div>
                             <p class="m-0" id="errorCeduEdit" style="color:#ff0000;text-align: center;"></p>
                         </div>
@@ -274,7 +285,7 @@
                             <label for="inputText" class="col-form-label"><strong>Tipo de Empleado</strong></label>
                             <div class="input-group ">
                                 <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover"data-bs-placement="top" data-bs-content="Elija un tipo para asignar al empleado"><i class="bi bi-sort-up"></i></button>
-                                <select class="form-select" id="empleadoEdit">
+                                <select class="form-select" id="tipoEdit">
                                     <option selected disabled>Tipo</option>
                                     <?php if(isset($mostrarT)){
                                         foreach($mostrarT as $tipo){
@@ -311,7 +322,7 @@
                 </div>
                 <div class="modal-footer">
                   <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" id="cerrarEdit">Cerrar</button>
-                  <button type="button" class="btn btn-success" id="editar">Actualizar</button>
+                  <button type="button" class="btn btn-registrar" id="editar">Actualizar</button>
                 </div>
             </form>
         </div>
@@ -338,6 +349,86 @@
     </div>
 </div>
 
+<!--- Modal de Datos  -->
+<div class="modal fade modal-lg" id="datosModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header alert alert-success">
+                <h5 class="modal-title"><strong>Datos Personal</strong></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="">
+                    <div class="row form-group col-md-12">
+                        <div class="col-lg-6">
+                            <label for="inputText" class="col-form-label"><strong>Nombre</strong></label>
+                            <div class="input-group ">
+                                <p class="m-0" id="nomDatos"></p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="inputText" class="col-form-label"><strong>Apellido</strong></label>
+                            <div class="input-group">
+                                <p class="m-0" id="apeDatos"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group col-md-12">
+                        <div class="col-lg-6">
+                            <label for="inputText" class="col-form-label"><strong>N° Documento</strong></label>
+                            <div class="input-group ">
+                                <p class="m-0" id="ceduDatos"></p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="inputText" class="col-form-label"><strong>Edad</strong></label>
+                            <div class="input-group">
+                                <p class="m-0" id="edadDatos"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-1 col-md-12">
+                        <label for="inputText" class="col-form-label"><strong>Direccion</strong></label>
+                        <div class="input-group">
+                            <p class="m-0" id="direcDatos"></p>
+                        </div>
+                    </div>
+                    <div class="row form-group col-md-12">
+                        <div class="col-lg-6">
+                            <label for="inputText" class="col-form-label"><strong>Telefono</strong></label>
+                            <div class="input-group ">
+                                <p class="m-0" id="teleDatos"></p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="inputText" class="col-form-label"><strong>Correo</strong></label>
+                            <div class="input-group">
+                                <p class="m-0" id="emailDatos"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group col-md-12">
+                        <div class="col-lg-6">
+                            <label for="inputText" class="col-form-label"><strong>Tipo de Empleado</strong></label>
+                            <div class="input-group ">
+                                <p class="m-0" id="tipoDatos"></p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="inputText" class="col-form-label"><strong>Sede</strong></label>
+                            <div class="input-group">
+                                <p class="m-0" id="sedeDatos"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" id="cerrarDatos">Cerrar</button>
+                </div>
+        </div>
+    </div>
+</div>
 
 </body>
 <?php $VarComp->js(); ?>

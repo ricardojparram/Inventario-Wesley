@@ -175,7 +175,7 @@
 <!-- FINAL MODAL DE PRODUCTOS -->
 
 <div class="modal fade" id="Agregar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-fullscreen">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header alert alert-success">
         <h3 class="modal-title"> <strong>Registrar Venta</strong> </h3>
@@ -253,7 +253,7 @@
         
         <div class="row">
 
-          <div class="form-group col-md-5 h-75 my-3">  
+          <div class="form-group col-md h-75 my-3">  
             <div class="container-fluid">
               <div class="row">
                 <div class="table table-body-tipo form-group col-12">
@@ -289,7 +289,7 @@
 
           </div>
 
-        <div class="form-group col-md-7 my-3">  
+        <div class="form-group col-md my-3">  
           <div class="container-fluid">
             <div class="row">
               <div class="table table-body form-group col-12">
