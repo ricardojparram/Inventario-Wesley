@@ -35,8 +35,8 @@ class usuarios extends DBConnect
       $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
       return $resultado;
     }
-    if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Cédula invalida.'];
+    if (preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
+      $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
       return $resultado;
     }
     if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
@@ -231,8 +231,8 @@ class usuarios extends DBConnect
       $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
       return $resultado;
     }
-    if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Cédula invalida.'];
+    if (preg_match_all("/^[VEJ]-[A-Z0-9]{7,12}$/", $cedula) == false) {
+      $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
       return $resultado;
     }
     if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {

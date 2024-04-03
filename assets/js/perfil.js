@@ -17,7 +17,8 @@ $(document).ready(function(){
 
 				$('#nameEdit').val(dato[0].nombre);
 				$('#apeEdit').val(dato[0].apellido);
-				$('#cedulaEdit').val(dato[0].cedula);
+				$("#cedulaEdit").val(dato[0].cedula.slice(2));
+				$("#preDocument").val(dato[0].cedula.charAt(0));
 				$('#emailEdit').val(dato[0].correo);
 			}
 		})
@@ -45,10 +46,10 @@ $(document).ready(function(){
 	let click = 0;
 	setInterval(() => { click = 0; }, 2000);
 
-	$("#nameEdit").keyup(()=> {  validarNombre($("#nameEdit"),$("#error") ,"Error de nombre,") });
-	$("#apeEdit").keyup(()=> {  validarNombre($("#apeEdit"),$("#error") ,"Error de apellido,") });
-	$("#cedulaEdit").keyup(()=> {	validarCedula($("#cedulaEdit"),$("#error") ,"Error de cedula,") });
-	$("#emailEdit").keyup(()=> {  validarCorreo($("#emailEdit"),$("#error") ,"Error de email,") });
+	$("#nameEdit").keyup(()=> {  validarNombre($("#nameEdit"),$("#errorNom") ,"Error de nombre,") });
+	$("#apeEdit").keyup(()=> {  validarNombre($("#apeEdit"),$("#errorApe") ,"Error de apellido,") });
+	$("#cedulaEdit").keyup(()=> {	validarCedula($("#cedulaEdit"),$("#errorCedu") ,"Error de cedula,", $("#preDocument")) });
+	$("#emailEdit").keyup(()=> {  validarCorreo($("#emailEdit"),$("#errorEmail") ,"Error de email,") });
 	let name, lastname, id, email;
 
 	$('#borrarFoto').click(()=>{
@@ -116,10 +117,10 @@ $(document).ready(function(){
 
 		if (click >= 1) throw new Error('Spam de clicks');
 
-		name = validarNombre($("#nameEdit"),$("#error") ,"Error de nombre,");
-		lastname = validarNombre($("#apeEdit"),$("#error") ,"Error de apellido,");
-		id = validarCedula($("#cedulaEdit"),$("#error") ,"Error de cedula,");
-		email = validarCorreo($("#emailEdit"),$("#error") ,"Error de email,");
+		name = validarNombre($("#nameEdit"),$("#errorNom") ,"Error de nombre,");
+		lastname = validarNombre($("#apeEdit"),$("#errorApe") ,"Error de apellido,");
+		id = validarCedula($("#cedulaEdit"),$("#errorCedu") ,"Error de cedula,", $("#preDocument"));
+		email = validarCorreo($("#emailEdit"),$("#errorEmail") ,"Error de email,");
 
 		if(!name && !lastname && !id && !email) {
 			throw new Error('Datos inválidos');

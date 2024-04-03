@@ -74,7 +74,7 @@ $(document).ready(function() {
     })
     $("#nom").keyup(() => {validarNombre($("#nom"), $("#errorNom"), "Error de Nombre,")})
     $("#ape").keyup(() => {validarNombre($("#ape"), $("#errorApe"), "Error de Apellido,")})
-    $("#edad").keyup(() => {validarNumero($("#edad"), $("#errorEdad"), "Error de Edad,")})
+    $("#edad").keyup(() => {validarFechaAyer($("#edad"), $("#errorEdad"), "Error de Fecha,")})
     $("#direc").keyup(() => {validarDireccion($("#direc"), $("#errorDirec"), "Error de Direccion,")})
     $("#tele").keyup(() => {validarTelefono($("#tele"), $("#errorTele"), "Error de Telefono,")})
     $("#sede").change(() => {validarSelect($("#sede"), $("#errorSede"), "Error de Sede,")})
@@ -90,7 +90,7 @@ $(document).ready(function() {
 
         let nombre = validarNombre($("#nom"), $("#errorNom"), "Error de Nombre,")
         let apellido = validarNombre($("#ape"), $("#errorApe"), "Error de Apellido,")
-        let edad = validarNumero($("#edad"), $("#errorEdad"), "Error de Edad,")
+        let edad = validarFechaAyer($("#edad"), $("#errorEdad"), "Error de Fecha,")
         let direccion = validarDireccion($("#direc"), $("#errorDirec"), "Error de Direccion,")
         let telefono = validarTelefono($("#tele"), $("#errorTele"), "Error de Telefono,")
         let sede = validarSelect($("#sede"), $("#errorSede"), "Error de Sede,")
@@ -155,7 +155,7 @@ $(document).ready(function() {
 				$("#nomEdit").val(data[0].nombres);
 				$("#apeEdit").val(data[0].apellidos);
 				$("#emailEdit").val(data[0].correo);
-				$("#edadEdit").val(data[0].edad);
+				$("#edadEdit").val(data[0].fecha);
 				$("#teleEdit").val(data[0].telefono);
 				$("#direcEdit").val(data[0].direccion);
 				$("#sedeEdit").val(data[0].sede);
@@ -174,12 +174,11 @@ $(document).ready(function() {
 			data: { select: "xd", cedulaId },
 			success(data) {
 
-				
                 $("#ceduDatos").text(data[0].cedula);
 				$("#nomDatos").text(data[0].nombres);
 				$("#apeDatos").text(data[0].apellidos);
 				$("#emailDatos").text(data[0].correo);
-				$("#edadDatos").text(data[0].edad);
+				$("#edadDatos").text(data[0].edad+" Años");
 				$("#teleDatos").text(data[0].telefono);
 				$("#direcDatos").text(data[0].direccion);
 				$("#sedeDatos").text(data[0].nomSede);
@@ -212,7 +211,7 @@ $(document).ready(function() {
     })
     $("#nomEdit").keyup(() => {validarNombre($("#nomEdit"), $("#errorNomEdit"), "Error de Nombre,")})
     $("#apeEdit").keyup(() => {validarNombre($("#apeEdit"), $("#errorApeEdit"), "Error de Apellido,")})
-    $("#edadEdit").keyup(() => {validarNumero($("#edadEdit"), $("#errorEdadEdit"), "Error de Edad,")})
+    $("#edadEdit").keyup(() => {validarFechaAyer($("#edadEdit"), $("#errorEdadEdit"), "Error de Fecha,")})
     $("#direcEdit").keyup(() => {validarDireccion($("#direcEdit"), $("#errorDirecEdit"), "Error de Direccion,")})
     $("#teleEdit").keyup(() => {validarTelefono($("#teleEdit"), $("#errorTeleEdit"), "Error de Telefono,")})
     $("#sedeEdit").change(() => {validarSelect($("#sedeEdit"), $("#errorSedeEdit"), "Error de Sede,")})
@@ -229,7 +228,7 @@ $(document).ready(function() {
 
         let nombre = validarNombre($("#nomEdit"), $("#errorNomEdit"), "Error de Nombre,")
         let apellido = validarNombre($("#apeEdit"), $("#errorApeEdit"), "Error de Apellido,")
-        let edad = validarNumero($("#edadEdit"), $("#errorEdadEdit"), "Error de Edad,")
+        let edad = validarFechaAyer($("#edadEdit"), $("#errorEdadEdit"), "Error de Fecha,")
         let direccion = validarDireccion($("#direcEdit"), $("#errorDirecEdit"), "Error de Direccion,")
         let telefono = validarTelefono($("#teleEdit"), $("#errorTeleEdit"), "Error de Telefono,")
         let sede = validarSelect($("#sedeEdit"), $("#errorSedeEdit"), "Error de Sede,");

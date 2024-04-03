@@ -506,7 +506,7 @@
 			input.attr("style","border-color: red;")
 			return false
 		}else if (!valid) {
-			div.text(mensaje+" introdusca una fecha")	
+			div.text(mensaje+" introduzca una fecha")	
 			input.attr("style","border-color: red;")
 			return false
 		}else{

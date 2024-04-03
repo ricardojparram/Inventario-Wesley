@@ -152,10 +152,16 @@
                         <input name="apellido" type="text" class="form-control" id="apeEdit" >
                       </div>
                     </div>
-                    <div class="row mb-3">
-                      <label for="Job" class="col-md-4 col-lg-3 col-form-label">Cedula</label>
+                    <div class="row mb-3 ">
+                      <label for="Job" class="col-md-4 col-lg-3 col-form-label">N° Documento</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="cedula" type="text" class="form-control" id="cedulaEdit" >
+                        <div class="input-group">
+                          <select class="input-group-text " id="preDocument">
+                            <option value="V">V</option>
+                            <option value="E">E</option>
+                          </select>
+                          <input type="text" class="form-control" id="cedulaEdit" >
+                        </div>
                       </div>
                     </div>
 
