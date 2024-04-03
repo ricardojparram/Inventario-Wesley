@@ -46,6 +46,11 @@ $(document).ready(function(){
 let click = 0;
 setInterval(()=>{ click = 0; }, 2000);
 
+$("#sedeNomb").keyup(() =>{ validarNombre($("#sedeNomb"),$("#error1"), "Error de Nombre de sede")});
+$("#sedeTele").keyup(() =>{ validarTelefono($("#sedeTele"),$("#error2"), "Error de Telefono de sede")});
+$("#sedeDirec").keyup(() =>{ validarDireccion($("#sedeDirec"),$("#error3"), "Error de direccion de sede")});
+
+
 
 $("#registrar").click((e)=>{
 
@@ -59,7 +64,7 @@ $("#registrar").click((e)=>{
 	if(click >= 1) throw new Error('Spam de clicks');
 
 	let  vnombre, vtelefono, vdireccion ;
-	vnombre = validarDireccion($('#sedeNomb'),$('#error1'), 'Nombre,');
+	vnombre = validarNombre($('#sedeNomb'),$('#error1'), 'Nombre,');
 	vtelefono = validarTelefono($('#sedeTele'),$('#error2'), 'Telefono');
 	vdireccion = validarDireccion($('#sedeDirec'),$('#error3'), 'Sede de envío,');
 
@@ -67,8 +72,37 @@ $("#registrar").click((e)=>{
 		throw new Error('Error en las entradas de los inputs.');
 	}
 
+	$.ajax({
+		type: "post",
+		dataType: "json",
+		 url: '', 
+	data: {
+		id,
+		nombre : $("#sedeNomb").val(),
+		telefono : $("#sedeTele"). val(),
+		direccion : $("#sedeDirec").val(),
+   		registrar : ''
+	},
+	success (data){
+		if(data.resultado){
+			mostrar.destroy(); 
+			rellenar(); 
+			$('#registrar').trigger('reset'); 
+			$('.cerrar').click(); 
+			Toast.fire({ icon: 'success', title: data.msg }) 
+		}else{
+			Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.'}); 
+		}
+	}
 
 })
+
+})
+
+$("#registrar").click(()=>{
+ 	$("#basicModal input").attr("style","borde-color:none; backgraund-image: none;");
+ 	$("#error").text("");
+ })
 
 let id;
 $(document).on('click', '.editar', function() {
@@ -103,8 +137,8 @@ $('#editar').click((e)=>{
 	if(!vnombre && !vtelefono && !vdireccion){
 		throw new Error('Error en las entradas de los inputs.');
 	}
-	console.log($("#ubicacionEdit").val())
-	$.post('', {validar:'', empresa : $('#empresa_envioEdit').val()},
+	console.log($("#sedeDirecEditar").val())
+	$.post('', {validar:'', nombre : $('#sedeNombEditar').val()},
 		function(response){
 			data = JSON.parse(response);
 			if(data.resultado != true){
@@ -114,10 +148,10 @@ $('#editar').click((e)=>{
 			$.ajax({type: "post",dataType: "json", url: '', 
 				data: {
 					id,
-					ubicacion : $("#ubicacionEdit").val(),
-					estado : $("#estado_sedeEdit").val(),
-					nombre : $("#nombre_sedeEdit").val(),
-					empresa : $("#empresa_envioEdit").val(),
+					nombre : $("#sedeNombEditar").val(),
+					telefono : $("#sedeTeleEditar").val(),
+					direccion: $("#sedeDirecEditar").val(),
+					
 					editar : ''
 				},
 				success(data){
