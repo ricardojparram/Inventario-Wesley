@@ -490,6 +490,7 @@ CREATE TABLE pacientes (
 CREATE TABLE venta (
   num_fact varchar(15) PRIMARY KEY,
   monto_fact decimal(10,2) NOT NULL,
+  monto_dolares decimal(10,2) NOT NULL,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
