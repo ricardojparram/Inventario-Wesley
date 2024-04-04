@@ -12,18 +12,19 @@ $(document).ready(function () {
 
     function rellenar(bitacora = false) {
         $.getJSON("", { mostrar: "", bitacora }, function (data) {
-            // const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';
-
+            // const permisoConfirmar = !permisos["Eliminar"] ? "disabled" : "";
             let tabla = data.reduce((acc, row) => {
                 return (acc += `
             <tr>
-                <td>${row.id_transferencia}</th>
-                <td scope="col">${row.nombre_sede}</td>
+                <td>${row.num_fact}</td>
+                <td scope="col">${row.cedula}</td>
+                <td scope="col">${row.nombre}</td>
                 <td scope="col">${row.fecha || ""}</td>
+                <td scope="col">${row.monto_fact}</td>
+                <td scope="col">${row.total_divisa}</td>
                 <td >
                 <span class="d-flex justify-content-center">
-                    <button type="button" title="Registrar recepcion" class="btn btn-success registrar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Registrar"><i class="bi bi-clipboard2-plus-fill"></i></button>
-                    <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+                    <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_pago}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
                 </span>
                 </td>
             </tr>`);

@@ -16,8 +16,7 @@ class pagosRecibidos extends DBConnect {
     public function mostrarPagosRecibidos($bitacora) {
         try {
             $this->conectarDB();
-            $sql = "SELECT id_cargo, fecha, num_cargo FROM cargo 
-                    WHERE status = 1;";
+            $sql = "SELECT id_pago, num_fact, monto_fact, cedula, nombre, fecha, total_divisa FROM vw_venta_detallada";
             $new = $this->con->prepare($sql);
             $new->execute();
             // if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
