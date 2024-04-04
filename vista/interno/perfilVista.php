@@ -140,19 +140,21 @@
                     </div>
 
                     
-                    <div class="row mb-3">
+                    <div class="row">
                       <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Nombre</label>
                       <div class="col-md-8 col-lg-9">
                         <input name="nombre" type="text" class="form-control" id="nameEdit" >
+                        <p id="errorNom" style="color:#ff0000;text-align: center;"></p>
                       </div>
                     </div>
-                    <div class="row mb-3">
+                    <div class="row">
                       <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Apellido</label>
                       <div class="col-md-8 col-lg-9">
                         <input name="apellido" type="text" class="form-control" id="apeEdit" >
+                        <p id="errorApe" style="color:#ff0000;text-align: center;"></p>
                       </div>
                     </div>
-                    <div class="row mb-3 ">
+                    <div class="row ">
                       <label for="Job" class="col-md-4 col-lg-3 col-form-label">N° Documento</label>
                       <div class="col-md-8 col-lg-9">
                         <div class="input-group">
@@ -162,13 +164,15 @@
                           </select>
                           <input type="text" class="form-control" id="cedulaEdit" >
                         </div>
+                        <p id="errorCedu" style="color:#ff0000;text-align: center;"></p>
                       </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row">
                       <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                       <div class="col-md-8 col-lg-9">
                         <input name="email" type="email" class="form-control" id="emailEdit" >
+                        <p id="errorEmail" style="color:#ff0000;text-align: center;"></p>
                       </div>
                     </div>
                     <p id="error" style="color:#ff0000;text-align: center;"></p>

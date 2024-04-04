@@ -311,11 +311,11 @@ class usuarios extends DBConnect
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['cedula'])) {
-          $resultado = ['resultado' => 'Correcto', 'msj' => 'La cédula está registrada.'];
+          $resultado = ['resultado' => 'Correcto', 'msj' => 'El documento está registrado.'];
 
           
         } else {
-          $resultado = ['resultado' => 'Error', 'msj' => 'Cedula no Registrada'];
+          $resultado = ['resultado' => 'Error', 'msj' => 'Documento no Registrado'];
           
         }
       } elseif ($this->id == " ") {
@@ -326,7 +326,7 @@ class usuarios extends DBConnect
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['cedula'])) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'La cédula ya está registrada.'];
+          $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya está registrado.'];
           
         } else {
           $resultado = ['resultado' => 'Correcto'];
@@ -340,10 +340,10 @@ class usuarios extends DBConnect
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['status']) && $data[0]['status'] == 0) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrada'];
+          $resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrado'];
           
         } elseif (isset($data[0]['cedula']) && $data[0]['cedula'] == $this->cedula && $data[0]['status'] == 1) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'La Cedula ya esta Registrada'];
+          $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya esta Registrado'];
           
         } else {
           $resultado = ['resultado' => 'Correcto'];
