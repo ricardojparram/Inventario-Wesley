@@ -36,6 +36,7 @@ CREATE
 OR REPLACE VIEW vw_venta_detallada AS
 SELECT
     p.id_pago,
+    p.status as status_pago,
     v.num_fact,
     v.monto_fact,
     pe.cedula AS cedula,
@@ -60,6 +61,7 @@ UNION
 ALL
 SELECT
     p.id_pago,
+    p.status as status_pago,
     v.num_fact,
     v.monto_fact,
     pa.ced_pac AS cedula,
@@ -80,13 +82,3 @@ FROM
     LEFT JOIN pacientes pa ON pa.ced_pac = vpa.ced_pac
 WHERE
     v.status = 1
-SELECT
-    id_pago,
-    num_fact,
-    monto_fact,
-    cedula,
-    nombre,
-    fecha,
-    total_divisa
-FROM
-    vw_venta_detallada
