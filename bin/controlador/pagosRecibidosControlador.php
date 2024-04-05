@@ -23,7 +23,14 @@ if (isset($_GET['mostrar'], $_GET['bitacora'], $permiso['Consultar'])) {
     die(json_encode($res));
 }
 
-
+if (isset($_GET['detalle'], $_GET['id_pago'], $permiso['Consultar'])) {
+    $res = $model->getMostrarDetalle($_GET['id_pago']);
+    die(json_encode($res));
+}
+if (isset($_POST['status'], $_POST['id_pago'])) {
+    $res = $model->getConfirmarPago($_POST['status'], $_POST['id_pago']);
+    die(json_encode($res));
+}
 
 $VarComp = new initcomponents();
 $header = new header();
