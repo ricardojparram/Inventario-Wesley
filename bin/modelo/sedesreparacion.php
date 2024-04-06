@@ -3,7 +3,7 @@
 	namespace modelo;
 	use config\connect\DBConnect as DBConnect;
 
-	class sedeEnvio extends DBConnect{
+	class sede extends DBConnect{
 
 		private $empresa;
 		private $estado;

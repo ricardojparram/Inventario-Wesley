@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#basicModal">Agregar</button>
                 </div>
               </div>
 
@@ -75,7 +75,7 @@
                       <div class="container-fluid">
                         <div class="row">
                             <div class="form-group col-lg-6">
-                              <label class="col-form-label"> <strong>Tipo*</strong> </label>
+                              <label class="col-form-label"> <strong>Tipo</strong> </label>
                               <input id="tipNom" type="text" class="form-control" required="" placeholder="Tipo de producto">
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                    <p id="error" style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>     
                     <div class="modal-footer">
                       <button id="closeAg" id="closeRegis" type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                      <button id="enviar" type="submit" class="btn btn-success">Registrar</button>
+                      <button id="enviar" type="submit" class="btn btn-registrar">Registrar</button>
                       </div>
                     </div>
                   </form>
@@ -111,7 +111,7 @@
                         <div class="row">
 
                             <div class="form-group col-lg-6">
-                              <label class="col-form-label"> <strong>Tipo*</strong> </label>
+                              <label class="col-form-label"> <strong>Tipo</strong> </label>
                               <input id="tipNomEdit"type="text" class="form-control" required="" >
 
                             </div> 
@@ -122,7 +122,7 @@
                   <p id="error2" style="color:#ff0000;text-align: center;"><?php echo (isset($respuesta))? $respuesta : " " ?></p>
                     <div class="modal-footer">
                       <button type="button" id="closeEditar"class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                      <button type="submit" id="enviarEditar" class="btn btn-success">Actualizar</button>
+                      <button type="submit" id="enviarEditar" class="btn btn-registrar">Actualizar</button>
                     </div>
                   </form>
                   </div>

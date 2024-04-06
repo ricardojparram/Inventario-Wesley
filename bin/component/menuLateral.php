@@ -28,13 +28,14 @@
     $metodo = ($_GET['url'] == 'metodo')? "active"  : "" ;
     $productosA = ($_GET['url'] == 'productoDañado' ||$_GET['url'] == 'producto' || $_GET['url'] == 'laboratorio' || $_GET['url'] == 'proveedor' || $_GET['url'] == 'presentacion' || $_GET['url'] == 'clase' || $_GET['url'] == 'tipo')?  ""  : "collapsed" ;
     $productosB = ($_GET['url'] == 'productoDañado' || $_GET['url'] == 'producto' || $_GET['url'] == 'laboratorio' || $_GET['url'] == 'proveedor' || $_GET['url'] == 'presentacion' || $_GET['url'] == 'clase' || $_GET['url'] == 'tipo')? "show" : "collapse" ;
-    $categoria = ($_GET['url'] == 'clase' || $_GET['url'] == 'url')? "active" : "" ;
+    $categoria = ($_GET['url'] == 'clase' || $_GET['url'] == 'tipo')? "active" : "" ;
     $producto = ($_GET['url'] == 'producto')? "active" : "" ;
     $laboratorio = ($_GET['url'] == 'laboratorio')? "active" :"" ;
     $proveedor = ($_GET['url'] == 'proveedor')? "active" : "" ;
     $presentacion = ($_GET['url'] == 'presentacion')? "active" : "" ;
     $inventario = ($_GET['url'] == 'inventario')? "active" : "" ;
     $productoDañado = ($_GET['url'] == 'productoDañado')? "active" : "" ;
+    $tipoProducto = ($_GET['url'] == 'tipoProducto') ? "active" : "" ;
     $clase = ($_GET['url'] == 'clase')? "active" : "" ;
     $tipo = ($_GET['url'] == 'tipo')? "active" : "" ;
     $medida = ($_GET['url'] == 'medida')? "active" : "" ;
@@ -43,7 +44,6 @@
     $donativoPacientes = ($_GET['url'] == 'donativoPaciente')? "active" : "";
     $donativoPersonal = ($_GET['url'] == 'donativoPersonal')? "active" : "";
     $donativoInstituciones = ($_GET['url'] == 'donativoInstituciones')? "active" : "";
-    $categoria = ($_GET['url'] == 'clase' || $_GET['url'] == 'url')? "active" : "" ;
     $reportes = ($_GET['url'] == 'reportes')? "": "collapsed";
     $usuario = ($_GET['url'] == 'usuario')? "active": "";
     $bitacora = ($_GET['url'] == 'bitacora')? "active": "";
@@ -153,7 +153,7 @@
     $metodoLi = (isset($this->permisos['Metodo pago']["Consultar"])) ?
     '<li>
         <a href="?url=metodo" class="'.$metodo.'" >
-          <i class="bi bi-circle-fill "></i><span>Metodo de pago</span>
+          <i class="bi bi-circle-fill "></i><span>Metodo de Pago</span>
         </a>
     </li>' : '';
 
@@ -197,6 +197,13 @@
         </a>
     </li>' : '';
 
+    $tipoProductoLi = (isset($this->permisos['Tipo']["Consultar"]))?
+    '<li>
+    <a href="?url=tipoProducto" class="'.$tipoProducto.'">
+      <i class="bi bi-circle-fill"></i><span>Tipo Producto</span>
+    </a>
+    </li>' : '';
+
     $claseLi = (isset($this->permisos['Clase']["Consultar"])) ?
     '<li>
       <a href="?url=clase" class="'.$clase.'">
@@ -209,6 +216,7 @@
         <i class="bi bi-circle-fill"></i><span>Tipo</span>
       </a>
     </li>' : '';
+
     $medidaLi = (isset($this->permisos['Medida']["Consultar"])) ?
     '<li>
       <a href="?url=medida" class="'.$medida.'">
@@ -217,16 +225,19 @@
     </li>' : '';
     $presentacionLi = (isset($this->permisos['Presentacion']["Consultar"])) ?
     '<li>
-      <a href="?url=medida" class="'.$presentacion.'">
+      <a href="?url=presentacion" class="'.$presentacion.'">
         <i class="bi bi-circle-fill"></i><span>Presentación</span>
       </a>
     </li>' : '';
-    $categoriaLi = (isset($this->permisos['Clase']["Consultar"]) || isset($this->permisos['Medida']["Consultar"]) || isset($this->permisos['Tipo']["Consultar"])) ?
+    $categoriaLi = ( isset($this->permisos['Clase']["Consultar"]) || isset($this->permisos['Medida']["Consultar"]) || isset($this->permisos['Tipo']["Consultar"])) ?
     '<li>
         <a href="#" class="'.$categoria.'">
           <i class="bi bi-tags"></i><span>Categoría</span>
         </a>
         <ul>
+
+          '.$tipoProductoLi.'
+
           '.$claseLi.'
 
           '.$tipoLi.'
@@ -243,7 +254,8 @@
         <a href="?url=inventario" class="'.$inventario.'">
           <i class="bi bi-box-fill"></i><span>Inventario</span>
         </a>
-    </li>' : '';
+    </li>'
+     : '';
 
     $productoDañadoLi = (isset($this->permisos['Producto dañado']["Consultar"])) ?
     '<li>

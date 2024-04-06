@@ -26,10 +26,10 @@ $(document).ready(function(){
 
 			        tabla += `
 			        <tr>
-			        <td>${row.des_clase}</td>
+			        <td>${row.nombre_c}</td>
 			        <td class="d-flex justify-content-center">
-			        <button type="button" ${editarPermiso} id="${row.cod_clase}" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i></button>
-			        <button type="button" ${eliminarPermiso} id="${row.cod_clase}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
+			        <button type="button" ${editarPermiso} id="${row.id_clase}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i></button>
+			        <button type="button" ${eliminarPermiso} id="${row.id_clase}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
 			        </td>
 			        </tr>
 			        `;
@@ -95,20 +95,19 @@ $(document).ready(function(){
     	})
 
 
-    /* --- EDITAR --- */
+    
 	let idedit;
-    // SELECCIONA ITEM
+
     $(document).on('click', '.editar', function() {
-        idedit = this.id; // se obtiene el id del botón, previamente le puse de id el codigo en rellenar()
+        idedit = this.id; 
         
-       	// RELLENA LOS INPUTS
        		$.ajax({
        			method: "post",
        			url: "",
        			dataType: "json",
-		        data: {item: "lol", idedit}, // id : id
+		        data: {item: "lol", idedit}, 
 		        success(data){
-		        	$("#claseEdit").val(data[0].des_clase);
+		        	$("#claseEdit").val(data[0].nombre_c);
 		        }
 
 		    })
@@ -130,16 +129,33 @@ $(document).ready(function(){
 			},
 			success(data){
 				if (eclase) {
-					mostrar.destroy(); 
-					rellenar();  
+					mostrar.destroy();  
 				  	$('#closeEdit').click(); 
-				    Toast.fire({ icon: 'success', title: 'Clase actualizada' }) 
+				    Toast.fire({ icon: 'success', title: 'Clase actualizada' })
+					rellenar(); 
+				}else{
+					e.preventDefault()
 				}
 			}
-		})
+	})
 	}
 	})
-    
+  
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
