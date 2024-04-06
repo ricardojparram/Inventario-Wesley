@@ -46,6 +46,16 @@
     $objModel->getCambioContra($_SESSION['cedula'], $_POST['passwordAct'], $_POST['passwordNew'], $_POST['passwordNewR']);
   }
 
+  if (isset($_GET['validar'])) {
+		$res = $objModel->getValidarC($_GET['cedula'], $_SESSION['cedula']);
+		die(json_encode($res));
+	}
+
+	if (isset($_GET['validarE'])) {
+		$res = $objModel->getValidarE($_GET['correo'], $_SESSION['cedula']);
+		die(json_encode($res));
+	}
+
   $VarComp = new initcomponents();
   $header = new header();
   $menu = new menuLateral($permisos);

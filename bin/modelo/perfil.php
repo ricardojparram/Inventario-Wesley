@@ -96,18 +96,22 @@ class perfil extends DBConnect{
 	}
 
 	public function getEditar($foto, $nombre, $apellido, $cedulaNueva, $correo, $cedulaVieja, $borrar = false){
-
+		$valid = true;
 		if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $nombre) == false){
-			die(json_encode(['resultado' => 'Error de nombre' , 'error' => 'Nombre invalido.']));
+			$resultadoEdit = ['respuesta' => 'Error' , 'error' => 'Nombre invalido.'];
+			$valid = false;
 		}
 		if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $apellido) == false){
-			die(json_encode(['resultado' => 'Error de apellido' , 'error' => 'Apellido invalido.']));
+			$resultadoEdit = ['respuesta' => 'Error' , 'error' => 'Apellido invalido.'];
+			$valid = false;
 		}
-		if(preg_match_all("/^[0-9]{7,10}$/", $cedulaNueva) == false){
-			die(json_encode(['resultado' => 'Error de cedula' , 'error' => 'Cédula invalida.']));
+		if(preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedulaNueva) == false){
+			$resultadoEdit = ['respuesta' => 'Error' , 'error' => 'Cédula invalida.'];
+			$valid = false;
 		}
 		if(preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false){
-			die(json_encode(['resultado' => 'Error de email' , 'error' => 'Correo invalida.']));
+			$resultadoEdit = ['respuesta' => 'Error' , 'error' => 'Correo invalida.'];
+			$valid = false;
 		}
 
 		$this->foto = $foto;
@@ -117,8 +121,10 @@ class perfil extends DBConnect{
 		$this->correo = $correo;
 		$this->cedulaVieja = $cedulaVieja;
 		$this->borrar = $borrar;
-
-		$resultadoEdit = $this->editarDatos();
+		
+		if ($valid) {
+			$resultadoEdit = $this->editarDatos();
+		}
 
 		if($this->borrar != false){
 			$resultadoFoto = $this->borrarImagen();
@@ -243,6 +249,9 @@ class perfil extends DBConnect{
 
 	public function getCambioContra($cedula, $passwordAct, $passwordNew, $passwordNewR){
 
+		if($passwordAct == $passwordNew) {
+			die(json_encode(['resultado' => 'Error de repetida' , 'error' => 'La contraseña nueva no puede ser igual a la anterior.']));
+		}
 		if(preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{8,30}$/", $passwordNew) == false) {
 			die(json_encode(['resultado' => 'Error de contraseña' , 'error' => 'Correo inválida.']));
 		}
@@ -289,6 +298,79 @@ class perfil extends DBConnect{
 			return $error;
 		}
 
+	}
+
+	public function getValidarC($cedula, $id){
+		$this->cedula = $cedula;
+		$this->id = $id;
+		return $this->validarC();
+	}
+
+	private function validarC(){
+		try {
+		
+		if ($this->cedula != $this->id) {
+			
+			parent::conectarDB();
+			$new = $this->con->prepare("SELECT `cedula`, `status` FROM usuario WHERE cedula = ?");
+			$new->bindValue(1, $this->cedula);
+			$new->execute();
+			$data = $new->fetchAll();
+			parent::desconectarDB();
+			if (isset($data[0]['status']) && $data[0]['status'] == 0) {
+			$resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrado'];
+			
+			} elseif (isset($data[0]['cedula']) && $data[0]['cedula'] == $this->cedula && $data[0]['status'] == 1) {
+			$resultado = ['resultado' => 'Error', 'msj' => 'El documeto ya esta Registrado'];
+			
+			} else {
+			$resultado = ['resultado' => 'Correcto'];
+			
+			}
+		}if ($this->cedula == $this->id) {
+			$resultado = ['resultado' => 'Correcto'];
+			
+		} 
+		return $resultado;
+
+
+		} catch (\PDOException $error) {
+		return $error;
+		}
+	}
+
+	public function getValidarE($correo, $id)
+	{
+	  $this->correo = $correo;
+	  $this->id = $id;
+	  return $this->validarE();
+	}
+  
+	private function validarE()
+	{
+	  try {
+  
+		parent::conectarDB();
+		$new = $this->con->prepare("SELECT `correo`, `status` FROM usuario WHERE cedula <> ? and correo = ?");
+		$new->bindValue(1, $this->id);
+		$new->bindValue(2, $this->correo);
+		$new->execute();
+		$data = $new->fetchAll();
+		parent::desconectarDB();
+		if (isset($data[0]['correo']) && $data[0]['status'] === 1) {
+		  $resultado = ['resultado' => 'Error', 'msj' => 'El Correo ya esta Registrado'];
+		  return $resultado;
+		}
+		// elseif (isset($data[0]['correo']) && $data[0]['status'] === 0 ) {
+		//     $resultado = ['resultado' => 'Error', 'msj' => 'El Correo no Puede Ser Registrado'];
+		//     return $resultado;
+		// } -------> Preguntar si dejo esta validacion <-------
+		$resultado = ['resultado' => 'Correcto'];
+		return $resultado;
+  
+	  } catch (\PDOException $e) {
+		return $e;
+	  }
 	}
 
 }

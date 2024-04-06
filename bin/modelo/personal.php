@@ -19,40 +19,40 @@
 
         public function getAgregarPersonal($cedula, $nombre, $apellido, $correo, $edad, $direccion, $telefono, $sede, $tipo){
 
-            if (preg_match_all("/^[VEJ]-[A-Z0-9]{7,12}$/", $cedula) == false) {
-              $resultado = ['resultado' => 'error', 'error' => 'Cédula invalida.'];
+            if (preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
+              $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
               return $resultado;
             }
             if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $nombre) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Nombre invalido.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
                 return $resultado;
             }
             if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $apellido) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Apellido invalido.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
                 return $resultado;
             }
             if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Correo invalido.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Correo invalido.'];
                 return $resultado;
             }
-            if (preg_match_all("/^[0-9]{1,3}$/", $edad) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Sede invalida.'];
+            if (preg_match_all("/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/", $edad) == false) {
+                $resultado = ['resultado' => 'Error', 'error' => 'Fecha invalida.'];
                 return $resultado;
             }
             if (preg_match_all("/[$%&|<>]/", $direccion) == true) {
-                $resultado = ['resultado' => 'error', 'error' => 'Direccion inválida.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Direccion inválida.'];
                 return $resultado;
             }
             if (preg_match_all("/^[0-9]{10,30}$/", $telefono) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Telefono Invalido'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Telefono Invalido'];
                 return $resultado;
             }
             if (preg_match_all("/^[0-9]{1,2}$/", $sede) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Sede invalida.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Sede invalida.'];
                 return $resultado;
             }
             if (preg_match_all("/^[0-9]{1,2}$/", $tipo) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Tipo de Empleado invalido.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Tipo de Empleado invalido.'];
                 return $resultado;
             }
 
@@ -116,7 +116,7 @@
                     $this->binnacle("",$_SESSION['cedula'], "Registró un personal");
                     parent::desconectarDB();
                 }else {
-                    $resultado = ['resultado' => 'error', 'error' => 'error desconocido.'];
+                    $resultado = ['resultado' => 'Error', 'error' => 'error desconocido.'];
                 }
                 return $resultado;
             } catch (\PDOException $error) {
@@ -147,12 +147,13 @@
         private function seleccionarUnico(){
             try {
                 parent::conectarDB();
-                $new = $this->con->prepare("SELECT p.cedula, p.nombres, p.apellidos, p.direccion, p.telefono, p.edad, p.correo, s.id_sede as sede, e.tipo_em as tipo, s.nombre as nomSede, e.nombre_e as nomTipo FROM personal p INNER JOIN sede s ON p.id_sede = s.id_sede INNER JOIN tipo_empleado e ON p.tipo_em = e.tipo_em WHERE p.cedula = ?");
+                $new = $this->con->prepare("SELECT p.cedula, p.nombres, p.apellidos, p.direccion, p.telefono, p.edad as fecha, p.correo, s.id_sede as sede, e.tipo_em as tipo, s.nombre as nomSede, e.nombre_e as nomTipo FROM personal p INNER JOIN sede s ON p.id_sede = s.id_sede INNER JOIN tipo_empleado e ON p.tipo_em = e.tipo_em WHERE p.cedula = ?");
                 $new->bindValue(1, $this->cedula);
                 $new->execute();
                 $data = $new->fetchAll(\PDO::FETCH_OBJ);
+                $fecha = time() - strtotime($data[0]->fecha);
+                $data[0]->edad = floor($fecha / 31556926);
                 parent::desconectarDB();
-
                 return $data;
             } catch (\PDOexection $error) {
                 return $error;
@@ -161,40 +162,40 @@
 
         public function getEditarPersonal($cedula, $nombre, $apellido, $correo, $edad, $direccion, $telefono, $sede, $tipo, $id){
 
-            if (preg_match_all("/^[VEJ]-[A-Z0-9]{7,12}$/", $cedula) == false) {
-              $resultado = ['resultado' => 'error', 'error' => 'Cédula invalida.'];
+            if (preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
+              $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
               return $resultado;
             }
             if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $nombre) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Nombre invalido.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
                 return $resultado;
             }
             if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $apellido) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Apellido invalido.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
                 return $resultado;
             }
             if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Correo invalido.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Correo invalido.'];
                 return $resultado;
             }
-            if (preg_match_all("/^[0-9]{1,3}$/", $edad) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Sede invalida.'];
+            if (preg_match_all("/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/", $edad) == false) {
+                $resultado = ['resultado' => 'Error', 'error' => 'Fecha invalida.'];
                 return $resultado;
             }
             if (preg_match_all("/[$%&|<>]/", $direccion) == true) {
-                $resultado = ['resultado' => 'error', 'error' => 'Direccion inválida.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Direccion inválida.'];
                 return $resultado;
             }
             if (preg_match_all("/^[0-9]{10,30}$/", $telefono) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Telefono Invalido'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Telefono Invalido'];
                 return $resultado;
             }
             if (preg_match_all("/^[0-9]{1,2}$/", $sede) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Sede invalida.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Sede invalida.'];
                 return $resultado;
             }
             if (preg_match_all("/^[0-9]{1,2}$/", $tipo) == false) {
-                $resultado = ['resultado' => 'error', 'error' => 'Tipo de Empleado invalido.'];
+                $resultado = ['resultado' => 'Error', 'error' => 'Tipo de Empleado invalido.'];
                 return $resultado;
             }
 
@@ -278,11 +279,11 @@
                 $data = $new->fetchAll();
                 parent::desconectarDB();
                 if (isset($data[0]['cedula'])) {
-                $resultado = ['resultado' => 'Correcto', 'msj' => 'La cédula está registrada.'];
+                $resultado = ['resultado' => 'Correcto', 'msj' => 'el documento está registrado.'];
 
                 
                 } else {
-                $resultado = ['resultado' => 'Error', 'msj' => 'Cedula no Registrada'];
+                $resultado = ['resultado' => 'Error', 'msj' => 'documento no Registrado'];
                 
                 }
             } elseif ($this->id == " ") {
@@ -294,7 +295,7 @@
                 $data = $new->fetchAll();
                 parent::desconectarDB();
                 if (isset($data[0]['cedula'])) {
-                $resultado = ['resultado' => 'Error', 'msj' => 'La cédula ya está registrada.'];
+                $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya está registrado.'];
                 
                 } else {
                 $resultado = ['resultado' => 'Correcto'];
@@ -309,10 +310,10 @@
                 $data = $new->fetchAll();
                 parent::desconectarDB();
                 if (isset($data[0]['status']) && $data[0]['status'] == 0) {
-                $resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrada'];
+                $resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrado'];
                 
                 } elseif (isset($data[0]['cedula']) && $data[0]['cedula'] == $this->cedula && $data[0]['status'] == 1) {
-                $resultado = ['resultado' => 'Error', 'msj' => 'La Cedula ya esta Registrada'];
+                $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya esta Registrado'];
                 
                 } else {
                 $resultado = ['resultado' => 'Correcto'];

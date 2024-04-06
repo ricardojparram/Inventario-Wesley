@@ -101,7 +101,7 @@ $(document).ready(function () {
 								url: '',
 								dataType: "json",
 								data: {
-									cedula: $("#cedula").val(),
+									cedula: $("#preDocument").val()+"-"+$("#cedula").val(),
 									name: $("#name").val(),
 									apellido: $("#apellido").val(),
 									email: $("#email").val(),
@@ -185,7 +185,8 @@ $(document).ready(function () {
 			data: { select: "user", id },
 			success(data) {
 
-				$("#cedulaEdit").val(data[0].cedula);
+				$("#cedulaEdit").val(data[0].cedula.slice(2));
+				$("#preDocumentEdit").val(data[0].cedula.charAt(0))
 				$("#nameEdit").val(data[0].nombre);
 				$("#apellidoEdit").val(data[0].apellido);
 				$("#emailEdit").val(data[0].correo);
@@ -249,7 +250,7 @@ $(document).ready(function () {
 								url: '',
 								dataType: 'json',
 								data: {
-									cedulaEdit: $("#cedulaEdit").val(),
+									cedulaEdit: $("#preDocumentEdit").val()+"-"+$("#cedulaEdit").val(),
 									nameEdit: $("#nameEdit").val(),
 									apellidoEdit: $("#apellidoEdit").val(),
 									emailEdit: $("#emailEdit").val(),

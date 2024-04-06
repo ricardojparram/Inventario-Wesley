@@ -94,7 +94,6 @@
                           <select class="input-group-text " id="preDocument">
                                     <option value="V">V</option>
                                     <option value="E">E</option>
-                                    <option value="J">J</option>
                                 </select>
                           <input type="text" class="form-control" name="cedula" id="cedula" placeholder="Cédula">
                         </div>
@@ -178,7 +177,6 @@
                           <select class="input-group-text " id="preDocumentEdit">
                             <option value="V">V</option>
                             <option value="E">E</option>
-                            <option value="J">J</option>
                           </select>
                           <input type="text" class="form-control" name="cedulaEdit" id="cedulaEdit" placeholder="Cédula">
                         </div>

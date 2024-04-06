@@ -29,11 +29,6 @@
     ?>
        
 <!-- End Sidebar-->
-<style>
-    .input-group-text{
-        appearance: none;
-    }
-</style>
 <main class="main" id="main">
     <div class="pagetitle">
         <h1>Personal</h1>
@@ -109,21 +104,20 @@
                         <div class="col-lg-6">
                             <label for="inputText" class="col-form-label"><strong>N° Documento</strong></label>
                             <div class="input-group ">
-                            <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija el tipo de nacionalidad (V, J, E) e introduzca el numero de documento."><i class="bi bi-card-text"></i></button>
+                            <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija el tipo de nacionalidad (V, E) e introduzca el numero de documento."><i class="bi bi-card-text"></i></button>
                                 <select class="input-group-text" id="preDocument">
                                     <option value="V">V</option>
                                     <option value="E">E</option>
-                                    <option value="J">J</option>
                                 </select>
                                 <input type="text" class="form-control" placeholder="N° Documento" id="cedu">
                             </div>
                             <p class="m-0" id="errorCedu" style="color:#ff0000;text-align: center;"></p>
                         </div>
                         <div class="col-lg-6">
-                            <label for="inputText" class="col-form-label"><strong>Edad</strong></label>
+                            <label for="inputText" class="col-form-label"><strong>Nacimiento</strong></label>
                             <div class="input-group">
-                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca los años de edad del personal"><i class="bi bi-hourglass"></i></button>
-                                <input type="number" class="form-control" placeholder="Edad" id="edad">
+                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la fecha de nacimiento"><i class="bi bi-hourglass"></i></button>
+                                <input type="date" class="form-control" id="edad">
                             </div>
                             <p class="m-0" id="errorEdad" style="color:#ff0000;text-align: center;"></p>
                         </div>
@@ -140,7 +134,7 @@
                         <div class="col-lg-6">
                             <label for="inputText" class="col-form-label"><strong>Telefono</strong></label>
                             <div class="input-group ">
-                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover"data-bs-placement="top" data-bs-content="Introduzca el numero celular del cliente"><i class="bi bi-telephone"></i></button>
+                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover"data-bs-placement="top" data-bs-content="Introduzca el numero del celular"><i class="bi bi-telephone"></i></button>
                                 <input type="text" class="form-control" placeholder="1234567890" id="tele">
                             </div>
                             <p class="m-0" id="errorTele" style="color:#ff0000;text-align: center;"></p>
@@ -235,21 +229,20 @@
                         <div class="col-lg-6">
                             <label for="inputText" class="col-form-label"><strong>N° Documento</strong></label>
                             <div class="input-group ">
-                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija el tipo de nacionalidad (V, J, E) e introduzca el numero de documento."><i class="bi bi-card-text"></i></button>
+                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Elija el tipo de nacionalidad (V, E) e introduzca el numero de documento."><i class="bi bi-card-text"></i></button>
                                 <select class="input-group-text " id="preDocumentEdit">
                                     <option value="V">V</option>
                                     <option value="E">E</option>
-                                    <option value="J">J</option>
                                 </select>
                                 <input type="text" class="form-control" placeholder="N° Documento" id="ceduEdit">
                             </div>
                             <p class="m-0" id="errorCeduEdit" style="color:#ff0000;text-align: center;"></p>
                         </div>
                         <div class="col-lg-6">
-                            <label for="inputText" class="col-form-label"><strong>Edad</strong></label>
+                            <label for="inputText" class="col-form-label"><strong>Nacimiento</strong></label>
                             <div class="input-group">
-                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca los años de edad del personal"><i class="bi bi-hourglass"></i></button>
-                                <input type="number" class="form-control" placeholder="Edad" id="edadEdit">
+                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la fecha de nacimiento"><i class="bi bi-hourglass"></i></button>
+                                <input type="date" class="form-control" id="edadEdit">
                             </div>
                             <p class="m-0" id="errorEdadEdit" style="color:#ff0000;text-align: center;"></p>
                         </div>
@@ -266,7 +259,7 @@
                         <div class="col-lg-6">
                             <label for="inputText" class="col-form-label"><strong>Telefono</strong></label>
                             <div class="input-group ">
-                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover"data-bs-placement="top" data-bs-content="Introduzca el numero celular del cliente"><i class="bi bi-telephone"></i></button>
+                                <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover"data-bs-placement="top" data-bs-content="Introduzca el numero del celular"><i class="bi bi-telephone"></i></button>
                                 <input type="text" class="form-control" placeholder="1234567890" id="teleEdit">
                             </div>
                             <p class="m-0" id="errorTeleEdit" style="color:#ff0000;text-align: center;"></p>

@@ -2,7 +2,7 @@ $(document).ready(function(){
 
   let timeoutId;
   $("#cedula").keyup(()=>{ 
-    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,", "V");
+    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,", $("#preDocument"));
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function() {
       if(valid) validarCedulaBD();
@@ -15,7 +15,7 @@ $(document).ready(function(){
     $.ajax({ type: "post", url: '', dataType: 'json',
       data: {
         login: '',
-        cedula: $("#cedula").val(),
+        cedula: $("#preDocument").val()+"-"+$("#cedula").val(),
         password: $("#pass").val()
       },
       success(data){
