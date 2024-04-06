@@ -65,6 +65,7 @@ $(document).ready(function () {
     });
 
     $('#anular').click(function () {
+        $(this).prop('disabled', true);
         $.post("", { eliminar: '', id }, function (res) {
             Toast.fire({ icon: "success", title: res.msg });
             mostrar.destroy();
@@ -73,6 +74,8 @@ $(document).ready(function () {
         }, "json").fail((e) => {
             Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
             throw new Error(e.responseJSON.msg);
+        }).always(() => {
+            $(this).prop('disabled', false);
         });
     })
 
