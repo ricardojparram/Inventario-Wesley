@@ -57,7 +57,7 @@
               <h5 class="card-title col-6 ml-3">Ventas de Productos</h5>
 
               <div class="text-end col-6 mt-3" >
-               <button type="button" id="#agregarModals" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
+               <button type="button" id="#agregarModals" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
               </div>
 
               </div>
@@ -192,21 +192,11 @@
                 <div class="form-group col-md-6">                          
                   <label for="inputText" class="col-sm-3 col-form-label"><strong>Cliente</strong></label>
                   <div class="input-group">
-                   <button class="iconos btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-fill"></i></button>
-                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item tipo-seleccion" href="#">Paciente</a></li>
-                    <li><a class="dropdown-item tipo-seleccion" href="#">Personal</a></li>
-                    <li><a class="dropdown-item tipo-seleccion" href="#">Todo</a></li>
-                  </ul>
-                  <select class="form-control select2 grupo-opciones" placeholder="Cédula" id="cedula">
-                    <optgroup label="Personal">
-                      <option>30233547</option>
-                      <option>12312315</option>
-                    </optgroup>
-                    <optgroup label="Pacientes">
-                      <option>7654563</option>
-                      <option>2343453</option>
-                    </optgroup>
+                   <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una cédula registrada en el sistema."><i class="bi bi-person-fill"></i></button>
+                  <select class="form-control select2 grupo-opciones" data-placeholder="Cliente" id="cedula">
+                    <option></option>
+                    <optgroup label="Personal"> </optgroup>
+                    <optgroup label="Pacientes"> </optgroup>
                   </select>
                   </div>
                   <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>
@@ -237,6 +227,7 @@
                       <tr>
                         <th></th>
                         <th>Tipo Pago</th>
+                        <th>Referencia</th>
                         <th>Precio</th>
                       </tr>
                     </thead>
@@ -248,15 +239,15 @@
                             <option></option>
                           </select>
                         </td>
+                        <td width='15%' class="referencia"><input class="select-asd ref" type="number" value=""/></td>
                         <td width='15%' class="precioPorTipo"><input class="select-asd precio-tipo" type="number" value=""/></td>
                       </tr>
-                     
+                    
                     </tbody>
                   </table>
 
                    <p class="filaTipoPago error" style="color:#ff0000;text-align: center;"></p>
-                  <a class="newRowPago a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva fila</a> <br>
-
+                   <a class="newRowPago a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva Fila</a><br>
                 </div>
               </div>
             </div>
@@ -287,18 +278,17 @@
                         </select>
                       </td>
                       <td width='10%' class="amount"><input class="select-asd stock" type="number" value=""/></td>
-                      <td width='10%' class="rate"><input class="select-asd" type="number" disabled value="" /></td>
-                      <td width='10%' class="sum"></td>
+                      <td width='15%' class="rate"><input class="select-asd precio" type="number" disabled value="" /></td>
+                      <td width='15%' class="sum"></td>
                     </tr>
                   </tbody>
                 </table>
 
                 <p class="filaProductos error" style="color:#ff0000;text-align: center;"></p>
-
                 <a class="newRow a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva fila</a> <br>
                 <div class="text-end pt-4">
+                  <p class="dolar" style=" display:none "></p>
                   <p class="text-end" id="montos"></p>
-                  <p class="text-end" id="montos2"></p>
                   <p class="text-end"id="cambio"></p>
                 </div>
               </div>
@@ -312,7 +302,7 @@
       <p id="pValid" class="error" style="color:#ff0000;text-align: center;"></p>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary cerrar" id="cerrar" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
+        <button type="submit" class="btn btn-registrar" id="registrar">Registrar</button>
       </div>
     </form>
   </div>

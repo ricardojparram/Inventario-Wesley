@@ -23,8 +23,38 @@
         die(json_encode($permiso));
       }
 
-      if (isset($_POST['mostrar'] , $_POST['bitacora'])) {
+      if (isset($_POST['mostrar'] , $_POST['bitacora']) && $permiso['Consultar']) {
         $res = $objModel->getMostrarVentas($_POST['bitacora']);
+        die(json_encode($res));
+      }
+
+      if (isset($_POST['detalleProductos'] , $_POST['id'])) {
+        $res = $objModel->detalleProductos($_POST['id']);
+        die(json_encode($res));
+      }
+
+      if (isset($_POST['selectCliente'])) {
+        $res = $objModel->getMostrarClientes();
+        die(json_encode($res));
+      }
+
+      if(isset($_POST['valorDolar'])) {
+        $res = $objModel->valorDolar();
+        die(json_encode($res));
+      }
+
+      if (isset($_POST['selectProductos'])) {
+        $res = $objModel->selectProductos();
+        die(json_encode($res));
+      }
+
+      if (isset($_POST['selectTipoPago'])) {
+        $res = $objModel->selectTipoPago();
+        die(json_encode($res));
+      }
+
+      if (isset($_GET['producto'] , $_GET['filas']) ) {
+        $res = $objModel->detallesProductoFila($_GET['producto']);
         die(json_encode($res));
       }
       
