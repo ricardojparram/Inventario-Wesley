@@ -36,6 +36,10 @@ Inputmask.extendAliases({
     mask: "V-9{7,10}",
     placeholder: "V-12345789"
   },
+  'rif': {
+    mask: "J-9{7,10}",
+    placeholder: " "
+  },
   'cantidad': {
     mask: "9{1,10}",
     placeholder: " "

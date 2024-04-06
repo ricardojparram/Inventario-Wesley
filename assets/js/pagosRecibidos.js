@@ -11,7 +11,7 @@ $(document).ready(function () {
         });
 
     function rellenar(bitacora = false) {
-        $.getJSON("", { mostrarTransferencias: "", bitacora }, function (data) {
+        $.getJSON("", { mostrar: "", bitacora }, function (data) {
             // const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';
 
             let tabla = data.reduce((acc, row) => {

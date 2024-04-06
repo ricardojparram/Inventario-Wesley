@@ -45,13 +45,12 @@
 
     protected function binnacle($modulo = "", $usuario, $descripcion){
       try {
-        $new = $this->con->prepare("INSERT INTO bitacora(id, usuario, descripcion, fecha, status) VALUES (DEFAULT,?,?,DEFAULT,1)");
+        $new = $this->con->prepare("INSERT INTO `bitacora`(`id_Bitacora`, `cedula`, `descripcion`, `fecha`, `status`) VALUES (DEFAULT,?,?,DEFAULT,1)");
         $new->bindValue(1, $usuario);
         $new->bindValue(2, $descripcion);
         $new->execute();
       } catch (\PDOException $e) {
-        print "¡Error!: " . $e->getMessage() . "<br/>";
-        die();
+        return $e;
       }
     }
 

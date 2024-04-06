@@ -9,7 +9,7 @@
         private $cedula;
         private $nombre;
         private $apellido;
-        private $email;
+        private $correo;
         private $edad;
         private $direccion;
         private $telefono;
@@ -17,9 +17,9 @@
         private $tipo;
         private $id;
 
-        public function getAgregarPersonal($cedula, $nombre, $apellido, $email, $edad, $direccion, $telefono, $sede, $tipo){
+        public function getAgregarPersonal($cedula, $nombre, $apellido, $correo, $edad, $direccion, $telefono, $sede, $tipo){
 
-            if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
+            if (preg_match_all("/^[VEJ]-[A-Z0-9]{7,12}$/", $cedula) == false) {
               $resultado = ['resultado' => 'error', 'error' => 'Cédula invalida.'];
               return $resultado;
             }
@@ -31,7 +31,7 @@
                 $resultado = ['resultado' => 'error', 'error' => 'Apellido invalido.'];
                 return $resultado;
             }
-            if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
+            if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false) {
                 $resultado = ['resultado' => 'error', 'error' => 'Correo invalido.'];
                 return $resultado;
             }
@@ -59,7 +59,7 @@
             $this->cedula = $cedula;
             $this->nombre = $nombre;
             $this->apellido = $apellido;
-            $this->email = $email;
+            $this->correo = $correo;
             $this->edad = $edad;
             $this->direccion = $direccion;
             $this->telefono = $telefono;
@@ -82,7 +82,7 @@
                 if (!isset($data[0]['status'])) {
 
                     parent::conectarDB();
-                    $new = $this->con->prepare("INSERT INTO `personal`(`cedula`, `nombres`, `apellidos`, `direccion`, `id_sede`, `edad`, `telefono`, `correo`, `tipo_em`, `status`) VALUES (?, ?; ?, ?, ?, ?, ?, ?, ?, 1)");
+                    $new = $this->con->prepare("INSERT INTO `personal`(`cedula`, `nombres`, `apellidos`, `direccion`, `id_sede`, `edad`, `telefono`, `correo`, `tipo_em`, `status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)");
                     $new->bindValue(1, $this->cedula);
                     $new->bindValue(2, $this->nombre);
                     $new->bindValue(3, $this->apellido);
@@ -93,8 +93,8 @@
                     $new->bindValue(8, $this->correo);
                     $new->bindValue(9, $this->tipo);
                     $new->execute();
-                    $resultado = ['resultado' => 'Registrado correctamente.'];
-                    $this->binnacle($_SESSION['cedula'], "Registró un personal");
+                    $resultado = ['resultado' => 'Registrado'];
+                    $this->binnacle("",$_SESSION['cedula'], "Registró un personal");
                     parent::desconectarDB();
 
                 }   elseif ($data[0]['status'] == 0){
@@ -112,13 +112,13 @@
                     $new->bindValue(9, $this->tipo);
                     $new->bindValue(10, $this->cedula);
                     $new->execute();
-                    $resultado = ['resultado' => 'Registrado correctamente.'];
-                    $this->binnacle($_SESSION['cedula'], "Registró un personal");
+                    $resultado = ['resultado' => 'Registrado'];
+                    $this->binnacle("",$_SESSION['cedula'], "Registró un personal");
                     parent::desconectarDB();
                 }else {
                     $resultado = ['resultado' => 'error', 'error' => 'error desconocido.'];
                 }
-                    return $resultado;
+                return $resultado;
             } catch (\PDOException $error) {
                 return $error;
             }
@@ -147,7 +147,7 @@
         private function seleccionarUnico(){
             try {
                 parent::conectarDB();
-                $new = $this->con->prepare("SELECT p.cedula, p.nombres, p.apellidos, p.direccion, p.telefono, p.edad, p.correo, s.nombre as sede, e.nombre_e as tipo FROM personal p INNER JOIN sede s ON p.id_sede = s.id_sede INNER JOIN tipo_empleado e ON p.tipo_em = e.tipo_em WHERE p.cedula = ?");
+                $new = $this->con->prepare("SELECT p.cedula, p.nombres, p.apellidos, p.direccion, p.telefono, p.edad, p.correo, s.id_sede as sede, e.tipo_em as tipo, s.nombre as nomSede, e.nombre_e as nomTipo FROM personal p INNER JOIN sede s ON p.id_sede = s.id_sede INNER JOIN tipo_empleado e ON p.tipo_em = e.tipo_em WHERE p.cedula = ?");
                 $new->bindValue(1, $this->cedula);
                 $new->execute();
                 $data = $new->fetchAll(\PDO::FETCH_OBJ);
@@ -159,9 +159,9 @@
             }
         }
 
-        public function getEditarPersonal($cedula, $nombre, $apellido, $email, $edad, $direccion, $telefono, $sede, $tipo, $id){
+        public function getEditarPersonal($cedula, $nombre, $apellido, $correo, $edad, $direccion, $telefono, $sede, $tipo, $id){
 
-            if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
+            if (preg_match_all("/^[VEJ]-[A-Z0-9]{7,12}$/", $cedula) == false) {
               $resultado = ['resultado' => 'error', 'error' => 'Cédula invalida.'];
               return $resultado;
             }
@@ -173,7 +173,7 @@
                 $resultado = ['resultado' => 'error', 'error' => 'Apellido invalido.'];
                 return $resultado;
             }
-            if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
+            if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false) {
                 $resultado = ['resultado' => 'error', 'error' => 'Correo invalido.'];
                 return $resultado;
             }
@@ -201,7 +201,7 @@
             $this->cedula = $cedula;
             $this->nombre = $nombre;
             $this->apellido = $apellido;
-            $this->email = $email;
+            $this->correo = $correo;
             $this->edad = $edad;
             $this->direccion = $direccion;
             $this->telefono = $telefono;
@@ -233,6 +233,7 @@
                 $resultado = ['resultado' => 'Editado'];
                 $this->binnacle("a", $_SESSION['cedula'], "Editó un personal");
                 parent::desconectarDB();
+                return $resultado;
             } catch (\PDOException $e) {
                 return $e;
             }
@@ -382,7 +383,7 @@
         public function mostrarTipo(){
             try {
             parent::conectarDB();
-            $new = $this->con->prepare("SELECT tipo_em, nombre_e FROM tipo WHERE status = 1");
+            $new = $this->con->prepare("SELECT tipo_em, nombre_e FROM tipo_empleado WHERE status = 1");
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
             parent::desconectarDB();

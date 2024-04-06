@@ -14,7 +14,6 @@ $(document).ready(function () {
         $.getJSON("", { mostrar: "", bitacora }, function (data) {
             const permisoEditar = (!permisos["Editar"]) ? 'disabled' : '';
             const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';
-            console.log(data)
             let tabla = data.reduce((acc, row) => {
                 return (acc += `
                 <tr>
@@ -185,7 +184,7 @@ $(document).ready(function () {
             return { id_producto: item.value, cantidad };
         });
     }
-    let valid_sede, valid_fecha;
+    let valid_fecha;
     $('#num_cargo').change(() => valid_cargo = validarNumero($('#num_cargo'), $('#error1'), "Error de cargo,"))
     $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
     $('#registrar').click(function (e) {
@@ -197,7 +196,6 @@ $(document).ready(function () {
         let valid_lotes_cantidad = validarProductos();
 
         productos = getProductos();
-        console.log(productos)
         if (!valid_cargo || !valid_fecha || !valid_productos || !valid_lotes_cantidad) return;
 
         let data = {
@@ -233,6 +231,16 @@ $(document).ready(function () {
             Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
             throw new Error(e.responseJSON.msg);
         });
+    })
+
+    $('.cerrar').click(() => {
+        $('#agregarform').trigger('reset');
+        $('.eliminarFila').click();
+        $('#Agregar input').removeClass('input-error');
+        $('#Agregar select').removeClass('input-error');
+        $('.error').text('');
+        agregarFila()
+        fechaHoy($('#fecha'));
     })
 
 });

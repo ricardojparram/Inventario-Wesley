@@ -48,7 +48,7 @@ $(document).ready(function () {
         tabla += `
           <tr>
             <td>${row.lote}</th>
-            <td>${row.id_producto_sede}</th>
+            <td>${row.presentacion_producto}</th>
             <td>${row.cantidad}</td>
             <td>${row.fecha_vencimiento ? row.fecha_vencimiento : ""}</td>
           </tr>`;
@@ -65,7 +65,7 @@ $(document).ready(function () {
   const mostrarProductos = () => {
     $.getJSON("", { select_producto: "" }, (data) => {
       let option = data.reduce((acc, row) => {
-        return (acc += `<option value="${row.id_producto_sede}">${row.lote}</option>`);
+        return (acc += `<option value="${row.id_producto_sede}">${row.presentacion_producto} ${row.fecha_vencimiento}</option>`);
       }, "");
       $(".select-productos").each(function () {
         if (this.children.length == 1) {
@@ -85,7 +85,6 @@ $(document).ready(function () {
   const validarProductosRepetidos = (status = true) => {
     let validacion = [];
     let $select = document.querySelectorAll('.select-productos');
-    console.log($select.length)
     if ($select.length < 1) {
       $('#error').html('No hay filas.');
       return false
@@ -131,15 +130,34 @@ $(document).ready(function () {
     if (!Number.isInteger(Number(cantidad))) return false;
     await $.getJSON('', { producto_inventario }, function (data) {
       if (cantidad > data[0].cantidad) {
+        $cantidad.attr('valid', false);
         $error.html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
           .removeClass("d-none");
         valid = false;
       } else {
+        $cantidad.attr('valid', true);
         $error.addClass("d-none");
         valid = true;
       }
     })
     return valid;
+  }
+  const validarCantidad = () => {
+    let validacion = [];
+    $(".cantidad input").each(function () {
+      if (this.value === "" || this.value === null || Number(this.value) < 1) {
+        $(this).addClass('input-error')
+        validacion.push(false);
+      } else if ($(this).attr('valid') === "false") {
+        $(this).addClass('input-error')
+        validacion.push(false);
+      } else {
+
+        $(this).removeClass('input-error')
+        validacion.push(true);
+      }
+    })
+    return !validacion.includes(false);
   }
 
   const filaPlantilla = `
@@ -195,13 +213,13 @@ $(document).ready(function () {
   let valid_sede, valid_fecha;
   $('#sede').change(() => valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,"))
   $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
-  $('#registrar').click(function (e) {
+  $('#registrar').click(async function (e) {
     e.preventDefault();
 
     valid_sede = validarNumero($('#sede'), $('#error1'), "Error de sede,");
     valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,");
     let valid_productos = validarProductosRepetidos(false);
-    let valid_cantidad = validarInventario();
+    let valid_cantidad = validarCantidad();
 
     if (!valid_sede || !valid_fecha || !valid_productos || !valid_cantidad) return;
 

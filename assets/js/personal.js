@@ -19,6 +19,7 @@ $(document).ready(function() {
         $.ajax({
             method: "post",
             url: "",
+            dataType: "json",
             data: { mostrar: "xd", bitacora },
             success(data){
                 data.forEach(row => {
@@ -27,11 +28,11 @@ $(document).ready(function() {
                         <td>${row.cedula}</td>
                         <td>${row.nombres}</td>
                         <td>${row.apellidos}</td>
-                        <td>${row.empleado}</td>
+                        <td>${row.tipo}</td>
                         <td>${row.sede} </td>
                         <td class="d-flex justify-content-center">
-                            <button type="button" class="btn btn-primary datos mx-2" id="${row.cedula}" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i></button>
-                            <button type="button" ${editarPermiso} class="btn btn-success editar mx-2" id="${row.cedula}" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i></button>
+                            <button type="button" class="btn btn-view datos mx-2" id="${row.cedula}" data-bs-toggle="modal" data-bs-target="#datosModal"><i class="bi bi-eye"></i></button>
+                            <button type="button" ${editarPermiso} class="btn btn-registrar editar mx-2" id="${row.cedula}" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i></button>
                             <button type="button" ${eliminarPermiso} class="btn btn-danger eliminar mx-2" id="${row.cedula}" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi-trash3"></i></button>
                         </td>
 					</tr>
@@ -48,22 +49,27 @@ $(document).ready(function() {
     
 	let click = 0;
 	setInterval(() => { click = 0; }, 2000);
-
     let timeout
-
     //Validaciones de Evento Registrar
-    $("#cedu").keyup(() => { 
-        let valid = validarCedula($("#cedu"), $("#errorCedu"), "Error de cédula,")
+    $("#preDocument").change(() => {
+        let valid = validarCedula($("#cedu"), $("#errorCedu"), "Error de Documento,", $("#preDocument"))
         clearTimeout(timeout)
         timeout = setTimeout(function(){
-            if (valid) {console.log("cedu");}
+            if (valid) {validarC(" ",$("#cedu") , $("#errorCedu"), $("#preDocument")) }
+        },700)
+    })
+    $("#cedu").keyup(() => { 
+        let valid = validarCedula($("#cedu"), $("#errorCedu"), "Error de Documento,", $("#preDocument"))
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            if (valid) { validarC(" ", $("#cedu"), $("#errorCedu"), $("#preDocument")) }
         },700)
     })
     $("#email").keyup(() => {
         let valid = validarCorreo($("#email"), $("#errorEmail"), "Error de Correo,")
         clearTimeout(timeout)
         timeout = setTimeout(function(){
-            if (valid) {console.log("email");}
+            if (valid) {validarE(" ", $("#email"), $("#errorEmail"))}
         },700)
     })
     $("#nom").keyup(() => {validarNombre($("#nom"), $("#errorNom"), "Error de Nombre,")})
@@ -76,12 +82,11 @@ $(document).ready(function() {
 
     $("#enviar").click((e) => {
         e.preventDefault();
-        console.log("hola");
 		if (click >= 1) throw new Error('Spam de clicks');
-		// if (typeof permisos.Registrar === 'undefined') {
-		// 	Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
-		// 	throw new Error('Permiso denegado.');
-		// }
+		if (typeof permisos.Registrar === 'undefined') {
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
+			throw new Error('Permiso denegado.');
+		}
 
         let nombre = validarNombre($("#nom"), $("#errorNom"), "Error de Nombre,")
         let apellido = validarNombre($("#ape"), $("#errorApe"), "Error de Apellido,")
@@ -90,10 +95,10 @@ $(document).ready(function() {
         let telefono = validarTelefono($("#tele"), $("#errorTele"), "Error de Telefono,")
         let sede = validarSelect($("#sede"), $("#errorSede"), "Error de Sede,")
         let tipo = validarSelect($("#tipo"), $("#errorTipo"), "Error de Tipo,")
-        let cedula = validarCedula($("#cedu"), $("#errorCedu"), "Error de Cédula,")
+        let cedula = validarCedula($("#cedu"), $("#errorCedu"), "Error de Cédula,", $("#preDocument"))
         let correo = validarCorreo($("#email"), $("#errorEmail"), "Error de Correo,")
         if (cedula) {
-            validarC(" ", $("#cedu"), $("#errorCedu")).then(() => {
+            validarC(" ", $("#cedu"), $("#errorCedu"), $("#preDocument")).then(() => {
                 if (correo) {
                     validarE(" ", $("#email"), $("#errorEmail")).then(() => {
 
@@ -103,7 +108,7 @@ $(document).ready(function() {
                                 url: '',
                                 dataType: "json",
                                 data: {
-                                    dni: $("#cedu").val(),
+                                    dni: $("#preDocument").val()+"-"+$("#cedu").val(),
                                     name: $("#nom").val(),
                                     lastName: $("#ape").val(),
                                     email: $("#email").val(),
@@ -115,11 +120,11 @@ $(document).ready(function() {
                                 },
                                 success(result) {
                                     console.log(result);
-                                    if (result.resultado === 'Registrado correctamente.') {
-                                        // tabla.destroy();
+                                    if (result.resultado === 'Registrado') {
+                                        tabla.destroy();
                                         $("#cerrarRegis").click();
                                         Toast.fire({ icon: 'success', title: 'Personal Registrado', showCloseButton: true})
-                                        // rellenar();
+                                        rellenar();
                                     } else {
                                         tabla.destroy();
                                         $("#error").text(result.resultado + ", " + result.error);
@@ -145,25 +150,57 @@ $(document).ready(function() {
 			data: { select: "xd", cedulaId },
 			success(data) {
 
-				$("#cedu").val(data[0].cedula);
-				$("#nom").val(data[0].nombres);
-				$("#ape").val(data[0].apellidos);
-				$("#email").val(data[0].correo);
-				$("#edad").val(data[0].edad);
-				$("#tele").val(data[0].telefono);
-				$("#direc").val(data[0].direccion);
-				$("#sede").val(data[0].sede);
-				$("#tipo").val(data[0].tipo);
+				$("#ceduEdit").val(data[0].cedula.slice(2));
+                $("#preDocumentEdit").val(data[0].cedula.charAt(0));
+				$("#nomEdit").val(data[0].nombres);
+				$("#apeEdit").val(data[0].apellidos);
+				$("#emailEdit").val(data[0].correo);
+				$("#edadEdit").val(data[0].edad);
+				$("#teleEdit").val(data[0].telefono);
+				$("#direcEdit").val(data[0].direccion);
+				$("#sedeEdit").val(data[0].sede);
+				$("#tipoEdit").val(data[0].tipo);
+			}
+		})
+	});
+
+    // Mostrar Datos Unicos para 
+    $(document).on('click', '.datos', function () {
+		cedulaId = this.id;
+        $.ajax({
+			method: "post",
+			url: '',
+			dataType: "json",
+			data: { select: "xd", cedulaId },
+			success(data) {
+
+				
+                $("#ceduDatos").text(data[0].cedula);
+				$("#nomDatos").text(data[0].nombres);
+				$("#apeDatos").text(data[0].apellidos);
+				$("#emailDatos").text(data[0].correo);
+				$("#edadDatos").text(data[0].edad);
+				$("#teleDatos").text(data[0].telefono);
+				$("#direcDatos").text(data[0].direccion);
+				$("#sedeDatos").text(data[0].nomSede);
+				$("#tipoDatos").text(data[0].nomTipo);
 			}
 		})
 	});
 
     //Validaciones de Evento Editar
-    $("#ceduEdit").keyup(() => { 
-        let valid = validarCedula($("#ceduEdit"), $("#errorCeduEdit"), "Error de cédula,")
+    $("#preDocumentEdit").change(() => {
+        let valid = validarCedula($("#ceduEdit"), $("#errorCeduEdit"), "Error de Documento,", $("#preDocumentEdit"))
         clearTimeout(timeout)
         timeout = setTimeout(function(){
-            if (valid) {validarC(cedulaId, $("#ceduEdit"), $("#errorCeduEdit"))}
+            if (valid) {validarC(cedulaId, $("#ceduEdit"), $("#errorCeduEdit"), $("#preDocumentEdit")) }
+        },700)
+    })
+    $("#ceduEdit").keyup(() => { 
+        let valid = validarCedula($("#ceduEdit"), $("#errorCeduEdit"), "Error de Documento,", $("#preDocumentEdit"))
+        clearTimeout(timeout)
+        timeout = setTimeout(function(){
+            if (valid) {validarC(cedulaId, $("#ceduEdit"), $("#errorCeduEdit"), $("#preDocumentEdit"))}
         },700)
     })
     $("#emailEdit").keyup(() => {
@@ -185,22 +222,22 @@ $(document).ready(function() {
     $("#editar").click((e) => {
         e.preventDefault()
 		if (click >= 1) throw new Error('Spam de clicks');
-		// if (typeof permisos.Editar === 'undefined') {
-		// 	Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
-		// 	throw new Error('Permiso denegado.');
-		// }
+		if (typeof permisos.Editar === 'undefined') {
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
+			throw new Error('Permiso denegado.');
+		}
 
         let nombre = validarNombre($("#nomEdit"), $("#errorNomEdit"), "Error de Nombre,")
         let apellido = validarNombre($("#apeEdit"), $("#errorApeEdit"), "Error de Apellido,")
         let edad = validarNumero($("#edadEdit"), $("#errorEdadEdit"), "Error de Edad,")
         let direccion = validarDireccion($("#direcEdit"), $("#errorDirecEdit"), "Error de Direccion,")
         let telefono = validarTelefono($("#teleEdit"), $("#errorTeleEdit"), "Error de Telefono,")
-        let sede = validarSelect($("#sedeEdit"), $("#errorSedeEdit"), "Error de Sede,")
-        let tipo = validarSelect($("#tipoEdit"), $("#errorTipoEdit"), "Error de Tipo,")
-        let cedula = validarCedula($("#ceduEdit"), $("#errorCeduEdit"), "Error de Cédula,")
+        let sede = validarSelect($("#sedeEdit"), $("#errorSedeEdit"), "Error de Sede,");
+        let tipo = validarSelect($("#tipoEdit"), $("#errorTipoEdit"), "Error de Tipo,");
+        let cedula = validarCedula($("#ceduEdit"), $("#errorCeduEdit"), "Error de Documento,", $("#preDocumentEdit"))
         let correo = validarCorreo($("#emailEdit"), $("#errorEmailEdit"), "Error de Correo,")
         if (cedula) {
-            validarC(cedulaId, $("#ceduEdit"), $("#errorCeduEdit")).then(() => {
+            validarC(cedulaId, $("#ceduEdit"), $("#errorCeduEdit"), $("#preDocumentEdit")).then(() => {
                 if (correo) {
                     validarE(cedulaId, $("#emailEdit"), $("#errorEmailEdit")).then(() => {
 
@@ -210,7 +247,7 @@ $(document).ready(function() {
                                 url: '',
                                 dataType: "json",
                                 data: {
-                                    dniEdit: $("#ceduEdit").val(),
+                                    dniEdit: $("#preDocumentEdit").val()+"-"+$("#ceduEdit").val(),
                                     nameEdit: $("#nomEdit").val(),
                                     lastNameEdit: $("#apeEdit").val(),
                                     emailEdit: $("#emailEdit").val(),
@@ -223,16 +260,16 @@ $(document).ready(function() {
                                 },
                                 success(result) {
                                     console.log(result);
-                                    // if (result.resultado === 'Editado correctamente.') {
-                                    //     tabla.destroy();
-                                    //     $("#cerrarEdit").click();
-                                    //     Toast.fire({ icon: 'success', title: 'Personal Registrado', showCloseButton: true })
-                                    //     rellenar();
-                                    // } else {
-                                    //     tabla.destroy();
-                                    //     $("#error").text(result.resultado + ", " + result.error);
-                                    //     rellenar();
-                                    // }
+                                    if (result.resultado === 'Editado') {
+                                        tabla.destroy();
+                                        $("#cerrarEdit").click();
+                                        Toast.fire({ icon: 'success', title: 'Personal Registrado', showCloseButton: true })
+                                        rellenar();
+                                    } else {
+                                        tabla.destroy();
+                                        $("#errorEdit").text(result.resultado + ", " + result.error);
+                                        rellenar();
+                                    }
                                 }
                             })
                         }
@@ -250,10 +287,10 @@ $(document).ready(function() {
     $("#delete").click((e) => {
         e.preventDefault()
 		if (click >= 1) throw new Error('Spam de clicks');
-		// if (typeof permisos.Eliminar === 'undefined') {
-		// 	Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
-		// 	throw new Error('Permiso denegado.');
-		// }
+		if (typeof permisos.Eliminar === 'undefined') {
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
+			throw new Error('Permiso denegado.');
+		}
         validarC(cedulaId, $("Noa"), $("#errorDel")).then(() => {
 			$.ajax({
 				type: "POST",
@@ -267,7 +304,7 @@ $(document).ready(function() {
 					console.log(data);
 					if (data.resultado === "Eliminado") {
 						tabla.destroy();
-						$("#cerrarModalDel").click();
+						$("#cerrarDel").click();
 						Toast.fire({ icon: 'error', title: 'Personal Eliminado', showCloseButton: true })
 						rellenar();
 					} else {
@@ -299,8 +336,8 @@ $(document).ready(function() {
 
     //Validacion de Existencia para la Cedula 
 	let val
-	function validarC(valor, input, div) {
-		val = (input.val() == undefined) ? " " : input.val()
+	function validarC(valor, input, div, prefijo) {
+		val = (input.val() == undefined) ? " " : prefijo.val()+"-"+input.val()
 		return new Promise((resolve, reject) => {
 			$.getJSON('', {
 				cedula: val,
@@ -310,7 +347,7 @@ $(document).ready(function() {
 				function (valid) {
 					console.log(valid)
 					if (valid.resultado === "Error") {
-						div.text("Error de Cedula, " + valid.msj);
+						div.text("Error de Documento, " + valid.msj);
 						input.attr("style", "border-color: red;");
 						input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
 						return reject(false);

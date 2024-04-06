@@ -1,18 +1,24 @@
 <?php
-use component\initcomponents as initcomponents;
-use component\header as header;
-use component\menuLateral as menuLateral;
-use modelo\personal as personal;
+	use component\initcomponents as initcomponents;
+	use component\header as header;
+	use component\menuLateral as menuLateral;
+	use modelo\personal as personal;
 
-	if(!isset($_SESSION['nivel'])){
-    	die('<script> window.location = "?url=login" </script>');
-  	}
 	$objModel = new personal();
 	$permisos = $objModel->getPermisosRol($_SESSION['nivel']);
-	$permiso = $permisos['Usuarios'];
+	$permiso = $permisos['Personal'];
+	$mostrarT = $objModel->mostrarTipo();
+	$mostrarS = $objModel->mostrarSede();
 
-	// $mostrarT = $objModel->mostrarTipo();
-	// $mostrarS = $objModel->mostrarSede();
+	if (!isset($_SESSION['nivel']))
+		die('<script> window.location = "?url=login" </script>');
+	
+	if (!isset($permiso["Consultar"]))
+		die('<script> window.location = "?url=home" </script>');
+
+	if (isset($_POST['getPermisos'], $permiso["Consultar"])) {
+		die(json_encode($permiso));
+	}
 
 	if (isset($_POST['dni'], $_POST['name'], $_POST['lastName'], $_POST['email'], $_POST['age'], $_POST['adress'], $_POST["phone"], $_POST['sede'], $_POST['tipo'])) {
 		$res = $objModel->getAgregarPersonal($_POST['dni'], $_POST['name'], $_POST['lastName'], $_POST['email'], $_POST['age'], $_POST['adress'], $_POST["phone"], $_POST['sede'], $_POST['tipo']);
@@ -25,7 +31,7 @@ use modelo\personal as personal;
 	}
 
 	if (isset($_POST['mostrar'])) {
-		$res = $objModel->getMostrarUsuario();
+		$res = $objModel->getMostrarPersonal();
 		die(json_encode($res));
 	}
 

@@ -1,23 +1,23 @@
-$(document).ready(function(){
+$(document).ready(function () {
 
     let permisos;
-    $.post("",{getPermisos:''})
-    .fail(e =>{
-        Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-        throw new Error('Error al obtener permisos: '+e);
-    })
-    .then((data) => {
-        permisos = JSON.parse(data);
-        rellenar(true)
-    });
+    $.post("", { getPermisos: '' })
+        .fail(e => {
+            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+            throw new Error('Error al obtener permisos: ' + e);
+        })
+        .then((data) => {
+            permisos = JSON.parse(data);
+            rellenar(true)
+        });
 
     let mostrar;
     const rellenar = (bitacora = false) => {
-        $.post("", {mostrar: "", bitacora},function(data){
+        $.post("", { mostrar: "", bitacora }, function (data) {
             let tabla;
-            const permisoAcciones = (!permisos["Modificar acciones"]) ? 'disabled' : '';    
-            const permisoEditar = (!permisos["Editar"]) ? 'disabled' : '';    
-            const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';    
+            const permisoAcciones = (!permisos["Modificar acciones"]) ? 'disabled' : '';
+            const permisoEditar = (!permisos["Editar"]) ? 'disabled' : '';
+            const permisoEliminar = (!permisos["Eliminar"]) ? 'disabled' : '';
             data.forEach(row => {
                 tabla += `
                 <tr>
@@ -28,37 +28,37 @@ $(document).ready(function(){
                         <button type="button" ${permisoEditar} id="${row.id}" title="Editar" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#modal_editar"><i class="bi bi-pencil"></i></button>
                         <button type="button" ${permisoEliminar} id="${row.id}" title="Eliminar" class="btn btn-danger eliminar mx-2" data-bs-toggle="modal" data-bs-target="#modal_borrar"><i class="bi bi-trash3"></i></button>
                     </td>
-                </tr>`; 
+                </tr>`;
             });
             $('#tabla tbody').html(tabla);
-            mostrar = $('#tabla').DataTable({resposive:true});
+            mostrar = $('#tabla').DataTable({ resposive: true });
         }, 'json')
-        .fail((e)=>{
-           Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-           throw new Error('Error al mostrar listado: '+e);
-        })
+            .fail((e) => {
+                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+                throw new Error('Error al mostrar listado: ' + e);
+            })
     }
 
     const icons = {
-        Consultar : '<i class="bi bi-eye-fill"></i>',
-        Registrar : '<i class="bi bi-plus-circle-fill"></i>',
-        Editar : '<i class="bi bi-pencil-fill"></i>',
+        Consultar: '<i class="bi bi-eye-fill"></i>',
+        Registrar: '<i class="bi bi-plus-circle-fill"></i>',
+        Editar: '<i class="bi bi-pencil-fill"></i>',
         Eliminar: '<i class="bi bi-trash-fill"></i>',
-        "Modificar acciones" : '<i class="bi bi-pencil-fill"></i>',
-        "Modificar acceso" : '<i class="bi bi-eye-slash-fill"></i>',
-        "Exportar reporte" : '<i class="bi bi-file-pdf"></i>',
-        "Exportar reporte estadistico" : '<i class="bi bi-file-spreadsheet"></i>',
-        "Comprobar pago" : '<i class="bi bi-journal-check"></i>',
-        "Asignar estado" : '<i class="bi bi-journal-check"></i>'
+        "Modificar acciones": '<i class="bi bi-pencil-fill"></i>',
+        "Modificar acceso": '<i class="bi bi-eye-slash-fill"></i>',
+        "Exportar reporte": '<i class="bi bi-file-pdf"></i>',
+        "Exportar reporte estadistico": '<i class="bi bi-file-spreadsheet"></i>',
+        "Comprobar pago": '<i class="bi bi-journal-check"></i>',
+        "Asignar estado": '<i class="bi bi-journal-check"></i>'
     }
 
-    let id 
+    let id
 
-    $(document).on('click', '.asignar_permisos', function() {
+    $(document).on('click', '.asignar_permisos', function () {
         validarPermiso(permisos["Modificar acciones"]);
 
-        id = this.id; 
-        $.post("",{mostrar_permisos:"", id},function(data){
+        id = this.id;
+        $.post("", { mostrar_permisos: "", id }, function (data) {
             let tabla = "";
             Object.entries(data).forEach(([modulo_nombre, row]) => {
                 let permisos = "";
@@ -87,110 +87,111 @@ $(document).ready(function(){
 
         }, "json").fail(e => {
             Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: '+e);
+            throw new Error('Error al mostrar listado: ' + e);
         })
 
     });
 
 
-    $('#enviarPermisos').click(()=>{
+    $('#enviarPermisos').click(() => {
         validarPermiso(permisos["Modificar acciones"]);
         let datos_permisos = [];
-        $('#tabla_permisos td input').each(function(i){
+        $('#tabla_permisos td input').each(function (i) {
             let input_permiso = $(this)[0];
-            datos_permisos[i] = {id_permiso : input_permiso.id, status : input_permiso.checked}
+            datos_permisos[i] = { id_permiso: input_permiso.id, status: input_permiso.checked }
         })
-        $.post("", {datos_permisos, id}, function(data){
-            if(data.respuesta === "ok"){
+        $.post("", { datos_permisos, id }, function (data) {
+            if (data.respuesta === "ok") {
                 Toast.fire({ icon: 'success', title: data.msg });
                 $('.cerrar').click();
-            }else{
+            } else {
                 Toast.fire({ icon: 'error', title: 'Hubo un error al modificar los permisos.' });
-                throw new Error('Error al mostrar listado: '+data.msg);
+                throw new Error('Error al mostrar listado: ' + data.msg);
             }
         }, "json")
-        .fail(()=>{
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: '+e);
-        })
+            .fail(() => {
+                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+                throw new Error('Error al mostrar listado: ' + e);
+            })
     })
-
-    $('#registrar').click((e)=>{
+    $("#rol_nombre").inputmask("nombre");
+    $('#registrar').click((e) => {
         e.preventDefault();
         validarPermiso(permisos["Registrar"]);
 
         let rol = $("#rol_nombre").val();
-        vrol = validarNombre($("#rol_nombre"),$("#error1") , "Error de nombre,");
-        if(!vrol)
+        vrol = validarNombre($("#rol_nombre"), $("#error1"), "Error de nombre,");
+        if (!vrol)
             throw new Error('Error de validacion.');
 
-        $.post('',{registrar:'', rol}, function(data){
-            if(data.resultado !== "ok"){
+        $.post('', { registrar: '', rol }, function (data) {
+            if (data.resultado !== "ok") {
                 Toast.fire({ icon: 'error', title: data.msg });
                 throw new Error(data.msg);
-            } 
-            mostrar.destroy(); 
-            rellenar(); 
-            $('#agregarform').trigger('reset'); 
-            $('.cerrar').click(); 
-            Toast.fire({ icon: 'success', title: 'Rol registrado' }) 
+            }
+            mostrar.destroy();
+            rellenar();
+            $('#agregarform').trigger('reset');
+            $('.cerrar').click();
+            Toast.fire({ icon: 'success', title: 'Rol registrado' })
 
         }, "json")
-        .fail((e)=>{
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: '+e);
-        })
+            .fail((e) => {
+                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+                throw new Error('Error al mostrar listado: ' + e);
+            })
     })
 
-    $(document).on('click', '.editar', function() {
+    $(document).on('click', '.editar', function () {
         validarPermiso(permisos["Editar"]);
-        id = this.id; 
-        $.post("", {select:"", id}, data => {
+        id = this.id;
+        $.post("", { select: "", id }, data => {
             $("#rol_nombre_edit").val(data[0].nombre);
-        },"json")
-        .fail(e =>{
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: '+e);
-        })
+        }, "json")
+            .fail(e => {
+                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+                throw new Error('Error al mostrar listado: ' + e);
+            })
     });
 
-    $('#editar').click((e)=>{
+    $("#rol_nombre_edit").inputmask("nombre");
+    $('#editar').click((e) => {
         e.preventDefault();
         validarPermiso(permisos["Editar"]);
 
         let nombre = $("#rol_nombre_edit").val();
-        vrol = validarNombre($("#rol_nombre_edit"),$("#error2") , "Error de nombre,");
-        if(!vrol)
+        vrol = validarNombre($("#rol_nombre_edit"), $("#error2"), "Error de nombre,");
+        if (!vrol)
             throw new Error('Error de validacion.');
 
-        $.post('',{editar:'', id, nombre}, function(data){
+        $.post('', { editar: '', id, nombre }, function (data) {
 
-            if(data.resultado !== "ok"){
+            if (data.resultado !== "ok") {
                 Toast.fire({ icon: 'error', title: data.msg });
                 throw new Error(data.msg);
-            } 
-            mostrar.destroy(); 
-            rellenar(); 
-            $('#agregarform').trigger('reset'); 
-            $('.cerrar').click(); 
-            Toast.fire({ icon: 'success', title: data.msg }) 
+            }
+            mostrar.destroy();
+            rellenar();
+            $('#agregarform').trigger('reset');
+            $('.cerrar').click();
+            Toast.fire({ icon: 'success', title: data.msg })
 
         }, "json")
-        .fail((e)=>{
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: '+e);
-        })
+            .fail((e) => {
+                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+                throw new Error('Error al mostrar listado: ' + e);
+            })
     })
 
-    $(document).on('click','.eliminar',function(){
+    $(document).on('click', '.eliminar', function () {
         validarPermiso(permisos["Eliminar"]);
         id = this.id
-    }); 
+    });
 
-    $('#borrar').click(()=>{
+    $('#borrar').click(() => {
         validarPermiso(permisos["Eliminar"]);
-        $.post('',{eliminar : '', id}, data => {
-            if(data.resultado != "ok"){
+        $.post('', { eliminar: '', id }, data => {
+            if (data.resultado != "ok") {
                 Toast.fire({ icon: 'error', title: data.msg });
                 throw new Error(data.msg);
             }
@@ -199,10 +200,10 @@ $(document).ready(function(){
             rellenar();
             Toast.fire({ icon: 'success', title: data.msg })
         }, "json")
-        .fail(e =>{
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: '+e);
-        })
+            .fail(e => {
+                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
+                throw new Error('Error al mostrar listado: ' + e);
+            })
 
     })
 
