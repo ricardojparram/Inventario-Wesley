@@ -12,7 +12,6 @@ $(document).ready(function(){
                 list.forEach(row => {
                     tabla+=`
                     <tr>
-                        <td>${row.modulo} </td>
                         <td>${row.nombre}</td>
                         <td>${row.descripcion}</td>
                         <td>${row.fecha}</td>
@@ -22,7 +21,7 @@ $(document).ready(function(){
                 $('#tabla tbody').html(tabla);
                 tabla = $("#tabla").DataTable({
                     responsive: true,
-                    "order": [[ 3, "desc" ]]
+                    "order": [[ 2, "desc" ]]
                 });
             }
         })

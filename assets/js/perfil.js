@@ -49,7 +49,7 @@ $(document).ready(function(){
 	$("#nameEdit").keyup(()=> {  validarNombre($("#nameEdit"),$("#errorNom") ,"Error de nombre,") });
 	$("#apeEdit").keyup(()=> {  validarNombre($("#apeEdit"),$("#errorApe") ,"Error de apellido,") });
 	$("#cedulaEdit").keyup(()=> {	
-		let valid = validarCedula($("#cedulaEdit"),$("#errorCedu") ,"Error de cedula,", $("#preDocument")) 
+		let valid = validarCedula($("#cedulaEdit"),$("#errorCedu") ,"Error de Documento,", $("#preDocument")) 
 		clearTimeout(timeout)
         timeout = setTimeout(function(){
             if (valid) { validarC($("#cedulaEdit"), $("#errorCedu"), $("#preDocument")) }
@@ -131,22 +131,22 @@ $(document).ready(function(){
 
 		name = validarNombre($("#nameEdit"),$("#errorNom") ,"Error de nombre,");
 		lastname = validarNombre($("#apeEdit"),$("#errorApe") ,"Error de apellido,");
-		id = validarCedula($("#cedulaEdit"),$("#errorCedu") ,"Error de cedula,", $("#preDocument"));
+		id = validarCedula($("#cedulaEdit"),$("#errorCedu") ,"Error de Documento,", $("#preDocument"));
 		email = validarCorreo($("#emailEdit"),$("#errorEmail") ,"Error de email,");
 
 		if(!name && !lastname && !id && !email) {
 			throw new Error('Datos inválidos');
 		}
-
+		let form = new FormData($('#formEditar')[0]);
+		form.append("cedula", $("#preDocument").val()+"-"+$("#cedulaEdit").val());
+		let borrar = $('#imgEditar').is('[src="assets/img/profile_photo.jpg"]');
+		console.log(canvas);
 		validarC($("#cedulaEdit"), $("#errorCedu"), $("#preDocument")).then(() => {
 			
 			
 			validarE($("#emailEdit"), $("#errorEmail")).then(() => {
 				
 				
-				let form = new FormData($('#formEditar')[0]);
-				form.append("cedula", $("#preDocument").val()+"-"+$("#cedulaEdit").val());
-				let borrar = $('#imgEditar').is('[src="assets/img/profile_photo.jpg"]');
 				
 				if(borrar != true){
 					if(typeof canvas === "undefined" || typeof canvas == null){

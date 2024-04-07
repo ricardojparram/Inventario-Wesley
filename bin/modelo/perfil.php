@@ -252,7 +252,7 @@ class perfil extends DBConnect{
 		if($passwordAct == $passwordNew) {
 			die(json_encode(['resultado' => 'Error de repetida' , 'error' => 'La contraseña nueva no puede ser igual a la anterior.']));
 		}
-		if(preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{8,30}$/", $passwordNew) == false) {
+		if(preg_match_all("/^[A-Za-z\d$@\/_.#-]{8,30}$/", $passwordNew) == false) {
 			die(json_encode(['resultado' => 'Error de contraseña' , 'error' => 'Correo inválida.']));
 		}
 		if($passwordNew != $passwordNewR) {
