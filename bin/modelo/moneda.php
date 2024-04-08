@@ -40,10 +40,10 @@ class moneda extends DBConnect{
       $new->bindValue(1 , $this->alcambio);
       $new->bindValue(2 , $this->moneda);
       $new->execute();
-      $idC = $this->con->lastInsertId();
-      $resultado = ['resultado' => 'Registado con exito', 'idC' => $idC];
+      $resultado = ['resultado' => 'Registado con exito'];
       $this->binnacle("Moneda",$_SESSION['cedula'],"Registró un Valor de Moneda.");
       parent::desconectarDB();
+      $this->actualizarValor($this->alcambio, $this->moneda);
       return $resultado;
 
      }catch(\PDOexection $error){
@@ -166,6 +166,7 @@ class moneda extends DBConnect{
       $resultado = ['resultado' => 'Editado'];
       $this->binnacle("Moneda",$_SESSION['cedula'],"Editó un Valor de Moneda.");
       parent::desconectarDB();
+      $this->actualizarValor($this->alcambio, $this->moneda);
       return $resultado;    
       
 
@@ -189,7 +190,7 @@ class moneda extends DBConnect{
        $new->execute();
        $data = $new->fetchAll();
        
-       if($bitacora) $this->binnacle("Moneda",$_SESSION['cedula'],"Consultó listado.");
+       if($bitacora) $this->binnacle("Moneda",$_SESSION['cedula'],"Consultó listado de Moneda.");
        parent::desconectarDB();
        return $data;
 
@@ -215,11 +216,12 @@ class moneda extends DBConnect{
    private function agregarMoneda(){
     try{
       parent::conectarDB();
-      $new = $this->con->prepare("INSERT INTO `moneda`(`id_moneda`, `nombre`, `status`) VALUES (DEFAULT,?,1)");
-      $new->bindValue(1, $this->moneda);
+      $numeroAleatorio = $this->generarNumeroAleatorio();
+      $new = $this->con->prepare("INSERT INTO `moneda`(`id_moneda`, `nombre`, `status`) VALUES (?,?,1)");
+      $new->bindValue(1, $numeroAleatorio);
+      $new->bindValue(2, $this->moneda);
       $new->execute();
-      $idR = $this->con->lastInsertId();
-      $resultado = ['resultado' => 'Registado con exito', 'idR' => $idR];
+      $resultado = ['resultado' => 'Registado con exito'];
       $this->binnacle("Moneda",$_SESSION['cedula'],"Registró una Moneda.");
       parent::desconectarDB();
       return $resultado;
@@ -241,12 +243,8 @@ class moneda extends DBConnect{
        parent::desconectarDB();
       return $data;
      }catch(\PDOexection $error){
-
        return $error;
-
      }
-
-
    }
 
    public function getEditarM($nameEdit, $id){
@@ -296,6 +294,25 @@ class moneda extends DBConnect{
 
      }
   }
+
+  private function actualizarValor($valor, $moneda){
+    try {
+      parent::conectarDB();
+      $new = $this->con->prepare("UPDATE moneda SET valor = ? WHERE id_moneda = ? AND status = 1");
+      $new->bindValue(1, $valor);
+      $new->bindValue(2, $moneda);
+      $new->execute();
+      parent::desconectarDB();
+    } catch (\PDOExecption $e) {
+      return $e;
+    }
+  }
+
+  private function generarNumeroAleatorio() {
+    return rand(10, 99);
+  }
+
+
 
 }
 ?>

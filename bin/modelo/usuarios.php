@@ -40,7 +40,7 @@ class usuarios extends DBConnect {
       $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
       return $resultado;
     }
-    if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
+    if (preg_match_all("/^[A-Za-z\d$@\/_.#-]{3,30}$/", $password) == false) {
       $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
       return $resultado;
     }
@@ -215,7 +215,7 @@ class usuarios extends DBConnect {
       return $resultado;
     }
     if ($password != "") {
-      if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
+      if (preg_match_all("/^[A-Za-z\d$@\/_.#-]{3,30}$/", $password) == false) {
         $resultado = ['resultado' => 'Error', 'error' => 'Contraseña invalida.'];
         return $resultado;
       }
