@@ -154,12 +154,10 @@ $(document).ready(function () {
 						form.set('foto', blob, 'avatar.png')
 						editarImagen(form);
 					});
-				} else {
+				} else if (borrar) {
+					form.append("borrar", "");
 					editarImagen(form);
-				}
-
-				if (borrar) {
-					form.append("borrar", "borrarImg");
+				} else {
 					editarImagen(form);
 				}
 
@@ -178,7 +176,7 @@ $(document).ready(function () {
 					$('#error').text(data.foto.error);
 					throw new Error('Error de foto.');
 				}
-				if (data.foto.respuesta == 'Imagen guardada.' || data.foto.respuesta == 'Imagen eliminada.') {
+				if (data.foto.respuesta === 'ok') {
 					$('.fotoPerfil').attr('src', data.foto.url);
 				}
 				if (data.edit.respuesta == "Editado correctamente") {
@@ -190,11 +188,12 @@ $(document).ready(function () {
 				} if (data.edit.respuesta == 'Error') {
 					$('#error').text(data.edit.respuesta + ", " + data.edit.error);
 				}
-
 			},
 			error(data) {
+				$('#error').text(data.responseJSON.msg);
 				$('#displayProgreso').hide();
-				Toast.fire({ icon: 'error', title: 'Ha ocurrido un error al subir la imágen.' });
+				Toast.fire({ icon: 'error', title: data.responseJSON.msg });
+				throw new Error('Error de foto.');
 			}
 		})
 	}

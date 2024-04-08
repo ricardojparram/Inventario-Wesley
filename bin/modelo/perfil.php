@@ -109,8 +109,8 @@ class perfil extends DBConnect {
 		$this->borrar = $borrar;
 
 		$resultadoEdit = $this->editarDatos();
-
-		if ($this->borrar != false)
+		$resultadoFoto = "";
+		if ($this->borrar !== false)
 			$resultadoFoto = $this->borrarImagen();
 
 		if (isset($this->foto['name']))
@@ -135,7 +135,7 @@ class perfil extends DBConnect {
 			$_SESSION['apellido'] = $this->apellido;
 			$_SESSION['correo'] = $this->correo;
 
-			return ['respuesta' => 'Editado correctamente'];;
+			return ['respuesta' => 'ok', 'msg' => "Editado correctamente"];;
 		} catch (\PDOException $e) {
 			return $this->http_error(500, $e);
 		}
@@ -158,7 +158,7 @@ class perfil extends DBConnect {
 		$nombre =  $repositorio . $nameEnc . '.' . $extension;
 
 		if (!move_uploaded_file($this->foto['tmp_name'], $nombre))
-			return $this->http_error(500, 'No se pudo guardar la imagen.');
+			die(json_encode($this->http_error(500, 'No se pudo guardar la imagen.')));
 
 		try {
 			parent::conectarDB();
@@ -178,7 +178,7 @@ class perfil extends DBConnect {
 			parent::desconectarDB();
 			$_SESSION['fotoPerfil'] = $nombre;
 
-			return ['respuesta' => 'Imagen guardada.', 'url' => $nombre];
+			return ['respuesta' => 'ok', 'msg' => "Imagen guardada", 'url' => $nombre];
 		} catch (\PDOException $e) {
 			return $this->http_error(500, $e);
 		}
@@ -199,8 +199,7 @@ class perfil extends DBConnect {
 			}
 
 			$_SESSION['fotoPerfil'] = $this->imagenPorDefecto;
-
-			return ['respuesta' => 'Imagen eliminada.', 'url' => $this->imagenPorDefecto];
+			return ['respuesta' => 'ok', 'msg' => "Imagen guardada", 'url' => $this->imagenPorDefecto];
 		} catch (\PDOException $e) {
 			return $this->http_error(500, $e);
 		}

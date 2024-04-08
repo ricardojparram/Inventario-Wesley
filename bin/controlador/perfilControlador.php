@@ -39,8 +39,7 @@ if (isset($_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'
   $data = "";
   if (isset($_POST['borrar']))
     $data = $objModel->getEditar('', $_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'], $_SESSION['cedula'], $_POST['borrar']);
-
-  if (isset($_FILES['foto']))
+  else if (isset($_FILES['foto']))
     $data = $objModel->getEditar($_FILES['foto'], $_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'], $_SESSION['cedula']);
 
   die(json_encode($data));
