@@ -188,24 +188,27 @@
                   <!-- Change Password Form -->
                   <form >
 
-                    <div class="row mb-3">
+                    <div class="row">
                       <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Contraseña Actual</label>
                       <div class="col-md-8 col-lg-9">
                         <input  type="password" class="form-control" id="password">
+                        <p id="passwordError" style="color:#ff0000;text-align: center;"></p>
                       </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row">
                       <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">Nueva Contraseña</label>
                       <div class="col-md-8 col-lg-9">
                         <input type="password" class="form-control" id="newPassword">
+                        <p id="newPasswordError" style="color:#ff0000;text-align: center;"></p>
                       </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row">
                       <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Repita Nueva Contraseña</label>
                       <div class="col-md-8 col-lg-9">
                         <input type="password" class="form-control" id="rePassword">
+                        <p id="rePasswordError" style="color:#ff0000;text-align: center;"></p>
                       </div>
                     </div>
                     <p id="error2" style="color:#ff0000;text-align: center;"></p>
