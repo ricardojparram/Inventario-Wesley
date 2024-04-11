@@ -149,8 +149,7 @@ function validarNumero(input, div, mensaje) {
 		input.addClass('input-error');
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "backgraund-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
@@ -449,14 +448,12 @@ function validarSelect(input, div, mensaje) {
 function validarSelec2(input, select, div, mensaje) {
 	parametro = input.val();
 	if (parametro == null || parametro == "") {
-		div.text(mensaje + " debe introducir datos.")
-		select.attr("style", "border-color: red;")
-		select.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+		div.text(mensaje + " debe introducir datos.");
+		input.addClass('input-error');
 		return false
 	} else {
 		div.text(" ");
-		select.attr("style", "border-color: none;")
-		select.attr("style", "backgraund-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }

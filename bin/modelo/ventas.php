@@ -3,17 +3,19 @@
   namespace modelo; 
   use FPDF as FPDF;
   use config\connect\DBConnect as DBConnect;
+  use utils\validar;
 
   class ventas extends DBConnect{
 
+      use validar;
   	  private $id;
       private $cedula;
+      private $tipoCliente;
       private $monto;
-      private $codigoP;
-      private $cantidad;
-      private $metodo;
-      private $moneda;
-
+      private $dolares;
+      private $datosProducto;
+      private $datosTipoPago;
+      
       public function getMostrarVentas($bitacora = false){
         try{
 
@@ -49,9 +51,6 @@
    }
 
    public function detalleProductos($id){
-    if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-      return ['resultado' => 'Error de id','error' => 'id inválida.'];
-    }
 
     $this->id = $id;
 
@@ -63,9 +62,37 @@
 
       parent::conectarDB();
 
-      $query = "SELECT CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , vp.cantidad , vp.precio_actual , vp.num_fact FROM venta_producto vp INNER JOIN producto_sede ps ON ps.id_producto_sede = vp.id_producto_sede INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE vp.num_fact = 1";
+      $query = "SELECT CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , vp.cantidad , vp.precio_actual , vp.num_fact FROM venta_producto vp INNER JOIN producto_sede ps ON ps.id_producto_sede = vp.id_producto_sede INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE vp.num_fact = ?";
 
       $new = $this->con->prepare($query);
+      $new->bindValue(1, $this->id);
+      $new->execute();
+      $data = $new->fetchAll(\PDO::FETCH_OBJ);
+
+      return $data;
+
+
+    } catch (\PDOException $e) {
+      return $e;
+    }
+  }
+
+   public function detalleTipo($id){
+
+    $this->id = $id;
+
+    return $this->detalleT();
+  }
+
+  private function detalleT(){
+    try {
+
+      parent::conectarDB();
+
+      $query = "SELECT fp.tipo_pago, dp.referencia , dp.monto_pago , v.num_fact FROM detalle_pago dp INNER JOIN forma_pago fp ON fp.id_forma_pago = dp.id_forma_pago INNER JOIN pagos_recibidos pr ON pr.id_pago = dp.id_pago INNER JOIN venta v ON v.num_fact = pr.num_fact WHERE v.num_fact = ?";
+
+      $new = $this->con->prepare($query);
+      $new->bindValue(1, $this->id);
       $new->execute();
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
 
@@ -179,6 +206,130 @@
 
       return $data;
 
+
+    } catch (\PDOException $e) {
+      return $e;
+    }
+  }
+
+  public function getRegistrarVenta($cedula , $tipoCliente , $montoTotal , $totalDolares , $datosProducto , $datosTipoPago){
+    if (!$this->validarString('documento', $cedula))
+      return $this->http_error(400, 'Cedula inválido.');
+
+    if (!$this->validarString('nombre', $tipoCliente))
+      return $this->http_error(400, 'Tipo Cliente inválido.');
+
+    if (!$this->validarString('decimnal', $montoTotal))
+      return $this->http_error(400, 'Monto total inválido.');
+
+    if (!$this->validarString('decimnal', $totalDolares))
+      return $this->http_error(400, 'Monto total en dolares inválido.');
+
+    $estructura_productos = [
+      'producto' => 'string',
+      'cantidad' => 'string',
+      'precio' => 'string',
+    ];
+
+    if (!$this->validarEstructuraArray($datosProducto, $estructura_productos, true))
+      return $this->http_error(400, 'Productos inválidos.');
+
+    $estructura_tipo = [
+      'TipoPago' => 'string',
+      'referencia' => 'string',
+      'precioTipo' => 'string',
+    ];
+
+    if (!$this->validarEstructuraArray($datosTipoPago, $estructura_tipo, true))
+      return $this->http_error(400, 'Datos Tipo Pago inválidos.');
+
+    $this->cedula = $cedula;
+    $this->tipoCliente = $tipoCliente;
+    $this->monto = $montoTotal;
+    $this->dolares = $totalDolares;
+    $this->datosProducto = $datosProducto;
+    $this->datosTipoPago = $datosTipoPago;
+
+    return $this->registrarVenta();
+
+  }
+
+
+  private function registrarVenta(){
+    try {
+      parent::conectarDB();
+      $idUnique = $this->uniqueID();
+      $new = $this->con->prepare('INSERT INTO `venta`(`num_fact`, `monto_fact`, `monto_dolares`, `fecha`, `status`) VALUES (?,?,?,DEFAULT,1)');
+      $new->bindValue(1, $idUnique);
+      $new->bindValue(2, $this->monto);
+      $new->bindValue(3, $this->dolares);
+      $new->execute();
+
+      $queryPersonal = "INSERT INTO `venta_personal`(`id_venta`, `cedula`, `num_fact`) VALUES (DEFAULT,?,?)";
+      $queryPaciente = "INSERT INTO `venta_pacientes`(`id_venta`, `num_fact`, `ced_pac`) VALUES (DEFAULT,?,?)";
+
+      if($this->tipoCliente === 'Personal'){
+        $new = $this->con->prepare($queryPersonal);
+        $new->bindValue(1,  $this->cedula);
+        $new->bindValue(2, $idUnique);
+        $new->execute();
+      }else{
+        $new = $this->con->prepare($queryPaciente);
+        $new->bindValue(1,  $idUnique);
+        $new->bindValue(2,  $this->cedula);
+        $new->execute();
+      }
+
+      foreach ($this->datosProducto as $datos){
+
+       $new = $this->con->prepare('INSERT INTO `venta_producto`(`id_venta_p`, `num_fact`, `id_producto_sede`, `cantidad`, `precio_actual`) VALUES (DEFAULT,?,?,?,?)');
+       $new->bindValue(1, $idUnique);
+       $new->bindValue(2, $datos['producto']);
+       $new->bindValue(3, $datos['cantidad']);
+       $new->bindValue(4, $datos['precio']);
+       $new->execute();
+
+       $this->actualizarCantidad($datos['producto'] , $datos['cantidad']);
+        
+      }
+
+      $new = $this->con->prepare('INSERT INTO `pagos_recibidos`(`id_pago`, `num_fact`, `status`) VALUES (DEFAULT,?,1)');
+      $new->bindValue(1, $idUnique);
+      $new->execute();
+      $this->id = $this->con->lastInsertId();
+
+      foreach ($this->datosTipoPago as $datosTipo){
+
+       $new = $this->con->prepare('INSERT INTO `detalle_pago`(`id_det_pago`, `id_pago`, `id_forma_pago`, `referencia`, `monto_pago`) VALUES (DEFAULT,?,?,?,?)');
+       $new->bindValue(1, $this->id);
+       $new->bindValue(2, $datosTipo['TipoPago']);
+       $new->bindValue(3, $datosTipo['referencia']);
+       $new->bindValue(4, $datosTipo['precioTipo']);
+       $new->execute();
+        
+      }
+
+       return ['resultado' => 'ok', 'msg' => 'Se ha registrado la venta correctamente'];
+      
+    } catch (\PDOException $e) {
+      return $e;
+    }
+  }
+
+  private function actualizarCantidad($id_producto_sede , $cantidad){
+    try {
+      parent::conectarDB();
+      $new = $this->con->prepare('SELECT ps.cantidad FROM producto_sede ps WHERE ps.id_producto_sede = ?');
+      $new->bindValue(1 , $id_producto_sede);
+      $new->execute();
+      $data = $new->fetchAll();
+
+      $NewCantidad = $data[0]['cantidad'] - $cantidad ;
+
+      $new = $this->con->prepare("UPDATE producto_sede ps SET ps.cantidad = ? WHERE ps.id_producto_sede = ?");
+      $new->bindValue(1, $NewCantidad);
+      $new->bindValue(2, $id_producto_sede);
+      $new->execute();
 
     } catch (\PDOException $e) {
       return $e;
