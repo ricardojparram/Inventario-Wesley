@@ -73,7 +73,7 @@ $(document).ready(function(){
 				</tr>
 				`  
 			})
-			$('#ventaNombre').text(`Numero de Factura #${lista[0].num_fact}.`);
+			$('#ventaNombre').text(`Numero de Factura ${lista[0].num_fact}.`);
 			$('#bodyDetalle').html(tabla);
 			$('.factura').attr("id", id);
 		})
@@ -95,7 +95,7 @@ $(document).ready(function(){
           </tr>
           `  
         })
-        $('#ventaNombreTipoPago').text(`Numero de Factura #${lista[0].num_fact}.`);
+        $('#ventaNombreTipoPago').text(`Numero de Factura ${lista[0].num_fact}.`);
         $('#bodyDetalleTipo').html(tabla);
       })
      })
@@ -582,6 +582,8 @@ $(document).ready(function(){
 
     }
 
+     let click = 0;
+     setInterval(()=>{click = 0}, 2000);
 
      let cedula , montoTotal , totalDolares , valid_productos , valid_precioTipo;
 
@@ -589,6 +591,8 @@ $(document).ready(function(){
 
     $('#registrar').click(function(e) {
       e.preventDefault();
+
+      if(click >= 1) throw new Error('Spam de clicks');
 
        cedula = validarSelec2($(".select2"),$(".select2-selection"),$("#error1"),"Error de Cedula");
        montoTotal = validarNumero($("#monto"),$("#error3"),"Error de monto");
@@ -632,11 +636,10 @@ $(document).ready(function(){
         }).fail(function(e){
           Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
           throw new Error(e.responseJSON.msg);
-        }).always(function() {
-          console.log("complete");
-        });
+        })
                
        }
+       click++;
 
     });
 
@@ -651,6 +654,58 @@ $(document).ready(function(){
      addNewRow() // 
      addNewRowPago()
   })
+
+    function validarId() {
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          type: "POST",
+          url: '',
+          dataType: "json",
+          data: { validarFactura: "existe", id },
+          success(data) {
+            console.log(data);
+            if (data.resultado === "Error de venta") {  
+                Toast.fire({ icon: 'error', title: 'Esta venta esta anulada' }); // ALERTA 
+                mostrar.destroy();
+                rellenar();
+                $('.cerrar').click();
+                reject(); 
+              } else {
+                resolve(); 
+              }
+            }
+          });
+      });
+    }
+
+    $(document).on('click', '.borrar' , function(){
+      id = this.id
+    })
+
+    $('#delete').click(function(e) {
+      
+      if (click >= 1) throw new Error('Spam de clicks'); 
+
+      $.ajax({
+        url: '',
+        type: 'POST',
+        dataType: 'json',
+        data: {anular: 'anular venta' , id},
+        success(data){
+          mostrar.destroy();
+          rellenar();
+          $('.cerrar').click();
+          Toast.fire({ icon: 'success', title: 'Venta anulada' }); // ALERTA 
+        }
+      }).fail(function() {
+        console.log("error");
+
+      }).always(function() {
+        console.log("complete");
+      });
+      
+        
+    });
 
 	
 });

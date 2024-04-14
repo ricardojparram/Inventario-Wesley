@@ -258,9 +258,20 @@
   private function registrarVenta(){
     try {
       parent::conectarDB();
-      $idUnique = $this->uniqueID();
+      
+      $new = $this->con->prepare('SELECT `num_fact`FROM `venta` ORDER BY `num_fact` DESC LIMIT 1');
+      $new->execute();
+      $data = $new->fetchAll();
+
+      if ($data) {
+        $factura = $this->generarNumeroFactura($data[0]['num_fact']);
+      } else {
+        $factura = 'N°-A00000';
+      }
+
+
       $new = $this->con->prepare('INSERT INTO `venta`(`num_fact`, `monto_fact`, `monto_dolares`, `fecha`, `status`) VALUES (?,?,?,DEFAULT,1)');
-      $new->bindValue(1, $idUnique);
+      $new->bindValue(1, $factura);
       $new->bindValue(2, $this->monto);
       $new->bindValue(3, $this->dolares);
       $new->execute();
@@ -271,11 +282,11 @@
       if($this->tipoCliente === 'Personal'){
         $new = $this->con->prepare($queryPersonal);
         $new->bindValue(1,  $this->cedula);
-        $new->bindValue(2, $idUnique);
+        $new->bindValue(2, $factura);
         $new->execute();
       }else{
         $new = $this->con->prepare($queryPaciente);
-        $new->bindValue(1,  $idUnique);
+        $new->bindValue(1,  $factura);
         $new->bindValue(2,  $this->cedula);
         $new->execute();
       }
@@ -283,7 +294,7 @@
       foreach ($this->datosProducto as $datos){
 
        $new = $this->con->prepare('INSERT INTO `venta_producto`(`id_venta_p`, `num_fact`, `id_producto_sede`, `cantidad`, `precio_actual`) VALUES (DEFAULT,?,?,?,?)');
-       $new->bindValue(1, $idUnique);
+       $new->bindValue(1, $factura);
        $new->bindValue(2, $datos['producto']);
        $new->bindValue(3, $datos['cantidad']);
        $new->bindValue(4, $datos['precio']);
@@ -294,7 +305,7 @@
       }
 
       $new = $this->con->prepare('INSERT INTO `pagos_recibidos`(`id_pago`, `num_fact`, `status`) VALUES (DEFAULT,?,1)');
-      $new->bindValue(1, $idUnique);
+      $new->bindValue(1, $factura);
       $new->execute();
       $this->id = $this->con->lastInsertId();
 
@@ -333,6 +344,83 @@
 
     } catch (\PDOException $e) {
       return $e;
+    }
+  }
+
+  public function validarFactura($id){
+
+    $this->id = $id;
+
+    return $this->validFactura();
+  }
+
+  private function validFactura(){
+    try {
+      parent::conectarDB();
+      $new = $this->con->prepare('SELECT v.num_fact FROM venta v WHERE v.status = 1 and v.num_fact = ?');
+      $new->bindValue(1, $this->id);
+      $new->execute();
+      $data = $new->fetchAll();
+      parent::desconectarDB();
+
+      if(isset($data[0]["num_fact"])){
+        return ['resultado' => 'Si existe esa venta.'];
+
+      }else{
+       return['resultado' => 'Error de venta'];
+     }
+      
+    }catch (\PDOException $e) {
+      return $e;
+    }
+  }
+
+  public function getAnularVenta($id){
+
+    $this->id = $id;
+
+    return $this->anularVenta();
+
+  }
+
+  private function anularVenta(){
+      try{
+
+      parent::conectarDB();
+
+      $new = $this->con->prepare("SELECT ps.id_producto_sede, vp.cantidad , ps.cantidad as stock FROM venta_producto vp INNER JOIN producto_sede ps ON ps.id_producto_sede = vp.id_producto_sede WHERE vp.num_fact = ?");
+      
+      $new->bindValue(1, $this->id);
+      $new->execute();
+      $result = $new->fetchAll(\PDO::FETCH_OBJ);
+
+      foreach ($result as $data){
+
+        $stockAct = $data->stock;
+        $cantidad = $data->cantidad;
+        $idProductoSede = $data->id_producto_sede;
+
+        $NewStock = $cantidad + $stockAct;
+
+        $new = $this->con->prepare("UPDATE producto_sede ps SET ps.cantidad = ? WHERE ps.id_producto_sede = ?");
+        $new->bindValue(1, $NewStock);
+        $new->bindValue(2, $idProductoSede);
+        $new->execute();
+        
+      }
+
+      $new = $this->con->prepare("UPDATE venta v SET v.status = 0 WHERE v.num_fact = ?");
+      $new->bindValue(1, $this->id);
+      $new->execute();
+      $data = $new->fetchAll(\PDO::FETCH_OBJ);
+    
+      parent::desconectarDB();
+
+      return ['resultado' => 'Venta eliminada.'];
+
+    }
+    catch(\PDOexection $error){
+      return $error;
     }
   }
 

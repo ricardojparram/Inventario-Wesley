@@ -68,6 +68,16 @@
         $res = $objModel->getRegistrarVenta($_POST['cedula'] , $_POST['tipoCliente'] , $_POST['montoTotal'] , $_POST['totalDolares'] , $_POST['datosProducto'], $_POST['datosTipoPago']);
          die(json_encode($res));
       }
+
+      if(isset($_POST['validarFactura'] , $_POST['id'] , $permiso['Eliminar']) ){
+        $res = $objModel->validarFactura($_POST['id']);
+        die(json_encode($res));
+      }
+
+      if(isset($_POST['anular'] , $_POST['id'])) {
+        $res = $objModel->getAnularVenta($_POST['id']);
+        die(json_encode($res));
+      }
       
      $VarComp = new initcomponents();
      $header = new header();
