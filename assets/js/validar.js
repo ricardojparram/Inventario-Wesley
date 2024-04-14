@@ -181,8 +181,7 @@ function validarNumero(input, div, mensaje) {
 		input.addClass('input-error');
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "backgraund-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
@@ -472,8 +471,7 @@ function validarSelect(input, div, mensaje) {
 		return false
 	} else {
 		div.text(" ");
-		input.attr("style", "border-color: none;")
-		input.attr("style", "backgraund-image: none;");
+		input.removeClass('input-error');
 		return true
 	}
 }
