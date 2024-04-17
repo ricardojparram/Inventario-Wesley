@@ -39,25 +39,25 @@ function validarNombre(input, div, mensaje) {
 }
 
 function validarDireccion(input, div, mensaje) {
-	parametro = input.val();
-	let valid = expresiones.direccion.test(parametro);
-	if (parametro == null || parametro == "") {
-		div.text(mensaje + " debe introducir la dirección.")
-		input.addClass('input-error');
-		return false
-	} else if (!valid) {
-		div.text(mensaje + " debe intruducir una dirección válida")
-		input.addClass('input-error');
-		return false
-	} else if (parametro.length > 158) {
-		div.text(mensaje + " direccion demasiada larga")
-		input.addClass('input-error');
-		return false
-	} else {
-		div.text(" ");
-		input.removeClass('input-error');
-		return true
-	}
+  parametro = input.val();
+  let valid = expresiones.direccion.test(parametro);
+  if (parametro == null || parametro == "") {
+    div.text(mensaje + " debe introducir la dirección.");
+    input.addClass("input-error");
+    return false;
+  } else if (!valid) {
+    div.text(mensaje + " debe intruducir una dirección válida");
+    input.addClass("input-error");
+    return false;
+  } else if (parametro.length > 158) {
+    div.text(mensaje + " direccion demasiada larga");
+    input.addClass("input-error");
+    return false;
+  } else {
+    div.text(" ");
+    input.removeClass("input-error");
+    return true;
+  }
 }
 
 function validarStringLong(input, div, mensaje) {
