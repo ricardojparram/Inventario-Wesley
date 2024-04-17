@@ -61,7 +61,7 @@
                   </div>
 
                   <div class="col-6 text-end mt-3">
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
+                    <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
                   </div>
                 </div>
 
@@ -74,7 +74,6 @@
                         <th scope="col">Proveedor</th>
                         <th scope="col">Productos</th>
                         <th scope="col">Fecha</th>
-                        <th scope="col">Total divisa</th>
                         <th scope="col">Total Bs</th>
                         <th width="1%" scope="col">Opciones</th>
                       </tr>
@@ -121,16 +120,21 @@
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el proveedor"><i class="bi bi-card-image"></i></button> 
                     <select class="form-control"  id="proveedor"> 
+                      <option></option>
                       <?php if(isset($proveedores)){
                         foreach($proveedores as $data){
                          ?> 
-                         <option value="<?php echo $data->cod_prove; ?>" class="opcion"><?php echo $data->razon_social; ?></option>
+                         <option value="<?php echo $data->rif_proveedor; ?>" class="opcion"><?php echo $data->razon_social; ?></option>
                          <?php
                        }
                      }else{"";}?>
                     </select>
                   </div>
+                  <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>
                 </div>
+
+
+
 
                 <div class="form-group col-6">                          
                   <label class="col-form-label"> <strong>Orden Compra</strong> </label>
@@ -138,37 +142,15 @@
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el orden de compra correspondiente"><i class="bi bi-envelope"></i></button> 
                     <input class="form-control"  id="orden" placeholder="">
                   </div>
+                  <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
                 </div>
 
               </div>
             </div>
           </div>
 
-          <div class="form-group col-md-12">  
-            <div class="container-fluid">
-              <div class="row">
 
-                <div class="form-group col-6">                          
-                  <label class="col-form-label"> <strong>IVA</strong> </label>
-                  <div class="input-group">
-                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca un IVA para la venta">%</button> 
-                      <input class="form-control iva" type="text" id="config_iva" value="16"/>
-                    </div>
-                </div>
 
-                <div class="form-group col-6">                          
-                  <label class="col-form-label"> <strong>Moneda</strong> </label>
-                  <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Evaluara el Total al valor de la moneda Seleccionada"><i class="bi bi-currency-exchange"></i></button> 
-                      <select class="form-select select2M" id="moneda">
-                        <option selected disabled>Moneda</option>
-                      </select>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
           
           <div class="form-group col-md-12">  
             <div class="container-fluid">
@@ -180,7 +162,11 @@
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la fecha de la compra"><i class="bi bi-calendar"></i></button> 
                     <input type="date"class="form-control"  id="fecha" required="" placeholder="">
                   </div>
+                  <p class="error" style="color:#ff0000;text-align: center;" id="error3"></p>
                 </div>
+
+
+
 
                 <div class="form-group col-6">                          
                   <label class="col-form-label"> <strong>Monto</strong> </label>
@@ -188,6 +174,7 @@
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el monto total de la compra"><i class="bi bi-cash"></i></button> 
                     <input type="number" class="form-control" disabled="disabled" id="monto" >
                   </div>
+                  <p class="error" style="color:#ff0000;text-align: center;" id="error4"></p>
                 </div>
 
               </div>
@@ -204,33 +191,36 @@
                       <tr>
                         <th></th>
                         <th>Producto</th>
+                        <th>Lote</th>
                         <th>Cantidad</th>
                         <th>Precio</th>
-                        <th>IVA</th>
+                        <th>Vencimiento</th>
                         <th>Total</th>
                       </tr>
                     </thead>
                     <tbody id="ASD">
                       <tr>
                         <td width="1%"><a class="removeRow a-asd" href="#"><i class="bi bi-trash-fill"></i></a></td>
-                        <td width='30%'> 
+                        <td width='20%'> 
                           <select class="select-productos select-asd" name="productos">
                             <option></option>
                           </select>
                         </td>
-                        <td width='10%' class="amount"><input class="select-asd" type="number" value=""/></td>
-                        <td width='10%' class="rate"><input class="select-asd" type="number" value="" /></td>
-                        <td width='10%'class="tax"></td>
-                        <td width='10%' class="sum"></td>
+                        <td width='10%' class="lote"><input class="select-asd" type="number" value=""/></td>
+                        <td width='10%' class="cantidad"><input class="select-asd" type="number" value=""/></td>
+                        <td width='10%' class="precio"><input class="select-asd" type="number" value="" /></td>
+                        <td width='10%'class="vencimiento"><input class="select-asd" type='text' /></td>
+                        <td width='10%' class="total"></td>
                       </tr>
                     </tbody>
                   </table>
+                  <p class="filaProductos error" style="color:#ff0000;text-align: center;"></p>
                   <a class="newRow a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva fila</a> <br>
                   <br>
                 </div>
                 <div class="text-end">
-                  <p id="montos"></p> 
-                  <p id="montos2"></p>
+                  <p id="lote"></p> 
+                  <p id="monto"></p>
                   <p id="cambio"></p>
                 </div>
               </div>
@@ -243,7 +233,7 @@
         
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary cerrar" id="cancelar" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
+            <button type="submit" class="btn btn-registrar " id="registrar">Registrar</button>
         </div>
       </form>
     </div>

@@ -426,6 +426,7 @@ function validarSelect(input, div, mensaje) {
 	} else {
 		div.text(" ");
 		input.removeClass('select-error');
+		input.removeClass('input-error');
 		return true
 	}
 }

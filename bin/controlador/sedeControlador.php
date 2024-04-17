@@ -31,23 +31,23 @@
 	}
 
 
-	if(isset($_POST['registrar'], $_POST['sedeNomb'],$_POST['telefono'], $_POST['direccion'], $permiso['Registrar'])){
-		$res = $model->getAgregarSede($_POST['sedeNomb'],$_POST['telefono'], $_POST['direccion']);
+	if(isset($_POST['registrar'], $_POST['nombre'],$_POST['telefono'], $_POST['direccion'], $permiso['Registrar'])){
+		$res = $model->getAgregarSede($_POST['nombre'],$_POST['telefono'], $_POST['direccion']);
 		die(json_encode($res));
 	}
 
 	if(isset($_POST['select'], $_POST['id'], $permiso['Editar'])){
-		$respuesta = $model->getSede($_POST['id']);
+		$respuesta = $model->mostrarSe($_POST['id']);
 		die(json_encode($respuesta));
 	}
 
-	if(isset($_POST['editar'], $_POST['id'], $_POST['empresa'], $_POST['estado'], $_POST['nombre'], $_POST['ubicacion'], $permiso['Editar'])){
-		$res = $model->getEditarSede( $_POST['empresa'], $_POST['estado'], $_POST['nombre'], $_POST['ubicacion'], $_POST['id']);
+	if(isset($_POST['editar'], $_POST['id'], $_POST['nombre'], $_POST['telefono'], $_POST['direccion'], $permiso['Editar'])){
+		$res = $model->getEditarSede($_POST['nombre'], $_POST['telefono'], $_POST['direccion'], $_POST['id']);
 		die(json_encode($res));
 	}
 
 	if(isset($_POST['eliminar'], $_POST['id'], $permiso['Eliminar'])){
-		$res = $model->getEliminarSede($_POST['id']);
+		$res = $model->getElimarSede($_POST['id']);
 		die(json_encode($res));
 	}
 
