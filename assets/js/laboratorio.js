@@ -46,7 +46,6 @@ $(document).ready(function () {
     if (input.val() === edit) return true;
     $.getJSON("", { rif: input.val(), validar: "rif", edit })
       .fail(e => {
-        console.log(e)
         div.text(e.responseJSON.msg);
         input.addClass('input-error');
       })
@@ -64,16 +63,9 @@ $(document).ready(function () {
     validarDireccion($("#direccion"), $("#error"), "Error de direccion,");
   });
 
-  let click = 0;
-  setInterval(() => {
-    click = 0;
-  }, 2000);
-
   $("#registrar").click((e) => {
     e.preventDefault();
     validarPermiso(permisos["Registrar"]);
-
-    if (click >= 1) throw new Error("Spam de clicks");
 
     let vrif, vnombre, vdireccion, vtelefono;
     validarRif($("#rif"), $("#error"), "Error de RIF,");
@@ -93,27 +85,24 @@ $(document).ready(function () {
       razon: $("#razon").val(),
       direccion: $("#direccion").val(),
     };
-    $.post(
-      "",
-      body,
-      (data) => {
-        if (data.resultado != "ok") {
-          Toast.fire({ icon: "error", title: data.msg });
-          throw new Error(data.msg);
-        }
+    $(this).prop('disabled', true);
+    $.post("", body, (data) => {
+      if (data.resultado != "ok") {
+        Toast.fire({ icon: "error", title: data.msg });
+        throw new Error(data.msg);
+      }
 
-        mostrar.destroy();
-        rellenar();
-        $("#agregarform").trigger("reset");
-        $(".cerrar").click();
-        Toast.fire({ icon: "success", title: data.msg });
-      },
-      "json",
-    ).fail((e) => {
+      mostrar.destroy();
+      rellenar();
+      $("#agregarform").trigger("reset");
+      $(".cerrar").click();
+      Toast.fire({ icon: "success", title: data.msg });
+    }, "json",).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
+    }).always(() => {
+      $(this).prop('disabled', false);
     });
-    click++;
   });
 
   let id;
@@ -121,18 +110,16 @@ $(document).ready(function () {
   $(document).on("click", ".editar", function () {
     id = this.id;
     validarPermiso(permisos["Editar"]);
-    $.post(
-      "",
-      { select: "", id },
-      (data) => {
-        $("#rifEdit").val(data[0].rif_laboratorio);
-        $("#razonEdit").val(data[0].razon_social);
-        $("#direccionEdit").val(data[0].direccion);
-      },
-      "json",
-    ).fail((e) => {
+    $(this).prop('disabled', true);
+    $.post("", { select: "", id }, (data) => {
+      $("#rifEdit").val(data[0].rif_laboratorio);
+      $("#razonEdit").val(data[0].razon_social);
+      $("#direccionEdit").val(data[0].direccion);
+    }, "json",).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
+    }).always(() => {
+      $(this).prop('disabled', false);
     });
   });
 
@@ -179,40 +166,31 @@ $(document).ready(function () {
       direccionEdit: $("#direccionEdit").val(),
       id,
     };
-    $.post(
-      "",
-      body,
-      (data) => {
-        if (data.resultado != "ok") {
-          Toast.fire({ icon: "error", title: data.msg });
-          throw new Error(data.msg);
-        }
+    $(this).prop('disabled', true);
+    $.post("", body, (data) => {
+      if (data.resultado != "ok") {
+        Toast.fire({ icon: "error", title: data.msg });
+        throw new Error(data.msg);
+      }
 
-        mostrar.destroy();
-        rellenar();
-        $("#editarform").trigger("reset");
-        $(".cerrar").click();
-        Toast.fire({ icon: "success", title: data.msg });
-      },
-      "json",
-    ).fail((e) => {
+      mostrar.destroy();
+      rellenar();
+      $("#editarform").trigger("reset");
+      $(".cerrar").click();
+      Toast.fire({ icon: "success", title: data.msg });
+    }, "json",).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
+    }).always(() => {
+      $(this).prop('disabled', false);
     });
-    click++;
   });
 
   $(document).on("click", ".cerrar", function () {
     $("#agregarform").trigger("reset");
     $("#editarform").trigger("reset");
-    $("#agregarform input").attr(
-      "style",
-      "border-color: none; background-image: none;",
-    );
-    $("#editarform input").attr(
-      "style",
-      "border-color: none; background-image: none;",
-    );
+    $("#agregarform input").attr("style", "border-color: none; background-image: none;",);
+    $("#editarform input").attr("style", "border-color: none; background-image: none;",);
     $("#error").text("");
     $("#errorEdit").text("");
   });
@@ -224,26 +202,22 @@ $(document).ready(function () {
   $("#borrar").click(() => {
     validarPermiso(permisos["Eliminar"]);
 
-    if (click >= 1) throw new Error("spaaam");
-    $.post(
-      "",
-      { eliminar: "", id },
-      (data) => {
-        if (data.resultado != "ok") {
-          Toast.fire({ icon: "error", title: data.msg });
-          throw new Error(data.msg);
-        }
-        console.log(data);
-        mostrar.destroy();
-        $(".cerrar").click();
-        rellenar();
-        Toast.fire({ icon: "success", title: data.msg });
-      },
-      "json",
-    ).fail((e) => {
+    $(this).prop('disabled', true);
+    $.post("", { eliminar: "", id }, (data) => {
+      if (data.resultado != "ok") {
+        Toast.fire({ icon: "error", title: data.msg });
+        throw new Error(data.msg);
+      }
+      console.log(data);
+      mostrar.destroy();
+      $(".cerrar").click();
+      rellenar();
+      Toast.fire({ icon: "success", title: data.msg });
+    }, "json",).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
+    }).always(() => {
+      $(this).prop('disabled', false);
     });
-    click++;
   });
 });

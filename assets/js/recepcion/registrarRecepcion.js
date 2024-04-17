@@ -64,19 +64,19 @@ $(document).ready(function () {
         })
     })
 
-    // const validarCantidad = (input) => {
-    //     let cantidad_transferencia = datos_transferencia[input.closest('tr').find('.select-productos').val()];
-    //     let cantidad = input.val();
-    //     let $error = input.next();
-    //     if (cantidad > cantidad_transferencia) {
-    //         $error.html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
-    //             .removeClass("d-none");
-    //         return false;
-    //     }
-    // }
-    // $(document).on('change', ".cantidad input", function () {
-    //     validarCantidad($(this));
-    // })
+    const validarProductos = () => {
+        let validacion = [];
+        $("input.select-asd").each(function () {
+            if (this.value === "" || this.value === null || this.value < 1) {
+                $(this).addClass('input-error')
+                validacion.push(false);
+            } else {
+                $(this).removeClass('input-error')
+                validacion.push(true);
+            }
+        })
+        return !validacion.includes(false);
+    }
     const getProductos = () => {
         return Object.values(document.querySelectorAll('.select-productos')).map(item => {
             let cantidad = $(item).closest('tr').find('.cantidad input').val();
@@ -104,6 +104,7 @@ $(document).ready(function () {
             productos,
         };
 
+        $(this).prop('disabled', true);
         $.post("", data, function (res) {
             Toast.fire({ icon: "success", title: res.msg });
             mostrar.destroy();
@@ -112,11 +113,15 @@ $(document).ready(function () {
         }, "json").fail((e) => {
             Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
             throw new Error(e.responseJSON.msg);
+        }).always(() => {
+            $(this).prop('disabled', false);
         });
     })
 
     $(document).on("click", ".detalle", function () {
         id = this.id;
+
+        $(this).prop('disabled', true);
         $.getJSON("?url=transferencia", { detalle: "", id_transferencia: id }, (res) => {
             let tabla = "";
             $("#Detalle h5").html(res[0].nombre_sede);
@@ -133,6 +138,8 @@ $(document).ready(function () {
         }).fail((e) => {
             Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
             throw new Error("Error al mostrar detalles: " + e);
+        }).always(() => {
+            $(this).prop('disabled', false);
         });
     });
 
@@ -142,7 +149,6 @@ $(document).ready(function () {
         $('#Agregar input').removeClass('input-error');
         $('#Agregar select').removeClass('input-error');
         $('.error').text('');
-        agregarFila()
         fechaHoy($('#fecha'));
     })
 

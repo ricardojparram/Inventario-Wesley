@@ -196,7 +196,7 @@
     try {
       parent::conectarDB();
 
-      $new = $this->con->prepare('SELECT ps.cantidad , ROUND((cp.precio_compra / cp.cantidad),2) AS precio FROM producto_sede ps INNER JOIN compra_producto cp ON cp.id_producto_sede = ps.id_producto_sede INNER JOIN compra c ON c.orden_compra = c.orden_compra WHERE ps.cantidad > 0 AND c.status = 1 AND ps.id_producto_sede = ? GROUP BY ps.id_producto_sede');
+      $new = $this->con->prepare('SELECT ps.cantidad , cp.precio_compra AS precio FROM producto_sede ps INNER JOIN compra_producto cp ON cp.id_producto_sede = ps.id_producto_sede INNER JOIN compra c ON c.orden_compra = c.orden_compra WHERE ps.cantidad > 0 AND c.status = 1 AND ps.id_producto_sede = ? GROUP BY ps.id_producto_sede');
 
       $new->bindValue(1 ,$this->id);
       $new->execute();
@@ -219,10 +219,10 @@
     if (!$this->validarString('nombre', $tipoCliente))
       return $this->http_error(400, 'Tipo Cliente inválido.');
 
-    if (!$this->validarString('decimnal', $montoTotal))
+    if (!$this->validarString('decimal', $montoTotal))
       return $this->http_error(400, 'Monto total inválido.');
 
-    if (!$this->validarString('decimnal', $totalDolares))
+    if (!$this->validarString('decimal', $totalDolares))
       return $this->http_error(400, 'Monto total en dolares inválido.');
 
     $estructura_productos = [
@@ -263,12 +263,7 @@
       $new->execute();
       $data = $new->fetchAll();
 
-      if ($data) {
-        $factura = $this->generarNumeroFactura($data[0]['num_fact']);
-      } else {
-        $factura = 'N°-A00000';
-      }
-
+      $factura = ($data)? $this->generarNumeroFactura($data[0]['num_fact']) : 'N°-A00000';
 
       $new = $this->con->prepare('INSERT INTO `venta`(`num_fact`, `monto_fact`, `monto_dolares`, `fecha`, `status`) VALUES (?,?,?,DEFAULT,1)');
       $new->bindValue(1, $factura);
@@ -347,12 +342,6 @@
     }
   }
 
-  public function validarFactura($id){
-
-    $this->id = $id;
-
-    return $this->validFactura();
-  }
 
   private function validFactura(){
     try {
@@ -364,10 +353,10 @@
       parent::desconectarDB();
 
       if(isset($data[0]["num_fact"])){
-        return ['resultado' => 'Si existe esa venta.'];
+      return ['resultado' => 'venta valida', 'res' => true];
 
       }else{
-       return['resultado' => 'Error de venta'];
+       return ['resultado' => 'error', 'msg' => 'La venta no existe', 'res' => false];
      }
       
     }catch (\PDOException $e) {
@@ -378,6 +367,10 @@
   public function getAnularVenta($id){
 
     $this->id = $id;
+
+    $validarFactura = $this->validFactura();
+
+    if ($validarFactura['res'] === false) return ['resultado' => 'error', 'msg' => 'La venta no existe'];
 
     return $this->anularVenta();
 
@@ -416,7 +409,7 @@
     
       parent::desconectarDB();
 
-      return ['resultado' => 'Venta eliminada.'];
+      return ['resultado' => 'Venta eliminada'];
 
     }
     catch(\PDOexection $error){

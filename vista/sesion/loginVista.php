@@ -47,7 +47,11 @@
                             <div class="mb-4">
                               <div class="input-group">
                                 <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca su cédula registrada en el sistema."><i class="bi bi-person-fill"></i></button>
-                              <input type="text" placeholder="Cedula" class="form-control" id="cedula" >
+                                <select class="input-group-text " id="preDocument">
+                                  <option value="V">V</option>
+                                  <option value="E">E</option>
+                                </select>
+                                <input type="text" placeholder="Cedula" class="form-control" id="cedula" >
                               </div>
 
                           </div>

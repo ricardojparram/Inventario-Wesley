@@ -32,15 +32,15 @@ class usuarios extends DBConnect {
       $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
       return $resultado;
     }
-    if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Cédula invalida.'];
+    if (preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
+      $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
       return $resultado;
     }
     if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
       $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
       return $resultado;
     }
-    if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
+    if (preg_match_all("/^[A-Za-z\d$@\/_.#-]{3,30}$/", $password) == false) {
       $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
       return $resultado;
     }
@@ -206,8 +206,8 @@ class usuarios extends DBConnect {
       $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
       return $resultado;
     }
-    if (preg_match_all("/^[0-9]{7,10}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Cédula invalida.'];
+    if (preg_match_all("/^[VEJ]-[A-Z0-9]{7,12}$/", $cedula) == false) {
+      $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
       return $resultado;
     }
     if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
@@ -215,7 +215,7 @@ class usuarios extends DBConnect {
       return $resultado;
     }
     if ($password != "") {
-      if (preg_match_all("/^[A-Za-z0-9 *?=&_!¡()@#]{3,30}$/", $password) == false) {
+      if (preg_match_all("/^[A-Za-z\d$@\/_.#-]{3,30}$/", $password) == false) {
         $resultado = ['resultado' => 'Error', 'error' => 'Contraseña invalida.'];
         return $resultado;
       }
@@ -282,9 +282,9 @@ class usuarios extends DBConnect {
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['cedula'])) {
-          $resultado = ['resultado' => 'Correcto', 'msj' => 'La cédula está registrada.'];
+          $resultado = ['resultado' => 'Correcto', 'msj' => 'El documento está registrado.'];
         } else {
-          $resultado = ['resultado' => 'Error', 'msj' => 'Cedula no Registrada'];
+          $resultado = ['resultado' => 'Error', 'msj' => 'Documento no Registrado'];
         }
       } elseif ($this->id == " ") {
         parent::conectarDB();
@@ -294,7 +294,7 @@ class usuarios extends DBConnect {
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['cedula'])) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'La cédula ya está registrada.'];
+          $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya está registrado.'];
         } else {
           $resultado = ['resultado' => 'Correcto'];
         }
@@ -306,9 +306,9 @@ class usuarios extends DBConnect {
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['status']) && $data[0]['status'] == 0) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrada'];
+          $resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrado'];
         } elseif (isset($data[0]['cedula']) && $data[0]['cedula'] == $this->cedula && $data[0]['status'] == 1) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'La Cedula ya esta Registrada'];
+          $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya esta Registrado'];
         } else {
           $resultado = ['resultado' => 'Correcto'];
         }

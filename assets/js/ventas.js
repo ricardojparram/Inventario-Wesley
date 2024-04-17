@@ -60,7 +60,7 @@ $(document).ready(function(){
 	$(document).on('click', '.detalleV' , function(){
 
 		id = this.id; 
-		$.post('',{detalleProductos : 'detV' , id}, function(data){
+		$.post('',{detalleProductos : 'detalleProductos' , id}, function(data){
 			let lista = JSON.parse(data);
 			let tabla;
 
@@ -623,7 +623,7 @@ $(document).ready(function(){
             rellenar();  // FUNCIÓN PARA RELLENAR
             $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
             $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
-            $('.select2 ').removeClass('input-error');
+            $('.select2').removeClass('select-error');
             $('.cerrar').click(); // CERRAR EL MODAL
             $('.removeRow').click(); 
             $('.removeRowPagoTipo').click(); 
@@ -646,7 +646,7 @@ $(document).ready(function(){
     $('#cerrar').click(()=>{
      $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
      $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
-     $('.select2 ').removeClass('input-error');
+     $('.select2 ').removeClass('select-error');
      $('#Agregar input').removeClass('input-error');
      $('.removeRow').click(); // LIMPIAR FILAS
      $('.removeRowPagoTipo').click(); // LIMPIAR FILAS TIPO PAGO
@@ -655,28 +655,6 @@ $(document).ready(function(){
      addNewRowPago()
   })
 
-    function validarId() {
-      return new Promise((resolve, reject) => {
-        $.ajax({
-          type: "POST",
-          url: '',
-          dataType: "json",
-          data: { validarFactura: "existe", id },
-          success(data) {
-            console.log(data);
-            if (data.resultado === "Error de venta") {  
-                Toast.fire({ icon: 'error', title: 'Esta venta esta anulada' }); // ALERTA 
-                mostrar.destroy();
-                rellenar();
-                $('.cerrar').click();
-                reject(); 
-              } else {
-                resolve(); 
-              }
-            }
-          });
-      });
-    }
 
     $(document).on('click', '.borrar' , function(){
       id = this.id
@@ -692,17 +670,23 @@ $(document).ready(function(){
         dataType: 'json',
         data: {anular: 'anular venta' , id},
         success(data){
+          if(data.resultado === 'Venta eliminada'){
+            mostrar.destroy();
+            rellenar();
+            $('.cerrar').click();
+          Toast.fire({ icon: 'success', title: 'Venta anulada' }); // ALERTA 
+        }else if(data.resultado === 'error'){
           mostrar.destroy();
           rellenar();
           $('.cerrar').click();
-          Toast.fire({ icon: 'success', title: 'Venta anulada' }); // ALERTA 
+            Toast.fire({ icon: 'error', title: 'Error de tipo de empleado', showCloseButton: true }) // ALERTA 
+            
+          }
         }
       }).fail(function() {
         console.log("error");
 
-      }).always(function() {
-        console.log("complete");
-      });
+      })
       
         
     });
