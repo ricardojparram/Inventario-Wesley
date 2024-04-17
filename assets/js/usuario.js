@@ -79,7 +79,7 @@ $(document).ready(function () {
 		e.preventDefault();
 		if (click >= 1) throw new Error('Spam de clicks');
 		if (typeof permisos.Registrar === 'undefined') {
-			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
 		}
 
@@ -112,7 +112,7 @@ $(document).ready(function () {
 									if (result.resultado === 'Registrado correctamente.') {
 										tabla.destroy();
 										$("#cerrarRegis").click();
-										Toast.fire({ icon: 'success', title: 'Usuario Registrado' })
+										Toast.fire({ icon: 'success', title: 'Usuario Registrado', showCloseButton: true })
 										refrescar();
 									} else {
 										tabla.destroy();
@@ -141,7 +141,7 @@ $(document).ready(function () {
 		if (click >= 1) throw new Error('Spam de clicks');
 
 		if (typeof permisos.Eliminar === 'undefined') {
-			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
 		}
 
@@ -158,7 +158,7 @@ $(document).ready(function () {
 					if (data.resultado === "Eliminado") {
 						tabla.destroy();
 						$("#cerrarModalDel").click();
-						Toast.fire({ icon: 'error', title: 'Usuario Eliminado' })
+						Toast.fire({ icon: 'error', title: 'Usuario Eliminado', showCloseButton: true })
 						refrescar();
 					}else if (data.resultado === "Error") {
 						$("#errorDel").text(data.msj);
@@ -229,7 +229,7 @@ $(document).ready(function () {
 		e.preventDefault()
 		if (click >= 1) throw new Error('Spam de clicks');
 		if (typeof permisos.Editar === 'undefined') {
-			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
 		}
 
@@ -262,7 +262,7 @@ $(document).ready(function () {
 									if (edit.resultado === "Editado") {
 										tabla.destroy();
 										$("#cerrarRegisEdit").click();
-										Toast.fire({ icon: 'success', title: 'Usuario Actualizado' })
+										Toast.fire({ icon: 'success', title: 'Usuario Actualizado', showCloseButton: true })
 										refrescar();
 									} else {
 										tabla.destroy();

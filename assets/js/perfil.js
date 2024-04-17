@@ -160,13 +160,14 @@ $(document).ready(function () {
 				} else {
 					editarImagen(form);
 				}
-
+				console.log(foto);
 			})
 		})
 		click++
 
 	})
 	function editarImagen(form) {
+		$('#foto').val('')
 		$.ajax({
 			type: "POST", url: '', dataType: 'JSON', data: form, contentType: false, processData: false,
 			xhr: () => loading(),
@@ -179,11 +180,11 @@ $(document).ready(function () {
 				if (data.foto.respuesta === 'ok') {
 					$('.fotoPerfil').attr('src', data.foto.url);
 				}
-				if (data.edit.respuesta == "Editado correctamente") {
+				if (data.edit.msg == "Editado correctamente") {
 					$('#formEditar').trigger('reset');
 					rellenar();
 					mostrarUsuarios();
-					Toast.fire({ icon: 'success', title: 'Usuario Actualizado' });
+					Toast.fire({ icon: 'success', title: 'Usuario Actualizado', showCloseButton: true });
 					$("#perfil").click();
 				} if (data.edit.respuesta == 'Error') {
 					$('#error').text(data.edit.respuesta + ", " + data.edit.error);
@@ -192,7 +193,7 @@ $(document).ready(function () {
 			error(data) {
 				$('#error').text(data.responseJSON.msg);
 				$('#displayProgreso').hide();
-				Toast.fire({ icon: 'error', title: data.responseJSON.msg });
+				Toast.fire({ icon: 'error', title: data.responseJSON.msg, showCloseButton: true });
 				throw new Error('Error de foto.');
 			}
 		})
@@ -214,19 +215,20 @@ $(document).ready(function () {
 	}
 
 	$("#password").keyup(() => {
-		let valid = validarContraseña($("#password"), $("#error2"), "Error de Contraseña Actual,")
+		let valid = validarContraseña($("#password"), $("#passwordError"), "Error de Contraseña Actual,")
 		clearTimeout(timeout);
 		timeout = setTimeout(function () {
-			if (valid) validarContraseñaBD($("#password"), $("#error2"));
+			if (valid) validarContraseñaBD($("#password"), $("#passwordError"));
 		}, 700);
 	});
-	$("#newPassword").keyup(() => { validarContraseña($("#newPassword"), $("#error2"), "Error de Contraseña Nueva,") });
-	$("#rePassword").keyup(() => { validarRepContraseña($("#rePassword"), $("#error2"), $("#newPassword")) });
-	let contra, reContra;
+	$("#newPassword").keyup(() => { validarContraseña($("#newPassword"), $("#newPasswordError"), "Error de Contraseña Nueva,") });
+	$("#rePassword").keyup(() => { validarRepContraseña($("#rePassword"), $("#rePasswordError"), $("#newPassword")) });
+	let contra, reContra, actContra;
 	$("#editContra").click(function (e) {
 		e.preventDefault()
-		reContra = validarRepContraseña($("#rePassword"), $("#error2"), $("#newPassword"));
-		contra = validarContraseña($("#newPassword"), $("#error2"), "Error de Contraseña Nueva,");
+		reContra = validarRepContraseña($("#rePassword"), $("#rePasswordError"), $("#newPassword"));
+		contra = validarContraseña($("#newPassword"), $("#newPasswordError"), "Error de Contraseña Nueva,");
+		actContra = validarContraseña($("#password"), $("#passwordError"), "Error de Contraseña Actual,");
 
 		if (!actContra || !contra || !reContra)
 			throw new Error("Datos invalidos");
@@ -238,14 +240,14 @@ $(document).ready(function () {
 		$(this).prop('disabled', true);
 		$.post("", body, function (des) {
 			if (des.resultado === 'Editada Contraseña') {
-				Toast.fire({ icon: 'success', title: 'Contraseña Actualizada' });
+				Toast.fire({ icon: 'success', title: 'Contraseña Actualizada', showCloseButton: true });
 				$("#perfil").click();
 				$("#profile-change-password input").val("")
 			}
 		}, "json")
 			.always(() => $(this).prop('disabled', false))
 			.fail((e) => {
-				Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+				Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true });
 				throw new Error(e.responseJSON.msg);
 			})
 
