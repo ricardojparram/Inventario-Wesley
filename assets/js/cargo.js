@@ -187,7 +187,7 @@ $(document).ready(function () {
     let valid_fecha;
     $('#num_cargo').change(() => valid_cargo = validarNumero($('#num_cargo'), $('#error1'), "Error de cargo,"))
     $('#fecha').change(() => valid_fecha = validarFecha($('#fecha'), $('#error2'), "Error de fecha,"))
-    $('#registrar').click(function (e) {
+    $("#agregarform").submit(function (e) {
         e.preventDefault();
 
         valid_cargo = validarNumero($('#num_cargo'), $('#error1'), "Error de cargo,");
@@ -205,7 +205,7 @@ $(document).ready(function () {
             productos,
         };
 
-        $(this).prop('disabled', true);
+        $(this).find('button[type="submit"]').prop('disabled', true);
         $.post("", data, function (res) {
             Toast.fire({ icon: "success", title: res.msg });
             mostrar.destroy();
@@ -215,7 +215,7 @@ $(document).ready(function () {
             Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
             throw new Error(e.responseJSON.msg);
         }).always(() => {
-            $(this).prop('disabled', false);
+            $(this).find('button[type="submit"]').prop('disabled', false);
         });
     })
 
