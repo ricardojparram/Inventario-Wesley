@@ -2,7 +2,7 @@
     
     namespace config\componentes;
 
-    define("_URL_", "http://localhost/Inventario-Wesley/");
+    define("_URL_", $_ENV["URL"]);
     define("_BD_" , $_ENV['DB']);
     define("_PASS_" , $_ENV['DB_PASS']);
     define("_USER_" , $_ENV['DB_USER']);
