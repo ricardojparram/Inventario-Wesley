@@ -3,19 +3,20 @@
     namespace config\componentes;
 
     define("_URL_", "http://localhost/Inventario-Wesley/");
-    define("_BD_" , "wesley");
-    define("_PASS_" , "");
-    define("_USER_" , "root");
-    define("_LOCAL_" , "localhost");
+    define("_BD_" , $_ENV['DB']);
+    define("_PASS_" , $_ENV['DB_PASS']);
+    define("_USER_" , $_ENV['DB_USER']);
+    define("_LOCAL_" , $_ENV['DB_HOST']);
+    define("_PORT_", $_ENV['DB_PORT']);
     define("DIRECTORY" , "bin/controlador/");
     define("MODEL", "modelo/");
     define("CONTROLADOR", "Controlador.php");
-    define("_SMTP", "smtp.gmail.com");
-    define("_SMTP_USER", "cfesricardo@gmail.com");
-    define("_SMTP_PASS", "gsdmrveydcxqexpi");
-    define("KEY", "adminadmin");
-    define("CIPHER", "AES-256-CBC");
-    define("IV", "0x01234567ABCDEF");
+    define("_SMTP", $_ENV['SMTP']);
+    define("_SMTP_USER", $_ENV['SMTP_USER']);
+    define("_SMTP_PASS", $_ENV['SMTP_PASS']);
+    define("KEY", $_ENV['KEY']);
+    define("CIPHER", $_ENV['CIPHER']);
+    define("IV", $_ENV['IV']);
 
 
     class configSistema{
@@ -35,6 +36,9 @@
     }
     public function _PASS_(){
       return _PASS_;
+    }
+    public function _PORT_(){
+      return _PORT_;
     }
     public function _USER_(){
       return _USER_;
