@@ -6,7 +6,7 @@
         "php": ">=7.3",
         "setasign/fpdf": "^1.8",
         "phpmailer/phpmailer": "^6.7",
-        "phpoffice/phpspreadsheet": "1.12.0",
+        "phpoffice/phpspreadsheet": "^2.0",
         "mpdf/mpdf": "^8.2",
         "cboden/ratchet": "^0.4.4"
     },
