@@ -553,4 +553,3 @@ const validarPermiso = permiso => {
 		Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
 		throw new Error('Permiso denegado.');
 	}
-}

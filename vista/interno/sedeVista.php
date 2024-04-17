@@ -124,7 +124,7 @@
 
 
                 <div class="form-group col-12 ">                          
-                    <label for="inputText" class="col-form-label"><strong>Telefono</strong></label>
+                    <label for="inputText" class="col-form-label"><strong>Telefono de la sede</strong></label>
                     <div class="input-group">
                       <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una empresa de envío."><i class="bi bi-building"></i></button>
                       <input class="form-control" id="sedeTele" required="" placeholder="Telefono de la sede">
@@ -180,27 +180,30 @@
             <div class="container-fluid">
               <div class="row">
 
-                <div class="form-group col-12 ">                          
-                    <label for="inputText" class="col-form-label"><strong>Empresas de envío</strong></label>
-                    <div class="input-group">
-                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una empresa de envío."><i class="bi bi-building"></i></button>
-                     
-                    </div>
-                    <p style="color:#ff0000;margin-left: 10px;" id="error1"></p>
-                </div>
                
                 <div class="form-group col-12 ">                          
                   <label class="col-form-label"> <strong>Nombre de la sede</strong> </label>
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el nombre de la sede de envío."><i class="bi bi-card-text"></i></button> 
-                    <input class="form-control" id="nombre_sedeEdit" required="" placeholder="Nombre de la sede de envío">
+                    <input class="form-control" id="sedeNombEditar" required="" placeholder="Nombre de la sede de envío">
                   </div>
                   <p style="color:#ff0000;margin-left: 10px;" id="error3"></p>
 
                 </div>
 
+
+                <div class="form-group col-12 ">                          
+                    <label for="inputText" class="col-form-label"><strong>Telefono de la sede</strong></label>
+                    <div class="input-group">
+                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una empresa de envío."><i class="bi bi-building"></i></button>
+                      <input class="form-control" id="sedeTeleEditar" required="" placeholder="Telefono de la sede">
+                    </div>
+                    <p style="color:#ff0000;margin-left: 10px;" id="error2"></p>
+                </div>
+
+
                 <div class="form-group col-12 ">                       
-                  <label class="col-form-label"> <strong>Ubicación de la sede</strong> </label>
+                  <label class="col-form-label"> <strong>Direccion de la sede</strong> </label>
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la ubicación de la sede de envío"><i class="bi bi-pin-map-fill"></i></button> 
                     <input class="form-control" id="ubicacionEdit" required="" placeholder="">
@@ -221,7 +224,7 @@
         
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success" id="editar">Editar</button>
+        <button type="submit" class="btn btn-success" id="editar">Actualizar</button>
       </div>
     </div>
   </div>
