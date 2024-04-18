@@ -242,7 +242,7 @@ body{
     pointer-events: none;
     background-color: #a2c22e;
     border-color: #a2c22e;
-    opacity: var(--bs-btn-disabled-opacity); 
+    opacity: var(--bs-btn-disabled-opacity);  
   }
 }
 
