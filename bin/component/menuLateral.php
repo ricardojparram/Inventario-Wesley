@@ -259,7 +259,7 @@
 
     $productoDañadoLi = (isset($this->permisos['Producto dañado']["Consultar"])) ?
     '<li>
-        <a href="?url=inventario" class="'.$productoDañado.'">
+        <a href="?url=Productodanado" class="'.$productoDañado.'">
           <i class="bi bi-capsule-pill"></i><span>Producto dañado</span>
         </a>
     </li>' : '';

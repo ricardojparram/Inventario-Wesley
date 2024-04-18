@@ -113,7 +113,7 @@ $(document).ready(function () {
     const validarProductos = () => {
         let validacion = [];
         $("input.select-asd").each(function () {
-            if (this.value === "" || this.value === null) {
+            if (this.value === "" || this.value === null || this.value < 1) {
                 $(this).addClass('input-error')
                 validacion.push(false);
             } else {
@@ -205,6 +205,7 @@ $(document).ready(function () {
             productos,
         };
 
+        $(this).prop('disabled', true);
         $.post("", data, function (res) {
             Toast.fire({ icon: "success", title: res.msg });
             mostrar.destroy();
@@ -213,6 +214,8 @@ $(document).ready(function () {
         }, "json").fail((e) => {
             Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
             throw new Error(e.responseJSON.msg);
+        }).always(() => {
+            $(this).prop('disabled', false);
         });
     })
 
@@ -222,6 +225,7 @@ $(document).ready(function () {
     });
 
     $('#anular').click(function () {
+        $(this).prop('disabled', true);
         $.post("", { eliminar: '', id }, function (res) {
             Toast.fire({ icon: "success", title: res.msg });
             mostrar.destroy();
@@ -230,6 +234,8 @@ $(document).ready(function () {
         }, "json").fail((e) => {
             Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
             throw new Error(e.responseJSON.msg);
+        }).always(() => {
+            $(this).prop('disabled', false);
         });
     })
 

@@ -111,7 +111,7 @@ public function productoDetalle($id){
 		if (!$this->validarFecha($fecha, 'Y-m-d'))
       		return $this->http_error(400, 'Fecha inválida.');
 
-		if (!$this->validarString('decimnal', $monto))
+		if (!$this->validarString('decimal', $monto))
 			return $this->http_error(400, 'Monto inválido.');
 			
 		$estructura_productos = [
@@ -178,6 +178,27 @@ public function productoDetalle($id){
 
 	}
 
+	public function getEliminarCompra($id){
+		$this->id = $id;
+	
+		$this->eliminarCompra();
+	}
+	
+	private function eliminarCompra(){
+
+		try{
+		parent::conectarDB();
+		 $new = $this->con->prepare("UPDATE `compra` SET status = 0 WHERE `orden_compra`= ? ");
+		 $new->bindValue(1, $this->id);
+		 $new->execute();
+		 $resultado = ['resultado' => 'Eliminado'];
+			echo json_encode($resultado);
+		  parent::desconectarDB();
+			die();
+		}catch (\PDOException $error) {
+		  return $error;
+		}
+	}
 
 
 

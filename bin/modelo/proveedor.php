@@ -19,23 +19,23 @@
 
       }
  
-      public function mostrarProveedorAjax($bitacora){
-        try{
-          $this->conectarDB();
-          $sql = "SELECT p.rif, p.razon_social, p.direccion, cp.telefono, cp.contacto, p.cod_prove FROM proveedor p
-                  INNER JOIN contacto_prove cp ON cp.cod_prove = p.cod_prove
-                  WHERE p.status = 1;";
-          $new = $this->con->prepare($sql);
-          $new->execute();
-          $data = $new->fetchAll(\PDO::FETCH_OBJ);
-          if($bitacora == "true") $this->binnacle("Proveedor",$_SESSION['cedula'],"Consultó listado.");
-          $this->desconectarDB();
-          die(json_encode($data));
+    public function mostrarProveedorAjax($bitacora){
+        
+     try {
 
-        }catch(\PDOException $e){
-          print "¡Error!: " . $e->getMessage() . "<br/>";
-          die();
-        }
+    
+            parent::conectarDB();
+        $query = "SELECT p.rif_proveedor, p.razon_social, p.direccion, c.telefono, c.contacto FROM proveedor as p, contacto_prove as c WHERE p.status = 1 and p.rif_proveedor = c.rif_proveedor";
+            $new = $this->con->prepare($query);
+            $new->execute();
+            $data = $new->fetchAll(\PDO::FETCH_OBJ);
+            echo json_encode($data);
+            parent::desconectarDB();
+            die();
+      } catch (\PDOException $error) {
+        return $error;
+        
+      }
       } 
 
       public function getDatosPro($rif, $direccion, $razon, $telefono, $contacto){
@@ -53,7 +53,9 @@
           die(json_encode(['resultado' => 'Error de telefono','msg' => 'Telefono inválido.']));
         }
 
-        $this->rif = $rif;
+  
+
+        $this->rifs = $rif;
         $this->direccion = $direccion;
         $this->razon = $razon;
         $this->telefono = $telefono;
@@ -68,26 +70,36 @@
         try{
           $this->conectarDB();
 
-          $new = $this->con->prepare("INSERT INTO proveedor(cod_prove,rif,direccion,razon_social,status) VALUES(DEFAULT,?,?,?,1)");
-          $new->bindValue(1, $this->rif); 
+          $new = $this->con->prepare("INSERT INTO proveedor(rif_proveedor,direccion,razon_social,status) VALUES(?,?,?,?)");
+          $new->bindValue(1, $this->rifs); 
           $new->bindValue(2, $this->direccion); 
           $new->bindValue(3, $this->razon);
+          $new->bindValue(4, 1);
           $new->execute();
-          $lastInsertId = $this->con->lastInsertId();
+          // $data = $new->fetchAll();
+         // $lastInsertId = $this->rifs;
 
-          $new = $this->con->prepare("INSERT INTO contacto_prove(id_contacto_prove, telefono, contacto, cod_prove) VALUES (DEFAULT, ?, ?, ?)");
+
+
+          $new = $this->con->prepare("INSERT INTO `contacto_prove`(`telefono`, `contacto`,`rif_proveedor`) VALUES (?, ?, ?)");
           $new->bindValue(1, $this->telefono);
           $new->bindValue(2, $this->contacto);
-          $new->bindValue(3, $lastInsertId);
+          $new->bindValue(3, $this->rifs);
           $new->execute();
-          $resultado = ['resultado' => 'ok', 'msg' => "Proveedor registrado."];
-          $this->binnacle("Proveedor",$_SESSION['cedula'],"Registró el proveedor.");
-          $this->desconectarDB();
-          die(json_encode($resultado));            
+           //$data = $new->fetchAll();
 
-        }catch(\PDOException $error){
-          print "¡Error!: " . $e->getMessage() . "<br/>";
-          die();
+            $resultado = ['resultado' => 'ok'];
+              echo json_encode($resultado);
+               parent::desconectarDB();
+              die();
+
+          //$resultado = ['resultado' => 'ok', 'msg' => "Proveedor registrado."];
+          //$this->binnacle("Proveedor",$_SESSION['cedula'],"Registró el proveedor.");
+          //$this->desconectarDB();
+          //die(json_encode($resultado));            
+
+        }catch (\PDOException $error) {
+          return $error;
         } 
 
       }
@@ -100,20 +112,25 @@
 
         $this->rif = $rif;
 
+
         return $this->validarRif();
       }
 
       private function validarRif(){
 
+
         try {
           $this->conectarDB();
-          $new = $this->con->prepare("SELECT rif FROM proveedor WHERE status = 1 and rif = ?");
+          $new = $this->con->prepare("SELECT rif_proveedor FROM proveedor WHERE status = 1 and rif_proveedor = ?");
           $new->bindValue(1, $this->rif);
           $new->execute();
           $data = $new->fetchAll();
 
+       
+
           $resultado;
-          if(isset($data[0]['rif'])){
+          if(isset($data[0]['rif_proveedor'])){
+           
             $resultado = ['resultado' => 'Error de rif', 'msg' => 'El rif ya está registrado.', 'res' => false];
           }else{
             $resultado = ['resultado' => 'Rif válido.', 'res' => true];
@@ -129,24 +146,24 @@
       }
 
 
-      public function getItem($id){
-
+    public function getItem($id){
+            
         if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-          die(json_encode(['resultado' => 'Error de id','msg' => 'Id inválida.']));
-        }
+               die(json_encode(['resultado' => 'Error de id','msg' => 'Id inválida.']));
+               }
 
-        $this->id = $id;
+                $this->id = $id;
 
-        $this->selectItem();
+                $this->selectItem();
       }
 
-      private function selectItem(){
+    private function selectItem(){
 
         try{
           $this->conectarDB();
           $sql = "SELECT * FROM proveedor p 
-          INNER JOIN contacto_prove cp ON p.cod_prove = cp.cod_prove 
-          WHERE p.status = 1 and p.cod_prove = ? ;";
+          INNER JOIN contacto_prove cp ON p.rif_proveedor = cp.rif_proveedor 
+          WHERE p.status = 1 and p.rif_proveedor = ? ;";
           $new = $this->con->prepare($sql);
           $new->bindValue(1, $this->id);
           $new->execute();
@@ -161,7 +178,7 @@
 
       }
 
-      public function getEditar($rif, $direccion, $razon, $telefono, $contacto, $id){
+      public function getEditar($rif, $direccion, $razon, $telefono, $contacto){
 
         if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1){
           die(json_encode(['resultado' => 'Error de rif','msg' => 'Rif inválido.']));
@@ -176,18 +193,20 @@
         if(preg_match_all("/^[0-9]{10,30}$/", $telefono) != 1){
           die(json_encode(['resultado' => 'Error de telefono','msg' => 'Telefono inválido.']));
         }
-        if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-          die(json_encode(['resultado' => 'Error de id','msg' => 'Id inválida.']));
-        }
+       
 
         $this->rif = $rif;
         $this->direccion = $direccion;
         $this->razon = $razon;
         $this->telefono = $telefono;
         $this->contacto = $contacto;
-        $this->idedit = $id;
+        //$this->idedit = $id;
+
 
         $validarRif = $this->validarRif();
+
+
+       
         if($validarRif['res'] === true) die(json_encode(["resultado" => "error", "El proveedor no existe"]));
 
         $this->editarProveedor();
@@ -195,22 +214,41 @@
 
       private function editarProveedor(){
 
+
+
         try{
           $this->conectarDB();
           $sql = "UPDATE proveedor p
-          INNER JOIN contacto_prove cp ON p.cod_prove = cp.cod_prove 
-          SET p.rif= ?, p.razon_social = ? , p.direccion= ?, cp.telefono = ? , cp.contacto = ? 
-          WHERE p.cod_prove = ?";
+          SET p.rif_proveedor= ?, p.razon_social = ?, p.direccion= ? WHERE p.rif_proveedor = ?";
           $new = $this->con->prepare($sql);
           $new->bindValue(1, $this->rif);
           $new->bindValue(2, $this->razon);
           $new->bindValue(3, $this->direccion);
-          $new->bindValue(4, $this->telefono);
-          $new->bindValue(5, $this->contacto);
-          $new->bindValue(6, $this->idedit);
+          $new->bindValue(4, $this->rif);
+
           $new->execute();
-          $resultado = ['resultado' => 'ok', "msg" => "Proveedor ha sido editado correctamente."];
-          $this->binnacle("Proveedor",$_SESSION['cedula'],"Editó proveedor.");
+
+           $sql = "UPDATE contacto_prove 
+          SET contacto= ?, telefono = ? WHERE rif_proveedor = ?";
+          $new = $this->con->prepare($sql);
+         
+          $new->bindValue(1, $this->contacto);
+          $new->bindValue(2, $this->telefono);
+          $new->bindValue(3, $this->rif);
+
+          $new->execute();
+
+
+
+
+
+          $resultado = ['resultado' => 'ok',"msg" => "Proveedor ha sido editado correctamente."];
+
+
+        //  $this->binnacle("Proveedor",$_SESSION['cedula'],"Editó proveedor.");
+
+
+       
           $this->desconectarDB();
           die(json_encode($resultado));
 
@@ -224,7 +262,7 @@
 
       public function getEliminar($id){
         if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-          die(json_encode(['resultado' => 'Error de id','msg' => 'Id inválida.']));
+          die(json_encode(['resultado' => 'Error de id','msg' => 'Id inválida']));
         }
 
         $this->id = $id;
@@ -233,13 +271,15 @@
       }
 
       private function eliminarProveedor(){
+
+
         try{
           $this->conectarDB();
-          $new = $this->con->prepare("UPDATE proveedor SET status = 0 WHERE proveedor.cod_prove = ?; ");
+          $new = $this->con->prepare("UPDATE proveedor SET status = 0 WHERE rif_proveedor = ?");
           $new->bindValue(1, $this->id);
           $new->execute();
           $resultado = ['resultado' => 'ok', 'msg' => "Proveedor ha sido eliminado correctamente."];
-          $this->binnacle("Proveedor",$_SESSION['cedula'],"Eliminó proveedor.");
+         // $this->binnacle("Proveedor",$_SESSION['cedula'],"Eliminó proveedor.");
           $this->desconectarDB();
           die(json_encode($resultado));
 

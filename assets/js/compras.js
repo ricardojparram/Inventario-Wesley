@@ -377,6 +377,33 @@ $(document).ready(function() {
 		}
 	})
 	
+	let id;
+	$(document).on('click', '.borrar',function (){
+		id = this.id;
+	})
+	$("#Borrar").click((e)=>{
+		e.preventDefault();
+		$.ajax({
+			type:"POST",
+			url:'',
+			dataType:'json',
+			data:{
+				borrar:'cualquiera',
+				id
+
+			},
+			success(data){
+				if (data.resultado === "Eliminado con exito."){
+					mostrar.destroy();
+					$("#borrar").click();
+					Toast.fire({icon: 'success', title:'Compras eliminada'})
+					rellenar();
+				}else{
+					console.log("No se elimino");
+				}
+			}
+		})
+	})
 
 	$('#cancelar').click(()=>{
 		$('#agregarform').trigger('reset');
