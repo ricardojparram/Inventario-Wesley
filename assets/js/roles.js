@@ -33,8 +33,8 @@ $(document).ready(function () {
             $('#tabla tbody').html(tabla);
             mostrar = $('#tabla').DataTable({ resposive: true });
         }, 'json').fail((e) => {
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: ' + e);
+            Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+            console.error(e);
         })
     }
 
@@ -86,8 +86,8 @@ $(document).ready(function () {
             $('#tabla_permisos').html(tabla);
 
         }, "json").fail(e => {
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            console.error('Error al mostrar listado: ' + e);
+            Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+            console.error(e);
         }).always(() => {
             $(this).prop('disabled', false);
         });
@@ -107,13 +107,10 @@ $(document).ready(function () {
             if (data.respuesta === "ok") {
                 Toast.fire({ icon: 'success', title: data.msg });
                 $('.cerrar').click();
-            } else {
-                Toast.fire({ icon: 'error', title: 'Hubo un error al modificar los permisos.' });
-                throw new Error('Error al mostrar listado: ' + data.msg);
             }
-        }, "json").fail(() => {
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            console.error('Error al mostrar listado: ' + e);
+        }, "json").fail((e) => {
+            Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+            console.error(e);
         }).always(() => {
             $(this).prop('disabled', false);
         });
@@ -130,10 +127,7 @@ $(document).ready(function () {
 
         $(this).find('button[type="submit"]').prop('disabled', true);
         $.post('', { registrar: '', rol }, function (data) {
-            if (data.resultado !== "ok") {
-                Toast.fire({ icon: 'error', title: data.msg });
-                throw new Error(data.msg);
-            }
+
             mostrar.destroy();
             rellenar();
             $('#agregarform').trigger('reset');
@@ -142,8 +136,8 @@ $(document).ready(function () {
 
         }, "json")
             .fail((e) => {
-                Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-                console.error('Error al mostrar listado: ' + e);
+                Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+                console.error(e);
             }).always(() => {
                 $(this).find('button[type="submit"]').prop('disabled', false);
             })
@@ -156,8 +150,8 @@ $(document).ready(function () {
         $.post("", { select: "", id }, data => {
             $("#rol_nombre_edit").val(data[0].nombre);
         }, "json").fail(e => {
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: ' + e);
+            Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+            console.error(e);
         }).always(() => {
             $(this).prop('disabled', false);
         });
@@ -176,10 +170,6 @@ $(document).ready(function () {
         $(this).find('button[type="submit"]').prop('disabled', true);
         $.post('', { editar: '', id, nombre }, function (data) {
 
-            if (data.resultado !== "ok") {
-                Toast.fire({ icon: 'error', title: data.msg });
-                throw new Error(data.msg);
-            }
             mostrar.destroy();
             rellenar();
             $('#agregarform').trigger('reset');
@@ -187,8 +177,8 @@ $(document).ready(function () {
             Toast.fire({ icon: 'success', title: data.msg })
 
         }, "json").fail((e) => {
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: ' + e);
+            Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+            console.error(e);
         }).always(() => {
             $(this).find('button[type="submit"]').prop('disabled', false);
         });
@@ -203,17 +193,13 @@ $(document).ready(function () {
         validarPermiso(permisos["Eliminar"]);
         $(this).prop('disabled', true);
         $.post('', { eliminar: '', id }, data => {
-            if (data.resultado != "ok") {
-                Toast.fire({ icon: 'error', title: data.msg });
-                throw new Error(data.msg);
-            }
             mostrar.destroy();
             $('.cerrar').click();
             rellenar();
             Toast.fire({ icon: 'success', title: data.msg })
         }, "json").fail(e => {
-            Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: ' + e);
+            Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+            console.error(e);
         }).always(() => {
             $(this).prop('disabled', false);
         });

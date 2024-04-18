@@ -3,13 +3,12 @@
 namespace modelo;
 
 use config\connect\DBConnect as DBConnect;
-use \PDO;
+use utils\validar;
 
 class roles extends DBConnect {
-
+	use validar;
 	private $id_rol;
 	private $rol;
-	private $modulos;
 	private $permisos;
 	private array $roles;
 
@@ -21,7 +20,6 @@ class roles extends DBConnect {
 
 	private function getRoles() {
 		try {
-
 			$this->conectarDB();
 			$new = $this->con->prepare("SELECT id_rol as id, nombre FROM rol");
 			$new->execute();
@@ -30,7 +28,7 @@ class roles extends DBConnect {
 				$this->roles[$rol['id']] = $rol['nombre'];
 			}
 		} catch (\PDOException $e) {
-			die($e);
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
@@ -47,17 +45,18 @@ class roles extends DBConnect {
 			}
 			return ['resultado' => 'ok', 'msg' => 'Rol valido'];
 		} catch (\PDOException $e) {
-			die($e);
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
 	public function getAgregarRol($rol) {
-		if (preg_match_all("/^[a-zA-ZÀ-ÿ]{5,30}$/", $rol) != 1)
-			return ['resultado' => 'error', 'msg' => 'Nombre inválido.'];
+		if (!$this->validarString('nombre', $rol))
+			$this->http_error(400, 'Nombre inválido.');
 
 		$this->rol = $rol;
 		$valid = $this->validarNombreRol();
-		if ($valid['resultado'] !== 'ok') return $valid;
+		if ($valid['resultado'] !== 'ok')
+			return $this->http_error(400, $valid['msg']);
 
 		return $this->agregarRol();
 	}
@@ -73,8 +72,7 @@ class roles extends DBConnect {
 			$new->bindValue(1, $id_rol);
 			return $new->execute();
 		} catch (\PDOException $e) {
-			print "¡Error!: " . $e->getMessage() . "<br/>";
-			die();
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
@@ -91,21 +89,21 @@ class roles extends DBConnect {
 
 			return ['resultado' => 'ok', 'msg' => 'Se ha agregado el rol'];
 		} catch (\PDOException $e) {
-			die($e);
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
 	public function getEditarRol($id_rol, $rol) {
-		if (preg_match_all("/^[0-9]{1,10}$/", $id_rol) != 1)
-			return ['resultado' => 'error', 'error' => 'Id inválida.'];
+		if (!$this->validarString('entero', $rol))
+			$this->http_error(400, 'Id inválida.');
 
-		if (preg_match_all("/^[a-zA-ZÀ-ÿ]{5,30}$/", $rol) != 1)
-			return ['resultado' => 'error', 'msg' => 'Nombre inválido.'];
+		if (!$this->validarString('nombre', $rol))
+			$this->http_error(400, 'Nombre inválido.');
 
 		$this->id_rol = $id_rol;
 		$this->rol = $rol;
 		$valid = $this->validarNombreRol();
-		if ($valid['resultado'] !== 'ok') return $valid;
+		if ($valid['resultado'] !== 'ok') return $this->http_error(400, $valid['msg']);
 
 		return $this->editarRol();
 	}
@@ -124,8 +122,7 @@ class roles extends DBConnect {
 				'msg' => "Se ha editado el rol {$this->roles[$this->id_rol]}."
 			];
 		} catch (\PDOException $e) {
-			print "¡Error!: " . $e->getMessage() . "<br/>";
-			die();
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
@@ -139,20 +136,20 @@ class roles extends DBConnect {
 			$data = $new->fetchAll(\PDO::FETCH_ASSOC);
 			return isset($data[0]);
 		} catch (\PDOException $e) {
-			print "¡Error!: " . $e->getMessage() . "<br/>";
-			die();
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
 	public function getEliminarRol($id_rol) {
 		if ($_SESSION['nivel'] === $id_rol)
-			return ['resultado' => 'error', 'msg' => 'No puede eliminar su propio rol.'];
-		if (preg_match_all("/^[0-9]{1,10}$/", $id_rol) != 1)
-			return ['resultado' => 'error', 'error' => 'Id inválida.'];
+			return $this->http_error(400, 'No puede eliminar su propio rol.');
+
+		if (!$this->validarString('entero', $id_rol))
+			$this->http_error(400, 'Id inválida.');
 
 		$this->id_rol = $id_rol;
 		if ($this->validarRolConUsuarios())
-			return ['resultado' => 'error', 'msg' => 'Este rol tiene usuarios activos.'];
+			return $this->http_error(400, 'Este rol tiene usuarios activos.');
 
 		return $this->eliminarRol();
 	}
@@ -165,21 +162,20 @@ class roles extends DBConnect {
 			$new = $this->con->prepare($sql);
 			$new->bindValue(1, $this->id_rol);
 
-			if (!$new->execute()) return ['resultado' => 'error', 'msg' => 'Ha ocurrido un error en la base de datos.'];
+			if (!$new->execute()) return $this->http_error(500, 'Ha ocurrido un error en la base de datos.');
 
 			return [
 				'resultado' => 'ok',
 				'msg' => "Se ha eliminado el rol {$this->roles[$this->id_rol]}."
 			];
 		} catch (\PDOException $e) {
-			print "¡Error!: " . $e->getMessage() . "<br/>";
-			die();
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
 	public function getMostrarRol($id_rol) {
-		if (preg_match_all("/^[0-9]{1,10}$/", $id_rol) != 1)
-			return ['resultado' => 'error', 'error' => 'Id inválida.'];
+		if (!$this->validarString('entero', $id_rol))
+			$this->http_error(400, 'Id inválida.');
 
 		$this->id_rol = $id_rol;
 		return $this->mostrarRol();
@@ -198,7 +194,7 @@ class roles extends DBConnect {
 			$this->desconectarDB();
 			return $data;
 		} catch (\PDOException $e) {
-			die($e);
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
@@ -223,13 +219,13 @@ class roles extends DBConnect {
 			$this->desconectarDB();
 			return $data;
 		} catch (\PDOException $e) {
-			die($e);
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
 	public function getPermisos($id) {
-		if (preg_match_all("/^[0-9]{1,10}$/", $id) != 1)
-			return ['resultado' => 'error', 'error' => 'Id inválida.'];
+		if (!$this->validarString('entero', $id))
+			$this->http_error(400, 'Id inválida.');
 
 		$this->id_rol = $id;
 
@@ -277,38 +273,19 @@ class roles extends DBConnect {
 			$this->desconectarDB();
 			return $permisos;
 		} catch (\PDOException $e) {
-			die($e);
-		}
-	}
-	public function safe_json_encode($value) {
-		if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-			$encoded = json_encode($value, JSON_PRETTY_PRINT);
-		} else {
-			$encoded = json_encode($value);
-		}
-		switch (json_last_error()) {
-			case JSON_ERROR_NONE:
-				return $encoded;
-			case JSON_ERROR_DEPTH:
-				return 'Maximum stack depth exceeded'; // or trigger_error() or throw new Exception()
-			case JSON_ERROR_STATE_MISMATCH:
-				return 'Underflow or the modes mismatch'; // or trigger_error() or throw new Exception()
-			case JSON_ERROR_CTRL_CHAR:
-				return 'Unexpected control character found';
-			case JSON_ERROR_SYNTAX:
-				return 'Syntax error, malformed JSON'; // or trigger_error() or throw new Exception()
-			case JSON_ERROR_UTF8:
-				die('ekisde');
-			default:
-				return 'Unknown error'; // or trigger_error() or throw new 
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 	public function getDatosPermisos($datos, $id) {
-		if (!is_array($datos))
-			return ['resultado' => 'error', 'error' => 'Permisos inválidos'];
+		if (!$this->validarString('entero', $id))
+			$this->http_error(400, 'Id inválida.');
 
-		if (preg_match_all("/^[0-9]{1,10}$/", $id) != 1)
-			return ['resultado' => 'error', 'error' => 'Id inválida.'];
+		$estructura = [
+			'id_permisos' => 'string',
+			'status' => 'string'
+		];
+		if (!$this->validarEstructuraArray($datos, $estructura, true))
+			return $this->http_error(400, 'Permisos inválidos.');
 
 		$this->permisos = $datos;
 		$this->id_rol = $id;
@@ -332,7 +309,7 @@ class roles extends DBConnect {
 					$new->bindValue(2, $modulo['id_permiso']);
 					$new->execute();
 				} catch (\PDOException $e) {
-					die($e);
+					return $this->http_error(500, $e->getMessage());
 				}
 			}
 			$respuesta = ['respuesta' => 'ok', 'msg' => 'Se han actualizado los permisos correctamente.'];
@@ -340,7 +317,7 @@ class roles extends DBConnect {
 			$this->desconectarDB();
 			return $respuesta;
 		} catch (\PDOException $e) {
-			die($e);
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 }
