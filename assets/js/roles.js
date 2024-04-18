@@ -87,7 +87,7 @@ $(document).ready(function () {
 
         }, "json").fail(e => {
             Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: ' + e);
+            console.error('Error al mostrar listado: ' + e);
         }).always(() => {
             $(this).prop('disabled', false);
         });
@@ -113,13 +113,13 @@ $(document).ready(function () {
             }
         }, "json").fail(() => {
             Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-            throw new Error('Error al mostrar listado: ' + e);
+            console.error('Error al mostrar listado: ' + e);
         }).always(() => {
             $(this).prop('disabled', false);
         });
     })
     $("#rol_nombre").inputmask("nombre");
-    $('#registrar').click((e) => {
+    $('#registrar').submit((e) => {
         e.preventDefault();
         validarPermiso(permisos["Registrar"]);
 
@@ -128,6 +128,7 @@ $(document).ready(function () {
         if (!vrol)
             throw new Error('Error de validacion.');
 
+        $(this).find('button[type="submit"]').prop('disabled', true);
         $.post('', { registrar: '', rol }, function (data) {
             if (data.resultado !== "ok") {
                 Toast.fire({ icon: 'error', title: data.msg });
@@ -142,7 +143,9 @@ $(document).ready(function () {
         }, "json")
             .fail((e) => {
                 Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-                throw new Error('Error al mostrar listado: ' + e);
+                console.error('Error al mostrar listado: ' + e);
+            }).always(() => {
+                $(this).find('button[type="submit"]').prop('disabled', false);
             })
     })
 
@@ -161,7 +164,7 @@ $(document).ready(function () {
     });
 
     $("#rol_nombre_edit").inputmask("nombre");
-    $('#editar').click((e) => {
+    $('#editar').submit((e) => {
         e.preventDefault();
         validarPermiso(permisos["Editar"]);
 
@@ -170,7 +173,7 @@ $(document).ready(function () {
         if (!vrol)
             throw new Error('Error de validacion.');
 
-        $(this).prop('disabled', true);
+        $(this).find('button[type="submit"]').prop('disabled', true);
         $.post('', { editar: '', id, nombre }, function (data) {
 
             if (data.resultado !== "ok") {
@@ -187,7 +190,7 @@ $(document).ready(function () {
             Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
             throw new Error('Error al mostrar listado: ' + e);
         }).always(() => {
-            $(this).prop('disabled', false);
+            $(this).find('button[type="submit"]').prop('disabled', false);
         });
     })
 
