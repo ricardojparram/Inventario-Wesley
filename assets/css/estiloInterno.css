@@ -237,6 +237,13 @@ body{
     border: #7d9c0a;
     color:#ffffff;
   }
+  &:disabled{
+    color: #ffffff;
+    pointer-events: none;
+    background-color: #a2c22e;
+    border-color: #a2c22e;
+    opacity: var(--bs-btn-disabled-opacity);
+  }
 }
 
 .btn-view{
@@ -253,6 +260,14 @@ body{
   &:hover{
     background: #009f95;
     color: #ffffff;
+  }
+
+  &:disabled{
+    color: #ffffff;
+    pointer-events: none;
+    background-color: #57c9c1;
+    border-color: #57c9c1;
+    opacity: var(--bs-btn-disabled-opacity);
   }
 }
 
