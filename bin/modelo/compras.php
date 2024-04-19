@@ -73,7 +73,7 @@ public function productoDetalle($id){
 
 	try{
 		parent::conectarDB();
-		$new = $this->con->prepare("SELECT cp.cantidad, cp.precio_compra , CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre) AS producto,c.orden_compra FROM compra_producto cp INNER JOIN compra c ON cp.orden_compra = c.orden_compra INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede INNER JOIN producto p ON ps.cod_producto = p.cod_producto INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON p.cod_pres = pr.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE c.status = 1 AND c.orden_compra = 1;
+		$new = $this->con->prepare("SELECT cp.cantidad, cp.precio_compra , CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre) AS producto,c.orden_compra FROM compra_producto cp INNER JOIN compra c ON cp.orden_compra = c.orden_compra INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede INNER JOIN producto p ON ps.cod_producto = p.cod_producto INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON p.cod_pres = pr.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE c.status = 1 AND c.orden_compra = ? ;
 		");
 		$new->bindValue(1, $this->producto);
 		$new->execute();
@@ -111,7 +111,7 @@ public function productoDetalle($id){
 		if (!$this->validarFecha($fecha, 'Y-m-d'))
       		return $this->http_error(400, 'Fecha inválida.');
 
-		if (!$this->validarString('decimnal', $monto))
+		if (!$this->validarString('decimal', $monto))
 			return $this->http_error(400, 'Monto inválido.');
 			
 		$estructura_productos = [
@@ -148,10 +148,11 @@ public function productoDetalle($id){
 			
 			foreach ($this->productos as $producto) {
 			
+				$fecha_vencimiento = $this->convertirFecha($producto['fecha_vencimiento'], 'd/m/Y');
 				$new = $this->con->prepare("INSERT INTO `producto_sede`(`id_producto_sede`, `cod_producto`, `lote`, `fecha_vencimiento`, `id_sede`, `cantidad`) VALUES (DEFAULT,?,?,?,1,?)");
 				$new->bindValue(1, $producto['id_producto']);
 				$new->bindValue(2, $producto['lote']);
-				$new->bindValue(3, $producto['fecha_vencimiento']);
+				$new->bindValue(3, $fecha_vencimiento);
 				$new->bindValue(4, $producto['cantidad']);
 				$new->execute();
 				$this->id = $this->con->lastInsertId();
@@ -177,6 +178,27 @@ public function productoDetalle($id){
 
 	}
 
+	public function getEliminarCompra($id){
+		$this->id = $id;
+	
+		$this->eliminarCompra();
+	}
+	
+	private function eliminarCompra(){
+
+		try{
+		parent::conectarDB();
+		 $new = $this->con->prepare("UPDATE `compra` SET status = 0 WHERE `orden_compra`= ? ");
+		 $new->bindValue(1, $this->id);
+		 $new->execute();
+		 $resultado = ['resultado' => 'Eliminado'];
+			echo json_encode($resultado);
+		  parent::desconectarDB();
+			die();
+		}catch (\PDOException $error) {
+		  return $error;
+		}
+	}
 
 
 

@@ -7,7 +7,7 @@ $(document).ready(function(){
     }).then(() => rellenar(true));
 
   function rellenar(bitacora = false){ 
-        $.ajax({ type: "post", url: "", dataType: "json", data: {mostrar: "labs", bitacora},
+        $.ajax({ type: "post", url: "", dataType: "json", data: {mostrar: "prove", bitacora},
             success(data){
                 let tabla;
                 editarPermiso = (typeof permisos.Editar === 'undefined') ? 'disabled' : '';
@@ -15,14 +15,14 @@ $(document).ready(function(){
                 data.forEach(row => {
                     tabla += `
                         <tr>
-                            <td>${row.rif}</th>
+                            <td>${row.rif_proveedor}</th>
                             <td scope="col">${row.razon_social}</td>
                             <td scope="col">${row.direccion}</td>                      
                             <td scope="col">${row.telefono}</td>
                             <td scope="col">${(row.contacto == null) ? '' : row.contacto}</td>
                             <td class="d-flex justify-content-center">
-                              <button type="button" ${editarPermiso} class="btn btn-success editar mx-2" id="${row.cod_prove}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button>
-                              <button type="button" ${eliminarPermiso} class="btn btn-danger borrar mx-2" id="${row.cod_prove}" data-bs-toggle="modal" data-bs-target="#Borrar"><i class="bi bi-trash3"></i></button>
+                              <button type="button" ${editarPermiso} class="btn btn-registrar editar mx-2" id="${row.rif_proveedor}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button>
+                              <button type="button" ${eliminarPermiso} class="btn btn-danger borrar mx-2" id="${row.rif_proveedor}" data-bs-toggle="modal" data-bs-target="#Borrar"><i class="bi bi-trash3"></i></button>
                             </td>
                         </tr>`;
                 });
@@ -121,9 +121,9 @@ $(document).ready(function(){
 
     $(document).on('click', '.editar', function() {
         id = this.id; 
-          $.ajax({ method: "post",url: "", dataType: "json", data: {select: "labs", id},
+          $.ajax({ method: "post",url: "", dataType: "json", data: {select: "prove", id},
             success(data){
-              $("#rifEdit").val(data[0].rif);
+              $("#rifEdit").val(data[0].rif_proveedor);
               $("#razonEdit").val(data[0].razon_social);
               $("#direccionEdit").val(data[0].direccion);
               $("#telefonoEdit").val(data[0].telefono);
@@ -164,7 +164,7 @@ $(document).ready(function(){
     vtelefono = validarTelefono($("#telefonoEdit"),$("#errorEdit") ,"Error de telefono,");
 
     $.ajax({ type: "post", url: '', dataType: "json",
-      data: {
+       data: {
         rifEdit : $("#rifEdit").val(),
         razonEdit : $("#razonEdit").val(),
         direccionEdit : $("#direccionEdit").val(),
@@ -174,17 +174,16 @@ $(document).ready(function(){
       },
       success(data){
         if(data.resultado === "Error de rif"){
-          $("#errorEdit").text(data.msg);
+          $("#errorEdit").text(data.ok);
           $("#rifEdit").attr("style","border-color: red;")
           $("#rifEdit").attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
           throw new Error('Rif ya registrado.');
         }
 
-        if(data.resultado != "ok"){
+         if(data.resultado != "ok"){
           Toast.fire({ icon: 'error', title: data.msg });
           throw new Error(data.msg);
         }
-
         mostrar.destroy();
         rellenar(); 
         $('#editarform').trigger('reset');
@@ -196,6 +195,7 @@ $(document).ready(function(){
                 Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
                 throw new Error('Error al mostrar listado: '+e);
             }
+
 
     })
     click++
@@ -220,7 +220,7 @@ $(document).ready(function(){
         }
 
     if(click >= 1) throw new Error('spaaam');
-    $.ajax({ type : 'post', url : '', dataType: "json", data : {eliminar : 'asd', id},
+    $.ajax({ type : 'post', url : '', dataType: "json", data : {eliminar : 'prove', id},
       success(data){
         if(data.resultado != "ok"){
           Toast.fire({ icon: 'error', title: data.msg });
@@ -233,7 +233,7 @@ $(document).ready(function(){
       },
       error(e){
                 Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.' });
-                throw new Error('Error al mostrar listado: '+e);
+                throw new Error('Error al mostrar listado:'+e);
             }
     })
     click++;

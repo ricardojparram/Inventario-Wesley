@@ -423,17 +423,16 @@ function validarBanco(input, div, mensaje) {
 }
 
 function validarSelect(input, div, mensaje) {
-  parametro = input.val();
-  if (parametro == null || parametro == "") {
-    div.text(mensaje + " seleccione una opción");
-    input.addClass("select-error");
-    return false;
-  } else {
-    div.text(" ");
-    input.removeClass("select-error");
-    input.removeClass("input-error");
-    return true;
-  }
+	parametro = input.val();
+	if (parametro == null || parametro == "") {
+		div.text(mensaje + " seleccione una opción")
+		input.addClass('select-error');
+		return false
+	} else {
+		div.text(" ");
+		input.removeClass('select-error');
+		return true
+	}
 }
 
 function validarSelec2(input, select, div, mensaje) {

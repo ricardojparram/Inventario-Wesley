@@ -1,34 +1,64 @@
 $(document).ready(function(){
 
   /* --- FUNCIÓN PARA RELLENAR LA TABLA --- */
-  rellenar();
-  let mostrar
-  function rellenar(){ 
-    $.ajax({
-      type: "post",
-      url: "",
-      dataType: "json",
-      data: {mostrar: "pres" },
-      success(data){
-        mostrar = $('#tableMostrar').DataTable({
-          responsive: true,
-          data: data
-        })
-      }
-    })
 
-  }
+  let mostrar;
+  let permiso , editarPermiso , eliminarPermiso, registrarPermiso;
 
+  $.ajax({method: 'POST', url: "", dataType: 'json', data: {getPermisos : "permiso"},
+          success(data){ permiso = data; }
+
+        }).then(function(){
+          rellenar(true);
+          registrarPermiso = (permiso.registrar != 1)? 'disable' : '';
+          $('.agregarModal').attr(registrarPermiso, '');
+      })
+
+    function rellenar(){
+      $.ajax({
+        type: "post",
+        url: "",
+        dataType: "json",
+        data: {mostrars: "present"},
+        success(data){
+            let tabla;
+            console.log(data);
+            data.forEach(row =>{
+                
+              tabla += `
+              <tr>
+              <td>${row.cod_pres}</td>
+              <td>${row.cantidad}</td>
+              <td>${row.nombre}</td>
+              <td>${row.peso}</td>
+              <td class="d-flex justify-content-center">
+              <button type="button" id="${row.cod_pres}" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i></button>
+              <button type="button"id="${row.cod_pres}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
+              </td>
+              </tr>
+              `;
+            })
+
+             $('#tbody').html(tabla);
+              mostrar = $('#tablas').DataTable({
+                responsive : true })
+        }
+        
+      })
+
+    }
+
+    rellenar();
   /* --- AGREGAR --- */
 
   // VALIDACIONES
-  $("#medida").keyup(()=> {  validarString($("#medida"),$("#error") ,"Error de  Medida,") });
+  $('#medida').change(function(){ validarSelect($("#medida"),$("#error"),"Error, escoge una medida");})
   $("#cantidad").keyup(()=> {  validarNumero($("#cantidad"),$("#error") , "Error en Cantidad,") });
   $("#peso").keyup(()=> {  validarNumero($("#peso"),$("#error") ,"Error en Peso,") });
 
   $("#registrar").click((e)=>{
 
-    let vmedida = validarString($("#medida"),$("#error") ,"Error de Medida,");
+    let vmedida = validarSelect($("#medida"),$("#error"),"Error tipo producto");
     let vcantidad = validarNumero($("#cantidad"),$("#error") , "Error en Cantidad,");
     let vpeso = validarNumero($("#peso"),$("#error") ,"Error en Peso,");
 
@@ -77,7 +107,7 @@ $(document).ready(function(){
             dataType: "json",
             data: {select: "pres", id}, // id : id
             success(data){
-              $("#medEdit").val(data[0].medida);
+             // $("#medEdit").val(data[0].medida);
               $("#cantEdit").val(data[0].cantidad);
               $("#pesEdit").val(data[0].peso);
               
@@ -90,22 +120,24 @@ $(document).ready(function(){
 
 
     // VALIDACIONES
-  $("#medEdit").keyup(()=> {  validarString($("#medEdit"),$("#error") ,"Error de  Medida,") });
-  $("#cantEdit").keyup(()=> {  validarNumero($("#cantEdit"),$("#error") , "Error en Cantidad,") });
-  $("#pesEdit").keyup(()=> {  validarNumero($("#pesEdit"),$("#error") ,"Error en Peso,") });
+ // $('#medEdit').change(function(){ validarSelect($("#medida"),$("#error"),"Error, escoge una medida");})
+  //$("#cantEdit").keyup(()=> {  validarNumero($("#cantEdit"),$("#error") , "Error en Cantidad,") });
+  //$("#pesEdit").keyup(()=> {  validarNumero($("#pesEdit"),$("#error") ,"Error en Peso,") });
 
   // FORMULARIO DE EDITAR
 
-  $("#editar").click((e)=>{
+    $("#editarP").click((e)=>{
+      console.log("Editando");
+
       //VALIDACIONES
-      let vmedida = validarString($("#medEdit"),$("#error") ,"Error de Medida,");
+     // let vmedida = validarString($("#medidas"),$("#error") ,"Error de Medida,");
       let vcantidad = validarNumero($("#cantEdit"),$("#error") , "Error en Cantidad,");
       let vpeso = validarNumero($("#pesEdit"),$("#error") ,"Error en Peso,");
 
 
     
-    if(vmedida ==true && vcantidad ==true && vpeso ==true){
-      //console.log("entrando");
+
+      console.log("entrando");
 
       //  ENVÍO DE DATOS
       $.ajax({
@@ -113,10 +145,11 @@ $(document).ready(function(){
         type: "post",
         url: '',
         data: {
-          medEdit : $("#medEdit").val(),
+          medEdit : $("#medidas").val(),
           cantEdit : $("#cantEdit").val(),
           pesEdit : $("#pesEdit").val(),
           id
+          
         },
         success(){
           mostrar.destroy();
@@ -130,26 +163,28 @@ $(document).ready(function(){
 
       e.preventDefault();
 
-    }else{
-      e.preventDefault();
-    }   
+     
 
   })
 
-
-    $(document).on('click', '.borrar', function() {
+  $(document).on('click', '.borrar', function() {
       id = this.id;
-     }); 
-      $('#borrar').click(()=>{
+    });
+      $('#borrar').click((e)=>{
+        e.preventDefault();
+
         $.ajax({
           type : 'post',
           url : '',
-          data : {eliminar : 'asd', id},
+          dataType: 'json',
+          data : {borrar : 'asd', id},
           success(data){
+
+            
             mostrar.destroy();
-            $('.cerrar').click();
+            $('#cerrar').click();
             rellenar();
-            Toast.fire({ icon: 'success', title: 'Tipo de Presentación eliminado' })
+            Toast.fire({ icon: 'success', title: 'Clase eliminada' })
           }
         })
       })
