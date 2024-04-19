@@ -81,4 +81,4 @@ FROM
     INNER JOIN venta_pacientes vpa ON vpa.num_fact = v.num_fact
     LEFT JOIN pacientes pa ON pa.ced_pac = vpa.ced_pac
 WHERE
-    v.status = 1
+    v.status = 1;
