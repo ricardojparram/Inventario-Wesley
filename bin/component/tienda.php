@@ -1,15 +1,16 @@
 <?php
 
-    namespace component;
+namespace component;
 
-    class tienda{
-
-      public function Nav(){
+class tienda
+{
+    public function Nav()
+    {
 
         $adminDashboard = "";
-        if(isset($_SESSION['nivel'])){
-          $adminDashboard = ($_SESSION['nivel'] != "4") 
-            ? '<li class="nav-item px-2"><a class="nav-link fw-medium" href="?url=home">Admin</a></li>' : '';
+        if(isset($_SESSION['nivel'])) {
+            $adminDashboard = ($_SESSION['nivel'] != "4")
+              ? '<li class="nav-item px-2"><a class="nav-link fw-medium" href="?url=home">Admin</a></li>' : '';
         }
         $loginIcons = (!isset($_SESSION['cedula']))
           ? '<div class="mt-2 mt-lg-0">
@@ -32,8 +33,8 @@
           <div class="container">
             <div>
               <a class="navbar-brand d-inline-flex" id="tituloNav" href="?url=inicio">
-                <img class="d-inline-block" src="assets/img/Logo_Medi.png" alt="logo" width="50px" height="50px" />
-                <h1 class="text-1000 fs-2 fw-bold mx-2 m-auto">Medisalud</h1>
+                <img class="d-inline-block" src="assets/img/Logos Wesley/logoWesleyColor.png" alt="logo"  height="100px" />
+                <h1 class="text-1000 fs-2 fw-bold mx-2 m-auto"></h1>
               </a>
             </div>
 
@@ -56,9 +57,8 @@
 
         ';
         echo $nav;
-      }
+    }
 
 
-  }
+}
 
-?>

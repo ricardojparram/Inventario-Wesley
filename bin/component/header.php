@@ -1,17 +1,17 @@
-<?php 
+<?php
 
-  namespace component;
+namespace component;
 
-  class header{
+class header
+{
+    public function Header()
+    {
 
-  public function Header(){
-
-  $header = '
+        $header = '
     <header id="header" class="header fixed-top d-flex align-items-center">
 <div class="d-flex align-items-center justify-content-between">
-  <a href="?url=inicio" class="logo">
-    <img src="assets/img/Logos Wesley/logoWesleyColor.png" alt="Wesley">
-  </a>
+  <a href="?url=inicio" class="logo d-flex justify-content-center align-items-center">
+    <img src="assets/img/Logos Wesley/logo_wesley_con_titulo.svg" alt="Wesley/>
   <i class="bi bi-list toggle-sidebar-btn"></i>
 </div><!-- End Logo -->
 
@@ -106,10 +106,9 @@
 
 </header>
   ';
-  
-   echo $header;
 
-  }  
+        echo $header;
+
+    }
 }
 
-?>
