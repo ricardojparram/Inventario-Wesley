@@ -49,7 +49,7 @@ $(document).ready(function () {
     });
   }
 
-  function validarRif(input, div) {
+  function validarRifBD(input, div) {
     $.post("", { rif: input.val(), validar: "rif" }, function (data) {
       let mensaje = JSON.parse(data);
       if (mensaje.resultado === "Error de rif") {
@@ -63,10 +63,11 @@ $(document).ready(function () {
     });
   }
 
-  // $("#rif").keyup(() => {
-  //   let valid = validarCedula($("#rif"), $("#error"), "Error de RIF,");
-  //   if (valid) validarRif($("#rif"), $("#error"));
-  // });
+  $("#rif").inputmask("rif");
+  $("#rif").keyup(() => {
+    let valid = validarRif($("#rif"), $("#error"), "Error de RIF,");
+    if (valid) validarRifBD($("#rif"), $("#error"));
+  });
   $("#razon").keyup(() => {
     validarNombre($("#razon"), $("#error"), "Error de nombre,");
   });
@@ -177,9 +178,10 @@ $(document).ready(function () {
     });
   });
 
+  $("#rifEdit").inputmask("rif");
   $("#rifEdit").keyup(() => {
-    let valid = validarCedula($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
-    if (valid) validarRif($("#rifEdit"), $("#errorEdit"));
+    let valid = validarRif($("#rifEdit"), $("#error"), "Error de RIF,");
+    if (valid) validarRifBD($("#rifEdit"), $("#error"));
   });
   $("#razonEdit").keyup(() => {
     validarNombre($("#razonEdit"), $("#errorEdit"), "Error de nombre,");
@@ -209,7 +211,8 @@ $(document).ready(function () {
     if (click >= 1) throw new Error("spaaam");
 
     let vrif, vnombre, vdireccion, vtelefono;
-    validarCedula($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
+
+    validarRif($("#rifEdit"), $("#error"), "Error de RIF,");
     vnombre = validarNombre(
       $("#razonEdit"),
       $("#errorEdit"),

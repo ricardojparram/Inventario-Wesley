@@ -44,7 +44,7 @@ class proveedor extends DBConnect
     public function getDatosPro($rif, $direccion, $razon, $telefono, $contacto)
     {
 
-        if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1) {
+        if(preg_match_all("/^J-[0-9]{9,10}$/", $rif) != 1) {
             die(json_encode(['resultado' => 'Error de rif','msg' => 'Rif inválido.']));
         }
         if(preg_match_all("/^[a-zA-ZÀ-ÿ\s]{0,30}$/", $razon) != 1) {
@@ -106,8 +106,8 @@ class proveedor extends DBConnect
     public function getRif($rif)
     {
 
-        if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1) {
-
+        if(preg_match_all("/^J-[0-9]{9,10}$/", $rif) != 1) {
+            die(json_encode(['resultado' => 'Error de rif','msg' => 'Rif inválido.']));
         }
 
         $this->rif = $rif;
@@ -147,15 +147,13 @@ class proveedor extends DBConnect
     }
 
 
-    public function getItem($id)
+    public function getItem($rif)
     {
-
-        if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1) {
-            die(json_encode(['resultado' => 'Error de id','msg' => 'Id inválida.']));
+        if(preg_match_all("/^J-[0-9]{9,10}$/", $rif) != 1) {
+            die(json_encode(['resultado' => 'Error de rif','msg' => 'Rif inválido.']));
         }
 
-        $this->id = $id;
-
+        $this->id = $rif;
         $this->selectItem();
     }
 
@@ -165,8 +163,8 @@ class proveedor extends DBConnect
         try {
             $this->conectarDB();
             $sql = "SELECT * FROM proveedor p 
-          INNER JOIN contacto_prove cp ON p.rif_proveedor = cp.rif_proveedor 
-          WHERE p.status = 1 and p.rif_proveedor = ? ;";
+                    INNER JOIN contacto_prove cp ON p.rif_proveedor = cp.rif_proveedor 
+                    WHERE p.status = 1 and p.rif_proveedor = ? ;";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id);
             $new->execute();
@@ -184,7 +182,7 @@ class proveedor extends DBConnect
     public function getEditar($rif, $direccion, $razon, $telefono, $contacto)
     {
 
-        if(preg_match_all("/^[0-9]{7,10}$/", $rif) != 1) {
+        if(preg_match_all("/^J-[0-9]{9,10}$/", $rif) != 1) {
             die(json_encode(['resultado' => 'Error de rif','msg' => 'Rif inválido.']));
         }
         if(preg_match_all("/^[a-zA-ZÀ-ÿ\s]{0,30}$/", $razon) != 1) {
@@ -236,30 +234,20 @@ class proveedor extends DBConnect
             $new->execute();
 
             $sql = "UPDATE contacto_prove 
-          SET contacto= ?, telefono = ? WHERE rif_proveedor = ?";
+                    SET telefono = ? WHERE rif_proveedor = ?";
             $new = $this->con->prepare($sql);
 
-            $new->bindValue(1, $this->contacto);
-            $new->bindValue(2, $this->telefono);
-            $new->bindValue(3, $this->rif);
+            $new->bindValue(1, $this->telefono);
+            $new->bindValue(2, $this->rif);
 
             $new->execute();
-
-
-
-
-
             $resultado = ['resultado' => 'ok',"msg" => "Proveedor ha sido editado correctamente."];
-
-
             //  $this->binnacle("Proveedor",$_SESSION['cedula'],"Editó proveedor.");
-
-
 
             $this->desconectarDB();
             die(json_encode($resultado));
 
-        } catch(\PDOException $error) {
+        } catch(\PDOException $e) {
             print "¡Error!: " . $e->getMessage() . "<br/>";
             die();
         }
@@ -267,21 +255,19 @@ class proveedor extends DBConnect
     }
 
 
-    public function getEliminar($id)
+    public function getEliminar($rif)
     {
-        if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1) {
-            die(json_encode(['resultado' => 'Error de id','msg' => 'Id inválida']));
+        if(preg_match_all("/^J-[0-9]{9,10}$/", $rif) != 1) {
+            die(json_encode(['resultado' => 'Error de rif','msg' => 'Rif inválido.']));
         }
 
-        $this->id = $id;
+        $this->id = $rif;
 
         $this->eliminarProveedor();
     }
 
     private function eliminarProveedor()
     {
-
-
         try {
             $this->conectarDB();
             $new = $this->con->prepare("UPDATE proveedor SET status = 0 WHERE rif_proveedor = ?");
@@ -299,4 +285,3 @@ class proveedor extends DBConnect
 
     }
 }
-
