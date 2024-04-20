@@ -10,8 +10,9 @@ class header
         $header = '
     <header id="header" class="header fixed-top d-flex align-items-center">
 <div class="d-flex align-items-center justify-content-between">
-  <a href="?url=inicio" class="logo d-flex justify-content-center align-items-center">
-    <img src="assets/img/Logos Wesley/logo_wesley_con_titulo.svg" alt="Wesley/>
+  <a href="?url=inicio" class="logo">
+    <img src="assets/img/Logos Wesley/logo_wesley_con_titulo.svg" alt="Wesley">
+  </a>
   <i class="bi bi-list toggle-sidebar-btn"></i>
 </div><!-- End Logo -->
 
@@ -111,4 +112,3 @@ class header
 
     }
 }
-
