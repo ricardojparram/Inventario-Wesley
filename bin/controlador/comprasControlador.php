@@ -34,7 +34,7 @@
 
 	if(isset($_POST['detalleCompra'])&& isset($_POST['id'])){
 		$res = $objModel->productoDetalle($_POST['id']);
-		die(json_encode($res));
+		die(json_encode($res)); 
 	}
 
 	if(isset($_POST['select'])&& $permiso['Consultar'] == 1){
