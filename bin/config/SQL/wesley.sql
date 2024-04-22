@@ -360,7 +360,6 @@ CREATE TABLE compra_producto (
 
 CREATE TABLE donaciones (
   id_donaciones int(11) AUTO_INCREMENT PRIMARY KEY,
-  beneficiario varchar(50) NOT NULL,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;

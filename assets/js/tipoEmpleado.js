@@ -60,13 +60,18 @@ $(document).ready(function () {
 
   let tipoEmpleado;
   let valid;
+  let timeoutId;
   let click = 0;
   setInterval(() => { click = 0; }, 2000);
-
+  
   $('#tipoEmpleado').keyup(() => {
     valid = validarStringLong($("#tipoEmpleado"), $("#error"), "Error de tipo empleado");
-    if (valid) validarTipoEmpleado($("#tipoEmpleado"), $("#error"));
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function() {
+      if (valid) validarTipoEmpleado($("#tipoEmpleado"), $("#error"));
+    }, 700);
   })
+
 
   // Registrar Empleado
 
@@ -162,9 +167,13 @@ $(document).ready(function () {
     })
   })
 
-  $('#tipoEmpleadoEdit').keyup(() => {
+
+   $('#tipoEmpleadoEdit').keyup(() => {
     valid = validarStringLong($("#tipoEmpleadoEdit"), $("#error2"), "Error de tipo empleado");
-    if (valid) validarTipoEmpleado($("#tipoEmpleadoEdit"), $("#error2"), id);
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function() {
+      if (valid)  validarTipoEmpleado($("#tipoEmpleadoEdit"), $("#error2"), id);
+    }, 700);
   })
 
   let tipoEmpleadoEdit;

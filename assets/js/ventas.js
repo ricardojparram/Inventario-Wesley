@@ -339,7 +339,7 @@ $(document).ready(function(){
         let isValid = true;
         inputs.each(function() {
           let value = parseFloat($(this).val());
-          if (value <= 0) {
+          if (value <= 0 || value === NaN || $(this).val() === '') {
             $(this).css({ "border": "solid 1px", "border-color": "red" });
             $(this).attr('valid', 'false');
             isValid = false;
@@ -351,14 +351,10 @@ $(document).ready(function(){
         return isValid;
       }
 
-      function validarTipoPorPrecio(montoM, precioXtipo) {
+      function validarTotal(montoM, precioXtipo) {
+        let isValid = true;
         let montoMax = parseFloat(montoM.val());
         let preciosPorTipo = precioXtipo;
-
-        if (!validarValoresPositivos(preciosPorTipo)) {
-          $('#pValid').text('Error: Precio por tipo no puede ser negativo o cero');
-          return false;
-        }
 
         let totalAsignado = 0;
         preciosPorTipo.each(function() {
@@ -369,24 +365,21 @@ $(document).ready(function(){
 
         if (totalAsignado > montoMax) {
           preciosPorTipo.css({ "border": "solid 1px", "border-color": "red" });
-          $(preciosPorTipo).attr('valid', 'false');
+          resto = Math.abs(resto)
           $('#pValid').text('Excede el monto máximo por ' + resto.toFixed(2) + ' bs');
-          return false;
+           isValid = false;
         } else if (totalAsignado < montoMax) {
           preciosPorTipo.css({ "border": "solid 1px", "border-color": "red" });
-          $(preciosPorTipo).attr('valid', 'false');
           $('#pValid').text('Falta ' + resto.toFixed(2) + ' bs para alcanzar el monto máximo');
-          return false;
+           isValid = false;
         } else if (totalAsignado < 1) {
           preciosPorTipo.css({ "border": "solid 1px", "border-color": "red" });
-          $(preciosPorTipo).attr('valid', 'false');
           $('#pValid').text('');
-          return false;
+          isValid = false;
         } else {
           preciosPorTipo.css({ "border": "none" });
-          $(preciosPorTipo).attr('valid', 'true');
-          return true;
         }
+        return isValid;
       }
 
 
@@ -414,7 +407,7 @@ $(document).ready(function(){
      $('body').on('click','.removeRowPagoTipo', function(e){
         $(this).closest('tr').remove();
         validarSelectRepetidos('.select-tipo' , '.filaTipoPago');
-        validarTipoPorPrecio($("#monto"), $('.precio-tipo'))
+        validarTotal($("#monto"), $('.precio-tipo'))
      });
 
  
@@ -443,7 +436,7 @@ $(document).ready(function(){
         			selectProductos: "productos"
         		},
         		success(data){
-        			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.producto} ${row.lote}</option>`).join('');
+        			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.id_producto_sede} - ${row.producto} ${row.lote}</option>`).join('');
 
         			$('.select-productos').each(function(){
         				if(this.children.length == 1){
@@ -582,12 +575,36 @@ $(document).ready(function(){
 
     }
 
+    function validarCedula(input, tipoCliente , select2, div){
+      return new Promise((resolve , reject)=>{
+        $.getJSON('',{cedula : input.val(), tipo: tipoCliente}, function(data){
+          if(data.resultado === "error"){
+            div.text(data.msg);
+            select2.addClass('select-error')
+            return reject(false); 
+          }else{
+            div.removeClass('select-error')
+            return resolve(true);
+          }
+        })
+      })
+    }
+
+
      let click = 0;
      setInterval(()=>{click = 0}, 2000);
 
-     let cedula , montoTotal , totalDolares , valid_productos , valid_precioTipo;
+     let cedula , tipoCliente , montoTotal , totalDolares , valid_productos , valid_precioTipo;
 
-    $('#cedula').change(()=>{ let cedula = validarSelec2($(".select2"),$(".select2-selection"),$("#error1"),"Error de Cedula"); });
+    $('#cedula').change(()=>{ 
+      let cedula = validarSelec2($(".select2"),$(".select2-selection"),$("#error1"),"Error de Cedula"); 
+     
+      if(cedula){
+        tipoCliente = $('#cedula').find('option:selected').attr('class');
+        validarCedula($(".select2"), tipoCliente ,$(".select2-selection") ,$("#error1"));
+      } 
+
+    });
 
     $('#registrar').click(function(e) {
       e.preventDefault();
@@ -600,10 +617,11 @@ $(document).ready(function(){
        valid_tipoPago =  validarSelectRepetidos('.select-tipo' , '.filaTipoPago', false);
        stock = validCantidad();
        referencia = validarReferencia();
+       $('.precioPorTipo input').each(function(){ validarValoresPositivos($(this)); });
        valid_precioTipo = $('.precio-tipo').is('[valid="false"]')? false : true;
-       validarTipoPorPrecio($("#monto"), $('.precio-tipo'));
+       
 
-       if(cedula && montoTotal && valid_productos && valid_tipoPago && stock && referencia && valid_precioTipo){
+       if(cedula && montoTotal && valid_productos && valid_tipoPago && stock && referencia && valid_precioTipo && validarTotal($("#monto"), $('.precio-tipo'))){
         
         cedula = $('#cedula').val();
         tipoCliente = $('#cedula').find('option:selected').attr('class');
@@ -656,39 +674,65 @@ $(document).ready(function(){
   })
 
 
+    $(document).on('click', '.factura' , function(){
+      id = this.id;
+
+      $.ajax({
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: {id, ticket: "factura"},
+        success(data){
+         if(data.respuesta === 'Archivo guardado'){
+          Toast.fire({ icon: 'success', title: 'Exportado correctamente.' });
+          descargarArchivo(data.ruta);
+        }else{
+          Toast.fire({ icon: 'error', title: 'Error de Exportado.' });
+        }
+      }
+    }).fail((e)=>{
+      Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+      throw new Error(e.responseJSON.msg);
+
+    })
+  })
+
+    function descargarArchivo(ruta){
+      let link =document.createElement('a');
+      link.href = ruta;
+      link.download = ruta.substr(ruta.lastIndexOf('/') + 1);
+      link.click();
+    }
+
+
     $(document).on('click', '.borrar' , function(){
       id = this.id
     })
 
-    $('#delete').click(function(e) {
-      
-      if (click >= 1) throw new Error('Spam de clicks'); 
+      $('#delete').click(function(e) {
 
-      $.ajax({
-        url: '',
-        type: 'POST',
-        dataType: 'json',
-        data: {anular: 'anular venta' , id},
-        success(data){
-          if(data.resultado === 'Venta eliminada'){
-            mostrar.destroy();
-            rellenar();
-            $('.cerrar').click();
-          Toast.fire({ icon: 'success', title: 'Venta anulada' }); // ALERTA 
-        }else if(data.resultado === 'error'){
-          mostrar.destroy();
-          rellenar();
-          $('.cerrar').click();
-            Toast.fire({ icon: 'error', title: 'Error de tipo de empleado', showCloseButton: true }) // ALERTA 
-            
-          }
+        if (click >= 1) throw new Error('Spam de clicks'); 
+
+        $.ajax({
+          url: '',
+          type: 'POST',
+          dataType: 'json',
+          data: {anular: 'anular venta' , id},
+          success(data){
+            if(data.resultado === 'Venta eliminada'){
+              mostrar.destroy();
+              rellenar();
+              $('.cerrar').click();
+              Toast.fire({ icon: 'success', title: 'Venta anulada' }); // ALERTA 
+           }  
         }
-      }).fail(function() {
-        console.log("error");
+      }).fail(function(e) {
+        Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+        throw new Error(e.responseJSON.msg);
 
       })
-      
-        
+
+
     });
 
 	

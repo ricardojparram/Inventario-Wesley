@@ -164,7 +164,7 @@
                             <label class="col-form-label"> <strong>Beneficiario</strong> </label>
                             <div class="input-group">
                               <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el beneficiario"><i class="bi bi-cash"></i></button> 
-                              <input type="text" class="form-control" id="beneficiario" >
+                              <input type="text" class="form-control" id="beneficiario" disabled>
                             </div>
                             <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
                           </div>
@@ -173,25 +173,6 @@
                       </div>
                     </div> 
 
-                    <div class="form-group col-md-12">  
-                      <div class="container-fluid">
-                        <div class="row">
-
-                          <div class="form-group col-md-12">                          
-                            <label class="col-form-label"> <strong>Sede</strong> </label>
-                            <div class="input-group">
-                              <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el beneficiario"><i class="bi bi-hospital"></i></button> 
-                              <select class="form-control select2" id="sede">
-                                <option value="0" selected disabled>Sedes</option>
-                              </select>
-                            </div>
-                            <p class="error" style="color:#ff0000;text-align: center;" id="error3"></p>
-                          </div>
-
-
-                        </div>
-                      </div>
-                    </div>
 
                     <div class="row">
 
@@ -206,7 +187,6 @@
                                     <th></th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
-                                    <th>Unidades</th>
                                   </tr>
                                 </thead>
                                 <tbody id="ASD">
@@ -217,8 +197,7 @@
                                         <option></option>
                                       </select>
                                     </td>
-                                    <td width='15%' class="cantidad"><input class="select-asd stock" disabled type="number" value=""/></td>
-                                    <td width='15%' class="unidades"><input class="select-asd unidad" type="number" value="" /></td>
+                                    <td width='20%' class="cantidad"><input class="select-asd stock" type="number" value=""/></td>
                                   </tr>
                                 </tbody>
                               </table>

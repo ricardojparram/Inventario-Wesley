@@ -146,7 +146,7 @@
     try {
       parent::conectarDB();
 
-      $query = "SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN compra_producto cp ON cp.id_producto_sede = ps.id_producto_sede INNER JOIN compra c ON c.orden_compra = cp.orden_compra WHERE p.status = 1 AND s.status = 1 AND c.status = 1 ORDER BY ps.fecha_vencimiento";
+      $query = "SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN compra_producto cp ON cp.id_producto_sede = ps.id_producto_sede INNER JOIN compra c ON c.orden_compra = cp.orden_compra WHERE p.status = 1 AND s.status = 1 AND c.status = 1 AND ps.cantidad > 0 ORDER BY ps.fecha_vencimiento;";
 
       $new = $this->con->prepare($query);
 
@@ -183,9 +183,9 @@
   }
 
   public function detallesProductoFila($id){
-    if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-      return ['resultado' => 'Error de id','error' => 'id inválida.'];
-    }
+
+    if (!$this->validarString('entero', $id))
+      return $this->http_error(400, 'id producto inválido.');
 
     $this->id = $id;
 
@@ -212,12 +212,135 @@
     }
   }
 
-  public function getRegistrarVenta($cedula , $tipoCliente , $montoTotal , $totalDolares , $datosProducto , $datosTipoPago){
-    if (!$this->validarString('documento', $cedula))
-      return $this->http_error(400, 'Cedula inválido.');
+  public function validarCedula($cedula, $tipoCliente){
 
     if (!$this->validarString('nombre', $tipoCliente))
       return $this->http_error(400, 'Tipo Cliente inválido.');
+
+    $tipo = [
+        'Paciente' => 'cedula',
+        'Personal' => 'documento',
+    ];
+
+    if (!$this->validarString($tipo[$tipoCliente] , $cedula))
+      return $this->http_error(400, 'Cedula inválido.');
+
+
+    $this->cedula = $cedula;
+
+    return $this->validCedula();
+
+  }
+
+    private function validCedula(){
+      try {
+        parent::conectarDB();
+
+        $new = $this->con->prepare("SELECT 'Paciente' AS tipo, p.ced_pac AS cedula FROM pacientes p WHERE p.ced_pac = :cedula AND p.status = 1 UNION ALL SELECT 'Personal' AS tipo, pe.cedula AS cedula FROM personal pe WHERE pe.cedula = :cedula AND pe.status = 1");
+        $new->bindValue(':cedula', $this->cedula);
+        $new->execute();
+        $data = $new->fetchAll();
+        parent::desconectarDB();
+
+        $mensaje = 'La cedula ' . $this->cedula . ' no existe';
+
+        if(isset($data[0]['cedula'])){
+          return ['resultado' => 'cedula valida', 'res' => true];
+
+        }else{
+         return ['resultado' => 'error', 'msg' => $mensaje, 'res' => false];
+       }
+
+     }catch (\PDOException $e) {
+      return $e;
+    }
+  }
+
+  private function validProductos(){
+    try {
+      parent::conectarDB();
+
+      $mensaje = '';
+
+      foreach ($this->datosProducto as $producto){
+
+        $id_producto_sede = $producto['producto'];
+        $cantidad  = $producto['cantidad'];
+
+
+        $new = $this->con->prepare("SELECT ps.cantidad , CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE ps.id_producto_sede = :id_producto_sede");
+        $new->bindValue(':id_producto_sede',  $id_producto_sede);
+        $new->execute();
+
+        $result = $new->fetchAll();
+
+  
+        if (empty($result)) {
+          $mensaje .= "Error ID $id_producto_sede no existe. ";
+
+        } else if ($result[0]['cantidad'] < $cantidad) {
+          $producto = $result[0]['producto'];
+          $mensaje .= "Error no hay suficiente $producto disponible. ";
+
+        }
+
+      }
+
+      if ($mensaje) {
+        return ['resultado' => 'error', 'msg' => $mensaje, 'res' => false];
+      } else {
+        return ['resultado' => 'producto valido', 'res' => true];
+      }
+      
+    }catch (\PDOException $e) {
+      return $e;
+    }
+  }
+
+    private function validTipoPago(){
+    try {
+      parent::conectarDB();
+
+      $mensaje = '';
+
+      foreach ($this->datosTipoPago as $tipoPago){
+
+        $TipoPago = $tipoPago['TipoPago'];
+
+        $new = $this->con->prepare("SELECT fp.tipo_pago FROM forma_pago fp WHERE fp.id_forma_pago = :id_forma_pago AND fp.status = 1");
+        $new->bindValue(':id_forma_pago',  $TipoPago);
+        $new->execute();
+
+        $result = $new->fetchAll();
+
+        if (empty($result)) $mensaje = "Error de tipo de pago no existe";
+        
+      }
+
+      if ($mensaje) {
+        return ['resultado' => 'error', 'msg' => $mensaje, 'res' => false];
+      } else {
+        return ['resultado' => 'tipo de pago valido', 'res' => true];
+      }
+      
+    }catch (\PDOException $e) {
+      return $e;
+    }
+  }
+
+  public function getRegistrarVenta($cedula , $tipoCliente , $montoTotal , $totalDolares , $datosProducto , $datosTipoPago){
+
+    if (!$this->validarString('nombre', $tipoCliente))
+      return $this->http_error(400, 'Tipo Cliente inválido.');
+
+    $tipo = [
+        'Paciente' => 'cedula',
+        'Personal' => 'documento',
+    ];
+
+    if (!$this->validarString($tipo[$tipoCliente] , $cedula))
+      return $this->http_error(400, 'Cedula inválido.');
+
 
     if (!$this->validarString('decimal', $montoTotal))
       return $this->http_error(400, 'Monto total inválido.');
@@ -243,12 +366,25 @@
     if (!$this->validarEstructuraArray($datosTipoPago, $estructura_tipo, true))
       return $this->http_error(400, 'Datos Tipo Pago inválidos.');
 
+    
     $this->cedula = $cedula;
     $this->tipoCliente = $tipoCliente;
     $this->monto = $montoTotal;
     $this->dolares = $totalDolares;
     $this->datosProducto = $datosProducto;
     $this->datosTipoPago = $datosTipoPago;
+
+    $validarCedula = $this->validCedula();
+
+    if ($validarCedula['res'] === false) return $this->http_error(400, $validarCedula['msg']);
+
+    $validarProductos = $this->validProductos();
+
+    if ($validarProductos['res'] === false) return $this->http_error(400, $validarProductos['msg']);
+
+    $validarTipoPago = $this->validTipoPago();
+
+    if ($validarTipoPago['res'] === false) return $this->http_error(400, $validarTipoPago['msg']);
 
     return $this->registrarVenta();
 
@@ -299,8 +435,13 @@
         
       }
 
-      $new = $this->con->prepare('INSERT INTO `pagos_recibidos`(`id_pago`, `num_fact`, `status`) VALUES (DEFAULT,?,1)');
+      $status = (count(array_filter($this->datosTipoPago, function($datosTipo) {
+        return isset($datosTipo['referencia']) && !empty($datosTipo['referencia']);
+      })) > 0) ? 0 : 1;
+
+      $new = $this->con->prepare('INSERT INTO `pagos_recibidos`(`id_pago`, `num_fact`, `status`) VALUES (DEFAULT,?,?)');
       $new->bindValue(1, $factura);
+      $new->bindValue(2, $status);
       $new->execute();
       $this->id = $this->con->lastInsertId();
 
@@ -309,7 +450,7 @@
        $new = $this->con->prepare('INSERT INTO `detalle_pago`(`id_det_pago`, `id_pago`, `id_forma_pago`, `referencia`, `monto_pago`) VALUES (DEFAULT,?,?,?,?)');
        $new->bindValue(1, $this->id);
        $new->bindValue(2, $datosTipo['TipoPago']);
-       $new->bindValue(3, $datosTipo['referencia']);
+       $new->bindValue(3, isset($datosTipo['referencia']) ? $datosTipo['referencia'] : NULL);
        $new->bindValue(4, $datosTipo['precioTipo']);
        $new->execute();
         
@@ -366,11 +507,14 @@
 
   public function getAnularVenta($id){
 
+     if (!$this->validarString('factura', $id))
+      return $this->http_error(400, 'factura inválido.');
+
     $this->id = $id;
 
     $validarFactura = $this->validFactura();
 
-    if ($validarFactura['res'] === false) return ['resultado' => 'error', 'msg' => 'La venta no existe'];
+    if ($validarFactura['res'] === false) return $this->http_error(400, $validarFactura['msg']);
 
     return $this->anularVenta();
 
@@ -416,6 +560,147 @@
       return $error;
     }
   }
+
+  public function ExportarTicket($id){
+
+    if (!$this->validarString('factura', $id))
+      return $this->http_error(400, 'factura inválido.');
+
+      $this->id = $id;
+
+      $validarFactura = $this->validFactura();
+
+      if ($validarFactura['res'] === false) return $this->http_error(400, $validarFactura['msg']);
+      
+      return $this->exportar();
+    }
+
+    private function exportar(){
+      try{
+       parent::conectarDB();
+
+       $query = "SELECT v.num_fact, v.monto_fact, pe.cedula AS cedula, pe.nombres AS nombre, pe.apellidos AS apellido, v.fecha, pe.telefono AS telefono, pe.direccion AS direccion, v.monto_dolares AS total_divisa
+          FROM venta v 
+          INNER JOIN venta_personal vpe ON vpe.num_fact = v.num_fact 
+          LEFT JOIN personal pe ON pe.cedula = vpe.cedula 
+          WHERE v.status = 1 AND v.num_fact = :num_fact
+
+          UNION ALL
+
+          SELECT v.num_fact, v.monto_fact, pa.ced_pac AS cedula, pa.nombre AS nombre, pa.apellido AS apellido, v.fecha, '' AS telefono, '' AS direccion, v.monto_dolares AS total_divisa
+          FROM venta v 
+          INNER JOIN venta_pacientes vpa ON vpa.num_fact = v.num_fact 
+          LEFT JOIN pacientes pa ON pa.ced_pac = vpa.ced_pac 
+          WHERE v.status = 1 AND v.num_fact = :num_fact ";
+
+       $new = $this->con->prepare($query);
+       $new->bindValue(':num_fact' , $this->id);
+       $new->execute();
+       $dataV = $new->fetchAll();
+
+       $queryP = "SELECT CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS descripcion , vp.cantidad , vp.precio_actual , vp.num_fact FROM venta_producto vp INNER JOIN producto_sede ps ON ps.id_producto_sede = vp.id_producto_sede INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE vp.num_fact = ?";
+       $new = $this->con->prepare($queryP);
+       $new->bindValue(1 , $this->id);
+       $new->execute();
+       $dataP = $new->fetchAll();
+      
+       $nombre = 'Ticket_'.$dataV[0]['num_fact'].'_'.$dataV[0]['cedula'].'.pdf';
+       
+       $pdf = new FPDF();
+       $pdf->SetMargins(4,10,4);
+       $pdf->AddPage();
+       
+       $pdf->SetFont('Arial','B',10);
+       $pdf->SetTextColor(0,0,0);
+       $pdf->MultiCell(0,5,utf8_decode(strtoupper('Centro Medico Wesley')),0,'C',false);
+       $pdf->SetFont('Arial','',9);
+       $pdf->MultiCell(0,5,utf8_decode('Rif: 1234567'),0,'C',false);
+       $pdf->MultiCell(0,5,utf8_decode('Dirreción: Barrio José Félix Ribas, Barquisimeto-Estado Lara.'),0,'C',false);
+       $pdf->MultiCell(0,5,utf8_decode('Teléfono: 04120502369'),0,'C',false);
+       $pdf->MultiCell(0,5,utf8_decode('Correo: MediSalud@gmail.com'),0,'C',false);
+
+       $pdf->Ln(1);
+       $pdf->Cell(0,5,utf8_decode("------------------------------------------------------"),0,0,'C');
+       $pdf->Ln(5);
+
+       $pdf->MultiCell(0,5,utf8_decode('Fecha: '. $dataV[0]['fecha']),0,'C',false);
+       $pdf->SetFont('Arial','B',10);
+       $pdf->MultiCell(0,5,utf8_decode(strtoupper("Ticket Nro: ". $dataV[0]['num_fact'])),0,'C',false);
+       $pdf->SetFont('Arial','',9);
+
+       $pdf->Ln(1);
+       $pdf->Cell(0,5,utf8_decode("------------------------------------------------------"),0,0,'C');
+       $pdf->Ln(5);
+
+       $pdf->MultiCell(0,5,utf8_decode("Cliente: ". $dataV[0]['nombre'].' '. $dataV[0]['apellido']),0,'C',false);
+       $pdf->MultiCell(0,5,utf8_decode("Documento: ".$dataV[0]['cedula']),0,'C',false);
+       $pdf->MultiCell(0,5,utf8_decode("Teléfono: ".$dataV[0]['telefono']),0,'C',false);
+       $pdf->MultiCell(0,5,utf8_decode("Dirección: ".$dataV[0]['direccion']),0,'C',false);
+
+       $pdf->Ln(1);
+       $pdf->Cell(0,5,utf8_decode("-------------------------------------------------------------------"),0,0,'C');
+       $pdf->Ln(3);
+
+       $tableWidth = 74;
+       $pdf->SetLeftMargin(($pdf->GetPageWidth() - $tableWidth) / 2);
+
+       $pdf->Cell(18,4,utf8_decode('Articulo'),0,0,'C');
+       $pdf->Cell(19,5,utf8_decode('Cant.'),0,0,'C');
+       $pdf->Cell(15,5,utf8_decode('Precio'),0,0,'C');
+       $pdf->Cell(28,5,utf8_decode('Total'),0,0,'C');
+
+       $pdf->Ln(3);
+       $pdf->Cell($tableWidth,5,utf8_decode("-------------------------------------------------------------------"),0,0,'C');
+       $pdf->Ln(5);
+
+       foreach ($dataP as $col => $value) {
+         $pdf->Cell(18,4,utf8_decode($value[0]),0,0,'C');
+         $pdf->Cell(19,4,utf8_decode($value[1]),0,0,'C');
+         $pdf->Cell(19,4,utf8_decode($value[2]),0,0,'C');
+         $pdf->Cell(28,4,utf8_decode($value[1] * $value[2]),0,1,'C');
+
+       }
+       $pdf->Ln(4);
+
+       $pdf->Cell($tableWidth,5,utf8_decode("-------------------------------------------------------------------"),0,0,'C');
+
+       $pdf->Ln(5);
+
+       $montoTotal = $dataV[0]['monto_fact'];
+
+       $pdf->Cell(18,5,utf8_decode(""),0,0,'C');
+       $pdf->Cell(22,5,utf8_decode("TOTAL"),0,0,'C');
+       $pdf->Cell(32,5,utf8_decode($montoTotal),0,0,'C');
+
+       $pdf->Ln(5);
+
+       $pdf->Cell(18,5,utf8_decode(""),0,0,'C');
+       $pdf->Cell(22,5,utf8_decode("Dolar"),0,0,'C');
+       $pdf->Cell(32,5,utf8_decode($dataV[0]['total_divisa'].'$'),0,0,'C');
+
+       $pdf->Ln(10);
+
+       $pdf->MultiCell($tableWidth,5,utf8_decode('*** Precios de productos no incluyen impuestos. Para poder realizar un reclamo o devolución debe de presentar este ticket ***'),0,'C',false);
+
+       $pdf->SetFont('Arial','B',9);
+       $pdf->Cell($tableWidth,7,utf8_decode('Gracias por su compra'),'',0,'C');
+
+       $pdf->Ln(9);
+
+       $repositorio = 'assets/tickets/'.$nombre;
+       $pdf->Output('F',$repositorio);
+
+       $respuesta = ['respuesta' => 'Archivo guardado', 'ruta' => $repositorio];
+       
+       $this->binnacle("Venta",$_SESSION['cedula'], "Exporto Ticket de Venta");
+       parent::desconectarDB();
+
+       return $respuesta;
+
+      }catch(\PDOexection $error){
+        die($error);
+      }
+    }
 
 
 

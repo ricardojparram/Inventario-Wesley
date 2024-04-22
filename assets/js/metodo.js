@@ -60,14 +60,18 @@ $(document).ready(function () {
     })
   }
 
-  let ytipo;
+  let tipo;
   let valid;
   let click = 0;
+  let timeoutId;
   setInterval(() => { click = 0; }, 2000);
 
   $('#tipo').keyup(() => {
     valid = validarStringLong($("#tipo"), $("#error"), "Error de tipo de pago")
-    if (valid) validarTipoPago($("#tipo"), $("#error"))
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function() {
+      if (valid) validarTipoPago($("#tipo"), $("#error"))
+    }, 700);
   })
 
   $("#enviar").click((e) => {
@@ -80,9 +84,9 @@ $(document).ready(function () {
 
     if (click >= 1) throw new Error('Spam de clicks');
 
-    ytipo = validarStringLong($("#tipo"), $("#error"), "Error de tipo de pago");
+    tipo = validarStringLong($("#tipo"), $("#error"), "Error de tipo de pago");
 
-    if (ytipo) {
+    if (tipo) {
 
       $.ajax({
 
@@ -195,13 +199,17 @@ $(document).ready(function () {
     })
   })
 
-  $("#tipoEdit").keyup(() => {
+
+  $('#tipoEdit').keyup(() => {
     valid = validarStringLong($("#tipoEdit"), $("#error2"), "Error de tipo pago")
-    if (valid) { validarTipoPago($("#tipoEdit"), $("#error2"), id) }
-  });
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function() {
+      if (valid)  validarTipoPago($("#tipoEdit"), $("#error2"), id)
+    }, 700);
+  })
 
 
-  let ctipo;
+  let tipoEdit;
   $("#enviarEdit").click((e) => {
     e.preventDefault()
 
@@ -209,8 +217,8 @@ $(document).ready(function () {
 
     validarExitencia().then(() => {
 
-      ctipo = validarStringLong($("#tipoEdit"), $("#error2"), "Error de tipo pago");
-      if (ctipo) {
+      tipoEdit = validarStringLong($("#tipoEdit"), $("#error2"), "Error de tipo pago");
+      if (tipoEdit) {
         $.ajax({
 
           type: "POST",

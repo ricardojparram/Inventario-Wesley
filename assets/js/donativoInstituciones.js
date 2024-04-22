@@ -112,17 +112,10 @@ $(document).ready(function(){
    		<option></option>
    		</select>
    		</td>
-   		<td width='15%' class="cantidad"><input class="select-asd stock" disabled type="number" value=""/></td>
-   		<td width='15%' class="unidades"><input class="select-asd unidad" type="number" value="" /></td>
+   		<td width='15%' class="cantidad"><input class="select-asd stock" type="number" value=""/></td>
    		</tr>`;
 
 
-    // Validar filas
-    function validarFila(filas, error) {
-    	let filaExiste = $(filas).find('tr').length > 0;
-    	$(error).text(filaExiste? '' : 'No debe haber filas vacías')
-    	return filaExiste;
-    }
 
     // Funcion de select para productos 
     selectProductos()
@@ -135,7 +128,7 @@ $(document).ready(function(){
     			selectProductos: "productos"
     		},
     		success(data){
-    			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.nombrepro} ${row.lote}</option>`).join('');
+    			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.id_producto_sede} - ${row.producto} ${row.lote}</option>`).join('');
 
     			$('.select-productos').each(function(){
     				if(this.children.length == 1){
@@ -152,70 +145,53 @@ $(document).ready(function(){
     	})
     }
 
-        // Validar producto vacios
-
-        function validarProductos(filas, productos, error , mensaje) {
-        	let vproductos = true;
-
-        	$(filas).each(function () {
-        		let producto = $(this).find(productos).val();
-        		if (producto == "" || producto == null) {
-        			vproductos = false;
-        			$(error).text(mensaje);
-        		} else {
-        			$(error).text('');
-        			vproductos = true;
-        		}
-        	});
-
-        	return vproductos;
-        }
 
 
 	// Validar producto repetidos
 
-	let productosRepetidos, productos;
-	function validarProductosRepetidos() {
-		productos = Object.values(document.querySelectorAll('.select-productos')).map(item => {
-			return item.value;
-		});
-		productosRepetidos = productos.filter((elemento, index) => productos.indexOf(elemento) !== index);
-		$(".select-productos").each(function () {
-			if (this.value == "") return;
-			if (productosRepetidos.includes(this.value)) {
-				$(this).attr('valid', false);
-				$(this).closest('td').find('div.chosen-container').addClass('select-error')
-			} else {
-				$(this).attr('valid', true);
-				$(this).closest('td').find('div.chosen-container').removeClass('select-error')
-			}
-		})
-	}
+	let selectRepetidos, select_t;
+    const validarSelectRepetidos = (selected, error, status = true) => {
+        let validacion = [];
+        let $select = document.querySelectorAll(selected);
+        if ($select.length < 1) {
+            $(error).html('No hay filas.');
+            return false
+        } else {
+            $(error).html('');
+        }
+        select_t = Object.values(document.querySelectorAll(selected)).map(item => {
+            return item.value;
+        });
+        selectRepetidos = select_t.filter((elemento, index) => select_t.indexOf(elemento) !== index);
+        $(selected).each(function () {
+            if (this.value === "" || this.value === null) {
+                if (status != true) {
+                    $(this).closest('td').find('div.chosen-container').addClass('select-error')
+                }
+                validacion.push(false);
+            } else if (selectRepetidos.includes(this.value)) {
+                $(this).closest('td').find('div.chosen-container').addClass('select-error')
+                validacion.push(false);
+            } else {
+                $(this).closest('td').find('div.chosen-container').removeClass('select-error')
+                validacion.push(true);
+            }
+        })
+        return !validacion.includes(false);
+    }
 
-	let cantidadStock , stock , select , unidades 
-	productoSeleccionado();
-	function productoSeleccionado(){
-		$('.select-productos').change(function() {
-			select = $(this);
-			producto = $(this).val();
-			cantidadStock = select.closest('tr').find('.cantidad input');
-			unidades = select.closest('tr').find('.unidades input');
-			fillData();
-		});
-	}
 
-	function fillData(){
-		$.getJSON('', {producto , filas : 'select fila'}, function(data) {
-			stock = data[0].cantidad;
-			unidad = data[0].unidades_restantes;
-			cantidadStock.val(stock);
-			unidades.val(unidad);
-			unidades.attr('placeholder', unidad);
-			validarUnidades(unidades , unidad);
-		});
-	}
+    const mostrarInventarioProducto = (item) => {
+        let $cantidad = $(item).closest('tr').find('.cantidad input');
+        let producto_inventario = item.value;
+        $.getJSON('', { producto : producto_inventario , filas : 'select fila'}, function (data) {
+            $cantidad.val(data[0].cantidad);
+            $cantidad.attr('placeholder', data[0].cantidad);
+            validarStock($cantidad , data[0].cantidad);
+        })
+    }
 
-	function validarUnidades(input, max){
+	function validarStock(input, max){
 		$(input).keyup(()=>{
 			stock = Number(max);
 			num = Number(input.val());
@@ -231,75 +207,85 @@ $(document).ready(function(){
 		})
 	}
 
-	validUnidades = () => {
-		let unidadValue = $('.unidad').val();
-		let isValidUnidad = !$('.unidad').is('[valid="false"]') && unidadValue !== "" && unidadValue !== '0';
+    validCantidad = () => {
+        let stockValue = $('.stock').val();
+        let isValidStock = !$('.stock').is('[valid="false"]') && stockValue !== "" && stockValue !== '0';
 
-		$('#pValid').text(isValidUnidad ? '' : 'Cantidad inválida.');
-		return isValidUnidad;
-	}
+        $('#pValid').text(isValidStock ? '' : 'Cantidad inválida.');
+        return isValidStock;
+    }
 
 
 
 	 // Funcion de agregar fila 
 	 function addNewRow(){
 	 	$('#ASD').append(newRow);
-	 	validarFila($('#ASD') ,$('.filaProductos'));
 	 	selectProductos();
-	 	productoSeleccionado();
 	 }
 
      // Agregar fila para insertar producto a donar
      $('.newRow').on('click',function(e){
      	addNewRow();   
+      validarSelectRepetidos('.select-productos' , '.filaProductos');   
      });
 
     // Evento de cambio en los productos 
     $(document).on("change", ".select-productos", function () {
-    	validarProductos($('.table-body tbody tr'),$(".select-productos"), $('.filaProductos') , 'No debe haber productos vacios');
-    	validarProductosRepetidos();
+    	validarSelectRepetidos('.select-productos' , '.filaProductos');   
+      mostrarInventarioProducto(this);
     });
 
 
      // ELiminar fila
      $('body').on('click','.removeRow', function(e){
      	$(this).closest('tr').remove();
-     	validarProductosRepetidos();
-     	validarFila($('#ASD') ,$('.filaProductos'));
+     	validarSelectRepetidos('.select-productos' , '.filaProductos');   
      });
 
-     
-     $('#rif').change(()=>{ validarSelec2($('#rif'),$(".select2-selection"), $('#error1') , 'Error de rif');  })
-     $('#beneficiario').keyup(()=> { validarStringLong($('#beneficiario'),  $('#error2') , 'Error de beneficiario'); });
+     function validarRif(input, select2, div){
+      return new Promise((resolve , reject)=>{
+        $.getJSON('',{rif : input.val(), tipo: 'Institciones'}, function(data){
+          if(data.resultado === "error"){
+            div.text(data.msg);
+            select2.addClass('select-error')
+            return reject(false); 
+          }else{
+            div.removeClass('select-error')
+            return resolve(true);
+          }
+        })
+      })
+    }
 
      let click = 0;
      let rif , beneficiario , producto;
      setInterval(()=>{click = 0}, 2000);
+
+      $('#rif').change(()=>{ 
+        valid = validarSelec2($('#rif'),$(".select2-selection"), $('#error1') , 'Error de rif');
+        if (valid) validarRif($("#rif"),$(".select2-selection") ,$("#error1"));
+        })
 
      $('#registrar').click(function(e) {
      	e.preventDefault()
 
      	if(click >= 1){ throw new Error('Spam de clicks');}
 
-     	let repetidos;
      	let datos = [];
 
      	rif = validarSelec2($('#rif'),$(".select2-selection"), $('#error1') , 'Error de rif');
-     	beneficiario = validarStringLong($('#beneficiario'),  $('#error2') , 'Error de beneficiario');
-     	filasValidas = validarFila($('#ASD') ,$('.filaProductos'));
-     	producto = validarProductos($('.table-body tbody tr'),$(".select-productos"), $('.filaProductos') , 'No debe haber productos vacios');
-     	repetidos = $('.select-productos').is('[valid="false"]')? false : true;
-     	unidades = validUnidades();
+     	producto = validarSelectRepetidos('.select-productos' , '.filaProductos' , false);
+     	cantidad = validCantidad();
 
-     	if(rif && beneficiario && filasValidas && productos && repetidos && unidades){
+     	if(rif && producto && cantidad){
 
      		$('.table-body tbody tr').each(function(){
      			productos = $(this).find('.select-productos').val();
-     			unidades = $(this).find('.unidad').val();
+     			stock = $(this).find('.stock').val();
 
      			let productoObj = {
      				producto : productos,
-     				unidades: unidades
+     				cantidad: stock
      			};
 
      			datos.push(productoObj);
@@ -309,25 +295,25 @@ $(document).ready(function(){
      			url: '',
      			type: 'POST',
      			dataType: 'json',
-     			data: {rifInstitucion: $('#rif').val(), beneficiario: $('#beneficiario').val() , datos },
+     			data: {rifInstitucion: $('#rif').val() , datos },
      			success(data){
      				if(data.resultado == 'registrado con exito'){
      					mostrar.destroy();
      					rellenar();  
-                    $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
-                    $('#agregar .select2-selection').attr("style","borden-color:none;","borden-color:none;");
-                    $('.error').text(" ");
-                    $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
-                    $('#error').text('');
-                    $('.removeRow').click();
-                    $('.cerrar').click(); 
-                    addNewRow();
-                    Toast.fire({ icon: 'success', title: 'Donacion registrada' , showCloseButton: true });
+               $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
+                $('#agregar .select2-selection').attr("style","borden-color:none;","borden-color:none;");
+                $('.error').text(" ");
+                $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
+                $('#error').text('');
+                $('.removeRow').click();
+                $('.cerrar').click(); 
+                Toast.fire({ icon: 'success', title: 'Donacion registrada' , showCloseButton: true });
                 }
             }
 
-        }).fail(function() {
-        	console.log("error");
+        }).fail(function(e) {
+        	Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+          throw new Error(e.responseJSON.msg);
         })
 
     }
@@ -335,6 +321,17 @@ $(document).ready(function(){
     click++
 
 })
+
+
+ $('#cerrar').click(()=>{
+    $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
+    $('#agregar .select2-selection').attr("style","borden-color:none;","borden-color:none;");
+    $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
+    $('.removeRow').click();
+    $('#error').text('');
+    $('.error').text(" ");
+     addNewRow();
+  })
 
   function validarExitencia(){
         return new Promise((resolve, reject) =>{

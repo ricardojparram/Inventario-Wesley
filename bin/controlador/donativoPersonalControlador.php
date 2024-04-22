@@ -48,8 +48,13 @@
         die(json_encode($res));
       }
 
-      if(isset($_POST['cedulaPersonal']) && isset($_POST['beneficiario']) && isset($_POST['datos']) && $permiso['Registrar']) {
-        $res = $objModel->getRegistrarDonacion($_POST['cedulaPersonal'], $_POST['beneficiario'] , $_POST['datos']);
+       if (isset($_GET['cedula'] , $_GET['tipo'])) {
+        $res = $objModel->validarCedula($_GET['cedula']);
+        die(json_encode($res));
+      }
+
+      if(isset($_POST['cedulaPersonal']) && isset($_POST['datos']) && $permiso['Registrar']) {
+        $res = $objModel->getRegistrarDonacion($_POST['cedulaPersonal'] , $_POST['datos']);
         die(json_encode($res));
       }
 

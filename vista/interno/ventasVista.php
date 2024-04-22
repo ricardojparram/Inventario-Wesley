@@ -167,7 +167,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-registrar factura" data-bs-dismiss="modal" id=" ">Exportar Factura</button>
+        <button type="button" class="btn btn-registrar factura" data-bs-dismiss="modal" id=" ">Exportar Ticket</button>
         <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal" id="cerrarDetalles">Cerrar</button>
       </div>
     </div>
