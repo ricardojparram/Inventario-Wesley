@@ -35,6 +35,10 @@ if (isset($_GET['select_producto'], $permiso["Consultar"])) {
     die(json_encode($res));
 }
 
+if (isset($_POST['exportar'])){
+  $res = $model->exportar();
+  die(json_encode($res));
+}
 
 
 

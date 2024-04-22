@@ -50,7 +50,7 @@
 
                 <div class="row">
                     <div class="col-6">
-                        <h5 class="card-title">Descargos registrados</h5>
+                        <h5 class="card-title"></h5>
                     </div>
 
                     <div class="col-6 text-end mt-3">
