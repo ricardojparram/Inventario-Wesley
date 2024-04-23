@@ -1,6 +1,6 @@
 $(document).ready(function () {
   fechaHoy($("#fecha"), $("#fecha2"));
-  let tabla, tipo, fechaInicio, fechaFinal, thead, columns, reporte;
+  let tabla, tipo, fechaInicio, fechaFinal, thead, reporte;
 
   $('input[type="date"]').on("change", function () {
     if ($("#fecha").val() > $("#fecha2").val()) {
@@ -16,23 +16,27 @@ $(document).ready(function () {
   });
 
   const tipoAcciones = {
-    donaciones: () => {
+    donaciones: (data) => {
       thead = `<tr>
   					<th scope="col">Fecha</th>
   					<th scope="col">Tipo de donación</th>
   					<th scope="col">Identifación</th>
   					<th scope="col">Nombre</th>
   				 </tr>`;
-      columns = [
-        { data: "fecha" },
-        { data: "tipo_donacion" },
-        { data: "id" },
-        { data: "nombre" },
-      ];
+      let tbody = data.reduce((acc, row) => {
+        return (acc += `
+        <tr>
+          <td>${row.fecha}</th>
+          <td scope="col">${row.tipo_donacion}</td>
+          <td scope="col">${row.id}</td>
+          <td scope="col">${row.nombre}</td>
+        </tr>`);
+      }, "");
       $("#reporteLista thead").html(thead);
+      $("#reporteLista tbody").html(tbody || "");
       $("#error").text("");
     },
-    productos: () => {
+    productos: (data) => {
       thead = `<tr>
   					<th scope="col">Sede</th>
   					<th scope="col">Producto</th>
@@ -42,16 +46,20 @@ $(document).ready(function () {
   					<th scope="col">Estado</th>
   					<th scope="col">Días</th>
   				 </tr>`;
-      columns = [
-        { data: "nombre_sede" },
-        { data: "presentacion_producto" },
-        { data: "lote" },
-        { data: "cantidad" },
-        { data: "fecha_vencimiento" },
-        { data: "estado_producto" },
-        { data: "dias" },
-      ];
+      let tbody = data.reduce((acc, row) => {
+        return (acc += `
+        <tr>
+          <td>${row.nombre_sede}</th>
+          <td scope="col">${row.presentacion_producto}</td>
+          <td scope="col">${row.lote}</td>
+          <td scope="col">${row.cantidad}</td>
+          <td scope="col">${row.fecha_vencimiento}</td>
+          <td scope="col">${row.estado_producto}</td>
+          <td scope="col">${row.dias}</td>
+        </tr>`);
+      }, "");
       $("#reporteLista thead").html(thead);
+      $("#reporteLista tbody").html(tbody || "");
       $("#error").text("");
     },
     error: () => {
@@ -79,7 +87,6 @@ $(document).ready(function () {
     }
 
     if (!tipoAcciones.hasOwnProperty(tipo)) tipoAcciones.error();
-    tipoAcciones[tipo]();
 
     $(el).prop("disabled", true);
     $.post(
@@ -87,10 +94,9 @@ $(document).ready(function () {
       { mostrar: "reporte", tipo, fechaInicio, fechaFinal },
       function (res) {
         reporte = res.reporte;
+        tipoAcciones[tipo](reporte);
         tabla = $("#reporteLista").DataTable({
           responsive: true,
-          data: reporte,
-          columns: columns,
         });
         generarGrafico(res.grafico, tipo);
         $("#reporte").removeClass("d-none");

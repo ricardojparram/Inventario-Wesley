@@ -345,7 +345,7 @@ class reportes extends DBConnect
           'productos' => function () {
               $sql = "SELECT 
                       s.nombre,
-                      SUM(CASE WHEN ps.fecha_vencimiento < CURDATE() THEN ps.cantidad ELSE 1 END) AS cantidad_vencidos,
+                      SUM(CASE WHEN ps.fecha_vencimiento < CURDATE() THEN ps.cantidad ELSE 0 END) AS cantidad_vencidos,
                       SUM(CASE WHEN ps.fecha_vencimiento >= CURDATE() THEN ps.cantidad ELSE 0 END) AS cantidad_vigentes
                     FROM producto_sede ps
                     INNER JOIN sede s ON s.id_sede = ps.id_sede
