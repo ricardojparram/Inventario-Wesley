@@ -38,7 +38,7 @@
 
 	if (isset($_POST["medida"]) && $permiso['Registrar'] == 1){
 		$res = $objModel->getAgregarMedida($_POST["medida"]);
-		die(json_encode($res));
+		die(json_encode($res)); 
 
 	}
 
