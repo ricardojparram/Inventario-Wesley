@@ -23,12 +23,13 @@
       $this->contra = parent::_PASS_();
       $this->local = parent::_LOCAL_();
       $this->nameBD = parent::_BD_();
+      $this->puerto = parent::_PORT_();
       // $this->connectarDB();
     }
 
     protected function conectarDB(){
       try {
-        $this->con = new \PDO("mysql:host={$this->local};dbname={$this->nameBD}", $this->usuario, $this->contra);  
+        $this->con = new \PDO("mysql:host={$this->local};port={$this->puerto};dbname={$this->nameBD}", $this->usuario, $this->contra);  
       } catch (\PDOException $e) {
         print "¡Error!: " . $e->getMessage() . "<br/>";
         

@@ -30,7 +30,7 @@
                  <div class="p-5">
 
                     <div class="text-end">
-                       <img src="assets/img/Logo_Medi.png" width="50px" alt="">
+                       <img src="assets/img/Logos Wesley/logo_wesley_sin_titulo.svg" width="50px" alt="">
                       </div>
 
                         <div class="text-center">

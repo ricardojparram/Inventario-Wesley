@@ -47,11 +47,11 @@
             
               <div class="row">
                 <div class="col-6">
-                  <h5 class="card-title">Proveedores</h5>
+                  <h5 class="card-title"></h5>
                 </div>
 
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
                 </div>
               </div>
 
@@ -183,7 +183,7 @@
         
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
+          <button type="submit" class="btn btn-registrar " id="registrar">Registrar</button>
         </div>
       </form>
     </div>
@@ -275,7 +275,7 @@
         
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-success" id="editar">Editar</button>
+          <button type="submit" class="btn btn-registrar" id="editar">Editar</button>
         </div>
       </form>
     </div>

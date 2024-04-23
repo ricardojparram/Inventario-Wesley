@@ -192,9 +192,6 @@
       </div>
     </div>
 
-  <!-- Footer -->
-
-  <?php $footer->Footer();?>
     
   <!-- End Footer -->
   

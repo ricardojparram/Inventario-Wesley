@@ -14,22 +14,22 @@
 <body>
 <!-- ======= Header ======= -->
 
-      <?php 
-      
+      <?php
+
         $header->Header();
-                
-      ?>
+
+    ?>
       
 <!-- End Header -->
 
 
 <!-- ======= Sidebar ======= -->
 
-      <?php 
-      
-         $menu->Menu();
-                
-      ?>
+      <?php
+
+       $menu->Menu();
+
+    ?>
          
   <!-- End Sidebar-->
 
@@ -48,25 +48,23 @@
 
     <section class="section">
       <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-12 d-flex justify-content-center">
 
-          <div class="card">
+          <div class="card" style="max-width: 800px;">
             <div class="card-body">
               <h5 class="card-title">Reportes</h5>
-              <p>Seleccione el reporte que desea generar.</p>
-              <select class="form-control" id="tipoReporte">
-                <option disabled selected>Tipo de reporte</option>
-                <option value="venta" >Ventas</option>
-                <option value="compra" >Compras</option>
-                <!-- <option value="pagos" >Pagos recibidos</option> -->
-              </select>
-              <br>
+              <!-- <p>Seleccione el reporte que desea generar.</p> -->
+              <!-- <select class="form-control" id="tipoReporte"> -->
+              <!--   <option disabled selected>Tipo de reporte</option> -->
+              <!--   <option value="venta" >Ventas</option> -->
+              <!--   <option value="compra" >Compras</option> -->
+              <!-- </select> -->
               <div class="row">
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <p>Fecha inicial: </p>
                   <input type="date" class="form-control" id="fecha" name="">
                 </div>
-                <div class="col-6">
+                <div class="col-12 col-sm-6">
                   <p>Fecha Final: </p>
                   <input type="date" class="form-control" id="fecha2" name=""><br>
                 </div>
@@ -83,40 +81,33 @@
     </section>
 
     <section class="section d-none" id="reporte">
-      <div class="row">
-        <div class="col-lg-12">
+      <div class="w-100 ">
+        <div class="row">
+            <div class="col-12 col-xl-6">
+              <div class="card ">
+                <div class="card-body p-3">
 
-          <div class="card">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-6">
-                  <h5 class="card-title">Reporte generado: </h5>
-                </div>
-                <div class="col-6 mt-3 text-end">
-                  <button class="btn btn-danger" id="exportar">Reporte <i class="bi bi-file-pdf"></i></button>
-                  <button class="btn btn-danger" id="exportarEstadistico">Reporte estadístico <i class="bi bi-file-pdf-fill"></i></button>
+                  <div class="container">
+                    <canvas id="grafico_donaciones"></canvas>
+                  </div>
+
                 </div>
               </div>
-
-              <div class="container">
-                <div class="row">
-                    <div class="table-responsive">
-                        <table class="table table-stripped table-hover" width="100%" cellspacing="0" id="reporteLista">
-                            <thead>
-                              
-                            </thead>
-
-                            <tbody>
-                              
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-              </div>
-
             </div>
-          </div>
 
+            <div class="col-12 col-xl-6">
+              <div class="card ">
+                <div class="card-body p-3">
+                  <div class="container">
+                    <canvas id="grafico_productos"></canvas>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+
+          </div>
         </div>
       </div>
     </section>

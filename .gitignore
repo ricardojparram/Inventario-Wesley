@@ -1,4 +1,3 @@
-/bin/config/componentes/configSistema.php
 /assets/reportes/*.pdf
 /assets/reportes/*.xlsx
 /assets/tickets/*.pdf
@@ -7,6 +6,5 @@
 .phpunit.result.cache
 phpunit.xml
 /vendor/
-composer.lock
 \.phpintel
-
+.env

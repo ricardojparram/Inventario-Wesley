@@ -6,21 +6,21 @@
 
 	$model = new notificaciones();
 
-	if(isset($_POST['notificacionRegistrar'])){
-		$model->registrarNotificaciones();
-	}
 
 	if (isset($_POST['notificaciones'])) {
-		$model->getNotificaciones();
+	$res = $model->getNotificaciones();
+	die(json_encode($res));
+	}
+
+	if (isset($_GET['detalleNotificacion'], $_GET['notificationId'])) {
+	$res = $model->mostrarDetalleNotificacion($_GET['notificationId']);
+	die(json_encode($res));
 	}
 
 	if(isset($_POST['notificacionVista'], $_POST['notificationId'])) {
 		$model->notificacionVista($_POST['notificationId']);
 	}
 
-	if (isset($_POST['nombreNotificacion'])) {
-		$model->agregarNotificacion($_POST['mensaje'] , $_POST['nombreNotificacion']);
-	}
 
 	die("<script> window.location = '?url=login' </script>");
 

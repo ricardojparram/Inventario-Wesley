@@ -30,7 +30,7 @@ INSERT INTO presentacion (cod_pres, cantidad, id_medida, peso, status) VALUES
 (1, 12, 1, 20.00, 1),
 (2, 10, 1, 200.00, 1);
 
-INSERT INTO producto (cod_producto, id_tipoprod, ubicacion, composicion, posologia, id_tipo, id_clase, cod_pres, status) VALUES
+INSERT INTO producto (cod_producto, id_tipoprod, contraindicaciones, composicion, posologia, id_tipo, id_clase, cod_pres, status) VALUES
 ('1', 1, 'Pastillo A1', ' C8H9NO2', 'La dosis habitual es de 325 mg a 650 mg. Tómelo con una frecuencia de 4 a 6 horas, según sea necesario, hasta 4 veces en un período de 24 horas. La dosis máxima puede variar entre 3,000 mg y 4,000 mg', 2, 1, 1, 1),
 ('2', 3, 'Pastillo B2', 'C13H18O2', 'En adultos y adolescentes de 14 a 18 años se toma un comprimido (600 mg) cada 6 a 8 horas, dependiendo de la intensidad del cuadro y de la respuesta al tratamiento.', 2, 1, 2, 1);
 

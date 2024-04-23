@@ -47,6 +47,10 @@
 		die(json_encode($res));
 	}
 
+	if (isset($_POST["borrar"]) && isset($_POST["id"]) && $permiso['Eliminar'] == 1){
+		$res = $objModel->getEliminarCompra($_POST["id"]);
+		die(json_encode($res));
+	}
 	$VarComp = new initcomponents();
 	$header = new header();
 	$menu = new menuLateral($permisos);

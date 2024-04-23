@@ -73,7 +73,7 @@ public function productoDetalle($id){
 
 	try{
 		parent::conectarDB();
-		$new = $this->con->prepare("SELECT cp.cantidad, cp.precio_compra , CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre) AS producto,c.orden_compra FROM compra_producto cp INNER JOIN compra c ON cp.orden_compra = c.orden_compra INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede INNER JOIN producto p ON ps.cod_producto = p.cod_producto INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON p.cod_pres = pr.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE c.status = 1 AND c.orden_compra = ?;
+		$new = $this->con->prepare("SELECT cp.cantidad, cp.precio_compra , CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre) AS producto,c.orden_compra FROM compra_producto cp INNER JOIN compra c ON cp.orden_compra = c.orden_compra INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede INNER JOIN producto p ON ps.cod_producto = p.cod_producto INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON p.cod_pres = pr.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE c.status = 1 AND c.orden_compra = ? ;
 		");
 		$new->bindValue(1, $this->producto);
 		$new->execute();
@@ -150,6 +150,7 @@ public function productoDetalle($id){
 
 				$fecha_vencimiento = $this->convertirFecha($producto['fecha_vencimiento'], 'd/m/Y');
 			
+				$fecha_vencimiento = $this->convertirFecha($producto['fecha_vencimiento'], 'd/m/Y');
 				$new = $this->con->prepare("INSERT INTO `producto_sede`(`id_producto_sede`, `cod_producto`, `lote`, `fecha_vencimiento`, `id_sede`, `cantidad`) VALUES (DEFAULT,?,?,?,1,?)");
 				$new->bindValue(1, $producto['id_producto']);
 				$new->bindValue(2, $producto['lote']);
@@ -179,6 +180,27 @@ public function productoDetalle($id){
 
 	}
 
+	public function getEliminarCompra($id){
+		$this->id = $id;
+	
+		$this->eliminarCompra();
+	}
+	
+	private function eliminarCompra(){
+
+		try{
+		parent::conectarDB();
+		 $new = $this->con->prepare("UPDATE `compra` SET status = 0 WHERE `orden_compra`= ? ");
+		 $new->bindValue(1, $this->id);
+		 $new->execute();
+		 $resultado = ['resultado' => 'Eliminado'];
+			echo json_encode($resultado);
+		  parent::desconectarDB();
+			die();
+		}catch (\PDOException $error) {
+		  return $error;
+		}
+	}
 
 
 

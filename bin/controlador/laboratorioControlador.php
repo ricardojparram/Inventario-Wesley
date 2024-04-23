@@ -33,9 +33,11 @@ if (isset($_POST['select'], $_POST['id'], $permiso["Editar"])) {
   die(json_encode($res));
 }
 
-if (isset($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['id'], $permiso["Editar"])) {
+if (isset($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['id'])) {
+  if (!isset($permiso["Editar"]))
+    die(json_encode($objModel->http_error(403, "Permiso denegado.")));
 
-  $res = $objModel->getEditar($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['id'], $permiso["Editar"]);
+  $res = $objModel->getEditar($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['id']);
   die(json_encode($res));
 }
 
