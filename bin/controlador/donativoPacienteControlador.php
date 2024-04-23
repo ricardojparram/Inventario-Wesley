@@ -38,10 +38,6 @@
         die(json_encode($res));
       }
 
-      if (isset($_POST['selectSedes'])) {
-        $res = $objModel->selectSedes();
-        die(json_encode($res));
-      }
 
       if(isset($_POST['selectProductos'])) {
         $res = $objModel->selectProductos();
@@ -53,8 +49,13 @@
         die(json_encode($res));
       }
 
-      if(isset($_POST['cedulaPaciente']) && isset($_POST['beneficiario']) && isset($_POST['datos']) && $permiso['Registrar']) {
-        $res = $objModel->getRegistrarDonacion($_POST['cedulaPaciente'], $_POST['beneficiario'] , $_POST['datos']);
+      if (isset($_GET['cedula'] , $_GET['tipo'])) {
+        $res = $objModel->validarCedula($_GET['cedula']);
+        die(json_encode($res));
+      }
+
+      if(isset($_POST['cedulaPaciente']) && isset($_POST['datos']) && $permiso['Registrar']) {
+        $res = $objModel->getRegistrarDonacion($_POST['cedulaPaciente'] , $_POST['datos']);
         die(json_encode($res));
       }
 

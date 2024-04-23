@@ -29,7 +29,8 @@ trait validar {
             "entero" => "/^[1-9]\d*$/",
             "string" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9/#\s,.-]){3,50}$/",
             "long_string" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s(),.-]){1,5000}$/",
-            "cuenta_bancaria" => "/^(?=.*[0-9])(?=.*[-])[0-9-]{1,25}$/"
+            "cuenta_bancaria" => "/^(?=.*[0-9])(?=.*[-])[0-9-]{1,25}$/",
+            "factura" => "/^N°-[A-Za-z0-9]{6,15}$/u"
         ];
         if (!isset($regex[$tipo]))
             die("No existe el tipo de dato en las expresiones regulares almacenadas.");

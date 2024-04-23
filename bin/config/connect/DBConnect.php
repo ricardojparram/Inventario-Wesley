@@ -59,16 +59,33 @@
       return bin2hex(random_bytes(5));
     }
 
-    protected function uniqueNumericID(){
-    $randomNumber = '';
-    $length = 8; // Longitud del ID numérico deseado
+    protected function generarNumeroFactura($numeroFactura) {
+    // Extraer la letra y el número actual
+    $numeroFactura = substr($numeroFactura, 4);
+    $length = strlen($numeroFactura) - 5;//El numero son los digitos de la factura, igual abajo*
+    $letraActual = substr($numeroFactura, 0, $length);
+    $numeroFactura = intval(substr($numeroFactura, $length));
+    
 
-    for ($i = 0; $i < $length; $i++) {
-        $randomNumber .= mt_rand(0, 9); // Genera un dígito aleatorio entre 0 y 9
-      }
+    // Incrementar el número
+    $numeroFactura++;
 
-      return $randomNumber;
+    // Verificar si necesitamos cambiar la letra
+    if ($numeroFactura > 99999) {
+        // Cambiar la letra
+
+      $letraActual++;
+
+        // Reiniciar el número
+      $numeroFactura = 0;
     }
+    
+
+    // Formatear el nuevo número de factura
+    $nuevoNumero = "N°-".$letraActual . sprintf('%05d', $numeroFactura);//Aqui tambien cambiar numero de ser necesario*
+
+    return $nuevoNumero;
+  }
 
     public function getPermisosRol($rol){
       $this->rol = $rol;

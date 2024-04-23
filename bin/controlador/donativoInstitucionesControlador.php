@@ -48,8 +48,13 @@
         die(json_encode($res));
       }
 
-      if(isset($_POST['rifInstitucion']) && isset($_POST['beneficiario']) && isset($_POST['datos']) && $permiso['Registrar']) {
-        $res = $objModel->getRegistrarDonacion($_POST['rifInstitucion'], $_POST['beneficiario'] , $_POST['datos']);
+      if(isset($_GET['rif'] , $_GET['tipo'])) {
+        $res = $objModel->validarRif($_GET['rif']);
+        die(json_encode($res));
+      }
+
+      if(isset($_POST['rifInstitucion']) && isset($_POST['datos']) && $permiso['Registrar']) {
+        $res = $objModel->getRegistrarDonacion($_POST['rifInstitucion'], $_POST['datos']);
         die(json_encode($res));
       }
 
