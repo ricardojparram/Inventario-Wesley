@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en" >
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reportes</title>
+  </head>
+</html>
     <?php $VarComp->header(); ?>
     <link rel="stylesheet" href="assets/css/estiloInterno.css">
     <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
@@ -22,10 +24,9 @@
       
 <!-- End Header -->
 
-
 <!-- ======= Sidebar ======= -->
-
-      <?php
+      
+<?php
 
        $menu->Menu();
 
@@ -47,24 +48,24 @@
     </div>
 
     <section class="section">
-      <div class="row">
-        <div class="col-lg-12 d-flex justify-content-center">
-
-          <div class="card" style="max-width: 800px;">
+      <div class="row justify-content-center">
+        <div class="col-lg-12" style="max-width: 1080px">
+          <div class="card">
             <div class="card-body">
               <h5 class="card-title">Reportes</h5>
-              <!-- <p>Seleccione el reporte que desea generar.</p> -->
-              <!-- <select class="form-control" id="tipoReporte"> -->
-              <!--   <option disabled selected>Tipo de reporte</option> -->
-              <!--   <option value="venta" >Ventas</option> -->
-              <!--   <option value="compra" >Compras</option> -->
-              <!-- </select> -->
-              <div class="row">
-                <div class="col-12 col-sm-6">
+              <p>Seleccione el reporte que desea generar.</p>
+              <select class="form-control" id="tipoReporte">
+                <option disabled selected>Tipo de reporte</option>
+                <option value="donaciones" >Donaciones</option>
+                <option value="productos" >Productos</option>
+              </select>
+              <br>
+              <div class="row mt-2">
+                <div class="col-6">
                   <p>Fecha inicial: </p>
                   <input type="date" class="form-control" id="fecha" name="">
                 </div>
-                <div class="col-12 col-sm-6">
+                <div class="col-6">
                   <p>Fecha Final: </p>
                   <input type="date" class="form-control" id="fecha2" name=""><br>
                 </div>
@@ -81,34 +82,51 @@
     </section>
 
     <section class="section d-none" id="reporte">
-      <div class="w-100 ">
-        <div class="row">
-            <div class="col-12 col-xl-6">
-              <div class="card ">
-                <div class="card-body p-3">
+      <div class="row justify-content-center">
 
-                  <div class="container">
-                    <canvas id="grafico_donaciones"></canvas>
-                  </div>
-
+        <div class="col-lg-12" style="max-width: 1080px">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-12" >
+                    <canvas id="grafico"></canvas>
                 </div>
               </div>
             </div>
-
-            <div class="col-12 col-xl-6">
-              <div class="card ">
-                <div class="card-body p-3">
-                  <div class="container">
-                    <canvas id="grafico_productos"></canvas>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-
           </div>
         </div>
+
+        <div class="col-lg-12" style="max-width: 1200px">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-6">
+                  <h5 class="card-title">Reporte generado: </h5>
+                </div>
+                <div class="col-6 mt-3 text-end">
+                  <button class="btn btn-danger" id="exportar">Reporte estadístico <i class="bi bi-file-pdf-fill"></i></button>
+                </div>
+              </div>
+
+              <div class="container">
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-stripped table-hover" width="100%" id="reporteLista">
+                            <thead>
+                            </thead>
+                            
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </section>
 

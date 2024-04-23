@@ -36,18 +36,8 @@ if(isset($_POST['mostrar'], $_POST['tipo'], $_POST['fechaInicio'], $_POST['fecha
     die(json_encode($res));
 }
 
-if(isset($_POST['exportar'], $_POST['tipo'], $_POST['fechaInicio'], $_POST['fechaFinal'], $permiso["Exportar reporte"])) {
-    $res = $objModel->getExportar($_POST['tipo'], $_POST['fechaInicio'], $_POST['fechaFinal']);
-    die(json_encode($res));
-}
-
-if(isset($_POST['estadistico'], $_POST['tipo'], $_POST['fechaInicio'], $_POST['fechaFinal'], $permiso["Exportar reporte estadistico"])) {
-    $res = $objModel->getReporteEstadistico($_POST['tipo'], $_POST['fechaInicio'], $_POST['fechaFinal']);
-    die(json_encode($res));
-}
-
-if(isset($_POST['grafico'], $_POST['fechaFinal'], $_POST['fechaInicio'])) {
-    $res = $objModel->getGrafico($_POST['fechaInicio'], $_POST['fechaFinal']);
+if(isset($_POST['exportar'], $_POST['tipo'], $_POST['fechaInicio'], $_POST['fechaFinal'], $_POST['grafico'], $permiso["Exportar reporte"])) {
+    $res = $objModel->getExportar($_POST['tipo'], $_POST['fechaInicio'], $_POST['fechaFinal'], $_POST['grafico']);
     die(json_encode($res));
 }
 
@@ -56,4 +46,3 @@ if(file_exists("vista/interno/reportesVista.php")) {
 } else {
     die('La vista no existe.');
 }
-
