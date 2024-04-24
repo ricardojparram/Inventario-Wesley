@@ -29,15 +29,15 @@ class menuLateral
         $sistemaB = ($_GET['url'] == 'roles' || $_GET['url'] == 'bitacora' || $_GET['url'] == 'usuarios' || $_GET['url'] == 'mantenimiento') ? "show" : "collapse" ;
         $moneda = ($_GET['url'] == 'moneda') ? "active" : "" ;
         $metodo = ($_GET['url'] == 'metodo') ? "active" : "" ;
-        $productosA = ($_GET['url'] == 'productoDañado' || $_GET['url'] == 'producto' || $_GET['url'] == 'laboratorio' || $_GET['url'] == 'proveedor' || $_GET['url'] == 'presentacion' || $_GET['url'] == 'clase' || $_GET['url'] == 'tipo') ? "" : "collapsed" ;
-        $productosB = ($_GET['url'] == 'productoDañado' || $_GET['url'] == 'producto' || $_GET['url'] == 'laboratorio' || $_GET['url'] == 'proveedor' || $_GET['url'] == 'presentacion' || $_GET['url'] == 'clase' || $_GET['url'] == 'tipo') ? "show" : "collapse" ;
+        $productosA = ($_GET['url'] == 'tipoProducto' || $_GET['url'] == 'medida' || $_GET['url'] == 'productoDanado' || $_GET['url'] == 'producto' || $_GET['url'] == 'laboratorio' || $_GET['url'] == 'proveedor' || $_GET['url'] == 'presentacion' || $_GET['url'] == 'clase' || $_GET['url'] == 'tipo' || $_GET['url'] == 'inventario') ? "" : "collapsed" ;
+        $productosB = ($_GET['url'] == 'tipoProducto' || $_GET['url'] == 'medida' || $_GET['url'] == 'productoDanado' || $_GET['url'] == 'producto' || $_GET['url'] == 'laboratorio' || $_GET['url'] == 'proveedor' || $_GET['url'] == 'presentacion' || $_GET['url'] == 'clase' || $_GET['url'] == 'tipo' || $_GET['url'] == 'inventario') ? "show" : "collapse" ;
         $categoria = ($_GET['url'] == 'clase' || $_GET['url'] == 'tipo') ? "active" : "" ;
         $producto = ($_GET['url'] == 'producto') ? "active" : "" ;
         $laboratorio = ($_GET['url'] == 'laboratorio') ? "active" : "" ;
         $proveedor = ($_GET['url'] == 'proveedor') ? "active" : "" ;
         $presentacion = ($_GET['url'] == 'presentacion') ? "active" : "" ;
         $inventario = ($_GET['url'] == 'inventario') ? "active" : "" ;
-        $productoDañado = ($_GET['url'] == 'productoDañado') ? "active" : "" ;
+        $productoDañado = ($_GET['url'] == 'productoDanado') ? "active" : "" ;
         $tipoProducto = ($_GET['url'] == 'tipoProducto') ? "active" : "" ;
         $clase = ($_GET['url'] == 'clase') ? "active" : "" ;
         $tipo = ($_GET['url'] == 'tipo') ? "active" : "" ;
