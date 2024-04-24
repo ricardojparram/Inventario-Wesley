@@ -3,9 +3,10 @@
 namespace modelo;
 
 use config\connect\DBConnect as DBConnect;
+use utils\validar;
 
 class usuarios extends DBConnect {
-
+  use validar;
   private $cedula;
   private $name;
   private $apellido;
@@ -103,7 +104,7 @@ class usuarios extends DBConnect {
         $resultado = ['resultado' => 'Error', 'error' => 'error desconocido.'];
       }
       return $resultado;
-    } catch (exection $error) {
+    } catch (\PDOException $error) {
       return $error;
     }
   }
@@ -123,7 +124,7 @@ class usuarios extends DBConnect {
 
       parent::desconectarDB();
       return $data;
-    } catch (\PDOexection $error) {
+    } catch (\PDOException $error) {
 
       return $error;
     }
@@ -137,7 +138,7 @@ class usuarios extends DBConnect {
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
       parent::desconectarDB();
       return $data;
-    } catch (\PDOexection $error) {
+    } catch (\PDOException $error) {
 
       return $error;
     }
@@ -165,7 +166,7 @@ class usuarios extends DBConnect {
       $this->binnacle("Usuario", $_SESSION['cedula'], "Eliminó un usuario");
       parent::desconectarDB();
       return $resultado;
-    } catch (\PDOexection $error) {
+    } catch (\PDOException $error) {
       return $error;
     }
   }
@@ -190,7 +191,7 @@ class usuarios extends DBConnect {
       parent::desconectarDB();
 
       return $data;
-    } catch (\PDOexection $error) {
+    } catch (\PDOException $error) {
 
       return $error;
     }
@@ -259,7 +260,7 @@ class usuarios extends DBConnect {
       $this->binnacle("Usuario", $_SESSION['cedula'], "Editó un usuario");
       parent::desconectarDB();
       return $resultado;
-    } catch (\PDOexection $error) {
+    } catch (\PDOException $error) {
 
       return $error;
     }
@@ -323,7 +324,7 @@ class usuarios extends DBConnect {
   }
 
   public function getValidarE($correo, $id) {
-    $this->correo = $correo;
+    $this->email = $correo;
     $this->id = $id;
 
     return $this->validarE();
@@ -334,7 +335,7 @@ class usuarios extends DBConnect {
       parent::conectarDB();
       $new = $this->con->prepare("SELECT `correo`, `status` FROM usuario WHERE cedula <> ? and correo = ?");
       $new->bindValue(1, $this->id);
-      $new->bindValue(2, $this->correo);
+      $new->bindValue(2, $this->email);
       $new->execute();
       $data = $new->fetchAll();
       parent::desconectarDB();
@@ -348,8 +349,23 @@ class usuarios extends DBConnect {
       // } -------> Preguntar si dejo esta validacion <-------
       $resultado = ['resultado' => 'Correcto'];
       return $resultado;
-    } catch (\PDOException $e) {
-      return $e;
+    } catch (\PDOException $error) {
+      return $error;
+    }
+  }
+
+  public function getPersonal($cedula){
+    try {
+      parent::conectarDB();
+      $new = $this->con->prepare("SELECT cedula, nombres, apellidos, correo, status FROM personal WHERE cedula = ?");
+      $new->bindValue(1, $cedula);
+      $new->execute();
+      $data = $new->fetchAll();
+      parent::desconectarDB();
+      if(!isset($data[0]['cedula']) || $data[0]['cedula'] == 0) return  $this->http_error(404, 'Registre Primero en Personal');
+      return $data;
+    } catch (\PDOException $error) {
+      return $this->http_error(500, $error);
     }
   }
 }
