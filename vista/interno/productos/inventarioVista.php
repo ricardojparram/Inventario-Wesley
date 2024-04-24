@@ -12,22 +12,22 @@
 <body>
 <!-- ======= Header ======= -->
 
-      <?php 
-      
+      <?php
+
         $header->Header();
-                
-      ?>
+
+   ?>
       
 <!-- End Header -->
 
 
 <!-- ======= Sidebar ======= -->
 
-      <?php 
-      
-        $menu->Menu();
-                
-      ?>
+      <?php
+
+     $menu->Menu();
+
+   ?>
          
   <!-- End Sidebar-->
 
@@ -64,13 +64,13 @@
 
                     <tr>
                       <th scope="col">#</th>
+                      <th scope="col">Sede</th>
                       <th scope="col">Fecha</th>
                       <th scope="col">Producto</th>
                       <th scope="col">Entrada</th>                      
                       <th scope="col">Salida</th>
                       <th scope="col">Lote</th>
                       <th scope="col">Cantidad</th>
-                      <th scope="col">Opciones</th>
                     </tr>
                   </thead>
               
