@@ -270,7 +270,7 @@ class menuLateral
 
         $productoDañadoLi = (isset($this->permisos['Producto dañado']["Consultar"])) ?
         '<li>
-        <a href="?url=Productodanado" class="'.$productoDañado.'">
+        <a href="?url=productoDanado" class="'.$productoDañado.'">
           <i class="bi bi-capsule-pill"></i><span>Producto dañado</span>
         </a>
     </li>' : '';
@@ -429,4 +429,3 @@ class menuLateral
     }
 
 }
-
