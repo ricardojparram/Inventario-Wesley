@@ -5,7 +5,8 @@ namespace modelo;
 use config\connect\DBConnect as DBConnect;
 use utils\validar;
 
-class recepcion extends DBConnect {
+class recepcion extends DBConnect
+{
     use validar;
     private $id_recepcion;
     private $id_transferencia;
@@ -16,7 +17,8 @@ class recepcion extends DBConnect {
     private $productos;
     private $id_producto;
 
-    public function mostrarSedes() {
+    public function mostrarSedes()
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT id_sede, nombre FROM sede WHERE status = 1";
@@ -28,7 +30,8 @@ class recepcion extends DBConnect {
             return ['error' => $e->getMessage()];
         }
     }
-    public function mostrarRecepciones($bitacora): array {
+    public function mostrarRecepciones($bitacora): array
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT r.id_recepcion, s.nombre as nombre_sede, r.fecha FROM recepcion_sede r
@@ -38,7 +41,9 @@ class recepcion extends DBConnect {
             $new = $this->con->prepare($sql);
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
-            // if($bitacora == "true") $this->binnacle("Transferencia",$_SESSION['cedula'],"Consultó listado.");
+            if($bitacora == "true") {
+                $this->binnacle("Recepcion", $_SESSION['cedula'], "Consultó listado de recepcion.");
+            }
             $this->desconectarDB();
             return $data;
         } catch (\PDOException $e) {
@@ -46,7 +51,8 @@ class recepcion extends DBConnect {
         }
     }
 
-    public function mostrarTransferencias($bitacora): array {
+    public function mostrarTransferencias($bitacora): array
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT t.id_transferencia, s.nombre as nombre_sede, t.fecha FROM transferencia t 
@@ -62,14 +68,17 @@ class recepcion extends DBConnect {
             return ['error' => $e->getMessage()];
         }
     }
-    public function getMostrarDetalle($id_recepcion) {
-        if (preg_match_all("/^[0-9]{1,10}$/", $id_recepcion) != 1)
+    public function getMostrarDetalle($id_recepcion)
+    {
+        if (preg_match_all("/^[0-9]{1,10}$/", $id_recepcion) != 1) {
             return $this->http_error(400, 'Producto invalido.');
+        }
 
         $this->id_recepcion = $id_recepcion;
         return $this->mostrarDetalle();
     }
-    private function mostrarDetalle() {
+    private function mostrarDetalle()
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT s.nombre as nombre_sede, ps.lote, ps.id_producto_sede, p.cod_producto, dr.cantidad, ps.fecha_vencimiento FROM detalle_recepcion dr
@@ -89,15 +98,18 @@ class recepcion extends DBConnect {
         }
     }
 
-    public function getDatosTransferencia($id_transferencia): array {
-        if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1)
+    public function getDatosTransferencia($id_transferencia): array
+    {
+        if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
             return $this->http_error(400, 'Producto invalido.');
+        }
 
         $this->id_transferencia = $id_transferencia;
         return $this->datosTransferencia();
     }
 
-    private function datosTransferencia(): array {
+    private function datosTransferencia(): array
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT id_sede, fecha FROM transferencia WHERE id_transferencia = ?";
@@ -120,7 +132,8 @@ class recepcion extends DBConnect {
             return ['error' => $e->getMessage()];
         }
     }
-    private function mostrarProductoInventario(): array {
+    private function mostrarProductoInventario(): array
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT cantidad FROM producto_sede WHERE id_producto_sede = ?;";
@@ -133,7 +146,8 @@ class recepcion extends DBConnect {
             return ['error' => $e->getMessage()];
         }
     }
-    private function cambiarEstadoTransferencia($status) {
+    private function cambiarEstadoTransferencia($status)
+    {
         try {
             $sql = "UPDATE transferencia SET status = :status WHERE id_transferencia = :id_transferencia";
             $new = $this->con->prepare($sql);
@@ -145,19 +159,24 @@ class recepcion extends DBConnect {
         }
     }
 
-    public function getAgregarRecepcion($id_transferencia, $sede, $fecha, $productos): array {
-        if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1)
+    public function getAgregarRecepcion($id_transferencia, $sede, $fecha, $productos): array
+    {
+        if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
             return $this->http_error(400, 'Transferencia inválida.');
+        }
 
-        if (preg_match_all("/^[0-9]{1,10}$/", $sede) != 1)
+        if (preg_match_all("/^[0-9]{1,10}$/", $sede) != 1) {
             return $this->http_error(400, 'Sede inválida.');
+        }
 
         $fecha =  date('Y-m-d H:i:s', strtotime($fecha));
-        if ($this->validarFecha($fecha, 'Y-m-d H:i:s') !== true)
+        if ($this->validarFecha($fecha, 'Y-m-d H:i:s') !== true) {
             return $this->http_error(400, 'Fecha inválida.');
+        }
 
-        if (!is_array($productos))
+        if (!is_array($productos)) {
             return $this->http_error(400, 'Productos inválidos.');
+        }
 
         $this->id_sede = $sede;
         $this->fecha = $fecha;
@@ -167,7 +186,8 @@ class recepcion extends DBConnect {
         return $this->agregarRecepcion();
     }
 
-    private function agregarRecepcion(): array {
+    private function agregarRecepcion(): array
+    {
         try {
             $this->conectarDB();
             $sql = "INSERT INTO recepcion_sede(id_transferencia, fecha, status) VALUES (?,?,1)";
@@ -202,12 +222,14 @@ class recepcion extends DBConnect {
                     $this->id_producto = $this->con->lastInsertId();
                 }
 
+
                 $sql = "INSERT INTO detalle_recepcion(id_recepcion, id_producto_sede, cantidad) VALUES (?,?,?)";
                 $new = $this->con->prepare($sql);
                 $new->bindValue(1, $this->id_recepcion);
                 $new->bindValue(2, $this->id_producto);
                 $new->bindValue(3, $producto['cantidad']);
                 $new->execute();
+                $this->inventario_historial("Recepcion", "x", "", "", $this->id_producto, $producto["cantidad"]);
             }
 
             $this->cambiarEstadoTransferencia(2);
@@ -219,7 +241,8 @@ class recepcion extends DBConnect {
         }
     }
 
-    private function verificarExistenciaDelLote() {
+    private function verificarExistenciaDelLote()
+    {
         try {
             $sql = "SELECT id_producto_sede, cantidad FROM producto_sede 
                     WHERE lote = (
@@ -239,15 +262,18 @@ class recepcion extends DBConnect {
         }
     }
 
-    public function getEliminarRecepcion($id_recepcion): array {
-        if (preg_match_all("/^[0-9]{1,10}$/", $id_recepcion) != 1)
+    public function getEliminarRecepcion($id_recepcion): array
+    {
+        if (preg_match_all("/^[0-9]{1,10}$/", $id_recepcion) != 1) {
             return $this->http_error(400, 'Transferencia inválida.');
+        }
 
         $this->id_recepcion = $id_recepcion;
 
         return $this->eliminarRecepcion();
     }
-    private function eliminarRecepcion(): array {
+    private function eliminarRecepcion(): array
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT id_transferencia FROM recepcion_sede

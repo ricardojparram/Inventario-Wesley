@@ -5,7 +5,8 @@ namespace modelo;
 use config\connect\DBConnect as DBConnect;
 use utils\validar;
 
-class descargo extends DBConnect {
+class descargo extends DBConnect
+{
     use validar;
     private $id_descargo;
     private $num_descargo;
@@ -13,7 +14,8 @@ class descargo extends DBConnect {
     private $productos;
     private $id_producto;
 
-    public function mostrarDescargos($bitacora) {
+    public function mostrarDescargos($bitacora)
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT id_descargo, fecha, num_descargo FROM descargo 
@@ -28,15 +30,18 @@ class descargo extends DBConnect {
         }
     }
 
-    public function getMostrarDetalle($id_descargo) {
-        if (!$this->validarString('entero', $id_descargo))
+    public function getMostrarDetalle($id_descargo)
+    {
+        if (!$this->validarString('entero', $id_descargo)) {
             return $this->http_error(400, 'descargo inválido.');
+        }
 
         $this->id_descargo = $id_descargo;
 
         return $this->mostrarDetalle();
     }
-    private function mostrarDetalle() {
+    private function mostrarDetalle()
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT ps.lote, ps.presentacion_producto, ps.fecha_vencimiento, dc.cantidad, c.num_descargo FROM descargo c 
@@ -53,7 +58,8 @@ class descargo extends DBConnect {
         }
     }
 
-    public function mostrarProductos() {
+    public function mostrarProductos()
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT id_producto_sede, presentacion_producto, fecha_vencimiento, cantidad FROM vw_producto_sede_detallado
@@ -66,7 +72,8 @@ class descargo extends DBConnect {
             return $this->http_error(500, $e->getMessage());
         }
     }
-    private function verificarExistenciaDelLote() {
+    private function verificarExistenciaDelLote()
+    {
         try {
             $sql = "SELECT id_producto_sede, cantidad FROM producto_sede 
                     WHERE lote = (
@@ -84,20 +91,24 @@ class descargo extends DBConnect {
             return $this->http_error(500, $e->getMessage());
         }
     }
-    public function getAgregarDescargo($num_descargo, $fecha, $productos): array {
-        if (!$this->validarString('entero', $num_descargo))
+    public function getAgregarDescargo($num_descargo, $fecha, $productos): array
+    {
+        if (!$this->validarString('entero', $num_descargo)) {
             return $this->http_error(400, 'Transferencia inválida.');
+        }
 
         $fecha =  date('Y-m-d', strtotime($fecha));
-        if (!$this->validarFecha($fecha, 'Y-m-d'))
+        if (!$this->validarFecha($fecha, 'Y-m-d')) {
             return $this->http_error(400, 'Fecha inválida.');
+        }
 
         $estructura_productos = [
             'id_producto' => 'string',
             'cantidad' => 'string'
         ];
-        if (!$this->validarEstructuraArray($productos, $estructura_productos, true))
+        if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
+        }
 
         $this->num_descargo = $num_descargo;
         $this->fecha = $fecha;
@@ -106,7 +117,8 @@ class descargo extends DBConnect {
         return $this->agregarDescargo();
     }
 
-    private function agregarDescargo(): array {
+    private function agregarDescargo(): array
+    {
         try {
             $this->conectarDB();
             $sql = "INSERT INTO descargo(fecha, num_descargo, status) VALUES (?,?,1)";
@@ -140,6 +152,8 @@ class descargo extends DBConnect {
                 $new->bindValue(2, $this->id_producto);
                 $new->bindValue(3, $cantidad);
                 $new->execute();
+
+                $this->inventario_historial("Descargo", "", "x", "", $this->id_producto, $cantidad);
             }
 
             $this->desconectarDB();
@@ -149,15 +163,18 @@ class descargo extends DBConnect {
         }
     }
 
-    public function getEliminarDescargo($id_descargo): array {
-        if (!$this->validarString('entero', $id_descargo))
+    public function getEliminarDescargo($id_descargo): array
+    {
+        if (!$this->validarString('entero', $id_descargo)) {
             return $this->http_error(400, 'descargo inválido.');
+        }
 
         $this->id_descargo = $id_descargo;
 
         return $this->eliminarDescargo();
     }
-    private function eliminarDescargo(): array {
+    private function eliminarDescargo(): array
+    {
         try {
             $this->conectarDB();
 
