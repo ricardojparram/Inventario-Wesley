@@ -36,10 +36,10 @@
 
     <main class="main" id="main">
         <div class="pagetitle">
-            <h1>Descargo</h1>
+            <h1>Producto Dañado</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item">Descargo</li>
+                    <li class="breadcrumb-item">Producto Dañado</li>
                 </ol>
             </nav>
 
@@ -54,7 +54,7 @@
                     </div>
 
                     <div class="col-6 text-end mt-3">
-                        <button type="button" id="Exportar" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exportar">Exportar</button>
+                        <button type="button" id="Exportar" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#exportar">Exportar</button>
                     </div>
                 </div>
 
@@ -64,7 +64,7 @@
                         <thead>
 
                             <tr>
-                                <th scope="col">Descargo</th>
+                                <th scope="col">Producto Dañado</th>
                                 <th scope="col">Fecha</th>
                                 <th scope="col">Opciones</th>
                             </tr>
