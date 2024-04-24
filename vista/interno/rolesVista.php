@@ -11,7 +11,7 @@
 <body>
   <!-- ======= Header ======= -->
 
-  <?php 
+  <?php
 
     $header->Header();
 
@@ -22,11 +22,11 @@
 
   <!-- ======= Sidebar ======= -->
 
-  <?php 
+  <?php
 
    $menu->Menu();
 
- ?>
+  ?>
 
  <!-- End Sidebar-->
 
@@ -109,9 +109,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
+      <form id = "agregarform">
       <div class="modal-body ">
 
-        <form id = "agregarform">
 
           <div class="form-group col-md-12">  
             <div class="container-fluid">
@@ -131,7 +131,6 @@
             </div>
           </div>
 
-        </form>
       </div>
 
       <p style="color:#ff0000;text-align: center;" id="error"><?php echo (isset($respuesta)) ? $respuesta : " "; ?></p>
@@ -140,6 +139,7 @@
         <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
@@ -154,9 +154,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
+      <form id = "editarform">
       <div class="modal-body ">
 
-        <form id = "editarform">
 
           <div class="form-group col-md-12">  
             <div class="container-fluid">
@@ -176,7 +176,6 @@
             </div>
           </div>
 
-        </form>
       </div>
 
       <p style="color:#ff0000;text-align: center;" id="error"><?php echo (isset($respuesta)) ? $respuesta : " "; ?></p>
@@ -185,6 +184,7 @@
         <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-success " id="editar">Editar</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
