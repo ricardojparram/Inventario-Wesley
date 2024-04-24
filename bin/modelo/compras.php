@@ -191,7 +191,7 @@ public function productoDetalle($id){
 		 $new = $this->con->prepare("UPDATE `compra` SET status = 0 WHERE `orden_compra`= ? ");
 		 $new->bindValue(1, $this->id);
 		 $new->execute();
-		 $resultado = ['resultado' => 'Eliminado'];
+		 $resultado = ['resultado' => 'Eliminado con exito.'];
 			echo json_encode($resultado);
 		  parent::desconectarDB();
 			die();

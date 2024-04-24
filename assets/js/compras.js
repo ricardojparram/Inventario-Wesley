@@ -381,7 +381,7 @@ $(document).ready(function() {
 	$(document).on('click', '.borrar',function (){
 		id = this.id;
 	})
-	$("#Borrar").click((e)=>{
+	$("#eliminar").click((e)=>{
 		e.preventDefault();
 		$.ajax({
 			type:"POST",
@@ -393,14 +393,10 @@ $(document).ready(function() {
 
 			},
 			success(data){
-				if (data.resultado === "Eliminado con exito."){
-					mostrar.destroy();
-					$("#borrar").click();
-					Toast.fire({icon: 'success', title:'Compras eliminada'})
-					rellenar();
-				}else{
-					console.log("No se elimino");
-				}
+				mostrar.destroy();
+				$(".cerrar").click();
+				Toast.fire({icon: 'success', title:'compra eliminada'})
+				rellenar();
 			}
 		})
 	})
