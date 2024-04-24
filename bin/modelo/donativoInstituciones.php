@@ -83,7 +83,7 @@ class donativoInstituciones extends DBConnect{
 	public function selectProductos(){
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare("SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE p.status = 1 AND s.status = 1 ORDER BY ps.fecha_vencimiento");
+			$new = $this->con->prepare("SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE p.status = 1 AND s.status = 1 AND ps.cantidad > 0 ORDER BY ps.fecha_vencimiento");
 
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);

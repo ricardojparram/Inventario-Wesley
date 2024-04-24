@@ -590,7 +590,7 @@ CREATE TABLE detalle_recepcion_nacional (
 
 -- --------------------------------------------------------
 --
--- Estructura de tabla para la tabla historial
+-- Estructura para la tabla historial
 --
 CREATE TABLE historial (
   id_historial int(11) AUTO_INCREMENT PRIMARY KEY,
@@ -610,3 +610,13 @@ CREATE TABLE historial (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- --------------------------------------------------------
+--
+-- Estructura de tabla notificaciones
+--
+CREATE TABLE notificaciones (
+  id int(11) AUTO_INCREMENT PRIMARY KEY,
+  titulo VARCHAR(60) NOT NULL,
+  mensaje VARCHAR(255) NOT NULL,
+  fecha datetime NOT NULL DEFAULT current_timestamp(),
+  status tinyint(1) UNSIGNED NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;

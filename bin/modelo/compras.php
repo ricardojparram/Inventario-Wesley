@@ -71,7 +71,7 @@ class compras extends DBConnect {
 
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare("SELECT cp.cantidad, cp.precio_compra , CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre) AS producto,c.orden_compra FROM compra_producto cp INNER JOIN compra c ON cp.orden_compra = c.orden_compra INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede INNER JOIN producto p ON ps.cod_producto = p.cod_producto INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON p.cod_pres = pr.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE c.status = 1 AND c.orden_compra = ?;
+			$new = $this->con->prepare("SELECT cp.cantidad, cp.precio_compra , CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre) AS producto,c.orden_compra FROM compra_producto cp INNER JOIN compra c ON cp.orden_compra = c.orden_compra INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede INNER JOIN producto p ON ps.cod_producto = p.cod_producto INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON p.cod_pres = pr.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE c.status = 1 AND c.orden_compra = ? ;
 		");
 			$new->bindValue(1, $this->producto);
 			$new->execute();
@@ -174,7 +174,7 @@ class compras extends DBConnect {
 	public function getEliminarCompra($id) {
 		$this->id = $id;
 
-		$this->eliminarCompra();
+		return $this->eliminarCompra();
 	}
 
 	private function eliminarCompra() {
@@ -184,10 +184,30 @@ class compras extends DBConnect {
 			$new = $this->con->prepare("UPDATE `compra` SET status = 0 WHERE `orden_compra`= ? ");
 			$new->bindValue(1, $this->id);
 			$new->execute();
+
+			$sql = 'SELECT cp.id_producto_sede, cp.cantidad , ps.cantidad AS stock FROM compra_producto cp INNER JOIN producto_sede ps WHERE cp.orden_compra = ?';
+
+			$new = $this->con->prepare($sql);
+			$new->bindValue(1, $this->id);
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
+
+			foreach ($data as $producto) {
+				$res = $producto->cantidad - $producto->stock;
+				$new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
+				$new->bindValue(1, $res);
+				$new->bindValue(2, $producto->id_producto_sede);
+				$new->execute();
+			}
+
+
 			$resultado = ['resultado' => 'Eliminado'];
-			echo json_encode($resultado);
+
+
+
 			parent::desconectarDB();
-			die();
+
+			return $resultado;
 		} catch (\PDOException $error) {
 			return $error;
 		}
