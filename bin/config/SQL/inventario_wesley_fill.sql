@@ -41,6 +41,17 @@ INSERT INTO producto_sede (id_producto_sede, cod_producto, lote, fecha_vencimien
 (1, '2', '000001', '2026-03-25', 1, 200),
 (2, '1', '000002', '2024-05-17', 1, 300);
 
+INSERT INTO proveedor (rif_proveedor, direccion, razon_social, contacto, status) VALUES
+('J-123123123', 'Urbanización Industrial Lebrun Edificio Cofasa piso 3, Petare. Caracas.', 'Proveedor ejemplo', '', 1);
+
+INSERT INTO contacto_prove (id_contacto_prove, telefono, rif_proveedor) VALUES
+  (1, '0412523232', 'J-123123123');
+
+INSERT INTO forma_pago(id_forma_pago, tipo_pago, status) VALUES
+(1, 'Pago movil', 1),
+(2, 'Transferencia', 1),
+(3, 'Efectivo', 1);
+
 INSERT INTO rol (id_rol, nombre, status) VALUES
 (1, 'Administrador', 1),
 (2, 'Gerente', 1),
@@ -50,11 +61,16 @@ INSERT INTO tipo_empleado (tipo_em, nombre_e, status) VALUES
 (1, 'Gerente', 1),
 (2, 'Doctor', 1);
 
+INSERT INTO instituciones (rif_int, razon_social, direccion, contacto, status) VALUES
+('J-123456787', 'Jose Antonio Maria Pineda', 'Vargas , centro', '04142342324', 1),
+('J-456789017', 'Hospital Universitario de Barquisimeto', 'Calle Hospital, Barquisimeto', '02511234568', 1);
+
 INSERT INTO personal (cedula, nombres, apellidos, direccion, id_sede, edad, telefono, correo, tipo_em, status) VALUES
 ('V-30125380', 'Roberto', 'Vargas', 'Urb Las casitas', 2, '1976-04-19', '04120503888', 'ricardo.prxr16@gmail.com', 2, 1);
 
 INSERT INTO usuario (cedula, nombre, apellido, correo, password, rol, img, status) VALUES
 ('V-123123123', 'admin', 'admin', 'admin@admin.com', '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.', 1, NULL, 1);
+
 
 INSERT INTO modulos (id_modulo, nombre, status) VALUES
 (1, 'Personal', 1),
