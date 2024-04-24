@@ -381,7 +381,7 @@ $(document).ready(function() {
 	$(document).on('click', '.borrar',function (){
 		id = this.id;
 	})
-	$("#Borrar").click((e)=>{
+	$("#borrar").click((e)=>{
 		e.preventDefault();
 		$.ajax({
 			type:"POST",
@@ -390,12 +390,11 @@ $(document).ready(function() {
 			data:{
 				borrar:'cualquiera',
 				id
-
 			},
 			success(data){
-				if (data.resultado === "Eliminado con exito."){
-					mostrar.destroy();
-					$("#borrar").click();
+				if (data.resultado === "Eliminado"){
+					tablaMostrar.destroy();
+					$(".cerrar").click();
 					Toast.fire({icon: 'success', title:'Compras eliminada'})
 					rellenar();
 				}else{

@@ -183,7 +183,7 @@ public function productoDetalle($id){
 	public function getEliminarCompra($id){
 		$this->id = $id;
 	
-		$this->eliminarCompra();
+		return $this->eliminarCompra();
 	}
 	
 	private function eliminarCompra(){
@@ -193,10 +193,31 @@ public function productoDetalle($id){
 		 $new = $this->con->prepare("UPDATE `compra` SET status = 0 WHERE `orden_compra`= ? ");
 		 $new->bindValue(1, $this->id);
 		 $new->execute();
+
+		 $sql = 'SELECT cp.id_producto_sede, cp.cantidad , ps.cantidad AS stock FROM compra_producto cp INNER JOIN producto_sede ps WHERE cp.orden_compra = ?';
+
+		 $new = $this->con->prepare($sql);
+		 $new->bindValue(1, $this->id);
+		 $new->execute();
+		 $data = $new->fetchAll(\PDO::FETCH_OBJ);
+
+		 foreach ($data as $producto) {
+		 	$res = $producto->cantidad - $producto->stock;
+		 	$new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
+		 	$new->bindValue(1, $res);
+		 	$new->bindValue(2, $producto->id_producto_sede);
+		 	$new->execute();
+		 }
+
+
 		 $resultado = ['resultado' => 'Eliminado'];
-			echo json_encode($resultado);
-		  parent::desconectarDB();
-			die();
+
+
+
+		 parent::desconectarDB();
+
+		 return $resultado;
+
 		}catch (\PDOException $error) {
 		  return $error;
 		}

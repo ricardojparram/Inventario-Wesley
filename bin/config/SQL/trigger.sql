@@ -28,63 +28,18 @@ BEGIN
         SET mensaje = CONCAT('El lote ', producto_nombre, ' esta cerca de terminar en la sede ', sede_nombre, '. Quedan ', cantidad_restante, ' unidades.');
         
         INSERT INTO notificaciones (titulo, mensaje, fecha, status)
-        VALUES (CONCAT('Lote ', producto_nombre, ' cerca de terminar'), mensaje, NOW(), 1); -- Concatena el título con el nombre del producto
+        VALUES (CONCAT('Lote ', producto_nombre, ' cerca de terminar'), mensaje, NOW(), 1); 
     END IF;
 END;
 //
 
 DELIMITER ;
 
--- --------------------------------------------------------
---
--- TRIGGER guardar_productos_vencidos
---
-
-    -- DELIMITER //
-    -- CREATE TRIGGER producto_sede_trigger
-    -- AFTER UPDATE ON producto_sede
-    -- FOR EACH ROW
-    -- BEGIN
-    --   DECLARE dias_vencidos INT;
-    --   DECLARE cantidad INT;
-    --   DECLARE producto_nombre VARCHAR(255);
-    --   DECLARE mensaje VARCHAR(255);
-
-    --   SET dias_vencidos = ABS(DATEDIFF(NEW.fecha_vencimiento, NOW()));
-
-    --   SELECT CONCAT(tp.nombrepro, ' ', pr.peso, ' ', m.nombre), NEW.cantidad INTO producto_nombre, cantidad
-    --   FROM producto_sede ps
-    --   INNER JOIN producto p ON p.cod_producto = NEW.cod_producto
-    --   INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod
-    --   INNER JOIN sede s ON s.id_sede = ps.id_sede
-    --   INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres
-    --   INNER JOIN medida m ON m.id_medida = pr.id_medida
-    --   WHERE NEW.cantidad > 0 ;
-
-    --   IF NEW.cantidad > 0 AND NEW.fecha_vencimiento < NOW() THEN
-    --     SET mensaje = CONCAT('El producto expiró hace ', dias_vencidos, ' días. Quedan ', cantidad, ' unidades. Se recomienda priorizar estos.');
-
-    --     IF NOT EXISTS (SELECT 1 FROM notificaciones WHERE mensaje = mensaje) THEN
-    --       INSERT INTO notificaciones (titulo, mensaje, fecha, status, id_producto)
-    --       VALUES (CONCAT('Producto ', producto_nombre, ' vencido'), mensaje, NOW(), 1, NEW.cod_producto);
-    --     END IF;
-    --   END IF;
-    -- END;
-    -- //
-
-    -- DELIMITER ;
-
-
-    -- SELECT CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ABS(DATEDIFF(ps.fecha_vencimiento, NOW())) AS dias_vencidos , ps.cantidad FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE ps.cantidad > 0 AND ps.fecha_vencimiento < NOW();
-
-    -- UPDATE `producto_sede` SET `cantidad`= 343 WHERE id_producto_sede = 1992
-
 
 -- --------------------------------------------------------
 --
 -- TRIGGER guardar_productos_vencidos, Listo
 --
-
 
 DELIMITER //
 CREATE TRIGGER `insert_pago_recibido_status_0` AFTER INSERT ON `pagos_recibidos`

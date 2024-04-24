@@ -22,6 +22,7 @@ INSERT INTO tipo (id_tipo, nombre_t, status) VALUES
 (1, 'Pediatrico', 1),
 (2, 'Adulto', 1);
 
+
 INSERT INTO medida (id_medida, nombre, status) VALUES
 (1, 'mg', 1),
 (2, 'ml', 1);
@@ -29,6 +30,12 @@ INSERT INTO medida (id_medida, nombre, status) VALUES
 INSERT INTO presentacion (cod_pres, cantidad, id_medida, peso, status) VALUES
 (1, 12, 1, 20.00, 1),
 (2, 10, 1, 200.00, 1);
+
+INSERT INTO `forma_pago` (`id_forma_pago`, `tipo_pago`, `status`) VALUES
+(1, 'Pago movil', 1),
+(2, 'Transferencia', 1),
+(3, 'Efectivo', 1);
+
 
 INSERT INTO producto (cod_producto, id_tipoprod, contraindicaciones, composicion, posologia, id_tipo, id_clase, cod_pres, status) VALUES
 ('1', 1, 'Pastillo A1', ' C8H9NO2', 'La dosis habitual es de 325 mg a 650 mg. Tómelo con una frecuencia de 4 a 6 horas, según sea necesario, hasta 4 veces en un período de 24 horas. La dosis máxima puede variar entre 3,000 mg y 4,000 mg', 2, 1, 1, 1),

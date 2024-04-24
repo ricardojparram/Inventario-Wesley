@@ -107,25 +107,25 @@ class header
 
       </header>
 
-<!-- MODAL Notification -->
-<div class="modal fade" id="notificacion" tabindex="-1" aria-labelledby="notificacionLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="notificacionLabel">Notificación</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p class="titulo"></p>
-        <p class="fecha"></p>
-        <p class="mensaje" style="text-align: justify"></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+    <!-- MODAL Notification -->
+    <div class="modal fade" id="notificacion" tabindex="-1" aria-labelledby="notificacionLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="notificacionLabel">Notificación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="titulo"></p>
+            <p class="fecha"></p>
+            <p class="mensaje" style="text-align: justify"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
   ';
 

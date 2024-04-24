@@ -1,16 +1,17 @@
 $(document).ready(function(){
 
-  let tiempo_para_repetir_peticion = 1800000; 
 
-  getNotificaciones()
-  setInterval(getNotificaciones , tiempo_para_repetir_peticion);
-
+  getNotificaciones();
+  setInterval(getNotificaciones, 600000);
 
   function getNotificaciones(){
     $.ajax({ type : 'POST', url: '?url=notificaciones', dataType: 'json', data: {notificaciones: 'consultar'},
       success(data){
         notificaciones = data;
         mostrarNotificacion(notificaciones);
+      },
+      error: function(xhr, status, error){
+        console.log(xhr.responseText);
       }
     })
   }
@@ -21,37 +22,33 @@ $(document).ready(function(){
      
      notificaciones.forEach((row) => {
     
-      let minutos = 0;
-      let tiempoMinutos = 60000;
-      const actualizaMinutos = function() {
-        minutos++;
-        $('.notification-item .tiempo').text(`Tiempo activo: ${minutos} minutos`);
-      };
-      setInterval(actualizaMinutos, tiempoMinutos);
       mostrar += `
-      <li id="${row.id}" class="notification-item notificacion w-100"  data-bs-toggle="modal" data-bs-target="#notificacion">
-      <div class="row">
-       <div class="col-md-12">
-        <div class="d-flex justify-content-center">
-          <div class="text-center mt-3">
-            <i class="bi bi-exclamation-circle text-warning"></i>
+      <div class='divNotificacion'>
+        <li id="${row.id}" class="notification-item notificacion w-100"  data-bs-toggle="modal" data-bs-target="#notificacion">
+          <div class="row">
+           <div class="col-md-12">
+            <div class="d-flex justify-content-center">
+              <div class="text-center mt-3">
+                <i class="bi bi-exclamation-circle text-warning"></i>
+              </div>
+              <div class="mx-2">
+                <a>${row.titulo}</a>
+                <p></p>
+                <p class='tiempo'>Tiempo activo: ${row.fecha} minutos</p>
+              </div>
+              </div>
+            </div>
           </div>
-          <div class="mx-2">
-            <h4>${row.titulo}</h4>
-            <p></p>
-            <p class='tiempo'>Tiempo activo: ${minutos} minutos</p>
-          </div>
-          </div>
-        </div>
-         <div class="col fs-5 text-end NotiButton">
-           <a id="${row.id}" class="leido btn-sm" href="#">Marcar como leido</a>
-        </div>
-      </div>
-      </li>
+          </li> 
 
-      <li class='divisor'>
-        <hr class="dropdown-divider">
-      </li>
+          <div class="col-12 me-5 pe-4 fs-5 text-end NotiButton">
+               <a id="${row.id}" class="leido btn-sm" href="#">Marcar como leido</a>
+            </div>
+
+          <li class='divisor'>
+            <hr class="dropdown-divider">
+          </li>
+      </div>
 
       `;
       notifications++;
@@ -67,6 +64,7 @@ $(document).ready(function(){
 }
 
 
+
   $(document).on('click' , '.notificacion' , function(e){
     const notificationId = $(this).attr('id');
 
@@ -78,27 +76,33 @@ $(document).ready(function(){
 
   })
 
+$(document).on('click', '.leido', function(e) {
+  e.stopPropagation();
+  
+  const notificationId = $(this).attr('id');
 
-   $(document).on('click' , '.leido' , function(e){
-      e.stopPropagation();
-      
-      const notificationId = $(this).attr('id');
-      const selectedNotification = $(this).closest('.notification-item');
-      let divisor = selectedNotification.next('.divisor');
+  // Realizar la solicitud AJAX para marcar como leído
+  $.ajax({ 
+    type: 'POST', 
+    url: '?url=notificaciones', 
+    dataType: 'json', 
+    data: { notificacionVista: '', notificationId },
+    success: function(data) {
+      // Actualizar el contador de notificaciones
+      let total_notificaciones = parseInt($('.contador').text()) - 1;
+      $('.contador').text(total_notificaciones);
+      $('.numNoti').text(total_notificaciones);
 
-        $.ajax({ type : 'POST', url: '?url=notificaciones', dataType: 'json', data: {notificacionVista: '' , notificationId},
-        success(data){
-          selectedNotification.add(divisor).fadeOut('slow', function() {
-          $(this).remove();
-         });
-          total_notificaciones = $('.contador').text() - 1;
-          $('.contador').text(total_notificaciones);
-          total_notificaciones = $('.numNoti').text() - 1;
-          $('.numNoti').text(total_notificaciones)
-        }
-     })
+      $(`#${notificationId}`).closest('.divNotificacion').fadeOut(500, function() {
+        $(this).empty();
+      });
+    },
+    error: function(xhr, status, error) {
+      console.log(error);
+    }
+  });
+});
 
-    })
    
     
 })
