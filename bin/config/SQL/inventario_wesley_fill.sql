@@ -30,6 +30,9 @@ INSERT INTO presentacion (cod_pres, cantidad, id_medida, peso, status) VALUES
 (1, 12, 1, 20.00, 1),
 (2, 10, 1, 200.00, 1);
 
+INSERT INTO laboratorio (rif_laboratorio, direccion, razon_social, status) VALUES
+('J-000876266', 'Urbanización Industrial Lebrun Edificio Cofasa piso 3, Petare. Caracas.', ' Laboratorio Cofasa', 1);
+
 INSERT INTO producto (cod_producto, id_tipoprod, contraindicaciones, composicion, posologia, id_tipo, id_clase, cod_pres, status) VALUES
 ('1', 1, 'Pastillo A1', ' C8H9NO2', 'La dosis habitual es de 325 mg a 650 mg. Tómelo con una frecuencia de 4 a 6 horas, según sea necesario, hasta 4 veces en un período de 24 horas. La dosis máxima puede variar entre 3,000 mg y 4,000 mg', 2, 1, 1, 1),
 ('2', 3, 'Pastillo B2', 'C13H18O2', 'En adultos y adolescentes de 14 a 18 años se toma un comprimido (600 mg) cada 6 a 8 horas, dependiendo de la intensidad del cuadro y de la respuesta al tratamiento.', 2, 1, 2, 1);
@@ -43,11 +46,15 @@ INSERT INTO rol (id_rol, nombre, status) VALUES
 (2, 'Gerente', 1),
 (3, 'Empleado', 1);
 
+INSERT INTO tipo_empleado (tipo_em, nombre_e, status) VALUES
+(1, 'Gerente', 1),
+(2, 'Doctor', 1);
+
+INSERT INTO personal (cedula, nombres, apellidos, direccion, id_sede, edad, telefono, correo, tipo_em, status) VALUES
+('V-30125380', 'Roberto', 'Vargas', 'Urb Las casitas', 2, '1976-04-19', '04120503888', 'ricardo.prxr16@gmail.com', 2, 1);
+
 INSERT INTO usuario (cedula, nombre, apellido, correo, password, rol, img, status) VALUES
-('123123123', 'admin', 'admin', 'admin@admin.com', '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.', 1, NULL, 1),
-('29880797', 'Ailin', 'Perez', 'duranjhoa5@gmail.com', '$2y$10$kmcloDWOIk4HNgSreXaPdes5YS1RImPYwNip4GVEQRGBnwNKeRlJK', 3, NULL, 1),
-('30395804', 'Jhoa', 'Duran', 'duranjhoa52@gmail.com', '$2y$10$/cxqYC.VN0ARUNWIlxHMHuU6ps6JPBtJx1gJIlHNizfnSmSH77hAC', 1, NULL, 1),
-('4', 'tommy', 'duran', 'I/a3j62muDU6jTXAQ31L+LtzZ6ldBEnfmObWxCu8pFQ=', '$2y$10$dnKhNNvC1HPPJxKDDaQVpOGz.vWrkUx3cZOTWgSY6NaNwrplncpZm', 1, 'assets/img/perfil/298b2f86898a210656700a947b7a6fcb.png', 1);
+('V-123123123', 'admin', 'admin', 'admin@admin.com', '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.', 1, NULL, 1);
 
 INSERT INTO modulos (id_modulo, nombre, status) VALUES
 (1, 'Personal', 1),
