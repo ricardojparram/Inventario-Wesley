@@ -3,39 +3,32 @@
 namespace modelo;
 
 use config\connect\DBConnect as DBConnect;
+use utils\validar;
 
 class login extends DBConnect
 {
+    use validar;
     private $cedula;
     private $password;
 
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     public function getLoginSistema($cedula, $password)
     {
-        if(preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
-            die(json_encode(['resultado' => 'Error de cedula' , 'error' => 'Cédula inválida.']));
+        if(!$this->validarString('documento', $cedula)) {
+            return $this->http_error(400, 'Cédula inválida.');
         }
-        if(preg_match_all("/^[A-Za-z\d$@\/_.#-]{0,30}$/", $password) == false) {
-
-            die(json_encode(['resultado' => 'Error de contraseña', 'error' => 'Contraseña inválida.']));
+        if(!$this->validarString('contraseña', $password)) {
+            return $this->http_error(400, 'Contraseña inválida.');
         }
 
         $this->cedula = $cedula;
         $this->password = $password;
 
-
         $validCedula = $this->validarCedula();
-        if($validCedula['res'] != true) {
-            die(json_encode($validCedula));
+        if(!isset($validCedula['res'])) {
+            return $validCedula;
         }
 
-        $this->loginSistema();
+        return $this->loginSistema();
     }
 
     private function loginSistema()
@@ -43,29 +36,29 @@ class login extends DBConnect
 
         try {
             $this->conectarDB();
-
-
-            $new = $this->con->prepare("SELECT u.cedula, u.nombre, u.apellido, u.correo, u.password, u.img, u.rol as nivel, r.nombre as puesto FROM usuario u 
-				INNER JOIN rol r
-				ON r.id_rol = u.rol
-				WHERE u.cedula = ?");
+            $new = $this->con->prepare("
+              SELECT u.cedula, u.nombre, u.apellido, u.correo, u.password, u.img, u.rol as nivel, r.nombre as puesto FROM usuario u 
+							INNER JOIN rol r
+							ON r.id_rol = u.rol
+							WHERE u.cedula = ?");
             $new->bindValue(1, $this->cedula);
             $new->execute();
             $data = $new->fetchAll();
 
             if(!isset($data[0]["password"])) {
                 $this->desconectarDB();
-                die(json_encode(['resultado' => 'Error de cedula', 'error' => 'La cédula no está registrada.']));
+                return $this->http_error(400, 'La cédula no está registrada.');
             }
-
             if(!password_verify($this->password, $data[0]['password'])) {
                 $this->desconectarDB();
-                die(json_encode(['resultado' => 'Error de contraseña' , 'error' => 'Contraseña incorrecta.']));
+                return $this->http_error(400, 'Contraseña incorrecta.');
             }
 
-            $new = $this->con->prepare('SELECT p.id_sede, s.nombre as sede FROM personal p
-                                        INNER JOIN sede s ON s.id_sede = p.id_sede
-                                        WHERE p.cedula = :cedula;');
+            $new = $this->con->prepare(
+                'SELECT p.id_sede, s.nombre as sede FROM personal p
+                 INNER JOIN sede s ON s.id_sede = p.id_sede
+                 WHERE p.cedula = :cedula;'
+            );
             $new->bindParam(':cedula', $data[0]['cedula']);
             $new->execute();
             $sede = $new->fetch(\PDO::FETCH_ASSOC);
@@ -83,26 +76,24 @@ class login extends DBConnect
             $_SESSION['fotoPerfil'] = (isset($data[0]['img'])) ? $data[0]['img'] : 'assets/img/profile_photo.jpg';
 
             $this->desconectarDB();
-            $resultado = ['resultado' => 'Logueado'];
-            die(json_encode($resultado));
-
-        } catch(PDOException $error) {
+            return ['resultado' => 'ok', 'msg' => 'Se ha iniciado sesion'];
+        } catch(\PDOException $error) {
             die($error);
         }
     }
 
     public function getValidarCedula($cedula)
     {
-        if(preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
-            $resultado = ['resultado' => 'Error de cedula' , 'error' => 'Cédula inválida.'];
-            die(json_encode($resultado));
+        if(!$this->validarString('documento', $cedula)) {
+            return $this->http_error(400, 'Cédula inválida.');
         }
+
         $this->cedula = $cedula;
 
         return $this->validarCedula();
     }
 
-    private function validarCedula()
+    private function validarCedula(): array
     {
         try {
 
@@ -113,14 +104,9 @@ class login extends DBConnect
             $new->execute();
             $data = $new->fetchAll();
             parent::desconectarDB();
-            $resultado;
-            if(!isset($data[0]['cedula'])) {
-                $resultado = ['resultado' => 'Error de cedula' , 'error' => 'La cédula no está registrada.', 'res' => false];
-            } else {
-                $resultado = ['resultado' => 'ok' , 'msg' => 'La cédula es válida.', 'res' => true];
-            }
-            return $resultado;
-
+            return (!isset($data[0]['cedula']))
+              ? $this->http_error(400, 'La cédula no está registrada.')
+              : ['resultado' => 'ok' , 'msg' => 'La cédula es válida.', 'res' => true];
         } catch(\PDOException $error) {
             die($error);
         }
@@ -128,4 +114,3 @@ class login extends DBConnect
 
 
 }
-
