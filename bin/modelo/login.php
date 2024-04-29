@@ -78,7 +78,7 @@ class login extends DBConnect
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha iniciado sesion'];
         } catch(\PDOException $error) {
-            die($error);
+            return $this->http_error(500, $error);
         }
     }
 
@@ -108,7 +108,7 @@ class login extends DBConnect
               ? $this->http_error(400, 'La cédula no está registrada.')
               : ['resultado' => 'ok' , 'msg' => 'La cédula es válida.', 'res' => true];
         } catch(\PDOException $error) {
-            die($error);
+            return $this->http_error(500, $error);
         }
     }
 
