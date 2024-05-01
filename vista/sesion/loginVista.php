@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <title>Inciar sesión</title>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-    <?php  $VarComp->header();?>
+  <head>
+    <title>Inciar sesión</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  </head>
+</html>
+<?php  $VarComp->header();?>
     <link href="assets/css/login.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/tienda.css">
 
@@ -39,6 +39,16 @@
             </div>
             <form id="user">
               <div class="form-group">
+                <div class="mb-4">
+                  <div class="input-group">
+                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese la sede en la que se encuentra."><i class="bi bi-hospital"></i></button>
+                    <select class="form-select" id="sede">
+                        <?php foreach ($sedes as $row): ?>
+                          <option value="<?= $row['id_sede']?>"> <?= $row["nombre"] ?> </option>
+                        <?php endforeach; ?>
+                    </select>
+                  </div>
+                </div>
                 <div class="mb-4">
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca su cédula registrada en el sistema."><i class="bi bi-person-fill"></i></button>

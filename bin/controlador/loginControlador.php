@@ -15,13 +15,14 @@ if(isset($_GET['cedula'], $_GET['validar'])) {
     die(json_encode($res));
 }
 
-if(isset($_POST['cedula'], $_POST['password'], $_POST['login'])) {
-    $res =  $objModel->getLoginSistema($_POST['cedula'], $_POST['password']);
+if(isset($_POST['cedula'], $_POST['password'], $_POST['login'], $_POST['sede'])) {
+    $res =  $objModel->getLoginSistema($_POST['cedula'], $_POST['password'], $_POST['sede']);
     die(json_encode($res));
 }
+
+$sedes = $objModel->getSedes();
 
 $VarComp = new initcomponents();
 $Nav = new tienda();
 
 require_once("vista/sesion/loginVista.php");
-

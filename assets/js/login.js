@@ -38,17 +38,20 @@ $(document).ready(function () {
       $("#error"),
       "Error de contraseña,",
     );
-    if (!vcedula || !vpassword) throw new Error("Datos invalidos");
+    vsede = validarNumero($("#sede"), $("#error"), "Error de sede,");
+
+    if (!vcedula || !vpassword || !vsede) throw new Error("Datos invalidos");
 
     $(this).find('button[type="submit"]').prop("disabled", true);
     $.post(
       "",
       {
         login: "",
+        sede: $("#sede").val(),
         cedula: $("#preDocument").val() + "-" + $("#cedula").val(),
         password: $("#pass").val(),
       },
-      function (data) {
+      function () {
         Swal.fire({
           title: "Iniciando sesión!",
           text: "Los datos son correctos.",

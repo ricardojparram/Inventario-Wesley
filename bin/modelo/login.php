@@ -10,8 +10,21 @@ class login extends DBConnect
     use validar;
     private $cedula;
     private $password;
+    private $sede;
 
-    public function getLoginSistema($cedula, $password)
+    public function getSedes()
+    {
+        try {
+            $this->conectarDB();
+            $sql = "SELECT id_sede, nombre FROM sede";
+            $new = $this->con->prepare($sql);
+            $new->execute();
+            return $new->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\PDOStatement $e) {
+            return $this->http_error(500, $e);
+        }
+    }
+    public function getLoginSistema($cedula, $password, $sede)
     {
         if(!$this->validarString('documento', $cedula)) {
             return $this->http_error(400, 'Cédula inválida.');
@@ -19,9 +32,13 @@ class login extends DBConnect
         if(!$this->validarString('contraseña', $password)) {
             return $this->http_error(400, 'Contraseña inválida.');
         }
+        if(!$this->validarString('entero', $sede)) {
+            return $this->http_error(400, 'Sede inválida.');
+        }
 
         $this->cedula = $cedula;
         $this->password = $password;
+        $this->sede = $sede;
 
         $validCedula = $this->validarCedula();
         if(!isset($validCedula['res'])) {
@@ -54,12 +71,8 @@ class login extends DBConnect
                 return $this->http_error(400, 'Contraseña incorrecta.');
             }
 
-            $new = $this->con->prepare(
-                'SELECT p.id_sede, s.nombre as sede FROM personal p
-                 INNER JOIN sede s ON s.id_sede = p.id_sede
-                 WHERE p.cedula = :cedula;'
-            );
-            $new->bindParam(':cedula', $data[0]['cedula']);
+            $new = $this->con->prepare('SELECT id_sede, nombre as sede FROM sede WHERE id_sede = :id_sede');
+            $new->bindParam(':id_sede', $this->sede);
             $new->execute();
             $sede = $new->fetch(\PDO::FETCH_ASSOC);
 
