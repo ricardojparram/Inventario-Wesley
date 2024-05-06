@@ -39,25 +39,25 @@ function validarNombre(input, div, mensaje) {
 }
 
 function validarDireccion(input, div, mensaje) {
-	parametro = input.val();
-	let valid = expresiones.direccion.test(parametro);
-	if (parametro == null || parametro == "") {
-		div.text(mensaje + " debe introducir la dirección.")
-		input.addClass('input-error');
-		return false
-	} else if (!valid) {
-		div.text(mensaje + " debe intruducir una dirección válida")
-		input.addClass('input-error');
-		return false
-	} else if (parametro.length > 158) {
-		div.text(mensaje + " direccion demasiada larga")
-		input.addClass('input-error');
-		return false
-	} else {
-		div.text(" ");
-		input.removeClass('input-error');
-		return true
-	}
+  parametro = input.val();
+  let valid = expresiones.direccion.test(parametro);
+  if (parametro == null || parametro == "") {
+    div.text(mensaje + " debe introducir la dirección.");
+    input.addClass("input-error");
+    return false;
+  } else if (!valid) {
+    div.text(mensaje + " debe intruducir una dirección válida");
+    input.addClass("input-error");
+    return false;
+  } else if (parametro.length > 158) {
+    div.text(mensaje + " direccion demasiada larga");
+    input.addClass("input-error");
+    return false;
+  } else {
+    div.text(" ");
+    input.removeClass("input-error");
+    return true;
+  }
 }
 
 function validarStringLong(input, div, mensaje) {
@@ -244,11 +244,11 @@ function validarCedula(input, div, mensaje, prefijo) {
   ) {
     div.text(
       mensaje +
-        " debe entre " +
-        documento[prefijo].minLength +
-        " y " +
-        documento[prefijo].maxLength +
-        " caracteres.",
+      " debe entre " +
+      documento[prefijo].minLength +
+      " y " +
+      documento[prefijo].maxLength +
+      " caracteres.",
     );
     input.addClass("input-error");
     return false;
@@ -423,29 +423,29 @@ function validarBanco(input, div, mensaje) {
 }
 
 function validarSelect(input, div, mensaje) {
-	parametro = input.val();
-	if (parametro == null || parametro == "") {
-		div.text(mensaje + " seleccione una opción")
-		input.addClass('select-error');
-		return false
-	} else {
-		div.text(" ");
-		input.removeClass('select-error');
-		return true
-	}
+  parametro = input.val();
+  if (parametro == null || parametro == "") {
+    div.text(mensaje + " seleccione una opción")
+    input.addClass('select-error');
+    return false
+  } else {
+    div.text(" ");
+    input.removeClass('select-error');
+    return true
+  }
 }
 
 function validarSelec2(input, select, div, mensaje) {
-	parametro = input.val();
-	if (parametro == null || parametro == "") {
-		div.text(mensaje + " debe introducir datos.")
-		input.addClass('select-error');
-		return false
-	} else {
-		div.text(" ");
-		input.removeClass('select-error');
-		return true
-	}
+  parametro = input.val();
+  if (parametro == null || parametro == "") {
+    div.text(mensaje + " debe introducir datos.");
+    input.addClass("select-error");
+    return false;
+  } else {
+    div.text(" ");
+    input.removeClass("select-error");
+    return true;
+  }
 }
 
 function validarFecha(input, div, mensaje) {

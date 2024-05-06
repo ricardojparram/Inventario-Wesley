@@ -1,6 +1,6 @@
 $(document).ready(function () {
   fechaHoy($("#fecha"), $("#fecha2"));
-  let tabla, tipo, fechaInicio, fechaFinal, thead, columns, reporte;
+  let tabla, tipo, fechaInicio, fechaFinal, thead, reporte;
 
   $('input[type="date"]').on("change", function () {
     if ($("#fecha").val() > $("#fecha2").val()) {
@@ -15,103 +15,104 @@ $(document).ready(function () {
     validarFechaAyer($(this), $("#error"), "La fecha");
   });
 
-  // const tipoAcciones = {
-  // 	venta : () => {
-  // 		thead = `<tr>
-  // 					<th scope="col">Factura N°</th>
-  // 					<th scope="col">Cédula</th>
-  // 					<th scope="col">Cliente</th>
-  // 					<th scope="col">Fecha</th>
-  // 					<th scope="col">Total divisa</th>
-  // 					<th scope="col">Total Bs</th>
-  // 				 </tr>`;
-  // 		columns = [{data : 'num_fact'}, {data : 'cedula'},
-  // 				   {data: 'nombre'}, {data : 'fecha'},
-  // 				   {data : 'total_divisa'},{data : 'monto_total'}];
-  // 		$('#reporteLista thead').html(thead);
-  // 		$('#error').text('')
-  // 	},
-  // 	compra : () => {
-  // 		thead = `<tr>
-  // 					<th scope="col">Orden de Compra</th>
-  // 					<th scope="col">Proveedor</th>
-  // 					<th scope="col">Fecha</th>
-  // 					<th scope="col">Cantidad de Productos</th>
-  // 					<th scope="col">Total divisa</th>
-  // 					<th scope="col">Total Bs</th>
-  // 				 </tr>`;
-  // 		columns = [{data : 'orden_compra'}, {data : 'razon_social'},
-  // 				   {data : 'fecha'}, {data : 'cantidad'},
-  // 				   {data : 'total_divisa'}, {data : 'monto_total'}];
-  // 		$('#reporteLista thead').html(thead);
-  // 		$('#error').text('')
-  // 	},
-  // 	'error' : () => {
-  // 		$('#error').text('Seleccione un tipo de reporte.');
-  // 		throw new Error('Seleccione un tipo de reporte.');
-  // 	}
-  // }
-
-  let click = 0;
-  setInterval(() => {
-    click = 0;
-  }, 1000);
+  const tipoAcciones = {
+    donaciones: (data) => {
+      thead = `<tr>
+  					<th scope="col">Fecha</th>
+  					<th scope="col">Tipo de donación</th>
+  					<th scope="col">Identifación</th>
+  					<th scope="col">Nombre</th>
+  				 </tr>`;
+      let tbody = data.reduce((acc, row) => {
+        return (acc += `
+        <tr>
+          <td>${row.fecha}</th>
+          <td scope="col">${row.tipo_donacion}</td>
+          <td scope="col">${row.id}</td>
+          <td scope="col">${row.nombre}</td>
+        </tr>`);
+      }, "");
+      $("#reporteLista thead").html(thead);
+      $("#reporteLista tbody").html(tbody || "");
+      $("#error").text("");
+    },
+    productos: (data) => {
+      thead = `<tr>
+  					<th scope="col">Sede</th>
+  					<th scope="col">Producto</th>
+  					<th scope="col">Lote</th>
+  					<th scope="col">Cantidad</th>
+  					<th scope="col">Fecha de vencimiento</th>
+  					<th scope="col">Estado</th>
+  					<th scope="col">Días</th>
+  				 </tr>`;
+      let tbody = data.reduce((acc, row) => {
+        return (acc += `
+        <tr>
+          <td>${row.nombre_sede}</th>
+          <td scope="col">${row.presentacion_producto}</td>
+          <td scope="col">${row.lote}</td>
+          <td scope="col">${row.cantidad}</td>
+          <td scope="col">${row.fecha_vencimiento}</td>
+          <td scope="col">${row.estado_producto}</td>
+          <td scope="col">${row.dias}</td>
+        </tr>`);
+      }, "");
+      $("#reporteLista thead").html(thead);
+      $("#reporteLista tbody").html(tbody || "");
+      $("#error").text("");
+    },
+    error: () => {
+      $("#error").text("Seleccione un tipo de reporte.");
+      throw new Error("Seleccione un tipo de reporte.");
+    },
+  };
 
   $("#generar").click(function () {
-    if (click >= 1) throw new Error("Spam de clicks");
-
-    generarGrafico();
-    // generarReporte();
-
-    click++;
+    generarReporte(this);
   });
 
   $("#exportar").click(function () {
-    if (click >= 1) throw new Error("Spam de clicks");
-
-    generarGrafico();
-    // exportarReporte();
-
-    click++;
+    exportarReporte();
   });
 
-  // $('#exportarEstadistico').click(function(){
-  // 	if(click >= 1) throw new Error('Spam de clicks');
-  //
-  // 	exportarReporteEstadistico();
-  //
-  // 	click++;
-  // })
-
-  function generarReporte() {
+  function generarReporte(el) {
     tipo = $("#tipoReporte").val();
     fechaInicio = $("#fecha").val();
     fechaFinal = $("#fecha2").val();
 
-    if ($("#reporteLista tbody tr").length >= 1) tabla.destroy();
+    if ($("#reporteLista tbody tr").length >= 1) {
+      console.log($("#reporteLista tbody tr").length >= 1);
+      tabla.destroy();
+    }
 
-    // if(!tipoAcciones.hasOwnProperty(tipo)) tipoAcciones.error();
-    // tipoAcciones[tipo]();
+    if (!tipoAcciones.hasOwnProperty(tipo)) tipoAcciones.error();
 
-    $.ajax({
-      type: "post",
-      url: "",
-      dataType: "json",
-      data: { mostrar: "reporte", tipo, fechaInicio, fechaFinal },
-      success(res) {
-        reporte = res;
+    $(el).prop("disabled", true);
+    $.post(
+      "",
+      { mostrar: "reporte", tipo, fechaInicio, fechaFinal },
+      function (res) {
+        reporte = res.reporte;
+        tipoAcciones[tipo](reporte);
         tabla = $("#reporteLista").DataTable({
           responsive: true,
-          data: reporte,
-          columns: columns,
         });
+        generarGrafico(res.grafico, tipo);
         $("#reporte").removeClass("d-none");
       },
-      error(e) {
-        Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-        throw new Error("Error al generar reporte: " + e);
-      },
-    });
+      "json",
+    )
+      .fail((e) => {
+        Toast.fire({
+          icon: "error",
+          title: e.responseJSON.msg || "Ha ocurrido un error.",
+        });
+        console.error(e);
+      })
+      .always(() => {
+        $(el).prop("disabled", false);
+      });
   }
 
   function exportarReporte() {
@@ -122,79 +123,25 @@ $(document).ready(function () {
       });
       throw new Error("Reporte vacío.");
     }
+    let grafico = document.querySelector("#grafico").toDataURL();
 
     $.ajax({
       method: "POST",
       url: "",
       dataType: "json",
-      data: { exportar: "reporte", tipo, fechaInicio, fechaFinal },
+      data: { exportar: "", tipo, fechaInicio, fechaFinal, grafico },
       xhr: () => loading(),
       success(data) {
         $("#displayProgreso").hide();
-        if (data.Error == "Reporte vacío.") {
-          Toast.fire({
-            icon: "error",
-            title: "No se puede exportar un reporte vacío.",
-          });
-          throw new Error("Reporte vacío.");
-        }
-
-        if (data.respuesta == "Archivo guardado") {
-          Toast.fire({ icon: "success", title: "Exportado correctamente." });
-          descargarArchivo(data.ruta);
-        } else {
-          Toast.fire({
-            icon: "error",
-            title: "No se pudo exportar el reporte.",
-          });
-        }
+        Toast.fire({ icon: "success", title: "Exportado correctamente." });
+        descargarArchivo(data.ruta);
       },
       error(e) {
-        $("#displayProgreso").hide();
-        Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-        throw new Error("Error al exportar el reporte: " + e);
-      },
-    });
-  }
-
-  function exportarReporteEstadistico() {
-    if (reporte.length < 1) {
-      Toast.fire({
-        icon: "error",
-        title: "No se puede exportar un reporte vacío.",
-      });
-      throw new Error("Reporte vacío.");
-    }
-
-    $.ajax({
-      method: "POST",
-      url: "",
-      dataType: "json",
-      data: { estadistico: "reporte", tipo, fechaInicio, fechaFinal },
-      xhr: () => loading(),
-      success(data) {
-        $("#displayProgreso").hide();
-        if (data.Error == "Reporte vacío.") {
-          Toast.fire({
-            icon: "error",
-            title: "No se puede exportar un reporte vacío.",
-          });
-          throw new Error("Reporte vacío.");
-        }
-
-        if (data.respuesta == "Archivo guardado") {
-          Toast.fire({ icon: "success", title: "Exportado correctamente." });
-          descargarArchivo(data.ruta);
-        } else {
-          Toast.fire({
-            icon: "error",
-            title: "No se pudo exportar el reporte.",
-          });
-        }
-      },
-      error(e) {
-        Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-        throw new Error("Error al exportar el reporte: " + e);
+        Toast.fire({
+          icon: "error",
+          title: e.responseJSON.msg || "Ha ocurrido un error.",
+        });
+        console.error("Error al exportar el reporte: " + e);
       },
     });
   }
@@ -206,188 +153,173 @@ $(document).ready(function () {
     link.click();
   }
 
-  function loading() {
-    let xhr = new window.XMLHttpRequest();
-    $("#displayProgreso").show();
-    xhr.upload.addEventListener(
-      "progress",
-      function (event) {
-        if (event.lengthComputable) {
-          let porcentaje = parseInt((event.loaded / event.total) * 100, 10);
-          $("#progressBar").data("aria-valuenow", porcentaje);
-          $("#progressBar").css("width", porcentaje + "%");
-          $("#progressBar").html(porcentaje + "%");
-        }
-      },
-      false,
-    );
-    xhr.addEventListener(
-      "progress",
-      function (e) {
-        if (e.lengthComputable) {
-          percentComplete = parseInt((e.loaded / e.total) * 100, 10);
-          $("#progressBar").data("aria-valuenow", percentComplete);
-          $("#progressBar").css("width", percentComplete + "%");
-          $("#progressBar").html(percentComplete + "%");
-        } else {
-          $("#progressBar").html("Upload");
-        }
-      },
-      false,
-    );
+  const canvas = document.getElementById("grafico").getContext("2d");
+  let gradient = canvas.createLinearGradient(0, 0, 0, 600);
+  gradient.addColorStop(0, "rgba(94, 166, 48, 0.7)");
+  gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
 
-    return xhr;
-  }
+  let gradient2 = canvas.createLinearGradient(0, 0, 0, 600);
+  gradient2.addColorStop(0, "rgba(128, 36, 170, 0.7)");
+  gradient2.addColorStop(1, "rgba(255, 255, 255, 0)");
 
-  let chartDonaciones = "",
-    chartProductos = "";
-  function generarGrafico() {
-    let canvas_donaciones = document
-      .getElementById("grafico_donaciones")
-      .getContext("2d");
-    let canvas_productos = document
-      .getElementById("grafico_productos")
-      .getContext("2d");
-    if (!!chartDonaciones) chartDonaciones.destroy();
-
-    let gradient = canvas_donaciones.createLinearGradient(0, 0, 0, 500);
-    gradient.addColorStop(0, "rgba(94, 166, 48, 0.7)");
-    gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-    let gradient2 = canvas_donaciones.createLinearGradient(0, 0, 0, 500);
-    gradient2.addColorStop(0, "rgba(128, 36, 170, 0.7)");
-    gradient2.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-    let gradient3 = canvas_donaciones.createLinearGradient(0, 0, 0, 500);
-    gradient3.addColorStop(0, "rgba(156, 234, 18, 0.7)");
-    gradient3.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-    fechaInicio = $("#fecha").val();
-    fechaFinal = $("#fecha2").val();
-    $.post(
-      "",
-      { grafico: "", fechaInicio, fechaFinal },
-      function (response) {
-        $("#reporte").removeClass("d-none");
-        const donaciones = response.donaciones;
-        const productos = response.productos;
-        const data_donaciones = {
-          labels: donaciones.fechas,
-          datasets: [
-            {
-              label: "Instituciones",
-              data: donaciones.donativos_int,
-              borderColor: "#558500",
-              borderRadius: 5,
-              backgroundColor: gradient,
-              pointBackgroundColor: "#558500",
-              fill: true,
-            },
-            {
-              label: "Pacientes",
-              data: donaciones.donativos_pac,
-              borderColor: "#af74c9",
-              borderRadius: 5,
-              backgroundColor: gradient2,
-              pointBackgroundColor: "#af74c9",
-              fill: true,
-            },
-            {
-              label: "Personal",
-              data: donaciones.donativos_per,
-              borderColor: "#92E500",
-              borderRadius: 5,
-              backgroundColor: gradient3,
-              pointBackgroundColor: "#92E500",
-              fill: true,
-            },
-          ],
-        };
-
-        chartDonaciones = new Chart(canvas_donaciones, {
-          type: "line",
-          xAxisID: [0, 5, 10, 15, 20, 25],
-          data: data_donaciones,
-          options: {
-            plugins: {
-              legend: {
-                display: true,
-                position: "bottom",
-                labels: {
-                  color: "black",
-                  usePointStyle: true,
-                  pointStyle: "circle",
-                },
-              },
-              title: {
-                display: true,
-                text: "Donaciones",
+  let gradient3 = canvas.createLinearGradient(0, 0, 0, 600);
+  gradient3.addColorStop(0, "rgba(156, 234, 18, 0.7)");
+  gradient3.addColorStop(1, "rgba(255, 255, 255, 0)");
+  const accionesGrafico = {
+    donaciones: (donaciones) => {
+      const data_donaciones = {
+        labels: donaciones.fechas,
+        datasets: [
+          {
+            label: "Instituciones",
+            data: donaciones.donativos_int,
+            borderColor: "#558500",
+            borderRadius: 5,
+            backgroundColor: gradient,
+            pointBackgroundColor: "#558500",
+            fill: true,
+          },
+          {
+            label: "Pacientes",
+            data: donaciones.donativos_pac,
+            borderColor: "#af74c9",
+            borderRadius: 5,
+            backgroundColor: gradient2,
+            pointBackgroundColor: "#af74c9",
+            fill: true,
+          },
+          {
+            label: "Personal",
+            data: donaciones.donativos_per,
+            borderColor: "#92E500",
+            borderRadius: 5,
+            backgroundColor: gradient3,
+            pointBackgroundColor: "#92E500",
+            fill: true,
+          },
+        ],
+      };
+      return {
+        type: "line",
+        xAxisID: [0, 5, 10, 15, 20, 25],
+        data: data_donaciones,
+        options: {
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: {
+                color: "black",
+                usePointStyle: true,
+                pointStyle: "circle",
               },
             },
-            interaction: {
-              intersect: false,
-              mode: "nearest",
-            },
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointBorderColor: "white",
-            pointBorderWidth: 2,
-            tension: 0.2,
-            borderWidth: 2.5,
-            borderCapStyle: "round",
-            responsive: true,
-            scales: {
-              x: {
-                grid: {
-                  display: false,
-                },
-              },
-              y: {
-                suggestedMin: 0,
-                suggestedMax: 15,
-                type: "linear",
-                position: "left",
-              },
+            title: {
+              display: true,
+              text: "Donaciones",
             },
           },
-        });
-
-        const data_productos = {
-          labels: productos.labels,
-          datasets: [
-            {
-              label: "Vencidos",
-              data: productos.vencidos,
-              borderColor: "#558500",
-              backgroundColor: gradient,
-            },
-            {
-              label: "Vigentes",
-              data: productos.vigentes,
-              borderColor: "#af74c9",
-              backgroundColor: gradient2,
-            },
-          ],
-        };
-        const config = {
-          type: "bar",
-          data: data_productos,
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                position: "top",
+          interaction: {
+            intersect: false,
+            mode: "nearest",
+          },
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBorderColor: "white",
+          pointBorderWidth: 2,
+          tension: 0.2,
+          borderWidth: 2.5,
+          borderCapStyle: "round",
+          scales: {
+            x: {
+              grid: {
+                display: false,
               },
-              title: {
-                display: true,
-                text: "Estado de los productos",
-              },
+            },
+            y: {
+              suggestedMin: 0,
+              suggestedMax: 15,
+              type: "linear",
+              position: "left",
             },
           },
-        };
-        chartProductos = new Chart(canvas_productos, config);
-      },
-      "json",
-    );
+        },
+      };
+    },
+    productos: (productos) => {
+      const data_productos = {
+        labels: productos.labels,
+        datasets: [
+          {
+            label: "Vencidos",
+            data: productos.vencidos,
+            borderColor: "#558500",
+            backgroundColor: gradient,
+          },
+          {
+            label: "Vigentes",
+            data: productos.vigentes,
+            borderColor: "#af74c9",
+            backgroundColor: gradient2,
+          },
+        ],
+      };
+      return {
+        type: "bar",
+        data: data_productos,
+        options: {
+          plugins: {
+            legend: {
+              position: "top",
+            },
+            title: {
+              display: true,
+              text: "Estado de los productos",
+            },
+          },
+        },
+      };
+    },
+    error: () => {
+      $("#error").text("Seleccione un tipo de reporte.");
+      throw new Error("Seleccione un tipo de reporte.");
+    },
+  };
+  let chart = "";
+  function generarGrafico(datos, tipo) {
+    if (!!chart) chart.destroy();
+    chart = new Chart(canvas, accionesGrafico[tipo](datos));
   }
 });
+
+function loading() {
+  let xhr = new window.XMLHttpRequest();
+  $("#displayProgreso").show();
+  xhr.upload.addEventListener(
+    "progress",
+    function (event) {
+      if (event.lengthComputable) {
+        let porcentaje = parseInt((event.loaded / event.total) * 100, 10);
+        $("#progressBar").data("aria-valuenow", porcentaje);
+        $("#progressBar").css("width", porcentaje + "%");
+        $("#progressBar").html(porcentaje + "%");
+      }
+    },
+    false,
+  );
+  xhr.addEventListener(
+    "progress",
+    function (e) {
+      if (e.lengthComputable) {
+        percentComplete = parseInt((e.loaded / e.total) * 100, 10);
+        $("#progressBar").data("aria-valuenow", percentComplete);
+        $("#progressBar").css("width", percentComplete + "%");
+        $("#progressBar").html(percentComplete + "%");
+      } else {
+        $("#progressBar").html("Upload");
+      }
+    },
+    false,
+  );
+  return xhr;
+}

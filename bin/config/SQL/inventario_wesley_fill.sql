@@ -31,11 +31,8 @@ INSERT INTO presentacion (cod_pres, cantidad, id_medida, peso, status) VALUES
 (1, 12, 1, 20.00, 1),
 (2, 10, 1, 200.00, 1);
 
-INSERT INTO `forma_pago` (`id_forma_pago`, `tipo_pago`, `status`) VALUES
-(1, 'Pago movil', 1),
-(2, 'Transferencia', 1),
-(3, 'Efectivo', 1);
-
+INSERT INTO laboratorio (rif_laboratorio, direccion, razon_social, status) VALUES
+('J-000876266', 'Urbanización Industrial Lebrun Edificio Cofasa piso 3, Petare. Caracas.', ' Laboratorio Cofasa', 1);
 
 INSERT INTO producto (cod_producto, id_tipoprod, contraindicaciones, composicion, posologia, id_tipo, id_clase, cod_pres, status) VALUES
 ('1', 1, 'Pastillo A1', ' C8H9NO2', 'La dosis habitual es de 325 mg a 650 mg. Tómelo con una frecuencia de 4 a 6 horas, según sea necesario, hasta 4 veces en un período de 24 horas. La dosis máxima puede variar entre 3,000 mg y 4,000 mg', 2, 1, 1, 1),
@@ -45,16 +42,36 @@ INSERT INTO producto_sede (id_producto_sede, cod_producto, lote, fecha_vencimien
 (1, '2', '000001', '2026-03-25', 1, 200),
 (2, '1', '000002', '2024-05-17', 1, 300);
 
+INSERT INTO proveedor (rif_proveedor, direccion, razon_social, contacto, status) VALUES
+('J-123123123', 'Urbanización Industrial Lebrun Edificio Cofasa piso 3, Petare. Caracas.', 'Proveedor ejemplo', '', 1);
+
+INSERT INTO contacto_prove (id_contacto_prove, telefono, rif_proveedor) VALUES
+  (1, '0412523232', 'J-123123123');
+
+INSERT INTO forma_pago(id_forma_pago, tipo_pago, status) VALUES
+(1, 'Pago movil', 1),
+(2, 'Transferencia', 1),
+(3, 'Efectivo', 1);
+
 INSERT INTO rol (id_rol, nombre, status) VALUES
 (1, 'Administrador', 1),
 (2, 'Gerente', 1),
 (3, 'Empleado', 1);
 
+INSERT INTO tipo_empleado (tipo_em, nombre_e, status) VALUES
+(1, 'Gerente', 1),
+(2, 'Doctor', 1);
+
+INSERT INTO instituciones (rif_int, razon_social, direccion, contacto, status) VALUES
+('J-123456787', 'Jose Antonio Maria Pineda', 'Vargas , centro', '04142342324', 1),
+('J-456789017', 'Hospital Universitario de Barquisimeto', 'Calle Hospital, Barquisimeto', '02511234568', 1);
+
+INSERT INTO personal (cedula, nombres, apellidos, direccion, id_sede, edad, telefono, correo, tipo_em, status) VALUES
+('V-30125380', 'Roberto', 'Vargas', 'Urb Las casitas', 2, '1976-04-19', '04120503888', 'ricardo.prxr16@gmail.com', 2, 1);
+
 INSERT INTO usuario (cedula, nombre, apellido, correo, password, rol, img, status) VALUES
-('123123123', 'admin', 'admin', 'admin@admin.com', '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.', 1, NULL, 1),
-('29880797', 'Ailin', 'Perez', 'duranjhoa5@gmail.com', '$2y$10$kmcloDWOIk4HNgSreXaPdes5YS1RImPYwNip4GVEQRGBnwNKeRlJK', 3, NULL, 1),
-('30395804', 'Jhoa', 'Duran', 'duranjhoa52@gmail.com', '$2y$10$/cxqYC.VN0ARUNWIlxHMHuU6ps6JPBtJx1gJIlHNizfnSmSH77hAC', 1, NULL, 1),
-('4', 'tommy', 'duran', 'I/a3j62muDU6jTXAQ31L+LtzZ6ldBEnfmObWxCu8pFQ=', '$2y$10$dnKhNNvC1HPPJxKDDaQVpOGz.vWrkUx3cZOTWgSY6NaNwrplncpZm', 1, 'assets/img/perfil/298b2f86898a210656700a947b7a6fcb.png', 1);
+('V-123123123', 'admin', 'admin', 'admin@admin.com', '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.', 1, NULL, 1);
+
 
 INSERT INTO modulos (id_modulo, nombre, status) VALUES
 (1, 'Personal', 1),

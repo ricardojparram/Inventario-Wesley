@@ -77,7 +77,7 @@ $("#enviar").click((e)=>{
  	url:"",
  	dataType:"json",
  	data:{
-
+     
  		medida: $("#mediNom").val(),
 
  	},

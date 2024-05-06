@@ -95,7 +95,7 @@ class medida extends DBConnect{
      $data = $new->fetchAll();
      echo json_encode($data);
      parent::desconectarDB();
-     die();
+     die();    
 
     }catch(\PDOexection $error){
 

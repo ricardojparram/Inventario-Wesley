@@ -56,7 +56,7 @@ class roles extends DBConnect
     public function getAgregarRol($rol)
     {
         if (!$this->validarString('nombre', $rol)) {
-            $this->http_error(400, 'Nombre inválido.');
+            return $this->http_error(400, 'Nombre inválido.');
         }
 
         $this->rol = $rol;
@@ -105,12 +105,12 @@ class roles extends DBConnect
 
     public function getEditarRol($id_rol, $rol)
     {
-        if (!$this->validarString('entero', $rol)) {
-            $this->http_error(400, 'Id inválida.');
+        if (!$this->validarString('entero', $id_rol)) {
+            return $this->http_error(400, 'Id inválida.');
         }
 
         if (!$this->validarString('nombre', $rol)) {
-            $this->http_error(400, 'Nombre inválido.');
+            return $this->http_error(400, 'Nombre inválido.');
         }
 
         $this->id_rol = $id_rol;
@@ -166,7 +166,7 @@ class roles extends DBConnect
         }
 
         if (!$this->validarString('entero', $id_rol)) {
-            $this->http_error(400, 'Id inválida.');
+            return $this->http_error(400, 'Id inválida.');
         }
 
         $this->id_rol = $id_rol;
@@ -202,7 +202,7 @@ class roles extends DBConnect
     public function getMostrarRol($id_rol)
     {
         if (!$this->validarString('entero', $id_rol)) {
-            $this->http_error(400, 'Id inválida.');
+            return $this->http_error(400, 'Id inválida.');
         }
 
         $this->id_rol = $id_rol;
@@ -260,7 +260,7 @@ class roles extends DBConnect
     public function getPermisos($id)
     {
         if (!$this->validarString('entero', $id)) {
-            $this->http_error(400, 'Id inválida.');
+            return $this->http_error(400, 'Id inválida.');
         }
 
         $this->id_rol = $id;
@@ -316,11 +316,11 @@ class roles extends DBConnect
     public function getDatosPermisos($datos, $id)
     {
         if (!$this->validarString('entero', $id)) {
-            $this->http_error(400, 'Id inválida.');
+            return $this->http_error(400, 'Id inválida.');
         }
 
         $estructura = [
-            'id_permisos' => 'string',
+            'id_permiso' => 'string',
             'status' => 'string'
         ];
         if (!$this->validarEstructuraArray($datos, $estructura, true)) {

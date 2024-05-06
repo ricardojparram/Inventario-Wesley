@@ -308,7 +308,7 @@ CREATE TABLE donaciones (
   id_donaciones int(11) AUTO_INCREMENT PRIMARY KEY,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
 
 -- --------------------------------------------------------
 --
@@ -390,7 +390,8 @@ CREATE TABLE personal (
   apellidos varchar(50) NOT NULL,
   direccion varchar(200) NOT NULL,
   id_sede int(11) NOT NULL,
-  fecha_nacimiento date NOT NULL,
+  edad date NOT NULL,
+  -- fecha_nacimiento date NOT NULL,
   telefono varchar(15) NOT NULL,
   correo varchar(320) NOT NULL,
   tipo_em int(11) NOT NULL,
