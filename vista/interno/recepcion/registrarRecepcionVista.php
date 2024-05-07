@@ -114,18 +114,17 @@
                                     <label for="sede" class="col-sm-3 col-form-label"><strong>Sede</strong></label>
                                     <div class="input-group">
                                         <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione la sede que recibirá los productos."><i class="bi bi-person-fill"></i></button>
-                                        <select class="form-control select2" placeholder="Sede de recepcion" id="sede">
+                                        <select class="form-control select2" disabled placeholder="Sede de recepcion" id="sede">
                                             <option value="0" selected disabled>Sede de recepción</option>
                                             <?php
                                             if (isset($sedes)) {
                                                 foreach ($sedes as $sede) {
-                                            ?>
+                                                    ?>
                                                     <option value="<?= $sede->id_sede; ?>" class="opcion"><?= $sede->nombre; ?></option>
                                             <?php
                                                 }
                                             }
-                                            ?>
-
+    ?>
                                         </select>
                                     </div>
                                     <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>
@@ -200,6 +199,7 @@
                         <th>Lote</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
+                        <th>Descripcion</th>
                         <th>Vencimiento</th>
                     </thead>
                     <tbody>

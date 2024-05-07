@@ -27,7 +27,7 @@ class recepcion extends DBConnect
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
     public function mostrarRecepciones($bitacora): array
@@ -47,7 +47,7 @@ class recepcion extends DBConnect
             $this->desconectarDB();
             return $data;
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
 
@@ -57,15 +57,18 @@ class recepcion extends DBConnect
             $this->conectarDB();
             $sql = "SELECT t.id_transferencia, s.nombre as nombre_sede, t.fecha FROM transferencia t 
                   INNER JOIN sede s ON t.id_sede = s.id_sede
-                  WHERE t.status = 1;";
+                  WHERE t.status = 1 AND s.id_sede = ?;";
             $new = $this->con->prepare($sql);
+            $new->bindValue(1, $_SESSION['id_sede']);
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
-            // if($bitacora == "true") $this->binnacle("Transferencia",$_SESSION['cedula'],"Consultó listado.");
+            if($bitacora == "true") {
+                $this->binnacle("Transferencia", $_SESSION['cedula'], "Consultó listado de transferencias.");
+            }
             $this->desconectarDB();
             return $data;
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
     public function getMostrarDetalle($id_recepcion)
@@ -118,7 +121,7 @@ class recepcion extends DBConnect
             $new->execute();
             $transferencia = $new->fetch(\PDO::FETCH_OBJ);
 
-            $sql = "SELECT ps.lote, dt.cantidad, ps.id_producto_sede FROM detalle_transferencia dt
+            $sql = "SELECT ps.lote, dt.cantidad, ps.id_producto_sede, dt.descripcion FROM detalle_transferencia dt
                     INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
                     INNER JOIN producto p ON p.cod_producto = ps.cod_producto 
                     WHERE dt.id_transferencia = ?;";
@@ -129,7 +132,7 @@ class recepcion extends DBConnect
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
             return ["transferencia" => $transferencia, "productos" => $data];
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
     private function mostrarProductoInventario(): array
@@ -143,7 +146,7 @@ class recepcion extends DBConnect
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
     private function cambiarEstadoTransferencia($status)
@@ -173,8 +176,12 @@ class recepcion extends DBConnect
         if ($this->validarFecha($fecha, 'Y-m-d H:i:s') !== true) {
             return $this->http_error(400, 'Fecha inválida.');
         }
-
-        if (!is_array($productos)) {
+        $estructura_productos = [
+          'id_producto' => 'string',
+          'cantidad' => 'string',
+          'descripcion' => 'string'
+        ];
+        if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
         }
 
@@ -223,11 +230,12 @@ class recepcion extends DBConnect
                 }
 
 
-                $sql = "INSERT INTO detalle_recepcion(id_recepcion, id_producto_sede, cantidad) VALUES (?,?,?)";
+                $sql = "INSERT INTO detalle_recepcion(id_recepcion, id_producto_sede, cantidad, descripcion) VALUES (?,?,?,?)";
                 $new = $this->con->prepare($sql);
                 $new->bindValue(1, $this->id_recepcion);
                 $new->bindValue(2, $this->id_producto);
                 $new->bindValue(3, $producto['cantidad']);
+                $new->bindValue(4, $producto['descripcion']);
                 $new->execute();
                 $this->inventario_historial("Recepcion", "x", "", "", $this->id_producto, $producto["cantidad"]);
             }
@@ -237,7 +245,7 @@ class recepcion extends DBConnect
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado la recepcion correctamente.'];
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
 
