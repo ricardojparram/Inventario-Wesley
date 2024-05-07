@@ -3,7 +3,6 @@
 namespace modelo;
 
 use config\connect\DBConnect as DBConnect;
-use DateTime;
 use utils\validar;
 
 class transferencia extends DBConnect
@@ -79,7 +78,9 @@ class transferencia extends DBConnect
             $new = $this->con->prepare($sql);
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
-            // if($bitacora == "true") $this->binnacle("Transferencia",$_SESSION['cedula'],"Consultó listado.");
+            if($bitacora == "true") {
+                $this->binnacle("Transferencia", $_SESSION['cedula'], "Consultó listado de transferencias.");
+            }
             $this->desconectarDB();
             return $data;
         } catch (\PDOException $e) {
@@ -100,7 +101,7 @@ class transferencia extends DBConnect
     {
         try {
             $this->conectarDB();
-            $sql = "SELECT s.nombre as nombre_sede, ps.presentacion_producto, ps.lote, dt.cantidad, ps.fecha_vencimiento FROM detalle_transferencia dt
+            $sql = "SELECT s.nombre as nombre_sede, ps.presentacion_producto, ps.lote, dt.cantidad, dt.descripcion, ps.fecha_vencimiento FROM detalle_transferencia dt
               INNER JOIN transferencia t ON dt.id_transferencia = t.id_transferencia
               INNER JOIN sede s ON s.id_sede = t.id_sede
               INNER JOIN vw_producto_sede_detallado ps ON ps.id_producto_sede = dt.id_producto_sede
@@ -128,7 +129,8 @@ class transferencia extends DBConnect
 
         $estructura_productos = [
           'id_producto' => 'string',
-          'cantidad' => 'string'
+          'cantidad' => 'string',
+          'descripcion' => 'string'
         ];
         if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
@@ -151,7 +153,7 @@ class transferencia extends DBConnect
             $new->execute();
             $this->id_transferencia = $this->con->lastInsertId();
 
-            $sql = "INSERT INTO detalle_transferencia(id_transferencia, id_producto_sede, cantidad) VALUES (?,?,?)";
+            $sql = "INSERT INTO detalle_transferencia(id_transferencia, id_producto_sede, cantidad, descripcion) VALUES (?,?,?,?)";
             foreach ($this->productos as $producto) {
                 $this->id_producto = $producto['id_producto'];
                 [$data] = $this->mostrarProductoInventario();
@@ -160,6 +162,7 @@ class transferencia extends DBConnect
                 $new->bindValue(1, $this->id_transferencia);
                 $new->bindValue(2, $this->id_producto);
                 $new->bindValue(3, $producto['cantidad']);
+                $new->bindValue(4, $producto['descripcion']);
                 $new->execute();
                 $this->inventario_historial("Transferencia", "", "x", "", $this->id_producto, $producto["cantidad"]);
                 $inventario = intval($data->cantidad) - intval($producto['cantidad']);
@@ -169,7 +172,7 @@ class transferencia extends DBConnect
                 $new->bindValue(2, $this->id_producto);
                 $new->execute();
             }
-
+            $this->binnacle("Transferencia", $_SESSION['cedula'], "Registró una transferencia.");
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado la transferencia correctamente.'];
         } catch (\PDOException $e) {
@@ -213,6 +216,7 @@ class transferencia extends DBConnect
                 $new->bindValue(2, $producto->id_producto_sede);
                 $new->execute();
             }
+            $this->binnacle("Transferencia", $_SESSION['cedula'], "Eliminó una transferencia.");
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha eliminado la transferencia correctamente.'];
         } catch (\PDOException $e) {
