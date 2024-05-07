@@ -18,24 +18,24 @@ $(document).ready(function () {
       dataType: "json",
       data: { mostrar: "inv", bitacora },
       success(data) {
-        let tabla;
         editarPermiso =
           typeof permisos.Editar === "undefined" ? "disabled" : "";
         eliminarPermiso =
           typeof permisos.Eliminar === "undefined" ? "disabled" : "";
-        data.forEach((row) => {
-          tabla += `
-                        <tr>
-                            <td>${row.id_historial}</th>
-                            <td scope="col">${row.sede}</td>
-                            <td>${row.fecha}</th>
-                            <td scope="col">${row.producto}</td>
-                            <td scope="col">${row.entrada}</td>                      
-                            <td scope="col">${row.salida}</td>
-                            <td scope="col">${row.id_lote}</td>
-                            <td scope="col">${row.cantidad}</td>
-                        </tr>`;
-        });
+        let tabla = data.reduce((acc, row) => {
+          return (acc += `
+             <tr>
+                 <td>${row.usuario}</th>
+                 <td>${row.nombre_sede}</th>
+                 <td>${row.fecha}</td>
+                 <td>${row.presentacion_producto}</th>
+                 <td>${row.entrada}</td>
+                 <td>${row.salida}</td>                      
+                 <td>${row.tipo_movimiento}</td>
+                 <td>${row.producto_lote}</td>
+                 <td>${row.cantidad}</td>
+             </tr>`);
+        }, "");
         $("#tableMostrar tbody").html(tabla);
         mostrar = $("#tableMostrar").DataTable({
           resposive: true,
