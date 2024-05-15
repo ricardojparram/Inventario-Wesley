@@ -183,7 +183,7 @@
                       <thead>
                         <tr>
                           <th></th>
-                         
+                          <th>Producto</th>
                           <th>Cantidad</th>
                           <th>Descripcion</th>
                         </tr>
