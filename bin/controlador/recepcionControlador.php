@@ -5,7 +5,9 @@ use component\header as header;
 use component\menuLateral as menuLateral;
 use modelo\recepcion;
 
-if (!isset($_SESSION['nivel'])) die('<script> window.location = "?url=login" </script>');
+if (!isset($_SESSION['nivel'])) {
+    die('<script> window.location = "?url=login" </script>');
+}
 
 $model = new recepcion();
 
@@ -14,7 +16,9 @@ $permiso = $permisos['Recepcion'];
 
 $sedes = $model->mostrarSedes();
 
-if (!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
+if (!isset($permiso["Consultar"])) {
+    die('<script> window.location = "?url=home" </script>');
+}
 
 if (isset($_GET['getPermisos'], $permiso['Consultar'])) {
     die(json_encode($permiso));
@@ -40,8 +44,10 @@ if (isset($_GET['datosTransferencia'], $_GET["id"], $permiso['Consultar'])) {
     die(json_encode($res));
 }
 
-if (isset($_POST['registrar'], $_POST["sede"], $_POST["transferencia"], $_POST['fecha'], $_POST["productos"], $permiso['Registrar'])) {
-    $res = $model->getAgregarRecepcion($_POST["transferencia"], $_POST["sede"], $_POST['fecha'], $_POST["productos"]);
+if (isset($_POST["sede"], $_POST["transferencia"], $_POST['fecha'], $_POST["productos"], $permiso['Registrar'])) {
+    $res = (isset($_FILES['img']))
+    ? $model->getAgregarRecepcion($_POST["transferencia"], $_POST["sede"], $_POST['fecha'], $_POST["productos"], $_FILES['img'])
+    : $model->getAgregarRecepcion($_POST["transferencia"], $_POST["sede"], $_POST['fecha'], $_POST["productos"]);
     die(json_encode($res));
 }
 

@@ -16,6 +16,7 @@ class recepcion extends DBConnect
     private $fecha;
     private $productos;
     private $id_producto;
+    private $img;
 
     public function mostrarSedes()
     {
@@ -162,7 +163,7 @@ class recepcion extends DBConnect
         }
     }
 
-    public function getAgregarRecepcion($id_transferencia, $sede, $fecha, $productos): array
+    public function getAgregarRecepcion($id_transferencia, $sede, $fecha, $productos, $img = false): array
     {
         if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
             return $this->http_error(400, 'Transferencia inválida.');
@@ -181,14 +182,22 @@ class recepcion extends DBConnect
           'cantidad' => 'string',
           'descripcion' => 'string'
         ];
+        $productos = json_decode($productos, 1);
         if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
+        }
+        if($img !== false) {
+            $valid = $this->validarImagen($img, true);
+            if(!$valid['valid']) {
+                return $valid['res']();
+            }
         }
 
         $this->id_sede = $sede;
         $this->fecha = $fecha;
         $this->productos = $productos;
         $this->id_transferencia = $id_transferencia;
+        $this->img = $img;
 
         return $this->agregarRecepcion();
     }
@@ -203,6 +212,9 @@ class recepcion extends DBConnect
             $new->bindValue(2, $this->fecha);
             $new->execute();
             $this->id_recepcion = $this->con->lastInsertId();
+            if($this->img !== false) {
+                $this->registrarImagenesRecepcion();
+            }
 
             foreach ($this->productos as $producto) {
                 $this->id_producto = $producto['id_producto'];
@@ -229,7 +241,6 @@ class recepcion extends DBConnect
                     $this->id_producto = $this->con->lastInsertId();
                 }
 
-
                 $sql = "INSERT INTO detalle_recepcion(id_recepcion, id_producto_sede, cantidad, descripcion) VALUES (?,?,?,?)";
                 $new = $this->con->prepare($sql);
                 $new->bindValue(1, $this->id_recepcion);
@@ -246,6 +257,19 @@ class recepcion extends DBConnect
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado la recepcion correctamente.'];
         } catch (\PDOException $e) {
             return $this->http_error(500, $e->getMessage());
+        }
+    }
+    private function registrarImagenesRecepcion(): void
+    {
+        for($i = 0; $i < count($this->img['name']); $i++) {
+            $name = $this->randomRepository('assets/img/inventario/', $this->img['name'][$i], 'recepcion_');
+            if (!move_uploaded_file($this->img['tmp_name'][$i], $name)) {
+                $res = "No se pudo guardar la imagen";
+            }
+            $new = $this->con->prepare("INSERT INTO img_recepcion(id_recepcion, img, status) VALUES (:id,:img,1)");
+            $new->bindValue(':id', $this->id_recepcion);
+            $new->bindValue(':img', $name);
+            $new->execute();
         }
     }
 

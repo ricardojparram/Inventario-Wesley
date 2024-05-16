@@ -110,8 +110,16 @@ $(document).ready(function () {
         "Error de fecha,",
       )),
   );
-
-  $("#registrar").click(function (e) {
+  $(".custom-file-input").on("change", function () {
+    var files = Array.from(this.files);
+    var fileName = files
+      .map((f) => {
+        return f.name;
+      })
+      .join(", ");
+    $(".custom-file-label").addClass("selected").html(fileName);
+  });
+  $("#agregarform").submit(function (e) {
     e.preventDefault();
 
     valid_fecha = validarFecha($("#fecha"), $("#error2"), "Error de fecha,");
@@ -119,27 +127,32 @@ $(document).ready(function () {
 
     if (!valid_fecha || !valid_sede) return;
 
-    productos = getProductos();
-    let data = {
-      registrar: "",
-      transferencia: id,
-      sede: $("#sede").val(),
-      fecha: $("#fecha").val(),
-      productos,
-    };
+    let productos = getProductos();
+    let form = new FormData();
+    form.set("transferencia", id);
+    form.set("sede", $("#sede").val());
+    form.set("fecha", $("#fecha").val());
+    form.set("productos", JSON.stringify(productos));
+    const photos = document.querySelector('input[type="file"][multiple]');
+    for (const [i, photo] of Array.from(photos.files).entries()) {
+      form.append(`img[]`, photo);
+    }
 
-    $(this).prop("disabled", true);
-    $.post(
-      "",
-      data,
-      function (res) {
+    $(this).find('button[type="submit"]').prop("disabled", true);
+    $.ajax({
+      type: "POST",
+      url: "",
+      dataType: "JSON",
+      data: form,
+      contentType: false,
+      processData: false,
+      success(res) {
         Toast.fire({ icon: "success", title: res.msg });
         mostrar.destroy();
         $(".cerrar").click();
         rellenar();
       },
-      "json",
-    )
+    })
       .fail((e) => {
         Toast.fire({
           icon: "error",
@@ -148,7 +161,7 @@ $(document).ready(function () {
         console.error(e.responseJSON.msg);
       })
       .always(() => {
-        $(this).prop("disabled", false);
+        $(this).find('button[type="submit"]').prop("disabled", false);
       });
   });
 
@@ -177,7 +190,7 @@ $(document).ready(function () {
     )
       .fail((e) => {
         Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-        throw new Error("Error al mostrar detalles: " + e);
+        console.error(e);
       })
       .always(() => {
         $(this).prop("disabled", false);
