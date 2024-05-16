@@ -13,6 +13,7 @@ class descargo extends DBConnect
     private $fecha;
     private $productos;
     private $id_producto;
+    private $img;
 
     public function mostrarDescargos($bitacora)
     {
@@ -63,8 +64,9 @@ class descargo extends DBConnect
         try {
             $this->conectarDB();
             $sql = "SELECT id_producto_sede, presentacion_producto, fecha_vencimiento, cantidad FROM vw_producto_sede_detallado
-                    WHERE id_sede = 1";
+                    WHERE id_sede = ?";
             $new = $this->con->prepare($sql);
+            $new->bindValue(1, $_SESSION['id_sede']);
             $new->execute();
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
@@ -91,7 +93,7 @@ class descargo extends DBConnect
             return $this->http_error(500, $e->getMessage());
         }
     }
-    public function getAgregarDescargo($num_descargo, $fecha, $productos): array
+    public function getAgregarDescargo($num_descargo, $fecha, $productos, $img = false): array
     {
         if (!$this->validarString('entero', $num_descargo)) {
             return $this->http_error(400, 'Transferencia inválida.');
@@ -103,16 +105,26 @@ class descargo extends DBConnect
         }
 
         $estructura_productos = [
-            'id_producto' => 'string',
-            'cantidad' => 'string'
+          'id_producto' => 'string',
+          'cantidad' => 'string',
+          'descripcion' => 'string'
         ];
+        $productos = json_decode($productos, 1);
         if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
+        }
+
+        if($img !== false) {
+            $valid = $this->validarImagen($img, true);
+            if(!$valid['valid']) {
+                return $valid['res']();
+            }
         }
 
         $this->num_descargo = $num_descargo;
         $this->fecha = $fecha;
         $this->productos = $productos;
+        $this->img = $img;
 
         return $this->agregarDescargo();
     }
@@ -128,10 +140,15 @@ class descargo extends DBConnect
             $new->execute();
             $this->id_descargo = $this->con->lastInsertId();
 
+            if($this->img !== false) {
+                $this->registrarImagenesDescargo();
+            }
+
             foreach ($this->productos as $producto) {
                 [
                     'id_producto' => $cod_producto,
-                    'cantidad' => $cantidad
+                    'cantidad' => $cantidad,
+                    'descripcion' => $descripcion
                 ] = $producto;
                 $this->id_producto = $cod_producto;
                 $producto_sede = $this->verificarExistenciaDelLote();
@@ -146,11 +163,12 @@ class descargo extends DBConnect
                 $this->id_producto = $producto_sede->id_producto_sede;
 
 
-                $sql = "INSERT INTO detalle_descargo(id_descargo, id_producto_sede, cantidad) VALUES (?,?,?)";
+                $sql = "INSERT INTO detalle_descargo(id_descargo, id_producto_sede, cantidad, descripcion) VALUES (?,?,?,?)";
                 $new = $this->con->prepare($sql);
                 $new->bindValue(1, $this->id_descargo);
                 $new->bindValue(2, $this->id_producto);
                 $new->bindValue(3, $cantidad);
+                $new->bindValue(4, $descripcion);
                 $new->execute();
 
                 $this->inventario_historial("Descargo", "", "x", "", $this->id_producto, $cantidad);
@@ -159,7 +177,21 @@ class descargo extends DBConnect
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado el descargo correctamente.'];
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
+        }
+    }
+
+    private function registrarImagenesDescargo(): void
+    {
+        for($i = 0; $i < count($this->img['name']); $i++) {
+            $name = $this->randomRepository('assets/img/inventario/', $this->img['name'][$i], 'descargo_');
+            if (!move_uploaded_file($this->img['tmp_name'][$i], $name)) {
+                $res = "No se pudo guardar la imagen";
+            }
+            $new = $this->con->prepare("INSERT INTO img_descargo(id_descargo, img, status) VALUES (:id,:img,1)");
+            $new->bindValue(':id', $this->id_descargo);
+            $new->bindValue(':img', $name);
+            $new->execute();
         }
     }
 

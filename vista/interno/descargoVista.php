@@ -133,8 +133,8 @@
                 <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
             </div>
 
+      <form id="agregarform" enctype='multipart/form-data'>
             <div class="modal-body ">
-                <form id="agregarform">
 
                     <div class="form-group col-md-12">
                         <div class="container-fluid">
@@ -144,7 +144,7 @@
                                     <label for="sede" class="col-sm-6 col-form-label"><strong>Número de Descargo</strong></label>
                                     <div class="input-group">
                                         <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el número de Descargo."><i class="bi bi-person-fill"></i></button>
-                                        <input class="form-control" type="text" id="num_descargo" />
+                                        <input class="form-control" type="text" id="num_descargo" name="num_descargo" />
                                     </div>
                                     <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>
                                 </div>
@@ -153,10 +153,20 @@
                                     <label class="col-form-label" for="fecha"><strong>Fecha</strong></label>
                                     <div class="input-group">
                                         <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Fecha en la que se hace la transferencia"><i class="bi bi-calendar2-date"></i></button>
-                                        <input class="form-control" disabled type="date" id="fecha" />
+                                        <input class="form-control" disabled type="date" id="fecha" name="fecha" />
                                     </div>
                                     <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
                                 </div>
+
+                                <div class="form-group col-lg-6">
+                                    <label class="col-form-label" for="formFile"><strong>Imagenes adjuntadas</strong></label>
+                                    <div class="input-group">
+                                        <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Fecha en la que se hace la transferencia"><i class="bi bi-images"></i></button>
+                                        <input class="form-control custom-file-input" multiple type="file" id="formFile" name="img[]">
+                                    </div>
+                                    <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
+                                </div>
+                                <label class="custom-file-label col-lg-6 d-flex align-items-center" for="formFile"></label>
 
                             </div>
                         </div>
@@ -174,6 +184,7 @@
                                                     <th></th>
                                                     <th>Producto</th>
                                                     <th>Cantidad</th>
+                                                    <th>Descripción</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="tablaSeleccionarProductos">
@@ -188,6 +199,10 @@
                                                     <td class="cantidad position-relative">
                                                         <input class="select-asd" type="text" value="" />
                                                         <span class="d-none floating-error">error</span>
+                                                    </td>
+                                                    <td class="descripcion position-relative">
+                                                      <input class="select-asd" type="text" value="" />
+                                                      <span class="d-none floating-error">error</span>
                                                     </td>
                                                 </tr>
 
