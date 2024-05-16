@@ -7,6 +7,7 @@ use modelo\transferencia;
 
 // echo password_hash('123123123', PASSWORD_BCRYPT);
 // die();
+//
 if (!isset($_SESSION['nivel'])) {
     die('<script> window.location = "?url=login" </script>');
 }
@@ -29,6 +30,17 @@ if (isset($_POST['notificacion'])) {
     $model->getNotificacion();
 }
 
+
+if (isset($_GET['detalle'], $_GET["id_transferencia"], $permiso['Consultar'])) {
+    $res = $model->getMostrarDetalle($_GET["id_transferencia"]);
+    die(json_encode($res));
+}
+
+if($_SESSION['id_sede'] != 1) {
+    die('<script> window.location = "?url=home" </script>');
+}
+
+
 if (isset($_GET['select_producto'])) {
     $res = $model->mostrarProductos();
     die(json_encode($res));
@@ -41,11 +53,6 @@ if (isset($_GET['producto_inventario'], $permiso['Consultar'])) {
 
 if (isset($_GET['mostrar'], $_GET['bitacora'], $permiso['Consultar'])) {
     $res = $model->mostrarTransferencias($_GET['bitacora']);
-    die(json_encode($res));
-}
-
-if (isset($_GET['detalle'], $_GET["id_transferencia"], $permiso['Consultar'])) {
-    $res = $model->getMostrarDetalle($_GET["id_transferencia"]);
     die(json_encode($res));
 }
 

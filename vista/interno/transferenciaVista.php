@@ -125,7 +125,7 @@
 <!-- INICIO MODAL DE AGREGAR -->
 
 <div class="modal fade" id="Agregar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header alert alert-success">
         <h3 class="modal-title"> <strong>Registrar Transferencia</strong> </h3>

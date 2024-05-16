@@ -182,9 +182,8 @@ class transferencia extends DBConnect
 
     public function getEliminarTransferencia($id_transferencia): array
     {
-        if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
-            http_response_code(400);
-            return ['resultado' => 'error', 'msg' => 'Id invalida.'];
+        if (!$this->validarString('entero', $id_transferencia)) {
+            return $this->http_error(400, 'Id inválida.');
         }
 
         $this->id_transferencia = $id_transferencia;
@@ -201,8 +200,8 @@ class transferencia extends DBConnect
             $new->execute();
 
             $sql = "SELECT dt.id_producto_sede, dt.cantidad, ps.cantidad as inventario FROM detalle_transferencia dt
-      INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
-      WHERE dt.id_transferencia = ?;";
+                    INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
+                    WHERE dt.id_transferencia = ?;";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id_transferencia);
             $new->execute();
