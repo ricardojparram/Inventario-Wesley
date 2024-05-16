@@ -269,10 +269,22 @@ CREATE TABLE detalle_descargo (
   id_descargo int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
+  descripcion varchar(200) CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla img_descargo
+--
+CREATE TABLE img_decargo (
+  id_descargo int(11) NOT NULL,
+  img varchar(300) CHARACTER SET utf16 COLLATE utf16_spanish2_ci NOT NULL,
+  status tinyint(1) UNSIGNED NOT NULL,
+  FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla compra
@@ -520,6 +532,17 @@ CREATE TABLE detalle_recepcion (
   FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla img_recepcion
+--
+CREATE TABLE img_recepcion (
+  id_recepcion int(11) NOT NULL,
+  img varchar(300) CHARACTER SET utf16 COLLATE utf16_spanish2_ci NOT NULL,
+  status tinyint(1) UNSIGNED NOT NULL,
+  FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla transferencia
