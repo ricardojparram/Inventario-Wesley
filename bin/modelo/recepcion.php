@@ -85,18 +85,27 @@ class recepcion extends DBConnect
     {
         try {
             $this->conectarDB();
-            $sql = "SELECT s.nombre as nombre_sede, ps.lote, ps.id_producto_sede, p.cod_producto, dr.cantidad, ps.fecha_vencimiento FROM detalle_recepcion dr
-                    INNER JOIN recepcion_sede r ON r.id_recepcion = dr.id_recepcion
-                    INNER JOIN transferencia t ON r.id_transferencia = t.id_transferencia
-                    INNER JOIN producto_sede ps ON ps.id_producto_sede = dr.id_producto_sede
-                    INNER JOIN producto p ON p.cod_producto = ps.cod_producto 
+            $sql = "SELECT r.fecha, t.id_transferencia, s.nombre as nombre_sede FROM recepcion_sede r
+                    INNER JOIN transferencia t ON t.id_transferencia = r.id_transferencia
                     INNER JOIN sede s ON s.id_sede = t.id_sede
-                    WHERE r.id_recepcion = ?;";
+                    WHERE r.status = 1 AND r.id_recepcion = :id";
             $new = $this->con->prepare($sql);
-            $new->bindValue(1, $this->id_recepcion);
-            $new->execute();
+            $new->execute([':id' => $this->id_recepcion]);
+            $recepcion = $new->fetch(\PDO::FETCH_ASSOC);
+
+            $sql = "SELECT img as src FROM img_recepcion WHERE id_recepcion = :id;";
+            $new = $this->con->prepare($sql);
+            $new->execute([':id' => $this->id_recepcion]);
+            $img = $new->fetchAll(\PDO::FETCH_ASSOC);
+
+            $sql = "SELECT ps.lote, ps.presentacion_producto, ps.fecha_vencimiento, dr.cantidad FROM detalle_recepcion dr
+                    INNER JOIN vw_producto_sede_detallado ps ON ps.id_producto_sede = dr.id_producto_sede
+                    WHERE dr.id_recepcion = :id;";
+            $new = $this->con->prepare($sql);
+            $new->execute([':id' => $this->id_recepcion]);
             $this->desconectarDB();
-            return $new->fetchAll(\PDO::FETCH_OBJ);
+            $detalle = $new->fetchAll(\PDO::FETCH_OBJ);
+            return ['recepcion' => $recepcion, 'detalle' => $detalle, 'img' => $img];
         } catch (\PDOException $e) {
             return $this->http_error(500, $e->getMessage());
         }

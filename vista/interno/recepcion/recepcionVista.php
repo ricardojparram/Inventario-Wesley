@@ -39,8 +39,7 @@
             <h1>Recepcion</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item">Recepcion</li>
-                </ol>
+                    <li class="breadcrumb-item">Recepcion</li> </ol>
             </nav>
 
         </div>
@@ -98,10 +97,14 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header alert alert-success">
-                <h5 class="modal-title"><strong class="detalle_titulo"></strong></h5>
+                <h5 class="modal-title"><strong class="detalle_titulo">Recepcion</strong></h5>
                 <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
             </div>
             <div class="modal-body">
+                <div class="d-flex justify-content-center align-items-center gap-2 images"></div>
+                <div class="container-sm mt-3">
+                  <dl class='row detalle_dl'></dl>
+                </div>
                 <table id="tabla_detalle" class="table table-hover">
                     <thead>
                         <th>Lote</th>
