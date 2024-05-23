@@ -39,18 +39,32 @@ $(document).ready(function () {
   $(document).on("click", ".detalle", function () {
     id = this.id;
     $.getJSON("", { detalle: "", id }, (res) => {
-      let tabla = "";
-      $(".detalle_titulo").html(`Descargo: ${res[0].num_descargo}`);
-      res.forEach((row) => {
-        tabla += `
+      $(".detalle_titulo").html(`Descargo: ${res.descargo.num_descargo}`);
+      let imgs = res.img.reduce((acc, row) => {
+        return (acc += `
+          <a href="${row.src}" target="_blank">
+            <img src="${row.src}" class="img-thumbnail" style="witdh: 200px; height: 200px">
+          </a>
+        `);
+      }, "");
+      let descargo = `
+          <dt class="col-sm-3">Sede</dt>
+          <dd class="col-sm-9">${res.descargo.nombre_sede}</dd>
+          <dt class="col-sm-3">Fecha</dt>
+          <dd class="col-sm-9">${res.descargo.fecha}</dd>
+        `;
+      let tabla = res.detalle.reduce((acc, row) => {
+        return (acc += `
             <tr>
               <td>${row.lote}</th>
               <td>${row.presentacion_producto}</th>
               <td>${row.cantidad}</td>
               <td>${row.fecha_vencimiento ? row.fecha_vencimiento : ""}</td>
-            </tr>`;
-      });
+            </tr>`);
+      }, "");
       $("#tabla_detalle tbody").html(tabla || "");
+      $(".images").html(imgs);
+      $(".recepcion_detalle dl").html(descargo);
     }).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar detalles: " + e);
@@ -70,7 +84,7 @@ $(document).ready(function () {
         if (this.children.length == 1) {
           $(this).append(option);
           $(this).chosen({
-            width: "400px",
+            width: "100%",
             placeholder_text_single: "Selecciona un producto",
             search_contains: true,
             allow_single_deselect: true,
@@ -137,13 +151,60 @@ $(document).ready(function () {
     return !validacion.includes(false);
   };
 
-  // const mostrarInventarioProducto = (item) => {
-  //     let $cantidad = $(item).closest('tr').find('.cantidad input');
-  //     let producto_inventario = item.value;
-  //     $.getJSON('', { producto_inventario }, function (data) {
-  //         $cantidad.val(data[0].cantidad);
-  //     })
-  // }
+  const mostrarInventarioProducto = (item) => {
+    let $cantidad = $(item).closest("tr").find(".cantidad input");
+    let producto_inventario = item.value;
+    $.getJSON("?url=transferencia", { producto_inventario }, function (data) {
+      $cantidad.val(data[0].cantidad);
+    });
+  };
+
+  const validarInventario = async (item) => {
+    let $cantidad = $(item);
+    let $error = $(item).next();
+    let producto_inventario = $cantidad
+      .closest("tr")
+      .find(".select-productos")
+      .val();
+    let cantidad = item.value;
+    let valid = false;
+    if (!Number.isInteger(Number(cantidad))) return false;
+    await $.getJSON(
+      "?url=transferencia",
+      { producto_inventario },
+      function (data) {
+        if (cantidad > data[0].cantidad) {
+          $cantidad.attr("valid", false);
+          $error
+            .html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
+            .removeClass("d-none");
+          valid = false;
+        } else {
+          $cantidad.attr("valid", true);
+          $error.addClass("d-none");
+          valid = true;
+        }
+      },
+    );
+    return valid;
+  };
+
+  const validarCantidad = () => {
+    let validacion = [];
+    $(".cantidad input").each(function () {
+      if (this.value === "" || this.value === null || Number(this.value) < 1) {
+        $(this).addClass("input-error");
+        validacion.push(false);
+      } else if ($(this).attr("valid") === "false") {
+        $(this).addClass("input-error");
+        validacion.push(false);
+      } else {
+        $(this).removeClass("input-error");
+        validacion.push(true);
+      }
+    });
+    return !validacion.includes(false);
+  };
 
   const filaPlantilla = `
     <tr>
@@ -181,13 +242,13 @@ $(document).ready(function () {
   /* Evento de cambio en los productos */
   $(document).on("change", ".select-productos", function () {
     validarProductosRepetidos();
-    // mostrarInventarioProducto(this);
+    mostrarInventarioProducto(this);
   });
 
   /* Evento de cambio en la cantidad*/
-  // $(document).on("change", ".cantidad input", function () {
-  //     // validarInventario(this)
-  // });
+  $(document).on("change", ".cantidad input", function () {
+    validarInventario(this);
+  });
 
   /* Evento Eliminar fila */
   $("body").on("click", ".eliminarFila", function (e) {
@@ -246,12 +307,14 @@ $(document).ready(function () {
     valid_fecha = validarFecha($("#fecha"), $("#error2"), "Error de fecha,");
     let valid_productos = validarProductosRepetidos(false);
     let valid_lotes_cantidad = validarProductos();
+    let valid_cantidad = validarCantidad();
 
     if (
       !valid_descargo ||
       !valid_fecha ||
       !valid_productos ||
-      !valid_lotes_cantidad
+      !valid_lotes_cantidad ||
+      !valid_cantidad
     )
       return;
 

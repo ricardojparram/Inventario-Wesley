@@ -20,10 +20,13 @@ class descargo extends DBConnect
         try {
             $this->conectarDB();
             $sql = "SELECT id_descargo, fecha, num_descargo FROM descargo 
-                    WHERE status = 1;";
+                    WHERE status = 1 AND id_sede = ?;";
             $new = $this->con->prepare($sql);
+            $new->bindValue(1, $_SESSION['id_sede']);
             $new->execute();
-            // if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
+            if ($bitacora == "true") {
+                $this->binnacle("Descargo", $_SESSION['cedula'], "Consultó listado en el módulo descargo.");
+            }
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
@@ -34,7 +37,7 @@ class descargo extends DBConnect
     public function getMostrarDetalle($id_descargo)
     {
         if (!$this->validarString('entero', $id_descargo)) {
-            return $this->http_error(400, 'descargo inválido.');
+            return $this->http_error(400, 'Descargo inválido.');
         }
 
         $this->id_descargo = $id_descargo;
@@ -45,15 +48,26 @@ class descargo extends DBConnect
     {
         try {
             $this->conectarDB();
-            $sql = "SELECT ps.lote, ps.presentacion_producto, ps.fecha_vencimiento, dc.cantidad, c.num_descargo FROM descargo c 
-                    INNER JOIN detalle_descargo dc ON dc.id_descargo = c.id_descargo
-                    INNER JOIN vw_producto_sede_detallado ps ON ps.id_producto_sede = dc.id_producto_sede
-                    WHERE c.id_descargo = ?";
+            $sql = "SELECT d.fecha, s.nombre as nombre_sede, d.num_descargo FROM descargo d
+                    INNER JOIN sede s ON s.id_sede = d.id_sede
+                    WHERE d.status = 1 AND d.id_descargo = :id";
             $new = $this->con->prepare($sql);
-            $new->bindValue(1, $this->id_descargo);
-            $new->execute();
+            $new->execute([':id' => $this->id_descargo]);
+            $descargo = $new->fetch(\PDO::FETCH_ASSOC);
+
+            $sql = "SELECT img as src FROM img_descargo WHERE status = 1 AND id_descargo = :id;";
+            $new = $this->con->prepare($sql);
+            $new->execute([':id' => $this->id_descargo]);
+            $img = $new->fetchAll(\PDO::FETCH_ASSOC);
+
+            $sql = "SELECT ps.lote, ps.presentacion_producto, ps.fecha_vencimiento, dc.cantidad FROM detalle_descargo dc
+                    INNER JOIN vw_producto_sede_detallado ps ON ps.id_producto_sede = dc.id_producto_sede
+                    WHERE dc.id_descargo = :id";
+            $new = $this->con->prepare($sql);
+            $new->execute([':id' => $this->id_descargo]);
+            $detalle = $new->fetchAll(\PDO::FETCH_ASSOC);
             $this->desconectarDB();
-            return $new->fetchAll(\PDO::FETCH_OBJ);
+            return ['descargo' => $descargo, 'detalle' => $detalle, 'img' => $img];
         } catch (\PDOException $e) {
             return $this->http_error(500, $e->getMessage());
         }
@@ -133,10 +147,11 @@ class descargo extends DBConnect
     {
         try {
             $this->conectarDB();
-            $sql = "INSERT INTO descargo(fecha, num_descargo, status) VALUES (?,?,1)";
+            $sql = "INSERT INTO descargo(fecha, num_descargo, id_sede, status) VALUES (?,?,?,1)";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->fecha);
             $new->bindValue(2, $this->num_descargo);
+            $new->bindValue(3, $_SESSION['id_sede']);
             $new->execute();
             $this->id_descargo = $this->con->lastInsertId();
 

@@ -103,6 +103,10 @@
                 <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
             </div>
             <div class="modal-body">
+                <div class="d-flex justify-content-center align-items-center gap-2 images"></div>
+                <div class="container-sm recepcion_detalle mt-3">
+                  <dl class='row'></dl>
+                </div>
                 <table id="tabla_detalle" class="table table-hover">
                     <thead>
                         <th>Lote</th>
