@@ -36,6 +36,11 @@ if (isset($_GET['detalle'], $_GET["id_transferencia"], $permiso['Consultar'])) {
     die(json_encode($res));
 }
 
+if (isset($_GET['producto_inventario'], $permiso['Consultar'])) {
+    $res = $model->getMostrarProductoInventario($_GET['producto_inventario']);
+    die(json_encode($res));
+}
+
 if($_SESSION['id_sede'] != 1) {
     die('<script> window.location = "?url=home" </script>');
 }
@@ -46,10 +51,6 @@ if (isset($_GET['select_producto'])) {
     die(json_encode($res));
 }
 
-if (isset($_GET['producto_inventario'], $permiso['Consultar'])) {
-    $res = $model->getMostrarProductoInventario($_GET['producto_inventario']);
-    die(json_encode($res));
-}
 
 if (isset($_GET['mostrar'], $_GET['bitacora'], $permiso['Consultar'])) {
     $res = $model->mostrarTransferencias($_GET['bitacora']);
