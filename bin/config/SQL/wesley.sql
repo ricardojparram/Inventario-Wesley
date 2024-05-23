@@ -246,6 +246,7 @@ CREATE TABLE producto_sede (
 CREATE TABLE descargo (
   id_descargo int(11) AUTO_INCREMENT PRIMARY KEY,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
+  id_sede int(11) NOT NULL,
   num_descargo int(11) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
@@ -279,7 +280,7 @@ CREATE TABLE detalle_descargo (
 --
 -- Estructura de tabla para la tabla img_descargo
 --
-CREATE TABLE img_decargo (
+CREATE TABLE img_descargo (
   id_descargo int(11) NOT NULL,
   img varchar(300) CHARACTER SET utf16 COLLATE utf16_spanish2_ci NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
@@ -574,6 +575,7 @@ CREATE TABLE detalle_transferencia (
 CREATE TABLE cargo (
   id_cargo int(11) AUTO_INCREMENT PRIMARY KEY,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
+  id_sede int(11) NOT NULL,
   num_cargo int(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
