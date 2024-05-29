@@ -613,11 +613,10 @@ CREATE TABLE historial (
 --
 -- Estructura de tabla notificaciones
 --
-
 CREATE TABLE notificaciones (
-    id int(11) AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(60) NOT NULL,
-    mensaje VARCHAR(255) NOT NULL,
-    fecha datetime NOT NULL DEFAULT current_timestamp(),
-    status tinyint(1) UNSIGNED NOT NULL
+  id int(11) AUTO_INCREMENT PRIMARY KEY,
+  titulo VARCHAR(60) NOT NULL,
+  mensaje VARCHAR(255) NOT NULL,
+  fecha datetime NOT NULL DEFAULT current_timestamp(),
+  status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;

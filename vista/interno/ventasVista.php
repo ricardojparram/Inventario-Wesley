@@ -279,7 +279,7 @@
                         </select>
                       </td>
                       <td width='10%' class="amount"> <input class="select-asd stock" type="number" value=""/></td>
-                      <td width='15%' class="rate"><input class="select-asd precio" type="number" disabled value="" /></td>
+                      <td width='15%' class="rate"><input class="select-asd precio" type="number" value="" /></td>
                       <td width='15%' class="sum"></td>
                     </tr>
                   </tbody>

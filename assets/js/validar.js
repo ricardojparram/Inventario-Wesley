@@ -244,11 +244,11 @@ function validarCedula(input, div, mensaje, prefijo) {
   ) {
     div.text(
       mensaje +
-      " debe entre " +
-      documento[prefijo].minLength +
-      " y " +
-      documento[prefijo].maxLength +
-      " caracteres.",
+        " debe entre " +
+        documento[prefijo].minLength +
+        " y " +
+        documento[prefijo].maxLength +
+        " caracteres.",
     );
     input.addClass("input-error");
     return false;
@@ -425,13 +425,13 @@ function validarBanco(input, div, mensaje) {
 function validarSelect(input, div, mensaje) {
   parametro = input.val();
   if (parametro == null || parametro == "") {
-    div.text(mensaje + " seleccione una opción")
-    input.addClass('select-error');
-    return false
+    div.text(mensaje + " seleccione una opción");
+    input.addClass("select-error");
+    return false;
   } else {
     div.text(" ");
-    input.removeClass('select-error');
-    return true
+    input.removeClass("select-error");
+    return true;
   }
 }
 
@@ -559,6 +559,11 @@ $(document).ready(function () {
   );
 });
 
+const debounce = (callback, time) => {
+  let timeoutid;
+  clearTimeout(timeoutid);
+  timeoutid = setTimeout(callback, time);
+};
 // Alerta permiso denegado
 const validarPermiso = (permiso) => {
   if (!permiso) {

@@ -339,7 +339,7 @@ $(document).ready(function(){
         let isValid = true;
         inputs.each(function() {
           let value = parseFloat($(this).val());
-          if (value <= 0 || value === NaN || $(this).val() === '') {
+          if ( value == 0 || value < 1 || !Number.isInteger(value)) {
             $(this).css({ "border": "solid 1px", "border-color": "red" });
             $(this).attr('valid', 'false');
             isValid = false;
@@ -421,7 +421,7 @@ $(document).ready(function(){
                         </select>
                       </td>
                       <td width='10%' class="amount"><input class="select-asd stock" type="number" value=""/></td>
-                      <td width='15%' class="rate"><input class="select-asd" type="number" disabled value="" /></td>
+                      <td width='15%' class="rate"><input class="select-asd precio" type="number" value="" /></td>
                       <td width='15%' class="sum"></td>
                     </tr>`;
 
@@ -455,30 +455,19 @@ $(document).ready(function(){
 
      let producto, select , cantidad, stock;
     //Selecciona cada producto 
-    cambio();
-    function cambio(){
-    	$('.select-productos').change(function(){
-    		select = $(this);
-    		producto = $(this).val();
-    		cantidad = select.closest('tr').find('.amount input');
-    		fillData();
-    	})
-    }
 
-    //  Rellena los inputs con el precio y cantidad de cada producto
-    function fillData(){
-    	$.getJSON('',{producto, filas: "data"}, function(data){
-
-    		let precio = select.closest('tr').find('.rate input');
-    		stock = data[0].cantidad;
-    		valor = data[0].precio;
-    		cantidad.val(stock);
-    		cantidad.attr("placeholder", stock);
-    		precio.val(valor);
-    		calculate();
-    		validarStock(cantidad, stock);
-
-    	})
+    const mostrarInventarioProducto = (item) => {
+        let $cantidad = $(item).closest('tr').find('.amount input');
+        let precio = $(item).closest('tr').find('.rate input');
+        let producto_inventario = item.value;
+        $.getJSON('', { producto : producto_inventario , filas : 'select fila'}, function (data) {
+            $cantidad.val(data[0].cantidad);
+            precio.val(data[0].precio);
+            $cantidad.attr('placeholder', data[0].cantidad);
+            calculate();
+            validarStock($cantidad , data[0].cantidad);
+            validarPrecio(precio);
+        })
     }
 
     function validarStock(input, max){
@@ -497,6 +486,21 @@ $(document).ready(function(){
     	})
     }
 
+    function validarPrecio(input){
+      $(input).keyup(()=>{
+        num = Number(input.val());
+        if(num == 0 || num < 1 || !Number.isInteger(num)){
+          input.css({"border" : "solid 1px", "border-color" : "red"})
+          input.attr("valid", "false");
+          $('#pValid').text('Precio inválida.');
+        }else{
+          input.css({'border': 'none'})
+          input.attr("valid", "true");
+          $('#pValid').text(' ');
+        }
+      })
+    }
+
     validCantidad = () => {
       let cantidadValue = $('.stock').val();
       let isValidCantidad = !$('.stock').is('[valid="false"]') && cantidadValue !== "" && cantidadValue !== '0';
@@ -505,12 +509,18 @@ $(document).ready(function(){
       return isValidCantidad;
     }
 
+    validPrecio = () => {
+      let precioValue = $('.precio').val();
+      let isValidPrecio = !$('.precio').is('[valid="false"]') && precioValue !== "" && precioValue !== '0';
+
+      $('#pValid').text(isValidPrecio ? '' : 'Cantidad inválida.');
+      return isValidPrecio;
+    }
 
     // Caracteriticas de la fila Producto
     function addNewRow(){
       $('#ASD').append(newRow);
       selectProductos();
-      cambio();
     }
 
     // Agregar fila para insertar producto
@@ -523,6 +533,7 @@ $(document).ready(function(){
      // Evento de cambio en los productos 
     $(document).on("change", ".select-productos", function () {
     	validarSelectRepetidos('.select-productos' , '.filaProductos'); 
+      mostrarInventarioProducto(this);
     });
 
 
@@ -616,12 +627,13 @@ $(document).ready(function(){
        valid_productos = validarSelectRepetidos('.select-productos' , '.filaProductos' , false);
        valid_tipoPago =  validarSelectRepetidos('.select-tipo' , '.filaTipoPago', false);
        stock = validCantidad();
+       precio = validPrecio();
        referencia = validarReferencia();
        $('.precioPorTipo input').each(function(){ validarValoresPositivos($(this)); });
        valid_precioTipo = $('.precio-tipo').is('[valid="false"]')? false : true;
        
 
-       if(cedula && montoTotal && valid_productos && valid_tipoPago && stock && referencia && valid_precioTipo && validarTotal($("#monto"), $('.precio-tipo'))){
+       if(cedula && montoTotal && valid_productos && valid_tipoPago && stock && precio && referencia && valid_precioTipo && validarTotal($("#monto"), $('.precio-tipo'))){
         
         cedula = $('#cedula').val();
         tipoCliente = $('#cedula').find('option:selected').attr('class');
