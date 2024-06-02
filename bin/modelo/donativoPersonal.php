@@ -23,9 +23,12 @@ class donativoPersonal extends DBConnect{
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
-			return $data;
+			if ($bitacora)
+			$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Consultó listado donativo personal.");
 
 			parent::desconectarDB();
+
+			return $data;
 
 		} catch (\PDOException $e) {
 
@@ -271,6 +274,8 @@ class donativoPersonal extends DBConnect{
 			$new->execute();
 		}
 
+		$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Registró donativo por personal.");
+
 		parent::desconectarDB();
         
         return ['resultado' => 'registrado con exito'];
@@ -353,6 +358,8 @@ class donativoPersonal extends DBConnect{
 		$new = $this->con->prepare('UPDATE donaciones d SET d.status = 0 WHERE d.id_donaciones = ?');
 		$new->bindValue(1 , $this->id);
 		$new->execute();
+
+		$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Anulo donativo por personal.");
 
 		$resultado = ['resultado' => 'Eliminado'];
 
