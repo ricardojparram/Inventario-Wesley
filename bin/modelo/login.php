@@ -2,8 +2,9 @@
 
 namespace modelo;
 
-use config\connect\DBConnect as DBConnect;
 use utils\validar;
+use utils\JWTService;
+use config\connect\DBConnect as DBConnect;
 
 class login extends DBConnect
 {
@@ -11,6 +12,7 @@ class login extends DBConnect
     private $cedula;
     private $password;
     private $sede;
+    private $login;
 
     public function getSedes()
     {
@@ -24,7 +26,7 @@ class login extends DBConnect
             return $this->http_error(500, $e);
         }
     }
-    public function getLoginSistema($cedula, $password, $sede)
+    public function getLoginSistema($cedula, $password, $sede, $login)
     {
         if (!$this->validarString('documento', $cedula)) {
             return $this->http_error(400, 'Cédula inválida.');
@@ -39,6 +41,7 @@ class login extends DBConnect
         $this->cedula = $cedula;
         $this->password = $password;
         $this->sede = $sede;
+        $this->login = $login;
 
         $validCedula = $this->validarCedula();
         if (!isset($validCedula['res'])) {
@@ -60,13 +63,13 @@ class login extends DBConnect
 							WHERE u.cedula = ?");
             $new->bindValue(1, $this->cedula);
             $new->execute();
-            $data = $new->fetchAll();
+            $data = $new->fetch(\PDO::FETCH_OBJ);
 
-            if (!isset($data[0]["password"])) {
+            if (!isset($data->password)) {
                 $this->desconectarDB();
                 return $this->http_error(400, 'La cédula no está registrada.');
             }
-            if (!password_verify($this->password, $data[0]['password'])) {
+            if (!password_verify($this->password, $data->password)) {
                 $this->desconectarDB();
                 return $this->http_error(400, 'Contraseña incorrecta.');
             }
@@ -74,19 +77,35 @@ class login extends DBConnect
             $new = $this->con->prepare('SELECT id_sede, nombre as sede FROM sede WHERE id_sede = :id_sede');
             $new->bindParam(':id_sede', $this->sede);
             $new->execute();
-            $sede = $new->fetch(\PDO::FETCH_ASSOC);
+            $sede = $new->fetch(\PDO::FETCH_OBJ);
 
-            if ($sede['id_sede']) {
-                $_SESSION['id_sede'] = $sede['id_sede'];
-                $_SESSION['sede'] = $sede['sede'];
+            $userData = (object) [
+                'id_sede' => (isset($sede->id_sede)) ? $sede->id_sede : '',
+                'sede' => (isset($sede->sede)) ? $sede->sede : '',
+                'cedula' => $data->cedula,
+                'nombre' => $data->nombre,
+                'apellido' => $data->apellido,
+                'correo' => $data->correo,
+                'nivel' => $data->nivel,
+                'puesto' => $data->puesto,
+                'fotoPerfil' => (isset($data->img)) ? $data->img : 'assets/img/profile_photo.jpg'
+            ];
+
+            if ($this->login === 'app') {
+                return JWTService::generateToken($userData);
             }
-            $_SESSION['cedula'] = $data[0]['cedula'];
-            $_SESSION['nombre'] = $data[0]['nombre'];
-            $_SESSION['apellido'] = $data[0]['apellido'];
-            $_SESSION['correo'] = $data[0]['correo'];
-            $_SESSION['nivel'] = $data[0]['nivel'];
-            $_SESSION['puesto'] = $data[0]['puesto'];
-            $_SESSION['fotoPerfil'] = (isset($data[0]['img'])) ? $data[0]['img'] : 'assets/img/profile_photo.jpg';
+
+            if (isset($sede->id_sede)) {
+                $_SESSION['id_sede'] = $userData->id_sede;
+                $_SESSION['sede'] = $userData->sede;
+            }
+            $_SESSION['cedula'] = $userData->cedula;
+            $_SESSION['nombre'] = $userData->nombre;
+            $_SESSION['apellido'] = $userData->apellido;
+            $_SESSION['correo'] = $userData->correo;
+            $_SESSION['nivel'] = $userData->nivel;
+            $_SESSION['puesto'] = $userData->puesto;
+            $_SESSION['fotoPerfil'] = (isset($userData->img)) ? $userData->img : 'assets/img/profile_photo.jpg';
 
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha iniciado sesion'];
