@@ -26,13 +26,13 @@ class login extends DBConnect
     }
     public function getLoginSistema($cedula, $password, $sede)
     {
-        if(!$this->validarString('documento', $cedula)) {
+        if (!$this->validarString('documento', $cedula)) {
             return $this->http_error(400, 'Cédula inválida.');
         }
-        if(!$this->validarString('contraseña', $password)) {
+        if (!$this->validarString('contraseña', $password)) {
             return $this->http_error(400, 'Contraseña inválida.');
         }
-        if(!$this->validarString('entero', $sede)) {
+        if (!$this->validarString('entero', $sede)) {
             return $this->http_error(400, 'Sede inválida.');
         }
 
@@ -41,7 +41,7 @@ class login extends DBConnect
         $this->sede = $sede;
 
         $validCedula = $this->validarCedula();
-        if(!isset($validCedula['res'])) {
+        if (!isset($validCedula['res'])) {
             return $validCedula;
         }
 
@@ -62,11 +62,11 @@ class login extends DBConnect
             $new->execute();
             $data = $new->fetchAll();
 
-            if(!isset($data[0]["password"])) {
+            if (!isset($data[0]["password"])) {
                 $this->desconectarDB();
                 return $this->http_error(400, 'La cédula no está registrada.');
             }
-            if(!password_verify($this->password, $data[0]['password'])) {
+            if (!password_verify($this->password, $data[0]['password'])) {
                 $this->desconectarDB();
                 return $this->http_error(400, 'Contraseña incorrecta.');
             }
@@ -76,7 +76,7 @@ class login extends DBConnect
             $new->execute();
             $sede = $new->fetch(\PDO::FETCH_ASSOC);
 
-            if($sede['id_sede']) {
+            if ($sede['id_sede']) {
                 $_SESSION['id_sede'] = $sede['id_sede'];
                 $_SESSION['sede'] = $sede['sede'];
             }
@@ -90,14 +90,14 @@ class login extends DBConnect
 
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha iniciado sesion'];
-        } catch(\PDOException $error) {
+        } catch (\PDOException $error) {
             return $this->http_error(500, $error);
         }
     }
 
     public function getValidarCedula($cedula)
     {
-        if(!$this->validarString('documento', $cedula)) {
+        if (!$this->validarString('documento', $cedula)) {
             return $this->http_error(400, 'Cédula inválida.');
         }
 
@@ -118,12 +118,10 @@ class login extends DBConnect
             $data = $new->fetchAll();
             parent::desconectarDB();
             return (!isset($data[0]['cedula']))
-              ? $this->http_error(400, 'La cédula no está registrada.')
-              : ['resultado' => 'ok' , 'msg' => 'La cédula es válida.', 'res' => true];
-        } catch(\PDOException $error) {
+                ? $this->http_error(400, 'La cédula no está registrada.')
+                : ['resultado' => 'ok', 'msg' => 'La cédula es válida.', 'res' => true];
+        } catch (\PDOException $error) {
             return $this->http_error(500, $error);
         }
     }
-
-
 }
