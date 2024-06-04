@@ -92,7 +92,7 @@ class login extends DBConnect
             ];
 
             if ($this->login === 'app') {
-                return JWTService::generateToken($userData);
+                return ['resultado' => "Logueado", "token" => JWTService::generateToken($userData)];
             }
 
             if (isset($sede->id_sede)) {
