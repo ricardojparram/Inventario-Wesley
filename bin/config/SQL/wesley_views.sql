@@ -27,7 +27,7 @@ FROM
     INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod
     INNER JOIN presentacion pres ON pres.cod_pres = p.cod_pres
     INNER JOIN medida med ON med.id_medida = pres.id_medida
-    INNER JOIN sede s ON s.id_sede = ps.id_sede
+    INNER JOIN sede s ON s.id_sede = ps.id_sede2
     INNER JOIN tipo ON tipo.id_tipo = p.id_tipo
     INNER JOIN clase ON clase.id_clase = p.id_clase;
 
@@ -98,7 +98,7 @@ FROM
             ps.presentacion_producto,
             SUM(drn.cantidad) AS cantidad,
             ps.id_sede,
-            'Recepcion nacional' AS tipo,
+            'Recepción nacional' AS tipo,
             rn.fecha AS fecha
         FROM
             vw_producto_sede_detallado ps
@@ -130,7 +130,7 @@ FROM
             ps.presentacion_producto,
             SUM(dr.cantidad) AS cantidad,
             ps.id_sede,
-            'Recepcion' AS tipo,
+            'Recepción' AS tipo,
             rs.fecha AS fecha
         FROM
             vw_producto_sede_detallado ps
@@ -180,7 +180,7 @@ FROM
             CASE
                 WHEN dp.id_donaciones IS NOT NULL THEN 'Personal'
                 WHEN dpac.id_donaciones IS NOT NULL THEN 'Paciente'
-                WHEN di.id_donaciones IS NOT NULL THEN 'Institucion'
+                WHEN di.id_donaciones IS NOT NULL THEN 'Institución'
                 ELSE 'No especificado'
             END as origen
         FROM
@@ -255,3 +255,52 @@ FROM
             d.fecha
     ) as salida
     INNER JOIN sede s ON s.id_sede = salida.id_sede;
+
+CREATE
+OR REPLACE VIEW vw_donaciones_por_tipo AS
+SELECT
+    q.id_donaciones,
+    q.fecha,
+    q.tipo_donacion,
+    q.id,
+    q.nombre,
+    ps.id_sede
+FROM
+    (
+        SELECT
+            d.id_donaciones,
+            d.fecha as fecha,
+            'Institución' as tipo_donacion,
+            CAST(di.rif_int AS CHAR) as id,
+            i.razon_social as nombre
+        FROM
+            donaciones d
+            INNER JOIN donativo_int di ON di.id_donaciones = d.id_donaciones
+            INNER JOIN instituciones i ON i.rif_int = di.rif_int
+        UNION
+        SELECT
+            d.id_donaciones,
+            d.fecha as fecha,
+            'Paciente' as tipo_donacion,
+            CAST(dp.ced_pac AS CHAR) as id,
+            CONCAT(p.nombre, ' ', p.apellido) as nombre
+        FROM
+            donaciones d
+            INNER JOIN donativo_pac dp ON dp.id_donaciones = d.id_donaciones
+            INNER JOIN pacientes p ON p.ced_pac = dp.ced_pac
+        UNION
+        SELECT
+            d.id_donaciones,
+            d.fecha as fecha,
+            'Personal' as tipo_donacion,
+            CAST(dper.cedula AS CHAR) as id,
+            CONCAT(per.nombres, ' ', per.apellidos) as nombre
+        FROM
+            donaciones d
+            INNER JOIN donativo_per dper ON dper.id_donaciones = d.id_donaciones
+            INNER JOIN personal per ON dper.cedula = per.cedula
+    ) as q
+    INNER JOIN det_donacion dd ON dd.id_donaciones = q.id_donaciones
+    INNER JOIN producto_sede ps ON ps.id_producto_sede = dd.id_producto_sede
+GROUP BY
+    q.id_donaciones;
