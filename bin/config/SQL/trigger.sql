@@ -52,7 +52,9 @@ BEGIN
     DECLARE mensaje TEXT;
 
     IF NEW.status = 0 THEN
-        IF EXISTS (SELECT 1 FROM venta WHERE num_fact = NEW.num_fact AND status = 1) THEN
+        IF EXISTS (SELECT 1 FROM venta v
+                   INNER JOIN venta_personal vpe ON vpe.num_fact = v.num_fact
+                   WHERE v.num_fact = NEW.num_fact AND v.status = 1) THEN
             SELECT vpe.cedula, pe.nombres, v.fecha, CONCAT(v.monto_dolares, ' ', m.nombre) INTO cedula, nombre, fecha, total_divisa
             FROM venta v
             INNER JOIN venta_personal vpe ON vpe.num_fact = v.num_fact
@@ -62,7 +64,9 @@ BEGIN
             LIMIT 1;
 
             SET mensaje = CONCAT('Pago recibido de ', nombre, ' (cedula: ', cedula, '). Fecha: ', fecha, '. Total en ', total_divisa);
-        ELSEIF EXISTS (SELECT 1 FROM venta WHERE num_fact = NEW.num_fact AND status = 1) THEN
+        ELSEIF EXISTS (SELECT 1 FROM venta v
+                       INNER JOIN venta_pacientes vpa ON vpa.num_fact = v.num_fact
+                       WHERE v.num_fact = NEW.num_fact AND v.status = 1) THEN
             SELECT vpa.ced_pac, pa.nombre, v.fecha, CONCAT(v.monto_dolares, ' ', m.nombre) INTO cedula, nombre, fecha, total_divisa
             FROM venta v
             INNER JOIN venta_pacientes vpa ON vpa.num_fact = v.num_fact

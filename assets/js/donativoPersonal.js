@@ -85,7 +85,7 @@ $(document).ready(function(){
                 success(data) {
                     $('#cedula').select2({
                         data: data.map(function(item) {
-                            return { id: item.cedula, text: item.cedula};
+                            return { id: item.cedula, text: item.cedula + ' ' + item.nombres + ' ' + item.apellidos};
                         }),
                         theme: 'bootstrap-5',
                         dropdownParent: $('#agregar .modal-body'),
@@ -342,7 +342,7 @@ $(document).ready(function(){
                 dataType: "json",
                 data: { validarE: "existe", id},
                 success(data) {
-                    if (data.resultado === "Error de donacion") {  
+                    if (data.resultado === "error") {  
                         mostrar.destroy();
                         rellenar();
                         $('.cerrar').click();

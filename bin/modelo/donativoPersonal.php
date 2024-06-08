@@ -23,9 +23,12 @@ class donativoPersonal extends DBConnect{
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
-			return $data;
+			if ($bitacora)
+			$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Consultó listado donativo personal.");
 
 			parent::desconectarDB();
+
+			return $data;
 
 		} catch (\PDOException $e) {
 
@@ -34,9 +37,8 @@ class donativoPersonal extends DBConnect{
 	}
 
 	public function getDetalleDonacion($id){
-		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-		}
+		if (!$this->validarString('entero' , $id))
+			return $this->http_error(400, 'id inválido.');
 
 		$this->id = $id;
 
@@ -79,11 +81,12 @@ class donativoPersonal extends DBConnect{
 		}
 	}
 
-	public function selectProductos(){
+	public function selectProductos($id_sede){
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare("SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE p.status = 1 AND s.status = 1 AND ps.cantidad > 0 ORDER BY ps.fecha_vencimiento");
+			$new = $this->con->prepare("SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE p.status = 1 AND s.status = 1 AND ps.cantidad > 0 AND s.id_sede = ? ORDER BY ps.fecha_vencimiento");
 
+			$new->bindValue(1, $id_sede);
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
@@ -97,9 +100,8 @@ class donativoPersonal extends DBConnect{
 	}
 
 	public function detallesProductoFila($id){
-		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-		}
+		if (!$this->validarString('entero' , $id))
+			return $this->http_error(400, 'id inválido.');
 
 		$this->id = $id;
 
@@ -272,6 +274,8 @@ class donativoPersonal extends DBConnect{
 			$new->execute();
 		}
 
+		$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Registró donativo por personal.");
+
 		parent::desconectarDB();
         
         return ['resultado' => 'registrado con exito'];
@@ -282,9 +286,8 @@ class donativoPersonal extends DBConnect{
 	 }
 
 	 public function validarExistencia($id){
-	 	if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-	 		return ['resultado' => 'Error de id','error' => 'id inválida.'];
-	 	}
+	 	if (!$this->validarString('entero' , $id))
+			return $this->http_error(400, 'id inválido.');
 
 	 	$this->id = $id;
 
@@ -303,10 +306,11 @@ class donativoPersonal extends DBConnect{
 	 		parent::desconectarDB();
 
 	 		if(isset($data[0]["id_donaciones"])){
-	 			return['resultado' => 'Si existe esta donacion.'];
-	 		}else{
-	 			return['resultado' => 'Error de donacion'];
-	 		}
+				return ['resultado' => 'donacion valida', 'res' => true];
+
+			}else{
+				return ['resultado' => 'error', 'msg' => 'La donación no existe', 'res' => false];
+			}
 	 	} catch (\PDOException $e) {
 	 		return $e;
 	 	}
@@ -314,11 +318,14 @@ class donativoPersonal extends DBConnect{
 
 
 	public function getEliminarDonacion($id){
-		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-		}
+		if (!$this->validarString('entero' , $id))
+			return $this->http_error(400, 'id inválido.');
 
 		$this->id = $id;
+
+		$validarFactura = $this->validExistencia();
+
+		if ($validarFactura['res'] === false) return ['resultado' => 'error', 'msg' => 'La donacion no existe'];
 
 		return $this->eliminarDonacion();
 	}
@@ -351,6 +358,8 @@ class donativoPersonal extends DBConnect{
 		$new = $this->con->prepare('UPDATE donaciones d SET d.status = 0 WHERE d.id_donaciones = ?');
 		$new->bindValue(1 , $this->id);
 		$new->execute();
+
+		$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Anulo donativo por personal.");
 
 		$resultado = ['resultado' => 'Eliminado'];
 

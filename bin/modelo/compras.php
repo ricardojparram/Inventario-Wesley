@@ -173,7 +173,6 @@ class compras extends DBConnect {
 
 	public function getEliminarCompra($id) {
 		$this->id = $id;
-
 		return $this->eliminarCompra();
 	}
 
@@ -212,4 +211,5 @@ class compras extends DBConnect {
 			return $error;
 		}
 	}
+	
 }

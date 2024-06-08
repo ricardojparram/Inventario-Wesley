@@ -84,7 +84,7 @@ $(document).ready(function(){
  				success(data) {
  					$('#cedula').select2({
  						data: data.map(function(item) {
- 							return { id: item.ced_pac, text: item.ced_pac};
+ 							return { id: item.ced_pac, text: item.ced_pac +' '+ item.nombre + ' ' + item.apellido};
  						}),
  						theme: 'bootstrap-5',
  						dropdownParent: $('#agregar .modal-body'),

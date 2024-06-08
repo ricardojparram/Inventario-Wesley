@@ -38,9 +38,8 @@
         die(json_encode($res));
       }
 
-
       if(isset($_POST['selectProductos'])) {
-        $res = $objModel->selectProductos();
+        $res = $objModel->selectProductos($_SESSION['id_sede']);
         die(json_encode($res));
       }
 

@@ -85,7 +85,7 @@ $(document).ready(function(){
    				success(data) {
    					$('#rif').select2({
    						data: data.map(function(item) {
-   							return { id: item.rif_int, text: item.rif_int};
+   							return { id: item.rif_int, text: item.rif_int +' '+ item.razon_social};
    						}),
    						theme: 'bootstrap-5',
    						dropdownParent: $('#agregar .modal-body'),
@@ -341,7 +341,7 @@ $(document).ready(function(){
                 dataType: "json",
                 data: { validarE: "existe", id},
                 success(data) {
-                    if (data.resultado === "Error de donacion") {  
+                    if (data.resultado === "error") {  
                         mostrar.destroy();
                         rellenar();
                         $('.cerrar').click();

@@ -42,13 +42,17 @@
          $new->execute();
          $data = $new->fetchAll(\PDO::FETCH_OBJ);
 
+         if ($bitacora)
+         $this->binnacle("Ventas", $_SESSION['cedula'], "Consultó listado ventas.");
+
          parent::desconectarDB();
 
         return $data;
 
-      }catch(\PDOexection $error){
+      }catch(\PDOexection $e){
 
-       return $error;     
+       return $e;     
+
      }  
    }
 
@@ -458,7 +462,10 @@
         
       }
 
-       return ['resultado' => 'ok', 'msg' => 'Se ha registrado la venta correctamente'];
+
+      $this->binnacle("Ventas", $_SESSION['cedula'], "Registró una venta.");
+
+      return ['resultado' => 'ok', 'msg' => 'Se ha registrado la venta correctamente'];
       
     } catch (\PDOException $e) {
       return $e;
@@ -552,9 +559,10 @@
       $new->bindValue(1, $this->id);
       $new->execute();
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
-    
+     
+      $this->binnacle("Ventas", $_SESSION['cedula'], "Anulo una venta.");
       parent::desconectarDB();
-
+      
       return ['resultado' => 'Venta eliminada'];
 
     }
