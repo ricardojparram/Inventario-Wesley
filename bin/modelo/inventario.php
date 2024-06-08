@@ -3,35 +3,42 @@
 namespace modelo;
 
 use config\connect\DBConnect as DBConnect;
+use utils\validar;
 
 class inventario extends DBConnect
 {
-    public function __construct()
+    use validar;
+    public function mostrarInventario($bitacora)
     {
-        parent::__construct();
-    }
-
-    public function mostrarInventarioAjax($bitacora)
-    {
-
         try {
-
             parent::conectarDB();
-            // $query = "SELECT h.fecha, h.tipo_movimiento, h.entrada, h.salida, s.nombre, h.id_lote, h.id_producto_sede, h.cantidad FROM historial as h, sede as s WHERE h.status = 1";
-            $query = "SELECT h.id_historial, h.fecha, h.tipo_movimiento, h.entrada, h.salida, s.nombre as sede, ps.lote as id_lote, ps.presentacion_producto as producto, h.cantidad FROM historial as h
-                      INNER JOIN vw_producto_sede_detallado ps ON ps.id_producto_sede = h.id_producto_sede
-                      INNER JOIN sede s ON s.id_sede = ps.id_sede
-                      WHERE h.status = 1;";
+            $query = "
+              SELECT 
+                  u.cedula as usuario,
+                  s.nombre as nombre_sede,
+                  h.fecha as fecha,
+                  vpsd.presentacion_producto as presentacion_producto,
+                  h.entrada as entrada,
+                  h.salida as salida,
+                  h.tipo_movimiento as tipo_movimiento,
+                  vpsd.lote as producto_lote,
+                  h.cantidad as cantidad
+              FROM
+                  historial h
+                  INNER JOIN usuario u ON h.id_usuario = u.cedula
+                  INNER JOIN sede s ON s.id_sede = h.id_sede
+                  INNER JOIN vw_producto_sede_detallado vpsd ON vpsd.id_producto_sede = h.id_producto_sede
+              WHERE h.status = 1;
+            ";
             $new = $this->con->prepare($query);
             $new->execute();
-            $data = $new->fetchAll(\PDO::FETCH_OBJ);
-            echo json_encode($data);
+            if($bitacora === "true") {
+                $this->binnacle("", $_SESSION['cedula'], "Consulto el listado de inventario.");
+            }
             parent::desconectarDB();
-            die();
+            return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $error) {
-            return $error;
-
+            return $this->http_error(500, $error);
         }
     }
 }
-

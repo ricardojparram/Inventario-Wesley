@@ -219,7 +219,7 @@ VALUES
     'admin',
     'admin',
     'admin@admin.com',
-    '$2y$10$IQ3tD7JwCMoBHFwv6P4YteAgNOnlevdqxZYwtR8XfvkebK0It3RN.',
+    '$2y$10$w1yanGxu3hASPys0NJDa5.xH685Gd0IIjUKbFfzbcDWf1BDyWvVJe',
     1,
     NULL,
     1

@@ -146,8 +146,6 @@
 
   <?php $VarComp->js() ?>
   <script src="assets/js/inicio.js"></script>
-  <script src="assets/js/carrito.js"></script>
-
 </body>
 
 </html>

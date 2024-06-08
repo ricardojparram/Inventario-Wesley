@@ -16,6 +16,7 @@ class recepcion extends DBConnect
     private $fecha;
     private $productos;
     private $id_producto;
+    private $img;
 
     public function mostrarSedes()
     {
@@ -27,7 +28,7 @@ class recepcion extends DBConnect
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
     public function mostrarRecepciones($bitacora): array
@@ -47,7 +48,7 @@ class recepcion extends DBConnect
             $this->desconectarDB();
             return $data;
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
 
@@ -57,15 +58,18 @@ class recepcion extends DBConnect
             $this->conectarDB();
             $sql = "SELECT t.id_transferencia, s.nombre as nombre_sede, t.fecha FROM transferencia t 
                   INNER JOIN sede s ON t.id_sede = s.id_sede
-                  WHERE t.status = 1;";
+                  WHERE t.status = 1 AND s.id_sede = ?;";
             $new = $this->con->prepare($sql);
+            $new->bindValue(1, $_SESSION['id_sede']);
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
-            // if($bitacora == "true") $this->binnacle("Transferencia",$_SESSION['cedula'],"Consultó listado.");
+            if($bitacora == "true") {
+                $this->binnacle("Transferencia", $_SESSION['cedula'], "Consultó listado de transferencias.");
+            }
             $this->desconectarDB();
             return $data;
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
     public function getMostrarDetalle($id_recepcion)
@@ -81,18 +85,27 @@ class recepcion extends DBConnect
     {
         try {
             $this->conectarDB();
-            $sql = "SELECT s.nombre as nombre_sede, ps.lote, ps.id_producto_sede, p.cod_producto, dr.cantidad, ps.fecha_vencimiento FROM detalle_recepcion dr
-                    INNER JOIN recepcion_sede r ON r.id_recepcion = dr.id_recepcion
-                    INNER JOIN transferencia t ON r.id_transferencia = t.id_transferencia
-                    INNER JOIN producto_sede ps ON ps.id_producto_sede = dr.id_producto_sede
-                    INNER JOIN producto p ON p.cod_producto = ps.cod_producto 
+            $sql = "SELECT r.fecha, t.id_transferencia, s.nombre as nombre_sede FROM recepcion_sede r
+                    INNER JOIN transferencia t ON t.id_transferencia = r.id_transferencia
                     INNER JOIN sede s ON s.id_sede = t.id_sede
-                    WHERE r.id_recepcion = ?;";
+                    WHERE r.status = 1 AND r.id_recepcion = :id";
             $new = $this->con->prepare($sql);
-            $new->bindValue(1, $this->id_recepcion);
-            $new->execute();
+            $new->execute([':id' => $this->id_recepcion]);
+            $recepcion = $new->fetch(\PDO::FETCH_ASSOC);
+
+            $sql = "SELECT img as src FROM img_recepcion WHERE id_recepcion = :id;";
+            $new = $this->con->prepare($sql);
+            $new->execute([':id' => $this->id_recepcion]);
+            $img = $new->fetchAll(\PDO::FETCH_ASSOC);
+
+            $sql = "SELECT ps.lote, ps.presentacion_producto, ps.fecha_vencimiento, dr.cantidad FROM detalle_recepcion dr
+                    INNER JOIN vw_producto_sede_detallado ps ON ps.id_producto_sede = dr.id_producto_sede
+                    WHERE dr.id_recepcion = :id;";
+            $new = $this->con->prepare($sql);
+            $new->execute([':id' => $this->id_recepcion]);
             $this->desconectarDB();
-            return $new->fetchAll(\PDO::FETCH_OBJ);
+            $detalle = $new->fetchAll(\PDO::FETCH_OBJ);
+            return ['recepcion' => $recepcion, 'detalle' => $detalle, 'img' => $img];
         } catch (\PDOException $e) {
             return $this->http_error(500, $e->getMessage());
         }
@@ -118,7 +131,7 @@ class recepcion extends DBConnect
             $new->execute();
             $transferencia = $new->fetch(\PDO::FETCH_OBJ);
 
-            $sql = "SELECT ps.lote, dt.cantidad, ps.id_producto_sede FROM detalle_transferencia dt
+            $sql = "SELECT ps.lote, dt.cantidad, ps.id_producto_sede, dt.descripcion FROM detalle_transferencia dt
                     INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
                     INNER JOIN producto p ON p.cod_producto = ps.cod_producto 
                     WHERE dt.id_transferencia = ?;";
@@ -129,7 +142,7 @@ class recepcion extends DBConnect
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
             return ["transferencia" => $transferencia, "productos" => $data];
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
     private function mostrarProductoInventario(): array
@@ -143,7 +156,7 @@ class recepcion extends DBConnect
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
         }
     }
     private function cambiarEstadoTransferencia($status)
@@ -159,7 +172,7 @@ class recepcion extends DBConnect
         }
     }
 
-    public function getAgregarRecepcion($id_transferencia, $sede, $fecha, $productos): array
+    public function getAgregarRecepcion($id_transferencia, $sede, $fecha, $productos, $img = false): array
     {
         if (preg_match_all("/^[0-9]{1,10}$/", $id_transferencia) != 1) {
             return $this->http_error(400, 'Transferencia inválida.');
@@ -173,15 +186,27 @@ class recepcion extends DBConnect
         if ($this->validarFecha($fecha, 'Y-m-d H:i:s') !== true) {
             return $this->http_error(400, 'Fecha inválida.');
         }
-
-        if (!is_array($productos)) {
+        $estructura_productos = [
+          'id_producto' => 'string',
+          'cantidad' => 'string',
+          'descripcion' => 'string'
+        ];
+        $productos = json_decode($productos, 1);
+        if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
+        }
+        if($img !== false) {
+            $valid = $this->validarImagen($img, true);
+            if(!$valid['valid']) {
+                return $valid['res']();
+            }
         }
 
         $this->id_sede = $sede;
         $this->fecha = $fecha;
         $this->productos = $productos;
         $this->id_transferencia = $id_transferencia;
+        $this->img = $img;
 
         return $this->agregarRecepcion();
     }
@@ -196,6 +221,9 @@ class recepcion extends DBConnect
             $new->bindValue(2, $this->fecha);
             $new->execute();
             $this->id_recepcion = $this->con->lastInsertId();
+            if($this->img !== false) {
+                $this->registrarImagenesRecepcion();
+            }
 
             foreach ($this->productos as $producto) {
                 $this->id_producto = $producto['id_producto'];
@@ -222,12 +250,12 @@ class recepcion extends DBConnect
                     $this->id_producto = $this->con->lastInsertId();
                 }
 
-
-                $sql = "INSERT INTO detalle_recepcion(id_recepcion, id_producto_sede, cantidad) VALUES (?,?,?)";
+                $sql = "INSERT INTO detalle_recepcion(id_recepcion, id_producto_sede, cantidad, descripcion) VALUES (?,?,?,?)";
                 $new = $this->con->prepare($sql);
                 $new->bindValue(1, $this->id_recepcion);
                 $new->bindValue(2, $this->id_producto);
                 $new->bindValue(3, $producto['cantidad']);
+                $new->bindValue(4, $producto['descripcion']);
                 $new->execute();
                 $this->inventario_historial("Recepcion", "x", "", "", $this->id_producto, $producto["cantidad"]);
             }
@@ -237,7 +265,20 @@ class recepcion extends DBConnect
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado la recepcion correctamente.'];
         } catch (\PDOException $e) {
-            return ['error' => $e->getMessage()];
+            return $this->http_error(500, $e->getMessage());
+        }
+    }
+    private function registrarImagenesRecepcion(): void
+    {
+        for($i = 0; $i < count($this->img['name']); $i++) {
+            $name = $this->randomRepository('assets/img/inventario/', $this->img['name'][$i], 'recepcion_');
+            if (!move_uploaded_file($this->img['tmp_name'][$i], $name)) {
+                $res = "No se pudo guardar la imagen";
+            }
+            $new = $this->con->prepare("INSERT INTO img_recepcion(id_recepcion, img, status) VALUES (:id,:img,1)");
+            $new->bindValue(':id', $this->id_recepcion);
+            $new->bindValue(':img', $name);
+            $new->execute();
         }
     }
 
