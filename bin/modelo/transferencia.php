@@ -50,18 +50,19 @@ class transferencia extends DBConnect
 
         $this->id_producto = $id_producto;
 
-        return $this->mostrarProductoInventario();
+        $this->conectarDB();
+        $data = $this->mostrarProductoInventario();
+        $this->desconectarDB();
+        return $data;
     }
-    private function mostrarProductoInventario(): array
+    private function mostrarProductoInventario(): object
     {
         try {
-            $this->conectarDB();
-            $sql = "SELECT cantidad FROM producto_sede WHERE id_producto_sede = ?;";
+            $sql = "SELECT cantidad, version FROM producto_sede WHERE id_producto_sede = ?;";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id_producto);
             $new->execute();
-            $this->desconectarDB();
-            return $new->fetchAll(\PDO::FETCH_OBJ);
+            return $new->fetch(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
             return $this->http_error(500, $e->getMessage());
         }
@@ -78,7 +79,7 @@ class transferencia extends DBConnect
             $new = $this->con->prepare($sql);
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
-            if($bitacora == "true") {
+            if ($bitacora == "true") {
                 $this->binnacle("Transferencia", $_SESSION['cedula'], "Consultó listado de transferencias.");
             }
             $this->desconectarDB();
@@ -128,9 +129,9 @@ class transferencia extends DBConnect
         }
 
         $estructura_productos = [
-          'id_producto' => 'string',
-          'cantidad' => 'string',
-          'descripcion' => 'string'
+            'id_producto' => 'string',
+            'cantidad' => 'string',
+            'descripcion' => 'string'
         ];
         if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
@@ -142,10 +143,13 @@ class transferencia extends DBConnect
 
         return $this->agregarTransferencia();
     }
+
     private function agregarTransferencia(): array
     {
         try {
             $this->conectarDB();
+            $this->con->beginTransaction();
+
             $sql = "INSERT INTO transferencia (id_sede, fecha, status) VALUES (?,?,1)";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id_sede);
@@ -156,8 +160,13 @@ class transferencia extends DBConnect
             $sql = "INSERT INTO detalle_transferencia(id_transferencia, id_producto_sede, cantidad, descripcion) VALUES (?,?,?,?)";
             foreach ($this->productos as $producto) {
                 $this->id_producto = $producto['id_producto'];
-                [$data] = $this->mostrarProductoInventario();
-                $this->conectarDB();
+                $data = $this->mostrarProductoInventario();
+
+                if (intval($data->cantidad) < intval($producto['cantidad'])) {
+                    $this->con->rollBack();
+                    return $this->http_error(400, 'Cantidad insuficiente en el inventario.');
+                }
+
                 $new = $this->con->prepare($sql);
                 $new->bindValue(1, $this->id_transferencia);
                 $new->bindValue(2, $this->id_producto);
@@ -165,18 +174,32 @@ class transferencia extends DBConnect
                 $new->bindValue(4, $producto['descripcion']);
                 $new->execute();
                 $this->inventario_historial("Transferencia", "", "x", "", $this->id_producto, $producto["cantidad"]);
-                $inventario = intval($data->cantidad) - intval($producto['cantidad']);
 
-                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
+                $inventario = intval($data->cantidad) - intval($producto['cantidad']);
+                $version = intval($data->version) + 1;
+
+                $sql = "UPDATE producto_sede SET cantidad = ?, version = ? WHERE id_producto_sede = ? AND version = ?";
+                $new = $this->con->prepare($sql);
                 $new->bindValue(1, $inventario);
-                $new->bindValue(2, $this->id_producto);
+                $new->bindValue(2, $version);
+                $new->bindValue(3, $this->id_producto);
+                $new->bindValue(4, $data->version);
                 $new->execute();
+
+                if ($new->rowCount() == 0) {
+                    $this->con->rollBack();
+                    return $this->http_error(409, 'La transferencia falló debido al exceso de concurrencia.');
+                }
             }
+
             $this->binnacle("Transferencia", $_SESSION['cedula'], "Registró una transferencia.");
-            $this->desconectarDB();
+            $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado la transferencia correctamente.'];
         } catch (\PDOException $e) {
+            $this->con->rollBack();
             return $this->http_error(500, $e->getMessage());
+        } finally {
+            $this->desconectarDB();
         }
     }
 
@@ -194,12 +217,14 @@ class transferencia extends DBConnect
     private function eliminarTransferencia()
     {
         try {
+            $this->conectarDB();
+            $this->con->beginTransaction();
             $sql = "UPDATE transferencia SET status = 0 WHERE id_transferencia = ?";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id_transferencia);
             $new->execute();
 
-            $sql = "SELECT dt.id_producto_sede, dt.cantidad, ps.cantidad as inventario FROM detalle_transferencia dt
+            $sql = "SELECT dt.id_producto_sede, dt.cantidad, ps.cantidad, ps.version as inventario FROM detalle_transferencia dt
                     INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
                     WHERE dt.id_transferencia = ?;";
             $new = $this->con->prepare($sql);
@@ -209,17 +234,28 @@ class transferencia extends DBConnect
 
             foreach ($this->productos as $producto) {
                 $inventario = intval($producto->cantidad) + intval($producto->inventario);
+                $version = $producto->version + 1;
 
-                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
-                $new->bindValue(1, $inventario);
-                $new->bindValue(2, $producto->id_producto_sede);
+                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = :cantidad version = :version_nueva WHERE id_producto_sede = :id AND version = :version_leida");
+                $new->bindValue(':cantidad', $inventario);
+                $new->bindValue(':version_nueva', $version);
+                $new->bindValue(':id', $producto->id_producto_sede);
+                $new->bindValue(':version_leida', $producto->version);
                 $new->execute();
+
+                if ($new->rowCount() == 0) {
+                    $this->con->rollBack();
+                    return $this->http_error(409, 'Eliminar la transferencia falló debido al exceso de concurrencia.');
+                }
             }
             $this->binnacle("Transferencia", $_SESSION['cedula'], "Eliminó una transferencia.");
-            $this->desconectarDB();
+            $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha eliminado la transferencia correctamente.'];
         } catch (\PDOException $e) {
+            $this->con->rollBack();
             return $this->http_error(500, $e->getMessage());
+        } finally {
+            $this->desconectarDB();
         }
     }
 }
