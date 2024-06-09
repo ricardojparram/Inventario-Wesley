@@ -19,10 +19,11 @@ trait validar
     public function validarString($tipo, $input): int|bool
     {
         $regex = [
-            "nombre" => "/^[a-zA-ZÀ-ÿ ]{1,30}$/",
+            "nombre" => "/^[a-zA-ZÀ-ÿ ]{3,30}$/",
+            "razon_social" => "/^[a-zA-ZÀ-ÿ ]{7,200}$/",
             "contraseña"  => "/^[A-Za-z0-9 *?=&_!¡()@#]{8,30}$/",
             "correo" => "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/",
-            "direccion" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){7,160}$/",
+            "direccion" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){7,200}$/",
             "cedula" => "/^[0-9]{7,10}$/",
             "rif" => "/^J-[0-9]{9,10}$/",
             "documento" => "/^[VEJ]-[A-Z0-9]{7,12}$/",
@@ -68,7 +69,7 @@ trait validar
     }
     public function validarImagen($img, $array = false): array|bool
     {
-        if(!$array) {
+        if (!$array) {
             if ($img['error'] > 0) {
                 return $this->http_error(400, 'Error de imágen');
             }
@@ -76,8 +77,8 @@ trait validar
                 return $this->http_error(400, 'Tipo de imagen inválido.');
             }
         }
-        if($array) {
-            for($i = 0; $i < count($img['name']); $i++) {
+        if ($array) {
+            for ($i = 0; $i < count($img['name']); $i++) {
                 if ($img['error'][$i] > 0) {
                     return ['valid' => false, 'res' => fn () => $this->http_error(400, 'Error de imágen')];
                 }
