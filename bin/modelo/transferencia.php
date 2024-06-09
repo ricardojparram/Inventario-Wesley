@@ -234,7 +234,7 @@ class transferencia extends DBConnect
 
             foreach ($this->productos as $producto) {
                 $inventario = intval($producto->cantidad) + intval($producto->inventario);
-                $version = $producto->version + 1;
+                $version = intval($producto->version) + 1;
 
                 $new = $this->con->prepare("UPDATE producto_sede SET cantidad = :cantidad version = :version_nueva WHERE id_producto_sede = :id AND version = :version_leida");
                 $new->bindValue(':cantidad', $inventario);
