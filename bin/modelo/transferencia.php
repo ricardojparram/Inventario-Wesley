@@ -224,7 +224,7 @@ class transferencia extends DBConnect
             $new->bindValue(1, $this->id_transferencia);
             $new->execute();
 
-            $sql = "SELECT dt.id_producto_sede, dt.cantidad, ps.cantidad, ps.version as inventario FROM detalle_transferencia dt
+            $sql = "SELECT dt.id_producto_sede, dt.cantidad, ps.cantidad as inventario, ps.version FROM detalle_transferencia dt
                     INNER JOIN producto_sede ps ON ps.id_producto_sede = dt.id_producto_sede
                     WHERE dt.id_transferencia = ?;";
             $new = $this->con->prepare($sql);
@@ -236,7 +236,7 @@ class transferencia extends DBConnect
                 $inventario = intval($producto->cantidad) + intval($producto->inventario);
                 $version = intval($producto->version) + 1;
 
-                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = :cantidad version = :version_nueva WHERE id_producto_sede = :id AND version = :version_leida");
+                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = :cantidad, version = :version_nueva WHERE id_producto_sede = :id AND version = :version_leida");
                 $new->bindValue(':cantidad', $inventario);
                 $new->bindValue(':version_nueva', $version);
                 $new->bindValue(':id', $producto->id_producto_sede);
