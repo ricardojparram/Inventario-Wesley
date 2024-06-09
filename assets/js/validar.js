@@ -1,6 +1,7 @@
 const expresiones = {
   nombre: /^[a-zA-ZÀ-ÿ ]{0,30}$/,
   correo: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+  razon_social: /^[a-zA-ZÀ-ÿ ]{7,200}$/,
   direccion: /^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){7,160}$/,
   cedula: /^[0-9]{7,10}$/,
   extranjero: /^[A-Z0-9]{7,12}$/,
@@ -37,7 +38,27 @@ function validarNombre(input, div, mensaje) {
     return true;
   }
 }
-
+function validarRazonSocial(input, div, mensaje) {
+  parametro = input.val();
+  let valid = expresiones.razon_social.test(parametro);
+  if (parametro == null || parametro == "") {
+    div.text(mensaje + " debe introducir datos.");
+    input.addClass("input-error");
+    return false;
+  } else if (!valid) {
+    div.text(mensaje + " debe ser válida");
+    input.addClass("input-error");
+    return false;
+  } else if (parametro.length > 200) {
+    div.text(mensaje + " demasiada larga");
+    input.addClass("input-error");
+    return false;
+  } else {
+    div.text(" ");
+    input.removeClass("input-error");
+    return true;
+  }
+}
 function validarDireccion(input, div, mensaje) {
   parametro = input.val();
   let valid = expresiones.direccion.test(parametro);
@@ -49,7 +70,7 @@ function validarDireccion(input, div, mensaje) {
     div.text(mensaje + " debe intruducir una dirección válida");
     input.addClass("input-error");
     return false;
-  } else if (parametro.length > 158) {
+  } else if (parametro.length > 200) {
     div.text(mensaje + " direccion demasiada larga");
     input.addClass("input-error");
     return false;
@@ -248,7 +269,7 @@ function validarCedula(input, div, mensaje, prefijo) {
         documento[prefijo].minLength +
         " y " +
         documento[prefijo].maxLength +
-        " caracteres.",
+        " caracteres."
     );
     input.addClass("input-error");
     return false;
@@ -552,10 +573,10 @@ const Toast = Swal.mixin({
 
 $(document).ready(function () {
   const popoverTriggerList = document.querySelectorAll(
-    '[data-bs-toggle="popover"]',
+    '[data-bs-toggle="popover"]'
   );
   const popoverList = [...popoverTriggerList].map(
-    (popoverTriggerEl) => new bootstrap.Popover(popoverTriggerEl),
+    (popoverTriggerEl) => new bootstrap.Popover(popoverTriggerEl)
   );
 });
 

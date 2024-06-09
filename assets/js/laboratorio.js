@@ -38,7 +38,7 @@ $(document).ready(function () {
           resposive: true,
         });
       },
-      "json",
+      "json"
     ).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
@@ -59,9 +59,9 @@ $(document).ready(function () {
       if (valid) validarRifBD($("#rif"), $("#error"));
     }, 800);
   });
-  $("#razon").inputmask("nombre");
+  $("#razon").inputmask("razon_social");
   $("#razon").keyup(() => {
-    validarNombre($("#razon"), $("#error"), "Error de nombre,");
+    validarRazonSocial($("#razon"), $("#error"), "Error de razon social,");
   });
   $("#direccion").keyup(() => {
     validarDireccion($("#direccion"), $("#error"), "Error de direccion,");
@@ -77,7 +77,7 @@ $(document).ready(function () {
     vdireccion = validarDireccion(
       $("#direccion"),
       $("#error"),
-      "Error de direccion,",
+      "Error de direccion,"
     );
 
     if (!vnombre || !vdireccion) {
@@ -106,7 +106,7 @@ $(document).ready(function () {
         $(".cerrar").click();
         Toast.fire({ icon: "success", title: data.msg });
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
@@ -134,7 +134,7 @@ $(document).ready(function () {
         $("#razonEdit").val(data[0].razon_social);
         $("#direccionEdit").val(data[0].direccion);
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
@@ -150,15 +150,20 @@ $(document).ready(function () {
     let valid = validarRif($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
     if (valid) validarRifBD($("#rifEdit"), $("#errorEdit"), id);
   });
-  $("#razonEdit").inputmask("nombre");
+
+  $("#razonEdit").inputmask("razon_social");
   $("#razonEdit").keyup(() => {
-    validarNombre($("#razonEdit"), $("#errorEdit"), "Error de nombre,");
+    validarRazonSocial(
+      $("#razonEdit"),
+      $("#errorEdit"),
+      "Error de razon social,"
+    );
   });
   $("#direccionEdit").keyup(() => {
     validarDireccion(
       $("#direccionEdit"),
       $("#errorEdit"),
-      "Error de direccion,",
+      "Error de direccion,"
     );
   });
 
@@ -171,12 +176,12 @@ $(document).ready(function () {
     vnombre = validarNombre(
       $("#razonEdit"),
       $("#errorEdit"),
-      "Error de nombre,",
+      "Error de nombre,"
     );
     vdireccion = validarDireccion(
       $("#direccionEdit"),
       $("#errorEdit"),
-      "Error de direccion,",
+      "Error de direccion,"
     );
 
     if (!vnombre || !vdireccion || !vrif) throw new Error("Error.");
@@ -204,7 +209,7 @@ $(document).ready(function () {
         $(".cerrar").click();
         Toast.fire({ icon: "success", title: data.msg });
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
@@ -223,11 +228,11 @@ $(document).ready(function () {
     $("#editarform").trigger("reset");
     $("#agregarform input").attr(
       "style",
-      "border-color: none; background-image: none;",
+      "border-color: none; background-image: none;"
     );
     $("#editarform input").attr(
       "style",
-      "border-color: none; background-image: none;",
+      "border-color: none; background-image: none;"
     );
     $("#error").text("");
     $("#errorEdit").text("");
@@ -256,7 +261,7 @@ $(document).ready(function () {
         rellenar();
         Toast.fire({ icon: "success", title: data.msg });
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
