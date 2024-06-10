@@ -35,14 +35,18 @@ class recepcion extends DBConnect
     {
         try {
             $this->conectarDB();
+            $sede_principal = ($_SESSION['id_sede'] != "1") ? "AND s.id_sede = :id_sede;" : '';
             $sql = "SELECT r.id_recepcion, s.nombre as nombre_sede, r.fecha FROM recepcion_sede r
                     INNER JOIN transferencia t ON t.id_transferencia = r.id_transferencia
                     INNER JOIN sede s ON t.id_sede = s.id_sede
-                    WHERE r.status = 1;";
+                    WHERE r.status = 1 $sede_principal";
             $new = $this->con->prepare($sql);
+            if ($sede_principal !== '') {
+                $new->bindValue(':id_sede', $_SESSION['id_sede']);
+            }
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
-            if($bitacora == "true") {
+            if ($bitacora == "true") {
                 $this->binnacle("Recepcion", $_SESSION['cedula'], "Consultó listado de recepcion.");
             }
             $this->desconectarDB();
@@ -63,7 +67,7 @@ class recepcion extends DBConnect
             $new->bindValue(1, $_SESSION['id_sede']);
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
-            if($bitacora == "true") {
+            if ($bitacora == "true") {
                 $this->binnacle("Transferencia", $_SESSION['cedula'], "Consultó listado de transferencias.");
             }
             $this->desconectarDB();
@@ -187,17 +191,17 @@ class recepcion extends DBConnect
             return $this->http_error(400, 'Fecha inválida.');
         }
         $estructura_productos = [
-          'id_producto' => 'string',
-          'cantidad' => 'string',
-          'descripcion' => 'string'
+            'id_producto' => 'string',
+            'cantidad' => 'string',
+            'descripcion' => 'string'
         ];
         $productos = json_decode($productos, 1);
         if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
         }
-        if($img !== false) {
+        if ($img !== false) {
             $valid = $this->validarImagen($img, true);
-            if(!$valid['valid']) {
+            if (!$valid['valid']) {
                 return $valid['res']();
             }
         }
@@ -221,7 +225,7 @@ class recepcion extends DBConnect
             $new->bindValue(2, $this->fecha);
             $new->execute();
             $this->id_recepcion = $this->con->lastInsertId();
-            if($this->img !== false) {
+            if ($this->img !== false) {
                 $this->registrarImagenesRecepcion();
             }
 
@@ -270,7 +274,7 @@ class recepcion extends DBConnect
     }
     private function registrarImagenesRecepcion(): void
     {
-        for($i = 0; $i < count($this->img['name']); $i++) {
+        for ($i = 0; $i < count($this->img['name']); $i++) {
             $name = $this->randomRepository('assets/img/inventario/', $this->img['name'][$i], 'recepcion_');
             if (!move_uploaded_file($this->img['tmp_name'][$i], $name)) {
                 $res = "No se pudo guardar la imagen";
@@ -285,7 +289,7 @@ class recepcion extends DBConnect
     private function verificarExistenciaDelLote()
     {
         try {
-            $sql = "SELECT id_producto_sede, cantidad FROM producto_sede 
+            $sql = "SELECT id_producto_sede, cantidad, version FROM producto_sede 
                     WHERE lote = (
                         SELECT lote FROM producto_sede WHERE id_producto_sede = :id_producto_sede
                     ) 
