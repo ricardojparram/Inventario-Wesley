@@ -72,7 +72,7 @@ $(document).ready(function () {
         icon: "error",
         title: e.responseJSON.msg || "Ha ocurrido un error.",
       });
-      console.error(e.responseJSON.msg);
+      console.error(e.responseJSON.msg || "Ha ocurrido un error.");
     });
   });
 
@@ -153,15 +153,15 @@ $(document).ready(function () {
         rellenar();
       },
     })
+      .always(() => {
+        $(this).find('button[type="submit"]').prop("disabled", false);
+      })
       .fail((e) => {
         Toast.fire({
           icon: "error",
           title: e.responseJSON.msg || "Ha ocurrido un error.",
         });
-        console.error(e.responseJSON.msg);
-      })
-      .always(() => {
-        $(this).find('button[type="submit"]').prop("disabled", false);
+        console.error(e.responseJSON.msg || "Ha ocurrido un error.");
       });
   });
 
