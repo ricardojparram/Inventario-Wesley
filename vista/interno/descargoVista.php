@@ -180,7 +180,7 @@
                         <div class="form-group my-3 ">
                             <div class="container-fluid">
                                 <div class="row">
-                                    <div class="table table-body-tipo table-responsive form-group col-12">
+                                    <div class="table table-body-tipo table-responsive form-group col-12 pb-4">
 
                                         <table class="table  table-striped">
                                             <thead>
@@ -215,7 +215,6 @@
 
                                         <p class="filaTipoPago error" id="error" style="color:#ff0000;text-align: center;"></p>
                                         <a class="agregarFila a-asd" role="button"></i> Nueva fila</a> <br>
-
                                     </div>
                                 </div>
                             </div>

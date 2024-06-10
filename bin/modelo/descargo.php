@@ -78,7 +78,7 @@ class descargo extends DBConnect
         try {
             $this->conectarDB();
             $sql = "SELECT id_producto_sede, presentacion_producto, fecha_vencimiento, cantidad FROM vw_producto_sede_detallado
-                    WHERE id_sede = ?";
+                    WHERE id_sede = ? AND cantidad > 0";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $_SESSION['id_sede']);
             $new->execute();
@@ -172,6 +172,10 @@ class descargo extends DBConnect
                 ] = $producto;
                 $this->id_producto = $cod_producto;
                 $producto_sede = $this->verificarExistenciaDelLote();
+                if (is_array($producto_sede)) {
+                    $this->con->rollBack();
+                    return $producto_sede;
+                }
 
                 if (intval($producto_sede->cantidad) < intval($cantidad)) {
                     $this->con->rollBack();
@@ -205,6 +209,7 @@ class descargo extends DBConnect
 
                 $this->inventario_historial("Descargo", "", "x", "", $this->id_producto, $cantidad);
             }
+            $this->binnacle("Descargo", $_SESSION['cedula'], "Registró un descargo.");
             $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado el descargo correctamente.'];
         } catch (\PDOException $e) {
@@ -244,31 +249,48 @@ class descargo extends DBConnect
     {
         try {
             $this->conectarDB();
-
+            $this->con->beginTransaction();
             $sql = "UPDATE descargo SET status = 0 WHERE id_descargo = ?";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id_descargo);
             $new->execute();
 
-            $sql = "SELECT ps.id_producto_sede, dc.cantidad, ps.cantidad as inventario FROM detalle_descargo dc
-                    INNER JOIN producto_sede ps ON ps.id_producto_sede = dc.id_producto_sede
-                    WHERE id_descargo = ?;";
+            $sql = "SELECT
+                        ps.id_producto_sede,
+                        dc.cantidad,
+                        ps.cantidad as inventario,
+                        ps.version
+                    FROM
+                        detalle_descargo dc
+                        INNER JOIN producto_sede ps ON ps.id_producto_sede = dc.id_producto_sede
+                    WHERE
+                        id_descargo = ?;";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id_descargo);
             $new->execute();
             $detalle_descargo = $new->fetchAll(\PDO::FETCH_OBJ);
             foreach ($detalle_descargo as $producto) {
                 $inventario = intval($producto->cantidad) + intval($producto->inventario);
-                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
-                $new->bindValue(1, $inventario);
-                $new->bindValue(2, $producto->id_producto_sede);
+                $version = intval($producto->version) + 1;
+                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = :cantidad, version = :version_nueva WHERE id_producto_sede = :id AND version = :version_leida");
+                $new->bindValue(':cantidad', $inventario);
+                $new->bindValue(':version_nueva', $version);
+                $new->bindValue(':id', $producto->id_producto_sede);
+                $new->bindValue(':version_leida', $producto->version);
                 $new->execute();
+                if ($new->rowCount() == 0) {
+                    $this->con->rollBack();
+                    return $this->http_error(409, 'Eliminar el descargo falló debido al exceso de concurrencia.');
+                }
             }
-
-            $this->desconectarDB();
+            $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha anulado el descargo correctamente.'];
         } catch (\PDOException $e) {
+            $this->con->rollBack();
             return $this->http_error(500, $e->getMessage());
+        } finally {
+
+            $this->desconectarDB();
         }
     }
 }
