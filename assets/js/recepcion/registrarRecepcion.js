@@ -22,8 +22,12 @@ $(document).ready(function () {
                 <td scope="col">${row.fecha || ""}</td>
                 <td >
                 <span class="d-flex justify-content-center">
-                    <button type="button" title="Registrar recepcion" class="btn btn-success registrar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Registrar"><i class="bi bi-clipboard2-plus-fill"></i></button>
-                    <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+                    <button type="button" title="Registrar recepcion" class="btn btn-success registrar mx-2" id="${
+                      row.id_transferencia
+                    }" data-bs-toggle="modal" data-bs-target="#Registrar"><i class="bi bi-clipboard2-plus-fill"></i></button>
+                    <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${
+                      row.id_transferencia
+                    }" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
                 </span>
                 </td>
             </tr>`);
@@ -94,21 +98,17 @@ $(document).ready(function () {
           .find(".descripcion input")
           .val();
         return { id_producto: item.value, cantidad, descripcion };
-      },
+      }
     );
   };
   let valid_sede, valid_fecha;
   $("#sede").change(
     () =>
-      (valid_sede = validarNumero($("#sede"), $("#error1"), "Error de sede,")),
+      (valid_sede = validarNumero($("#sede"), $("#error1"), "Error de sede,"))
   );
   $("#fecha").change(
     () =>
-      (valid_fecha = validarFecha(
-        $("#fecha"),
-        $("#error2"),
-        "Error de fecha,",
-      )),
+      (valid_fecha = validarFecha($("#fecha"), $("#error2"), "Error de fecha,"))
   );
   $(".custom-file-input").on("change", function () {
     var files = Array.from(this.files);
@@ -179,14 +179,14 @@ $(document).ready(function () {
           tabla += `
               <tr>
                 <td>${row.lote}</th>
-                <td>${row.id_producto_sede}</th>
+                <td>${row.presentacion_producto}</th>
                 <td>${row.cantidad}</td>
                 <td>${row.descripcion}</td>
                 <td>${row.fecha_vencimiento ? row.fecha_vencimiento : ""}</td>
               </tr>`;
         });
         $("#tabla_detalle tbody").html(tabla || "");
-      },
+      }
     )
       .fail((e) => {
         Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
