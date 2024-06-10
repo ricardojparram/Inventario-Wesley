@@ -9,8 +9,13 @@ trait validar
     public function validarFecha($date, $format = 'Y-m-d'): bool
     {
         $d = DateTime::createFromFormat($format, $date);
+        $errors = DateTime::getLastErrors();
+        if ($errors) {
+            return false;
+        }
         return $d && $d->format($format) == $date;
     }
+
     public function http_error($code, $error): array
     {
         http_response_code($code);
