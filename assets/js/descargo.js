@@ -349,7 +349,7 @@ $(document).ready(function () {
           icon: "error",
           title: e.responseJSON.msg || "Ha ocurrido un error.",
         });
-        console.error(e.responseJSON.msg);
+        console.error(e.responseJSON.msg || "Ha ocurrido un error.");
       })
       .always(() => {
         $(this).find('button[type="submit"]').prop("disabled", false);
@@ -379,7 +379,7 @@ $(document).ready(function () {
           icon: "error",
           title: e.responseJSON.msg || "Ha ocurrido un error.",
         });
-        throw new Error(e.responseJSON.msg);
+        console.log(e.responseJSON.msg || "Ha ocurrido un error.");
       })
       .always(() => {
         $(this).prop("disabled", false);

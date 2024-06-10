@@ -290,7 +290,7 @@ $(document).ready(function () {
         icon: "error",
         title: e.responseJSON.msg || "Ha ocurrido un error.",
       });
-      throw new Error(e.responseJSON.msg);
+      console.error(e.responseJSON.msg || "Ha ocurrido un error.");
     });
   });
 
@@ -315,7 +315,7 @@ $(document).ready(function () {
         icon: "error",
         title: e.responseJSON.msg || "Ha ocurrido un error.",
       });
-      throw new Error(e.responseJSON.msg);
+      console.error(e.responseJSON.msg || "Ha ocurrido un error.");
     });
   });
 
