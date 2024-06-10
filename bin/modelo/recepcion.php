@@ -219,6 +219,7 @@ class recepcion extends DBConnect
     {
         try {
             $this->conectarDB();
+            $this->con->beginTransaction();
             $sql = "INSERT INTO recepcion_sede(id_transferencia, fecha, status) VALUES (?,?,1)";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->id_transferencia);
@@ -226,22 +227,43 @@ class recepcion extends DBConnect
             $new->execute();
             $this->id_recepcion = $this->con->lastInsertId();
             if ($this->img !== false) {
-                $this->registrarImagenesRecepcion();
+                $res = $this->registrarImagenesRecepcion();
+                if ($res['resultado'] !== 'ok') {
+                    $this->con->rollBack();
+                    return $this->http_error(500, 'Hubo un error al subir imagen.');
+                }
             }
 
             foreach ($this->productos as $producto) {
                 $this->id_producto = $producto['id_producto'];
                 $producto_sede = $this->verificarExistenciaDelLote();
+                if (is_array($producto_sede)) {
+                    $this->con->rollBack();
+                    return $producto_sede;
+                }
 
                 if (isset($producto_sede->id_producto_sede)) {
                     $inventario = intval($producto_sede->cantidad) + intval($producto['cantidad']);
-                    $sql = "UPDATE producto_sede SET cantidad = :inventario 
-                            WHERE id_producto_sede = :id_producto_sede";
+                    $version = intval($producto_sede->version) + 1;
+                    $sql = "UPDATE
+                                producto_sede
+                            SET
+                                cantidad = :cantidad,
+                                version = :version_nueva
+                            WHERE
+                                id_producto_sede = :id
+                                AND version = :version_leida";
                     $new = $this->con->prepare($sql);
-                    $new->bindValue(":inventario", $inventario);
-                    $new->bindValue(":id_producto_sede", $producto_sede->id_producto_sede);
+                    $new->bindValue(':cantidad', $inventario);
+                    $new->bindValue(':version_nueva', $version);
+                    $new->bindValue(':id', $producto_sede->id_producto_sede);
+                    $new->bindValue(':version_leida', $producto_sede->version);
                     $new->execute();
                     $this->id_producto = $producto_sede->id_producto_sede;
+                    if ($new->rowCount() == 0) {
+                        $this->con->rollBack();
+                        return $this->http_error(409, 'La recepción falló debido al exceso de concurrencia.');
+                    }
                 } else {
                     $sql = "INSERT INTO producto_sede(cod_producto, lote, fecha_vencimiento, id_sede, cantidad)
                             SELECT cod_producto, lote, fecha_vencimiento, :sede, :cantidad FROM producto_sede
@@ -266,24 +288,28 @@ class recepcion extends DBConnect
 
             $this->cambiarEstadoTransferencia(2);
 
-            $this->desconectarDB();
+            $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado la recepcion correctamente.'];
         } catch (\PDOException $e) {
+            $this->con->rollBack();
             return $this->http_error(500, $e->getMessage());
+        } finally {
+            $this->desconectarDB();
         }
     }
-    private function registrarImagenesRecepcion(): void
+    private function registrarImagenesRecepcion(): array
     {
         for ($i = 0; $i < count($this->img['name']); $i++) {
             $name = $this->randomRepository('assets/img/inventario/', $this->img['name'][$i], 'recepcion_');
             if (!move_uploaded_file($this->img['tmp_name'][$i], $name)) {
-                $res = "No se pudo guardar la imagen";
+                return ["resultado" => "error", "msg" => "No se pudo guardar la imagen"];
             }
             $new = $this->con->prepare("INSERT INTO img_recepcion(id_recepcion, img, status) VALUES (:id,:img,1)");
             $new->bindValue(':id', $this->id_recepcion);
             $new->bindValue(':img', $name);
             $new->execute();
         }
+        return ["resultado" => "ok", "msg" => "La imagen se guardo correctamente"];
     }
 
     private function verificarExistenciaDelLote()
@@ -321,6 +347,7 @@ class recepcion extends DBConnect
     {
         try {
             $this->conectarDB();
+            $this->con->beginTransaction();
             $sql = "SELECT id_transferencia FROM recepcion_sede
                     WHERE id_recepcion = ?";
             $new = $this->con->prepare($sql);
@@ -336,7 +363,7 @@ class recepcion extends DBConnect
             $new->bindValue(1, $this->id_recepcion);
             $new->execute();
 
-            $sql = "SELECT ps.id_producto_sede, dr.cantidad, ps.cantidad as inventario FROM detalle_recepcion dr
+            $sql = "SELECT ps.id_producto_sede, dr.cantidad, ps.cantidad as inventario, ps.version FROM detalle_recepcion dr
                     INNER JOIN producto_sede ps ON ps.id_producto_sede = dr.id_producto_sede
                     WHERE id_recepcion = ?;";
             $new = $this->con->prepare($sql);
@@ -344,17 +371,40 @@ class recepcion extends DBConnect
             $new->execute();
             $detalle_recepcion = $new->fetchAll(\PDO::FETCH_OBJ);
             foreach ($detalle_recepcion as $producto) {
-                $inventario = intval($producto->cantidad) - intval($producto->inventario);
-                $new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
-                $new->bindValue(1, $inventario);
-                $new->bindValue(2, $producto->id_producto_sede);
+
+                if (intval($producto->cantidad) < intval($producto->inventario)) {
+                    $this->con->rollBack();
+                    return $this->http_error(400, 'Cantidad insuficiente en el inventario.');
+                }
+                $inventario = intval($producto->inventario) - intval($producto->cantidad);
+                $version = intval($producto->version) + 1;
+                $sql = "UPDATE
+                            producto_sede
+                        SET
+                            cantidad = :cantidad,
+                            version = :version_nueva
+                        WHERE
+                            id_producto_sede = :id
+                            AND version = :version_leida";
+                $new = $this->con->prepare($sql);
+                $new->bindValue(':cantidad', $inventario);
+                $new->bindValue(':version_nueva', $version);
+                $new->bindValue(':id', $producto->id_producto_sede);
+                $new->bindValue(':version_leida', $producto->version);
                 $new->execute();
+                if ($new->rowCount() == 0) {
+                    $this->con->rollBack();
+                    return $this->http_error(409, 'Eliminar la recepción falló debido al exceso de concurrencia.');
+                }
             }
 
-            $this->desconectarDB();
+            $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha anulado la recepcion correctamente.'];
         } catch (\PDOException $e) {
+            $this->con->rollBack();
             return $this->http_error(500, $e->getMessage());
+        } finally {
+            $this->desconectarDB();
         }
     }
 }
