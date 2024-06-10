@@ -230,7 +230,7 @@ class donativoInstituciones extends DBConnect{
 
 		$validarProductos = $this->validProductos();
 
-       if ($validarProductos['res'] === false) return $this->http_error(400, $validarProductos['msg']);
+        if ($validarProductos['res'] === false) return $this->http_error(400, $validarProductos['msg']);
 
 		return $this->registrarDonacion();
 

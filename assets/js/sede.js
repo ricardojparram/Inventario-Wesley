@@ -111,8 +111,8 @@ $(document).ready(function () {
         if (data.resultado) {
           mostrar.destroy();
           rellenar();
-          $("#registrar").trigger("reset");
           $(".cerrar").click();
+          $("#agregarform").trigger("reset");
           Toast.fire({ icon: "success", title: "Registrado con exito." });
         } else {
           Toast.fire({ icon: "error", title: "Ha ocurrido un error." });

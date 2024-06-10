@@ -106,7 +106,7 @@
 
       <div class="modal-body ">
 
-        <form id = "agregarform">
+        <form id="agregarform">
 
           <div class="form-group col-md-12">  
             <div class="container-fluid">

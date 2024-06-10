@@ -63,17 +63,19 @@ $(document).ready(function () {
   let timeoutId;
   let click = 0;
   setInterval(() => { click = 0; }, 2000);
-  
-  $('#tipoEmpleado').keyup(() => {
-    valid = validarStringLong($("#tipoEmpleado"), $("#error"), "Error de tipo empleado");
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(function() {
-      if (valid) validarTipoEmpleado($("#tipoEmpleado"), $("#error"));
-    }, 700);
-  })
 
 
-  // Registrar Empleado
+  // Validar tipoEmpleado al soltar una tecla, excepto Enter
+  $('#tipoEmpleado').keyup((e) => {
+    if (e.key !== 'Enter') {
+      valid = validarStringLong($("#tipoEmpleado"), $("#error"), "Error de tipo empleado");
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (valid) validarTipoEmpleado($("#tipoEmpleado"), $("#error"));
+      }, 700);
+    }
+  });
+
 
   $('#registrar').click((e) => {
     e.preventDefault();
@@ -88,7 +90,7 @@ $(document).ready(function () {
     tipoEmpleado = validarStringLong($("#tipoEmpleado"), $("#error"), "Error de tipo empleado");
 
     if (tipoEmpleado) {
-
+      $(this).find('button[type="submit"]').prop("disabled", true);
       $.ajax({
         type: 'POST',
         url: '',
@@ -101,21 +103,25 @@ $(document).ready(function () {
             mostrar.destroy();
             rellenar();
             $('#user').trigger('reset');
-            $("#close").click();
             $("#tipoEmpleado").removeClass('input-error');
             $("#error").text("");
+            $(".cerrar").click();
             Toast.fire({ icon: 'success', title: 'Tipo empleado registrado', showCloseButton: true });
           } else if (data.resultado === 'error') {
             $("#error").text(data.msg);
             $("#tipoEmpleado").addClass('input-error');
           }
         }
-      })
+      }).always(() => {
+        $(this).find('button[type="submit"]').prop("disabled", false);
+      });
     }
 
     click++;
 
   })
+
+
 
   // Cerrar Modal
 
@@ -168,12 +174,14 @@ $(document).ready(function () {
   })
 
 
-   $('#tipoEmpleadoEdit').keyup(() => {
+  $('#tipoEmpleadoEdit').keyup(() => {
+    if (e.key !== 'Enter') {
     valid = validarStringLong($("#tipoEmpleadoEdit"), $("#error2"), "Error de tipo empleado");
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(function() {
-      if (valid)  validarTipoEmpleado($("#tipoEmpleadoEdit"), $("#error2"), id);
+    timeoutId = setTimeout(function () {
+      if (valid) validarTipoEmpleado($("#tipoEmpleadoEdit"), $("#error2"), id);
     }, 700);
+   }
   })
 
   let tipoEmpleadoEdit;
