@@ -30,6 +30,7 @@ trait validar
             "fecha" => "/^([0-9]{4}\-[0-9]{2}\-[0-9]{2})$/",
             "fecha_es" => "/^([0-9]{2}\/[0-9]{2}\/[0-9]{4})$/",
             "datetime" => "/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/",
+            "numero" => "/^[0-9]+$/",
             "decimal" => "/^([0-9]+\.+[0-9]|[0-9])+$/",
             "entero" => "/^[1-9]\d*$/",
             "string" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9#\/s,.-]){3,50}$/",
@@ -38,7 +39,8 @@ trait validar
             "factura" => "/^N°-[A-Za-z0-9]{6,15}$/u"
         ];
         if (!isset($regex[$tipo])) {
-            die("No existe el tipo de dato en las expresiones regulares almacenadas.");
+            $res = $this->http_error(500, "No existe el tipo de dato en las expresiones regulares almacenadas.");
+            die(json_encode($res));
         }
 
         return preg_match($regex[$tipo], $input);
