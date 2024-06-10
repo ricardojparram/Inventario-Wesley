@@ -23,9 +23,15 @@ $(document).ready(function () {
           <td scope="col">${row.fecha || ""}</td>
           <td >
             <span class="d-flex justify-content-center">
-              <!-- <button type="button" ${permisoEditar} title="Editar" class="btn btn-success editar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button> -->
-              <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
-              <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_transferencia}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+              <!-- <button type="button" ${permisoEditar} title="Editar" class="btn btn-success editar mx-2" id="${
+          row.id_transferencia
+        }" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button> -->
+              <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${
+          row.id_transferencia
+        }" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
+              <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${
+                row.id_transferencia
+              }" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
             </span>
           </td>
         </tr>`);
@@ -94,12 +100,12 @@ $(document).ready(function () {
       $("#error").html("");
     }
     productos = Object.values(
-      document.querySelectorAll(".select-productos"),
+      document.querySelectorAll(".select-productos")
     ).map((item) => {
       return item.value;
     });
     productosRepetidos = productos.filter(
-      (elemento, index) => productos.indexOf(elemento) !== index,
+      (elemento, index) => productos.indexOf(elemento) !== index
     );
     $(".select-productos").each(function () {
       if (this.value === "" || this.value === null) {
@@ -132,7 +138,7 @@ $(document).ready(function () {
     let $cantidad = $(item).closest("tr").find(".cantidad input");
     let producto_inventario = item.value;
     $.getJSON("", { producto_inventario }, function (data) {
-      $cantidad.val(data[0].cantidad);
+      $cantidad.val(data.cantidad);
     });
   };
 
@@ -147,10 +153,10 @@ $(document).ready(function () {
     let valid = false;
     if (!Number.isInteger(Number(cantidad))) return false;
     await $.getJSON("", { producto_inventario }, function (data) {
-      if (cantidad > data[0].cantidad) {
+      if (cantidad > data.cantidad) {
         $cantidad.attr("valid", false);
         $error
-          .html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
+          .html(`No hay suficiente.(Disponible: ${data.cantidad})`)
           .removeClass("d-none");
         valid = false;
       } else {
@@ -238,21 +244,17 @@ $(document).ready(function () {
           .find(".descripcion input")
           .val();
         return { id_producto: item.value, cantidad, descripcion };
-      },
+      }
     );
   };
   let valid_sede, valid_fecha;
   $("#sede").change(
     () =>
-      (valid_sede = validarNumero($("#sede"), $("#error1"), "Error de sede,")),
+      (valid_sede = validarNumero($("#sede"), $("#error1"), "Error de sede,"))
   );
   $("#fecha").change(
     () =>
-      (valid_fecha = validarFecha(
-        $("#fecha"),
-        $("#error2"),
-        "Error de fecha,",
-      )),
+      (valid_fecha = validarFecha($("#fecha"), $("#error2"), "Error de fecha,"))
   );
   $("#registrar").click(async function (e) {
     e.preventDefault();
@@ -282,7 +284,7 @@ $(document).ready(function () {
         $(".cerrar").click();
         rellenar();
       },
-      "json",
+      "json"
     ).fail((e) => {
       Toast.fire({
         icon: "error",
@@ -307,7 +309,7 @@ $(document).ready(function () {
         $(".cerrar").click();
         rellenar();
       },
-      "json",
+      "json"
     ).fail((e) => {
       Toast.fire({
         icon: "error",
