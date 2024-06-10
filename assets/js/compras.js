@@ -366,6 +366,11 @@ $(document).ready(function() {
 						fechaHoy($('#fecha'));
 						Toast.fire({ icon: 'success', title: 'Compra registrada' })
 						filaN()
+					}else if(data.resultado === "Error de orden"){
+						$("#error").text(data.error);
+						$("#orden").attr("style","border-color:red;")
+						$("#orden").attr("style","border-color:red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+						throw new Error('Orden de compra repetida.');
 					}
 				}
 

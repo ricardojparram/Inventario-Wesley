@@ -139,6 +139,14 @@ public function productoDetalle($id){
 	private function registrarCompra(){
 		try{
 			parent::conectarDB();
+			$new = $this->con->prepare("SELECT orden_compra FROM compra WHERE status = 1 AND orden_compra = ?");
+			$new->bindValue(1, $this->orden);
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
+
+			if(isset($data[0]->orden_compra)){
+				die(json_encode(['resultado'=> 'Error de orden', 'error'=> 'Orden de compra ya registrada.']));
+			}
 			$new = $this->con->prepare("INSERT INTO `compra`(`orden_compra`, `fecha`, `monto_total`, `ced_prove`, `status`) VALUES (?,?,?,?,1)");
 			$new->bindValue(1 , $this->orden );
 			$new->bindValue(2, $this->fecha);

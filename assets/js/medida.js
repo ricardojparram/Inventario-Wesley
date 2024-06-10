@@ -87,7 +87,7 @@ $("#enviar").click((e)=>{
             rellenar();
             $('#user').trigger('reset'); 
             $("#closeRegis").click();
-            $("#mediNom").attr("style","borde-color:none; backgraund-image: none;");
+            $("#mediNom").attr("style","border-color:none; background-image: none;");
             $("#error").text("");
             Toast.fire({ icon: 'success', title: 'Medida de Producto registrado' , showCloseButton: true });
           }else if(data.resultado === 'error'){

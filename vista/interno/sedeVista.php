@@ -155,7 +155,7 @@
       <p style="color:#ff0000;text-align: center;" id="error"><?php echo (isset($respuesta)) ? $respuesta : " "; ?></p>
         
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
+        <button id ="cerraR" type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
       </div>
     </div>
@@ -243,7 +243,7 @@
         ¿Desea Borrar los Datos de la Sede de Envío?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+        <button id = "borrars"type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
         <button id="borrar" type="button" class="btn btn-danger">Borrar</button>
       </div>
     </div> 

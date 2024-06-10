@@ -83,8 +83,8 @@ $("#registrar").click((e)=>{
 		if(data.resultado){
 			mostrar.destroy(); 
 			rellenar(); 
-			$('#registrar').trigger('reset'); 
-			$('.cerrar').click(); 
+			$('#agregarform').trigger('reset');  
+			$('#cerraR').click();
 			Toast.fire({ icon: 'success', title:'Registrado con exito.' }) 
 		}else{
 			Toast.fire({ icon: 'error', title: 'Ha ocurrido un error.'}); 
@@ -93,6 +93,19 @@ $("#registrar").click((e)=>{
 
 })
 
+})
+
+$('#cerraR').click(()=>{
+$('.select2').val(0).trigger('change');
+$('#agregarform').trigger('reset');
+$('.select2').removeClass('select-error');
+$('#agregarform').removeClass('input-error');
+$('removeRow').click();
+$('.removeRowPagoTipo').click();
+$('.error').text("");
+$('.error').text("");
+addNewRow()
+assNewRowPago()
 })
 
 let id;
