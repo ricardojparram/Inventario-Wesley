@@ -21,8 +21,12 @@ $(document).ready(function () {
                     <td scope="col">${row.fecha || ""}</td>
                     <td>
                         <span class="d-flex justify-content-center">
-                            <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${row.id_descargo}" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
-                            <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_descargo}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+                            <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${
+          row.id_descargo
+        }" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
+                            <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${
+                              row.id_descargo
+                            }" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
                         </span>
                     </td>
                 </tr>`);
@@ -105,12 +109,12 @@ $(document).ready(function () {
       $("#error").html("");
     }
     productos = Object.values(
-      document.querySelectorAll(".select-productos"),
+      document.querySelectorAll(".select-productos")
     ).map((item) => {
       return item.value;
     });
     productosRepetidos = productos.filter(
-      (elemento, index) => productos.indexOf(elemento) !== index,
+      (elemento, index) => productos.indexOf(elemento) !== index
     );
     $(".select-productos").each(function () {
       if (this.value === "" || this.value === null) {
@@ -155,7 +159,7 @@ $(document).ready(function () {
     let $cantidad = $(item).closest("tr").find(".cantidad input");
     let producto_inventario = item.value;
     $.getJSON("?url=transferencia", { producto_inventario }, function (data) {
-      $cantidad.val(data[0].cantidad);
+      $cantidad.val(data.cantidad);
     });
   };
 
@@ -173,10 +177,10 @@ $(document).ready(function () {
       "?url=transferencia",
       { producto_inventario },
       function (data) {
-        if (cantidad > data[0].cantidad) {
+        if (cantidad > data.cantidad) {
           $cantidad.attr("valid", false);
           $error
-            .html(`No hay suficiente.(Disponible: ${data[0].cantidad})`)
+            .html(`No hay suficiente.(Disponible: ${data.cantidad})`)
             .removeClass("d-none");
           valid = false;
         } else {
@@ -184,7 +188,7 @@ $(document).ready(function () {
           $error.addClass("d-none");
           valid = true;
         }
-      },
+      }
     );
     return valid;
   };
@@ -265,7 +269,7 @@ $(document).ready(function () {
           .find(".descripcion input")
           .val();
         return { id_producto: item.value, cantidad, descripcion };
-      },
+      }
     );
   };
   let valid_sede, valid_fecha;
@@ -274,16 +278,12 @@ $(document).ready(function () {
       (valid_descargo = validarNumero(
         $("#num_descargo"),
         $("#error1"),
-        "Error de descargo,",
-      )),
+        "Error de descargo,"
+      ))
   );
   $("#fecha").change(
     () =>
-      (valid_fecha = validarFecha(
-        $("#fecha"),
-        $("#error2"),
-        "Error de fecha,",
-      )),
+      (valid_fecha = validarFecha($("#fecha"), $("#error2"), "Error de fecha,"))
   );
 
   $(".custom-file-input").on("change", function () {
@@ -302,7 +302,7 @@ $(document).ready(function () {
     valid_descargo = validarNumero(
       $("#num_descargo"),
       $("#error1"),
-      "Error de de descargo,",
+      "Error de de descargo,"
     );
     valid_fecha = validarFecha($("#fecha"), $("#error2"), "Error de fecha,");
     let valid_productos = validarProductosRepetidos(false);
@@ -372,7 +372,7 @@ $(document).ready(function () {
         $(".cerrar").click();
         rellenar();
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({

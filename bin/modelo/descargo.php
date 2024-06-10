@@ -91,7 +91,7 @@ class descargo extends DBConnect
     private function verificarExistenciaDelLote()
     {
         try {
-            $sql = "SELECT id_producto_sede, cantidad FROM producto_sede 
+            $sql = "SELECT id_producto_sede, cantidad, version FROM producto_sede 
                     WHERE lote = (
                         SELECT lote FROM producto_sede WHERE id_producto_sede = :id_producto_sede
                     ) 
@@ -109,8 +109,8 @@ class descargo extends DBConnect
     }
     public function getAgregarDescargo($num_descargo, $fecha, $productos, $img = false): array
     {
-        if (!$this->validarString('entero', $num_descargo)) {
-            return $this->http_error(400, 'Transferencia inválida.');
+        if (!$this->validarString('numero', $num_descargo)) {
+            return $this->http_error(400, 'Numero de cargo inválido.');
         }
 
         $fecha =  date('Y-m-d', strtotime($fecha));
@@ -119,18 +119,18 @@ class descargo extends DBConnect
         }
 
         $estructura_productos = [
-          'id_producto' => 'string',
-          'cantidad' => 'string',
-          'descripcion' => 'string'
+            'id_producto' => 'string',
+            'cantidad' => 'string',
+            'descripcion' => 'string'
         ];
         $productos = json_decode($productos, 1);
         if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
         }
 
-        if($img !== false) {
+        if ($img !== false) {
             $valid = $this->validarImagen($img, true);
-            if(!$valid['valid']) {
+            if (!$valid['valid']) {
                 return $valid['res']();
             }
         }
@@ -147,6 +147,7 @@ class descargo extends DBConnect
     {
         try {
             $this->conectarDB();
+            $this->con->beginTransaction();
             $sql = "INSERT INTO descargo(fecha, num_descargo, id_sede, status) VALUES (?,?,?,1)";
             $new = $this->con->prepare($sql);
             $new->bindValue(1, $this->fecha);
@@ -155,8 +156,12 @@ class descargo extends DBConnect
             $new->execute();
             $this->id_descargo = $this->con->lastInsertId();
 
-            if($this->img !== false) {
-                $this->registrarImagenesDescargo();
+            if ($this->img !== false) {
+                $res = $this->registrarImagenesDescargo();
+                if ($res['resultado'] !== 'ok') {
+                    $this->con->rollBack();
+                    return $this->http_error(500, 'Hubo un error al subir imagen.');
+                }
             }
 
             foreach ($this->productos as $producto) {
@@ -168,13 +173,25 @@ class descargo extends DBConnect
                 $this->id_producto = $cod_producto;
                 $producto_sede = $this->verificarExistenciaDelLote();
 
+                if (intval($producto_sede->cantidad) < intval($cantidad)) {
+                    $this->con->rollBack();
+                    return $this->http_error(400, 'Cantidad insuficiente en el inventario.');
+                }
+
                 $inventario = intval($producto_sede->cantidad) - intval($cantidad);
-                $sql = "UPDATE producto_sede SET cantidad = :inventario 
-                        WHERE id_producto_sede = :id_producto_sede";
+                $version = intval($producto_sede->version) + 1;
+                $sql = "UPDATE producto_sede SET cantidad = :inventario, version = :version_nueva
+                        WHERE id_producto_sede = :id_producto_sede AND version = :version_leida";
                 $new = $this->con->prepare($sql);
                 $new->bindValue(":inventario", $inventario);
+                $new->bindValue(":version_nueva", $version);
                 $new->bindValue(":id_producto_sede", $producto_sede->id_producto_sede);
+                $new->bindValue(":version_leida", $producto_sede->version);
                 $new->execute();
+                if ($new->rowCount() == 0) {
+                    $this->con->rollBack();
+                    return $this->http_error(409, 'EL descargo falló debido al exceso de concurrencia.');
+                }
                 $this->id_producto = $producto_sede->id_producto_sede;
 
 
@@ -188,32 +205,35 @@ class descargo extends DBConnect
 
                 $this->inventario_historial("Descargo", "", "x", "", $this->id_producto, $cantidad);
             }
-
-            $this->desconectarDB();
+            $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado el descargo correctamente.'];
         } catch (\PDOException $e) {
+            $this->con->rollBack();
             return $this->http_error(500, $e->getMessage());
+        } finally {
+            $this->desconectarDB();
         }
     }
 
-    private function registrarImagenesDescargo(): void
+    private function registrarImagenesDescargo(): array
     {
-        for($i = 0; $i < count($this->img['name']); $i++) {
+        for ($i = 0; $i < count($this->img['name']); $i++) {
             $name = $this->randomRepository('assets/img/inventario/', $this->img['name'][$i], 'descargo_');
             if (!move_uploaded_file($this->img['tmp_name'][$i], $name)) {
-                $res = "No se pudo guardar la imagen";
+                return ["resultado" => "error", "msg" => "No se pudo guardar la imagen"];
             }
             $new = $this->con->prepare("INSERT INTO img_descargo(id_descargo, img, status) VALUES (:id,:img,1)");
             $new->bindValue(':id', $this->id_descargo);
             $new->bindValue(':img', $name);
             $new->execute();
         }
+        return ["resultado" => "ok", "msg" => "No se pudo guardar la imagen"];
     }
 
     public function getEliminarDescargo($id_descargo): array
     {
         if (!$this->validarString('entero', $id_descargo)) {
-            return $this->http_error(400, 'descargo inválido.');
+            return $this->http_error(400, 'Id descargo inválida.');
         }
 
         $this->id_descargo = $id_descargo;

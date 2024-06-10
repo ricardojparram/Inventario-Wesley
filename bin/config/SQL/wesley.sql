@@ -248,7 +248,7 @@ CREATE TABLE descargo (
   id_descargo int(11) AUTO_INCREMENT PRIMARY KEY,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   id_sede int(11) NOT NULL,
-  num_descargo int(11) NOT NULL,
+  num_descargo varchar(11) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
