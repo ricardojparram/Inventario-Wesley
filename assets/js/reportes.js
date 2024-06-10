@@ -242,7 +242,7 @@ $(document).ready(function () {
         labels: productos.labels,
         datasets: [
           {
-            label: "Productos",
+            label: "Cantidad",
             data: productos.data,
             borderColor: "rgba(94, 166, 48, 0.7)",
             borderRadius: 5,
@@ -281,7 +281,7 @@ $(document).ready(function () {
         labels: productos.labels,
         datasets: [
           {
-            label: "Productos",
+            label: "Cantidad",
             data: productos.data,
             borderColor: "rgba(94, 166, 48, 0.7)",
             borderRadius: 5,
