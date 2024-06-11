@@ -438,6 +438,7 @@
        $new->execute();
 
        $this->actualizarCantidad($datos['producto'] , $datos['cantidad']);
+       $this->inventario_historial("Venta", "", "x", "", $datos['producto'], $datos['cantidad']);
         
       }
 

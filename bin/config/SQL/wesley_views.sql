@@ -27,7 +27,7 @@ FROM
     INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod
     INNER JOIN presentacion pres ON pres.cod_pres = p.cod_pres
     INNER JOIN medida med ON med.id_medida = pres.id_medida
-    INNER JOIN sede s ON s.id_sede = ps.id_sede2
+    INNER JOIN sede s ON s.id_sede = ps.id_sede
     INNER JOIN tipo ON tipo.id_tipo = p.id_tipo
     INNER JOIN clase ON clase.id_clase = p.id_clase;
 

@@ -85,8 +85,7 @@ class donativoInstituciones extends DBConnect{
 	public function selectProductos($id_sede){
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare("SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE p.status = 1 AND s.status = 1 AND ps.cantidad > 0 AND s.id_sede = ? ORDER BY ps.fecha_vencimiento");
-
+			$new = $this->con->prepare("SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida INNER JOIN detalle_recepcion_nacional drn ON drn.id_producto_sede = ps.id_producto_sede INNER JOIN recepcion_nacional rn ON rn.id_rep_nacional = drn.id_rep_nacional WHERE p.status = 1 AND s.status = 1 AND ps.cantidad > 0 AND s.id_sede = ? ORDER BY ps.fecha_vencimiento;");
 			$new->bindValue(1, $id_sede);
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
@@ -261,6 +260,8 @@ class donativoInstituciones extends DBConnect{
 			$new->bindValue(2 , $this->cantidad);
 			$new->bindValue(3 , $this->id);
 			$new->execute();
+
+			$this->inventario_historial("Donativo Institución", "", "x", "",  $this->producto, $this->cantidad);
 
 			$new = $this->con->prepare('SELECT ps.cantidad FROM producto_sede ps WHERE ps.id_producto_sede = ?');
 			$new->bindValue(1 , $this->producto);
