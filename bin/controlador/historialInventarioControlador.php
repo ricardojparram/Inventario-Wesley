@@ -22,7 +22,7 @@ if (!isset($permiso["Consultar"])) {
 }
 
 if (isset($_GET['mostrar'], $_GET['bitacora'])) {
-    $res = $objModel->mostrarInventario($_GET['bitacora']);
+    $res = $objModel->mostrarHistorialInventario($_GET['bitacora']);
     die(json_encode($res));
 }
 

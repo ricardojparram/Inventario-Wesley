@@ -8,7 +8,7 @@ use utils\validar;
 class historialInventario extends DBConnect
 {
     use validar;
-    public function mostrarInventario($bitacora)
+    public function mostrarHistorialInventario($bitacora)
     {
         try {
             parent::conectarDB();

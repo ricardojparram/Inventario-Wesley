@@ -39,7 +39,7 @@
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <h1> Inventario de productos</h1>
+            <h1> Historial del Inventario de productos</h1>
           </li>
         </ol>
       </nav>
