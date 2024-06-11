@@ -48,7 +48,7 @@ $(document).ready(function () {
   function validarRifBD(input, div, edit = false) {
     if (input.val() === edit) return true;
     $.getJSON("", { rif: input.val(), validar: "rif", edit }).fail((e) => {
-      div.text(e.responseJSON.msg);
+      div.text(e.responseJSON?.msg);
       input.addClass("input-error");
     });
   }
@@ -111,9 +111,9 @@ $(document).ready(function () {
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
-        console.error("Error al mostrar listado: " + e.responseJSON.msg);
+        console.error(e.responseJSON?.msg || "Ha ocurrido un error");
       })
       .always(() => {
         $(this).find('button[type="submit"]').prop("disabled", false);
@@ -138,7 +138,7 @@ $(document).ready(function () {
     )
       .fail((e) => {
         Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-        throw new Error("Error al mostrar listado: " + e);
+        console.error(e.responseJSON?.msg || "Ha ocurrido un error");
       })
       .always(() => {
         $(this).prop("disabled", false);
@@ -214,9 +214,9 @@ $(document).ready(function () {
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
-        console.error(e);
+        console.error(e.responseJSON?.msg || "Ha ocurrido un error");
       })
       .always(() => {
         $(this).find('button[type="submit"]').prop("disabled", false);
@@ -266,9 +266,9 @@ $(document).ready(function () {
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
-        console.error(e);
+        console.error(e.responseJSON?.msg || "Ha ocurrido un error");
       })
       .always(() => {
         $(this).prop("disabled", false);

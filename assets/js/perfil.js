@@ -256,7 +256,7 @@ $(document).ready(function () {
       },
       "json"
     ).fail((e) => {
-      div.text(e.responseJSON.msg);
+      div.text(e.responseJSON?.msg);
       input.addClass("input-error");
       resultado = false;
     });
@@ -334,10 +334,10 @@ $(document).ready(function () {
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
           showCloseButton: true,
         });
-        console.error(e.responseJSON.msg || "Ha ocurrido un error.");
+        console.error(e.responseJSON?.msg || "Ha ocurrido un error.");
       });
   });
 
@@ -349,7 +349,7 @@ $(document).ready(function () {
       input.removeClass("input-error");
       resultado = true;
     }).fail((e) => {
-      div.text(e.responseJSON.msg);
+      div.text(e.responseJSON?.msg);
       input.addClass("input-error");
       resultado = false;
     });
@@ -367,7 +367,7 @@ $(document).ready(function () {
         resultado = true;
       }
     ).fail((e) => {
-      div.text(e.responseJSON.msg);
+      div.text(e.responseJSON?.msg);
       input.addClass("input-error");
       resultado = false;
     });

@@ -5,7 +5,7 @@ $(document).ready(function () {
       $("#cedula"),
       $("#error"),
       "Error de cedula,",
-      $("#preDocument"),
+      $("#preDocument")
     );
     debounce(() => {
       if (valid) validarCedulaBD();
@@ -16,7 +16,7 @@ $(document).ready(function () {
       $("#cedula"),
       $("#error"),
       "Error de cedula,",
-      $("#preDocument"),
+      $("#preDocument")
     );
     debounce(() => {
       if (valid) validarCedulaBD();
@@ -31,12 +31,12 @@ $(document).ready(function () {
       $("#cedula"),
       $("#error"),
       "Error de cedula,",
-      $("#preDocument"),
+      $("#preDocument")
     );
     vpassword = validarContraseña(
       $("#pass"),
       $("#error"),
-      "Error de contraseña,",
+      "Error de contraseña,"
     );
     vsede = validarNumero($("#sede"), $("#error"), "Error de sede,");
 
@@ -61,10 +61,10 @@ $(document).ready(function () {
           window.location = "?url=login";
         }, 1600);
       },
-      "json",
+      "json"
     )
       .fail((e) => {
-        $("#error").text(e.responseJSON.msg);
+        $("#error").text(e.responseJSON?.msg);
         console.error(e);
       })
       .always(() => {
@@ -82,9 +82,9 @@ $(document).ready(function () {
       function (data) {
         $("#error").text("");
         $("#cedula").removeClass("input-error");
-      },
+      }
     ).fail((e) => {
-      $("#error").text(e.responseJSON.msg);
+      $("#error").text(e.responseJSON?.msg);
       $("#cedula").addClass("input-error");
       console.error(e);
     });

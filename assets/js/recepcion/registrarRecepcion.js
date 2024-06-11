@@ -70,9 +70,9 @@ $(document).ready(function () {
     }).fail((e) => {
       Toast.fire({
         icon: "error",
-        title: e.responseJSON.msg || "Ha ocurrido un error.",
+        title: e.responseJSON?.msg || "Ha ocurrido un error.",
       });
-      console.error(e.responseJSON.msg || "Ha ocurrido un error.");
+      console.error(e.responseJSON?.msg || "Ha ocurrido un error.");
     });
   });
 
@@ -159,9 +159,9 @@ $(document).ready(function () {
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
-        console.error(e.responseJSON.msg || "Ha ocurrido un error.");
+        console.error(e.responseJSON?.msg || "Ha ocurrido un error.");
       });
   });
 

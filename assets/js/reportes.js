@@ -55,7 +55,7 @@ $(document).ready(function () {
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error(e);
       })
@@ -88,7 +88,7 @@ $(document).ready(function () {
       error(e) {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error("Error al exportar el reporte: " + e);
       },
