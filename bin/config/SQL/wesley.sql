@@ -235,6 +235,7 @@ CREATE TABLE producto_sede (
   fecha_vencimiento date NOT NULL,
   id_sede int(11) NOT NULL,
   cantidad int(11) NOT NULL,
+  version int(11) DEFAULT 0,
   FOREIGN KEY (id_sede) REFERENCES sede (id_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (cod_producto) REFERENCES producto (cod_producto) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
@@ -247,7 +248,7 @@ CREATE TABLE descargo (
   id_descargo int(11) AUTO_INCREMENT PRIMARY KEY,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   id_sede int(11) NOT NULL,
-  num_descargo int(11) NOT NULL,
+  num_descargo varchar(11) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
@@ -275,7 +276,6 @@ CREATE TABLE detalle_descargo (
   FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
-
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla img_descargo
@@ -286,6 +286,7 @@ CREATE TABLE img_descargo (
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla compra
@@ -533,7 +534,6 @@ CREATE TABLE detalle_recepcion (
   FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
-
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla img_recepcion
@@ -544,6 +544,7 @@ CREATE TABLE img_recepcion (
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla transferencia

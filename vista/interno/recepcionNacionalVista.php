@@ -180,9 +180,9 @@
             <div class="form-group my-3 ">
               <div class="container-fluid">
                 <div class="row">
-                  <div class="table table-body-tipo form-group col-12">
+                  <div class="table table-body-tipo table-responsive form-group col-12">
 
-                    <table class="table table-striped">
+                    <table class="table table-striped ">
                       <thead>
                         <tr>
                           <th></th>

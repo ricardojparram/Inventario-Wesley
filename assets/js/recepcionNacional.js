@@ -23,8 +23,12 @@ $(document).ready(function () {
             <td scope="col">${row.fecha || ""}</td>
             <td >
               <span class="d-flex justify-content-center">
-                <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${row.id_rep_nacional}" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
-                <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${row.id_rep_nacional}" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
+                <button type="button" ${permisoEliminar} title="Eliminar" class="btn btn-danger eliminar mx-2" id="${
+          row.id_rep_nacional
+        }" data-bs-toggle="modal" data-bs-target="#Eliminar"><i class="bi bi-trash3"></i></button>
+                <button type="button" title="Detalles" class="btn btn-dark detalle mx-2" id="${
+                  row.id_rep_nacional
+                }" data-bs-toggle="modal" data-bs-target="#Detalle"><i class="bi bi-journal-text"></i></button>
               </span>
             </td>
           </tr>`);
@@ -72,7 +76,7 @@ $(document).ready(function () {
         if (this.children.length == 1) {
           $(this).append(option);
           $(this).chosen({
-            width: "25vw",
+            width: "240px",
             placeholder_text_single: "Selecciona un producto",
             search_contains: true,
             allow_single_deselect: true,
@@ -93,12 +97,12 @@ $(document).ready(function () {
       $("#error").html("");
     }
     productos = Object.values(
-      document.querySelectorAll(".select-productos"),
+      document.querySelectorAll(".select-productos")
     ).map((item) => {
       return item.value;
     });
     productosRepetidos = productos.filter(
-      (elemento, index) => productos.indexOf(elemento) !== index,
+      (elemento, index) => productos.indexOf(elemento) !== index
     );
     $(".select-productos").each(function () {
       if (this.value === "" || this.value === null) {
@@ -175,6 +179,8 @@ $(document).ready(function () {
   const agregarFila = () => {
     $("#tablaSeleccionarProductos").append(filaPlantilla);
     mostrarProductos();
+    $(".cantidad input").inputmask("cantidad");
+    $(".fecha input").inputmask("fecha");
   };
 
   mostrarProductos();
@@ -182,8 +188,6 @@ $(document).ready(function () {
   $(".agregarFila").on("click", function (e) {
     agregarFila();
     validarProductosRepetidos();
-    $(".cantidad input").inputmask("cantidad");
-    $(".fecha input").inputmask("fecha");
   });
 
   /* Evento de cambio en los productos */
@@ -213,7 +217,7 @@ $(document).ready(function () {
           .find(".fecha input")
           .val();
         return { id_producto: item.value, lote, cantidad, fecha_vencimiento };
-      },
+      }
     );
   };
   let valid_proveedor, valid_fecha;
@@ -222,16 +226,12 @@ $(document).ready(function () {
       (valid_proveedor = validarRif(
         $("#proveedor"),
         $("#error1"),
-        "Error de proveedor,",
-      )),
+        "Error de proveedor,"
+      ))
   );
   $("#fecha").change(
     () =>
-      (valid_fecha = validarFecha(
-        $("#fecha"),
-        $("#error2"),
-        "Error de fecha,",
-      )),
+      (valid_fecha = validarFecha($("#fecha"), $("#error2"), "Error de fecha,"))
   );
   $("#registrar").click(function (e) {
     e.preventDefault();
@@ -239,7 +239,7 @@ $(document).ready(function () {
     valid_proveedor = validarRif(
       $("#proveedor"),
       $("#error1"),
-      "Error de proveedor,",
+      "Error de proveedor,"
     );
     valid_fecha = validarFecha($("#fecha"), $("#error2"), "Error de fecha,");
     let valid_productos = validarProductosRepetidos(false);
@@ -271,14 +271,14 @@ $(document).ready(function () {
         $(".cerrar").click();
         rellenar();
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
           icon: "error",
           title: e.responseJSON.msg || "Ha ocurrido un error.",
         });
-        throw new Error(e.responseJSON.msg);
+        console.error(e.responseJSON.msg || "Ha ocurrido un error.");
       })
       .always(() => {
         $(this).prop("disabled", false);
@@ -301,14 +301,14 @@ $(document).ready(function () {
         $(".cerrar").click();
         rellenar();
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
           icon: "error",
           title: e.responseJSON.msg || "Ha ocurrido un error.",
         });
-        throw new Error(e.responseJSON.msg);
+        console.error(e.responseJSON.msg || "Ha ocurrido un error.");
       })
       .always(() => {
         $(this).prop("disabled", false);

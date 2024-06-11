@@ -38,7 +38,7 @@ class laboratorio extends DBConnect
         if (!$this->validarString('rif', $rif)) {
             return $this->http_error(400, 'Rif inválido.');
         }
-        if (!$this->validarString('nombre', $razon)) {
+        if (!$this->validarString('razon_social', $razon)) {
             return $this->http_error(400, 'Rif inválido.');
         }
         if (!$this->validarString('direccion', $direccion)) {
@@ -61,8 +61,8 @@ class laboratorio extends DBConnect
         try {
             $this->conectarDB();
             $sql = (!$this->update)
-              ? 'INSERT INTO laboratorio(rif_laboratorio,direccion,razon_social,status) VALUES(:rif, :direccion, :razon_social, 1)'
-              : 'UPDATE laboratorio SET direccion = :direccion, razon_social = :razon_social, status = 1
+                ? 'INSERT INTO laboratorio(rif_laboratorio,direccion,razon_social,status) VALUES(:rif, :direccion, :razon_social, 1)'
+                : 'UPDATE laboratorio SET direccion = :direccion, razon_social = :razon_social, status = 1
                 WHERE rif_laboratorio = :rif;';
 
             $new = $this->con->prepare($sql);
@@ -111,7 +111,7 @@ class laboratorio extends DBConnect
             $this->desconectarDB();
             if (isset($data[0]['rif_laboratorio']) && $data[0]['status'] == 1) {
                 return $this->http_error(400, 'El rif ya está registrado.');
-            } elseif(isset($data[0]['status']) && $data[0]['status'] == 0) {
+            } elseif (isset($data[0]['status']) && $data[0]['status'] == 0) {
                 $this->update = true;
             }
             return ['resultado' => 'ok', 'msg' => 'Rif válido.', 'res' => true];
@@ -141,8 +141,8 @@ class laboratorio extends DBConnect
         if (!$this->validarString('rif', $rif)) {
             return $this->http_error(400, 'Rif inválido.');
         }
-        if (!$this->validarString('nombre', $razon)) {
-            return $this->http_error(400, 'Rif inválido.');
+        if (!$this->validarString('razon_social', $razon)) {
+            return $this->http_error(400, 'Razon social inválida.');
         }
         if (!$this->validarString('direccion', $direccion)) {
             return $this->http_error(400, 'Dirección inválida.');
@@ -158,7 +158,7 @@ class laboratorio extends DBConnect
 
         if ($this->idedit !== $this->rif) {
             $validarRif = $this->validarRif();
-            if (!$validarRif['res']) {
+            if (!isset($validarRif['res'])) {
                 return $this->http_error(400, $validarRif['msg']);
             }
         }

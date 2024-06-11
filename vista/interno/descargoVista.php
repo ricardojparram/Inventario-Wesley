@@ -105,7 +105,7 @@
             <div class="modal-body">
                 <div class="d-flex justify-content-center align-items-center gap-2 images"></div>
                 <div class="container-sm recepcion_detalle mt-3">
-                  <dl class='row'></dl>
+                    <dl class='row'></dl>
                 </div>
                 <table id="tabla_detalle" class="table table-hover">
                     <thead>
@@ -137,8 +137,8 @@
                 <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
             </div>
 
-      <form id="agregarform" enctype='multipart/form-data'>
-            <div class="modal-body ">
+            <form id="agregarform" enctype='multipart/form-data'>
+                <div class="modal-body ">
 
                     <div class="form-group col-md-12">
                         <div class="container-fluid">
@@ -180,9 +180,9 @@
                         <div class="form-group my-3 ">
                             <div class="container-fluid">
                                 <div class="row">
-                                    <div class="table table-body-tipo form-group col-12">
+                                    <div class="table table-body-tipo table-responsive form-group col-12 pb-4">
 
-                                        <table class="table table-striped">
+                                        <table class="table  table-striped">
                                             <thead>
                                                 <tr>
                                                     <th></th>
@@ -205,8 +205,8 @@
                                                         <span class="d-none floating-error">error</span>
                                                     </td>
                                                     <td class="descripcion position-relative">
-                                                      <input class="select-asd" type="text" value="" />
-                                                      <span class="d-none floating-error">error</span>
+                                                        <input class="select-asd" type="text" value="" />
+                                                        <span class="d-none floating-error">error</span>
                                                     </td>
                                                 </tr>
 
@@ -215,7 +215,6 @@
 
                                         <p class="filaTipoPago error" id="error" style="color:#ff0000;text-align: center;"></p>
                                         <a class="agregarFila a-asd" role="button"></i> Nueva fila</a> <br>
-
                                     </div>
                                 </div>
                             </div>
@@ -229,10 +228,10 @@
                         <button type="button" class="btn btn-secondary cerrar" id="cerrar" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
                     </div>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
+</div>
 </div>
 
 <!-- FINAL MODAL DE AGREGAR -->

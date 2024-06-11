@@ -113,6 +113,10 @@ class roles extends DBConnect
             return $this->http_error(400, 'Nombre inválido.');
         }
 
+        if ($id_rol == $_SESSION['nivel']) {
+            return $this->http_error(403, 'No puede modificar su propio rol.');
+        }
+
         $this->id_rol = $id_rol;
         $this->rol = $rol;
         $valid = $this->validarNombreRol();
@@ -161,7 +165,7 @@ class roles extends DBConnect
 
     public function getEliminarRol($id_rol)
     {
-        if ($_SESSION['nivel'] === $id_rol) {
+        if ($_SESSION['nivel'] == $id_rol) {
             return $this->http_error(400, 'No puede eliminar su propio rol.');
         }
 
@@ -315,6 +319,10 @@ class roles extends DBConnect
     }
     public function getDatosPermisos($datos, $id)
     {
+        if ($id == $_SESSION['nivel']) {
+            return $this->http_error(403, 'No puede modificar su propio rol.');
+        }
+
         if (!$this->validarString('entero', $id)) {
             return $this->http_error(400, 'Id inválida.');
         }

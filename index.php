@@ -1,25 +1,22 @@
-<?php  
- 
-  session_start();
+<?php
 
-  if(file_exists('vendor/autoload.php')) {
-    
+
+session_start();
+
+if(file_exists('vendor/autoload.php')) {
+
     require 'vendor/autoload.php';
-  }else{
+} else {
     return "Error: no se encontró el autoload.";
-  }
+}
 
-  header("Access-Control-Allow-Origin: *");
-  header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-  header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Origin: *");
+use config\componentes\configSistema as configSistema;
 
-  Use config\componentes\configSistema as configSistema;
+$GlobalConfig = new configSistema();
+$GlobalConfig->_int();
 
-  $GlobalConfig = new configSistema();
-  $GlobalConfig->_int();
+use bin\controlador\frontControlador as frontControlador;
 
-  Use bin\controlador\frontControlador as frontControlador;
+$IndexSystem = new frontControlador($_REQUEST);
 
-  $IndexSystem = new frontControlador($_REQUEST);
-
-?>

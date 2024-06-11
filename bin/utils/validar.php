@@ -9,8 +9,13 @@ trait validar
     public function validarFecha($date, $format = 'Y-m-d'): bool
     {
         $d = DateTime::createFromFormat($format, $date);
+        $errors = DateTime::getLastErrors();
+        if ($errors) {
+            return false;
+        }
         return $d && $d->format($format) == $date;
     }
+
     public function http_error($code, $error): array
     {
         http_response_code($code);
@@ -19,16 +24,18 @@ trait validar
     public function validarString($tipo, $input): int|bool
     {
         $regex = [
-            "nombre" => "/^[a-zA-ZÀ-ÿ ]{1,30}$/",
+            "nombre" => "/^[a-zA-ZÀ-ÿ ]{3,30}$/",
+            "razon_social" => "/^[a-zA-ZÀ-ÿ ]{7,200}$/",
             "contraseña"  => "/^[A-Za-z0-9 *?=&_!¡()@#]{8,30}$/",
             "correo" => "/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/",
-            "direccion" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){7,160}$/",
+            "direccion" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){7,200}$/",
             "cedula" => "/^[0-9]{7,10}$/",
             "rif" => "/^J-[0-9]{9,10}$/",
             "documento" => "/^[VEJ]-[A-Z0-9]{7,12}$/",
             "fecha" => "/^([0-9]{4}\-[0-9]{2}\-[0-9]{2})$/",
             "fecha_es" => "/^([0-9]{2}\/[0-9]{2}\/[0-9]{4})$/",
             "datetime" => "/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/",
+            "numero" => "/^[0-9]+$/",
             "decimal" => "/^([0-9]+\.+[0-9]|[0-9])+$/",
             "entero" => "/^[1-9]\d*$/",
             "string" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9#\/\s,.-]){3,50}$/",
@@ -37,7 +44,8 @@ trait validar
             "factura" => "/^N°-[A-Za-z0-9]{6,15}$/u"
         ];
         if (!isset($regex[$tipo])) {
-            die("No existe el tipo de dato en las expresiones regulares almacenadas.");
+            $res = $this->http_error(500, "No existe el tipo de dato en las expresiones regulares almacenadas.");
+            die(json_encode($res));
         }
 
         return preg_match($regex[$tipo], $input);
@@ -68,7 +76,7 @@ trait validar
     }
     public function validarImagen($img, $array = false): array|bool
     {
-        if(!$array) {
+        if (!$array) {
             if ($img['error'] > 0) {
                 return $this->http_error(400, 'Error de imágen');
             }
@@ -76,8 +84,8 @@ trait validar
                 return $this->http_error(400, 'Tipo de imagen inválido.');
             }
         }
-        if($array) {
-            for($i = 0; $i < count($img['name']); $i++) {
+        if ($array) {
+            for ($i = 0; $i < count($img['name']); $i++) {
                 if ($img['error'][$i] > 0) {
                     return ['valid' => false, 'res' => fn () => $this->http_error(400, 'Error de imágen')];
                 }

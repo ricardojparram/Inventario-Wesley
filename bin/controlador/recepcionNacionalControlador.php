@@ -8,7 +8,7 @@ use modelo\recepcionNacional;
 if (!isset($_SESSION['nivel'])) {
     die('<script> window.location = "?url=login" </script>');
 }
-if($_SESSION['id_sede'] != 1) {
+if ($_SESSION['id_sede'] != 1) {
     die('<script> window.location = "?url=home" </script>');
 }
 
