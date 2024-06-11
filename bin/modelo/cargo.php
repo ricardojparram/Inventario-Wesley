@@ -22,7 +22,7 @@ class cargo extends DBConnect
                     WHERE status = 1;";
             $new = $this->con->prepare($sql);
             $new->execute();
-            if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
+            if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado de cargos.");
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
@@ -150,7 +150,7 @@ class cargo extends DBConnect
                 $new->bindValue(":inventario", $inventario);
                 $new->bindValue(":version_nueva", $version);
                 $new->bindValue(":id_producto_sede", $producto_sede->id_producto_sede);
-                $new->bindValue(":version_leida", $producto->version);
+                $new->bindValue(":version_leida", $producto_sede->version);
                 $new->execute();
                 $this->id_producto = $producto_sede->id_producto_sede;
                 if ($new->rowCount() == 0) {
@@ -167,6 +167,7 @@ class cargo extends DBConnect
                 $new->execute();
                 $this->inventario_historial("Cargo", "x", "", "", $this->id_producto, $producto["cantidad"]);
             }
+            $this->binnacle("Cargos", $_SESSION['cedula'], "Registró un cargo.");
             $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado el cargo correctamente.'];
         } catch (\PDOException $e) {
@@ -246,6 +247,7 @@ class cargo extends DBConnect
                 }
             }
 
+            $this->binnacle("Cargos", $_SESSION['cedula'], "Eliminó un cargo.");
             $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha anulado el cargo correctamente.'];
         } catch (\PDOException $e) {
