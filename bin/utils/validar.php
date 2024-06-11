@@ -17,13 +17,25 @@ trait validar
         }
         return $d && $d->format($format) == $date;
     }
+    function validarFechaMenorQueActual($fechaStr, $formato = 'Y-m-d')
+    {
+        $fecha = DateTime::createFromFormat($formato, $fechaStr);
+
+        if (!$fecha) {
+            return false;
+        }
+        $hoy = new DateTime();
+        return $fecha <= $hoy;
+    }
+
+
 
     public function http_error($code, $error): array
     {
         http_response_code($code);
         return ['resultado' => 'error', 'msg' => $error];
     }
-    public function validarString($tipo, $input): int|bool
+    public function validarString($tipo, $input, $length = false): int|bool
     {
         $regex = [
             "nombre" => "/^[a-zA-ZÀ-ÿ ]{3,30}$/",
@@ -40,11 +52,21 @@ trait validar
             "numero" => "/^[0-9]+$/",
             "decimal" => "/^([0-9]+\.+[0-9]|[0-9])+$/",
             "entero" => "/^[1-9]\d*$/",
+            "cod_producto" => "/^[0-9a-zA-Z]+$/",
             "string" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9#\/\s,.-]){3,50}$/",
             "long_string" => "/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s(),.-]){1,5000}$/",
             "cuenta_bancaria" => "/^(?=.*[0-9])(?=.*[-])[0-9-]{1,25}$/",
             "factura" => "/^N°-[A-Za-z0-9]{6,15}$/u"
         ];
+
+        if ($length) {
+            if (!isset($length['min'], $length['max'])) {
+                return die('$lenght requiere keys min y max.');
+            }
+            $valid = mb_strlen($input, 'UTF-8') >= $length['min'] && mb_strlen($input, 'UTF-8') <= $length['max'];
+            return ($valid) ? preg_match($regex[$tipo], $input) : false;
+        }
+
         if (!isset($regex[$tipo])) {
             $res = $this->http_error(500, "No existe el tipo de dato en las expresiones regulares almacenadas.");
             die(json_encode($res));
