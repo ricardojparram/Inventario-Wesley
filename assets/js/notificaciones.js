@@ -76,32 +76,44 @@ $(document).ready(function(){
 
   })
 
-$(document).on('click', '.leido', function(e) {
-  e.stopPropagation();
+  $(document).on('click', '.leido', function(e) {
+    e.stopPropagation();
+    
+    const $notificationButton = $(this);
+    const notificationId = $notificationButton.attr('id');
   
-  const notificationId = $(this).attr('id');
-
-  // Realizar la solicitud AJAX para marcar como leído
-  $.ajax({ 
-    type: 'POST', 
-    url: '?url=notificaciones', 
-    dataType: 'json', 
-    data: { notificacionVista: '', notificationId },
-    success: function(data) {
-      // Actualizar el contador de notificaciones
-      let total_notificaciones = parseInt($('.contador').text()) - 1;
-      $('.contador').text(total_notificaciones);
-      $('.numNoti').text(total_notificaciones);
-
-      $(`#${notificationId}`).closest('.divNotificacion').fadeOut(500, function() {
-        $(this).empty();
-      });
-    },
-    error: function(xhr, status, error) {
-      console.log(error);
-    }
+    // Deshabilitar el botón para evitar múltiples clics
+    $notificationButton.prop('disabled', true);
+  
+    $.ajax({ 
+      type: 'POST', 
+      url: '?url=notificaciones', 
+      dataType: 'json', 
+      data: { notificacionVista: '', notificationId },
+      success: function(data) {
+        let total_notificaciones = parseInt($('.contador').text());
+  
+        // Solo disminuir el contador si es mayor que 0
+        if (total_notificaciones > 0) {
+          total_notificaciones--;
+        }
+  
+        // Actualizar los elementos de la UI
+        $('.contador').text(total_notificaciones);
+        $('.numNoti').text(total_notificaciones);
+  
+        // Eliminar la notificación visualmente
+        $(`#${notificationId}`).closest('.divNotificacion').fadeOut(500, function() {
+          $(this).remove();  
+        });
+      },
+      error: function(xhr, status, error) {
+        console.log(error);
+        $notificationButton.prop('disabled', false);
+      }
+    });
   });
-});
+  
 
    
     

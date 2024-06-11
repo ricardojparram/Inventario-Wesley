@@ -67,11 +67,13 @@ $(document).ready(function () {
   setInterval(() => { click = 0; }, 2000);
 
   $('#tipo').keyup(() => {
-    valid = validarStringLong($("#tipo"), $("#error"), "Error de tipo de pago")
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(function() {
-      if (valid) validarTipoPago($("#tipo"), $("#error"))
-    }, 700);
+    if (e.key !== 'Enter') {
+      valid = validarStringLong($("#tipo"), $("#error"), "Error de tipo de pago")
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(function () {
+        if (valid) validarTipoPago($("#tipo"), $("#error"))
+      }, 700);
+    }
   })
 
   $("#enviar").click((e) => {
@@ -201,11 +203,13 @@ $(document).ready(function () {
 
 
   $('#tipoEdit').keyup(() => {
-    valid = validarStringLong($("#tipoEdit"), $("#error2"), "Error de tipo pago")
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(function() {
-      if (valid)  validarTipoPago($("#tipoEdit"), $("#error2"), id)
-    }, 700);
+    if (e.key !== 'Enter') {
+      valid = validarStringLong($("#tipoEdit"), $("#error2"), "Error de tipo pago")
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(function () {
+        if (valid) validarTipoPago($("#tipoEdit"), $("#error2"), id)
+      }, 700);
+    }
   })
 
 
