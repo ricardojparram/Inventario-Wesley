@@ -12,27 +12,23 @@ class inventario extends DBConnect
     {
         try {
             parent::conectarDB();
-            $query = "
-              SELECT 
-                  u.cedula as usuario,
-                  s.nombre as nombre_sede,
-                  h.fecha as fecha,
-                  vpsd.presentacion_producto as presentacion_producto,
-                  h.entrada as entrada,
-                  h.salida as salida,
-                  h.tipo_movimiento as tipo_movimiento,
-                  vpsd.lote as producto_lote,
-                  h.cantidad as cantidad
-              FROM
-                  historial h
-                  INNER JOIN usuario u ON h.id_usuario = u.cedula
-                  INNER JOIN sede s ON s.id_sede = h.id_sede
-                  INNER JOIN vw_producto_sede_detallado vpsd ON vpsd.id_producto_sede = h.id_producto_sede
-              WHERE h.status = 1;
-            ";
+            $query = "SELECT
+                        ps.presentacion_producto,
+                        ps.presentacion_peso,
+                        ps.medida,
+                        ps.lote,
+                        ps.fecha_vencimiento,
+                        ps.cantidad as inventario,
+                        ps.tipo,
+                        ps.clase
+                    FROM
+                        vw_producto_sede_detallado ps
+                    WHERE
+                        id_sede = :id_sede
+                        AND ps.cantidad > 0;";
             $new = $this->con->prepare($query);
-            $new->execute();
-            if($bitacora === "true") {
+            $new->execute(['id_sede' => $_SESSION['id_sede']]);
+            if ($bitacora === "true") {
                 $this->binnacle("", $_SESSION['cedula'], "Consulto el listado de inventario.");
             }
             parent::desconectarDB();

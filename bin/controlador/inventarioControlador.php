@@ -21,16 +21,12 @@ if (!isset($permiso["Consultar"])) {
     die('<script> window.location = "?url=login" </script>');
 }
 
-//if(isset($_POST['notificacion'])) {
-//$objModel->getNotificacion();
-//}
-
 if (isset($_POST['getPermisos'], $permiso["Consultar"])) {
     die(json_encode($permiso));
 }
 
-if (isset($_POST['mostrar'])) {
-    $res = $objModel->mostrarInventario($_POST['bitacora']);
+if (isset($_GET['mostrar'], $_GET['bitacora'])) {
+    $res = $objModel->mostrarInventario($_GET['bitacora']);
     die(json_encode($res));
 }
 
