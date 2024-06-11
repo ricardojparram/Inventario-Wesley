@@ -33,7 +33,7 @@ class historialInventario extends DBConnect
             $new = $this->con->prepare($query);
             $new->execute();
             if ($bitacora === "true") {
-                $this->binnacle("", $_SESSION['cedula'], "Consulto el listado de inventario.");
+                $this->binnacle("", $_SESSION['cedula'], "Consulto el listado de historial de inventario.");
             }
             parent::desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
