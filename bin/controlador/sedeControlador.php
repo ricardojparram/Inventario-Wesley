@@ -41,8 +41,8 @@ if (isset($_POST['registrar'], $_POST['nombre'], $_POST['telefono'], $_POST['dir
     die(json_encode($res));
 }
 
-if (isset($_POST['select'], $_POST['id'], $permiso['Editar'])) {
-    $respuesta = $model->mostrarSe($_POST['id']);
+if (isset($_GET['select'], $_GET['id'], $permiso['Editar'])) {
+    $respuesta = $model->getSede($_GET['id']);
     die(json_encode($respuesta));
 }
 
