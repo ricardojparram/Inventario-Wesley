@@ -245,7 +245,7 @@
         ¿Desea Borrar los Datos de la Sede de Envío?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+        <button id="borrars" type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
         <button id="borrar" type="button" class="btn btn-danger">Borrar</button>
       </div>
     </div>
