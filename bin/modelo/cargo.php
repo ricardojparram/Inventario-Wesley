@@ -22,7 +22,7 @@ class cargo extends DBConnect
                     WHERE status = 1;";
             $new = $this->con->prepare($sql);
             $new->execute();
-            // if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
+            if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
@@ -92,8 +92,8 @@ class cargo extends DBConnect
     }
     public function getAgregarCargo($num_cargo, $fecha, $productos): array
     {
-        if (!$this->validarString('entero', $num_cargo)) {
-            return $this->http_error(400, 'Transferencia inválida.');
+        if (!$this->validarString('numero', $num_cargo)) {
+            return $this->http_error(400, 'Numero de cargo inválido.');
         }
 
         $fecha =  date('Y-m-d', strtotime($fecha));
@@ -177,7 +177,7 @@ class cargo extends DBConnect
     public function getEliminarCargo($id_cargo): array
     {
         if (!$this->validarString('entero', $id_cargo)) {
-            return $this->http_error(400, 'Cargo inválido.');
+            return $this->http_error(400, 'Id cargo inválida.');
         }
 
         $this->id_cargo = $id_cargo;

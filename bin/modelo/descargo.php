@@ -110,7 +110,7 @@ class descargo extends DBConnect
     public function getAgregarDescargo($num_descargo, $fecha, $productos, $img = false): array
     {
         if (!$this->validarString('numero', $num_descargo)) {
-            return $this->http_error(400, 'Numero de cargo inválido.');
+            return $this->http_error(400, 'Numero de descargo inválido.');
         }
 
         $fecha =  date('Y-m-d', strtotime($fecha));
