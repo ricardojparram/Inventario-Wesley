@@ -19,7 +19,8 @@ class JWTService
     }
     private static function http_error($code, $msg): array
     {
-        $validar = new class () {
+        $validar = new class()
+        {
             use validar;
         };
         return $validar->http_error($code, $msg);
@@ -49,7 +50,7 @@ class JWTService
 
         try {
             $decoded = JWT::decode($token, new Key(self::$secret_key, self::$encrypt));
-            if($returnType) {
+            if ($returnType) {
                 return (object)['resultado' => 'ok', 'msg' => 'Token valido', 'valid' => true];
             }
             return (object) $decoded->data;
@@ -60,10 +61,16 @@ class JWTService
     public static function validateSession($returnType = false): bool | object
     {
         $headers = apache_request_headers();
-        if (!isset($headers['authorization'])) {
-            return false;
-        }
-        $token = explode(' ', $headers['authorization']);
+
+        $auth = match (true) {
+            isset($headers['Authorization']) => $headers['Authorization'],
+            isset($headers['authorization']) => $headers['authorization'],
+            default => false
+        };
+        if (!$auth) return false;
+
+        $token = explode(' ', $auth);
+
         if (!isset($token[1])) {
             return false;
         }
