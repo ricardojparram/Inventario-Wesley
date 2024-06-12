@@ -13,7 +13,10 @@ if (!isset($_SESSION['nivel']) && !$JWToken) {
 }
 
 $nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
-$objModel = new inventario();
+$sede = (isset($_SESSION['id_sede'])) ? $_SESSION['id_sede'] : $JWToken->id_sede;
+$cedula = (isset($_SESSION['cedula'])) ? $_SESSION['cedula'] : $JWToken->cedula;
+
+$objModel = new inventario(['cedula' => $cedula, 'sede' => $sede]);
 $permisos = $objModel->getPermisosRol($nivel);
 $permiso = $permisos['Inventario'];
 
