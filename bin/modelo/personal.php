@@ -3,9 +3,11 @@
     namespace modelo;
 
     use config\connect\DBConnect as DBConnect;
+    use utils\validar;
 
     class personal extends DBConnect
     {
+        use validar;
         private $cedula;
         private $nombre;
         private $apellido;
@@ -23,7 +25,7 @@
               $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
               return $resultado;
             }
-            if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $nombre) == false) {
+            if (preg_match_all("/^[a-zA-ZÀ-ÿ]{0,30}$/", $nombre) == false) {
                 $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
                 return $resultado;
             }

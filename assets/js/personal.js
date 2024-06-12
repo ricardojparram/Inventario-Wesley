@@ -127,7 +127,7 @@ $(document).ready(function() {
                                         rellenar();
                                     } else {
                                         tabla.destroy();
-                                        $("#error").text(result.resultado + ", " + result.error);
+                                        $("#errorRegis").text(result.resultado + ", " + result.error);
                                         rellenar();
                                     }
                                 }
@@ -140,7 +140,7 @@ $(document).ready(function() {
         click++
     })
 
-    let cedulaId 
+    
     $(document).on('click', '.editar', function () {
 		cedulaId = this.id;
         $.ajax({

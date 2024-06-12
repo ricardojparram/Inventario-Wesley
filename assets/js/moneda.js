@@ -52,7 +52,7 @@ $(document).ready(function () {
 	}
 
 	let click = 0;
-	//setInterval(() => { click = 0; }, 1500);
+	setInterval(() => { click = 0; }, 1500);
 
 	let name;
 	$('#moneda').keyup((e) => {

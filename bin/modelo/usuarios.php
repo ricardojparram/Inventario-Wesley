@@ -25,7 +25,7 @@ class usuarios extends DBConnect {
 
   public function getAgregarUsuario($cedula, $name, $apellido, $email, $password, $tipoUsuario) {
 
-    if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $name) == false) {
+    if (!$this->validarString('nombre', $name) == false) {
       $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
       return $resultado;
     }
