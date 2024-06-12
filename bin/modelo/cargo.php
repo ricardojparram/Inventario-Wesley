@@ -5,7 +5,8 @@ namespace modelo;
 use config\connect\DBConnect as DBConnect;
 use utils\validar;
 
-class cargo extends DBConnect {
+class cargo extends DBConnect
+{
     use validar;
     private $id_cargo;
     private $num_cargo;
@@ -13,7 +14,8 @@ class cargo extends DBConnect {
     private $productos;
     private $id_producto;
 
-    public function mostrarCargos($bitacora) {
+    public function mostrarCargos($bitacora)
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT id_cargo, fecha, num_cargo FROM cargo 
@@ -28,15 +30,18 @@ class cargo extends DBConnect {
         }
     }
 
-    public function getMostrarDetalle($id_cargo) {
-        if (!$this->validarString('entero', $id_cargo))
+    public function getMostrarDetalle($id_cargo)
+    {
+        if (!$this->validarString('entero', $id_cargo)) {
             return $this->http_error(400, 'Cargo inválido.');
+        }
 
         $this->id_cargo = $id_cargo;
 
         return $this->mostrarDetalle();
     }
-    private function mostrarDetalle() {
+    private function mostrarDetalle()
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT ps.lote, ps.presentacion_producto, ps.fecha_vencimiento, dc.cantidad, c.num_cargo FROM cargo c 
@@ -53,7 +58,8 @@ class cargo extends DBConnect {
         }
     }
 
-    public function mostrarProductos() {
+    public function mostrarProductos()
+    {
         try {
             $this->conectarDB();
             $sql = "SELECT id_producto_sede, presentacion_producto, fecha_vencimiento, cantidad FROM vw_producto_sede_detallado
@@ -66,7 +72,8 @@ class cargo extends DBConnect {
             return $this->http_error(500, $e->getMessage());
         }
     }
-    private function verificarExistenciaDelLote() {
+    private function verificarExistenciaDelLote()
+    {
         try {
             $sql = "SELECT id_producto_sede, cantidad FROM producto_sede 
                     WHERE lote = (
@@ -84,20 +91,24 @@ class cargo extends DBConnect {
             return $this->http_error(500, $e->getMessage());
         }
     }
-    public function getAgregarCargo($num_cargo, $fecha, $productos): array {
-        if (!$this->validarString('entero', $num_cargo))
+    public function getAgregarCargo($num_cargo, $fecha, $productos): array
+    {
+        if (!$this->validarString('entero', $num_cargo)) {
             return $this->http_error(400, 'Transferencia inválida.');
+        }
 
         $fecha =  date('Y-m-d', strtotime($fecha));
-        if (!$this->validarFecha($fecha, 'Y-m-d'))
+        if (!$this->validarFecha($fecha, 'Y-m-d')) {
             return $this->http_error(400, 'Fecha inválida.');
+        }
 
         $estructura_productos = [
             'id_producto' => 'string',
             'cantidad' => 'string'
         ];
-        if (!$this->validarEstructuraArray($productos, $estructura_productos, true))
+        if (!$this->validarEstructuraArray($productos, $estructura_productos, true)) {
             return $this->http_error(400, 'Productos inválidos.');
+        }
 
         $this->num_cargo = $num_cargo;
         $this->fecha = $fecha;
@@ -106,7 +117,8 @@ class cargo extends DBConnect {
         return $this->agregarCargo();
     }
 
-    private function agregarCargo(): array {
+    private function agregarCargo(): array
+    {
         try {
             $this->conectarDB();
             $sql = "INSERT INTO cargo(fecha, num_cargo, status) VALUES (?,?,1)";
@@ -140,6 +152,7 @@ class cargo extends DBConnect {
                 $new->bindValue(2, $this->id_producto);
                 $new->bindValue(3, $cantidad);
                 $new->execute();
+                $this->inventario_historial("Cargo", "x", "", "", $this->id_producto, $producto["cantidad"]);
             }
 
             $this->desconectarDB();
@@ -149,15 +162,18 @@ class cargo extends DBConnect {
         }
     }
 
-    public function getEliminarCargo($id_cargo): array {
-        if (!$this->validarString('entero', $id_cargo))
+    public function getEliminarCargo($id_cargo): array
+    {
+        if (!$this->validarString('entero', $id_cargo)) {
             return $this->http_error(400, 'Cargo inválido.');
+        }
 
         $this->id_cargo = $id_cargo;
 
         return $this->eliminarCargo();
     }
-    private function eliminarCargo(): array {
+    private function eliminarCargo(): array
+    {
         try {
             $this->conectarDB();
 

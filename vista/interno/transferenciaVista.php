@@ -89,7 +89,6 @@
 
 <?php $VarComp->js(); ?>
 <script src="assets/js/chosen.jquery.min.js"></script>
-<script src="assets/js/select2.full.min.js"></script>
 <script type="text/javascript" src="assets/js/transferencia.js"></script>
 
 </html>
@@ -107,6 +106,7 @@
             <th>Lote</th>
             <th>Producto</th>
             <th>Cantidad</th>
+            <th>Descripcion</th>
             <th>Vencimiento</th>
           </thead>
           <tbody>
@@ -125,7 +125,7 @@
 <!-- INICIO MODAL DE AGREGAR -->
 
 <div class="modal fade" id="Agregar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header alert alert-success">
         <h3 class="modal-title"> <strong>Registrar Transferencia</strong> </h3>
@@ -147,13 +147,13 @@
                       <option value="0" selected disabled>Sede de recepción</option>
                       <?php
                       if (isset($sedes)) {
-                        foreach ($sedes as $sede) {
-                      ?>
+                          foreach ($sedes as $sede) {
+                              ?>
                           <option value="<?= $sede->id_sede; ?>" class="opcion"><?= $sede->nombre; ?></option>
                       <?php
-                        }
+                          }
                       }
-                      ?>
+  ?>
 
                     </select>
                   </div>
@@ -185,6 +185,7 @@
                           <th></th>
                           <th>Producto</th>
                           <th>Cantidad</th>
+                          <th>Descripcion</th>
                         </tr>
                       </thead>
                       <tbody id="tablaSeleccionarProductos">
@@ -197,7 +198,11 @@
                             <span class="d-none floating-error">error</span>
                           </td>
                           <td class="cantidad position-relative">
-                            <input class="select-asd" type="number" value="" />
+                            <input class="select-asd" type="text" value="" />
+                            <span class="d-none floating-error">error</span>
+                          </td>
+                          <td class="descripcion position-relative">
+                            <input class="select-asd" type="text" value="" />
                             <span class="d-none floating-error">error</span>
                           </td>
                         </tr>

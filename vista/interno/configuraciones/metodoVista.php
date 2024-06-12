@@ -83,15 +83,8 @@
 
 </main>
 
-  <!-- Footer -->
 
-  <?php $footer->Footer();?>
-    
-  <!-- End Footer -->
-
-
-
-
+s
 <!-- Modal Registrar-->
 <div class="modal fade" id="registrarModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-lg">

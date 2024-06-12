@@ -2,9 +2,11 @@
 
 namespace modelo;
 use config\connect\DBConnect as DBConnect;
+use utils\validar;
 
 class tipoEmpleado extends DBConnect{
 
+	use validar;
 	private $tipoEmpleado;
 	private $id;
 
@@ -17,19 +19,21 @@ class tipoEmpleado extends DBConnect{
 		$new->execute();
 		$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
+		if ($bitacora)
+        $this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Consultó listado tipo de empleado.");
+
 		parent::desconectarDB();
 
 		return $data;
 
 		} catch (\PDOException $e) {
-			return $e;
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
 	 public function validarTipoEmpleado($tipoEmpleado , $id){
-      if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $tipoEmpleado) != 1){
-          return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
-      }
+	 if (!$this->validarString('string' , $tipoEmpleado))
+		return $this->http_error(400, 'Tipo empleado invalido.');
 
       $this->id = ($id === 'false') ? false : $id;
       $this->tipoEmpleado = $tipoEmpleado;
@@ -63,14 +67,13 @@ class tipoEmpleado extends DBConnect{
         return $resultado;
         
       } catch (\PDOException $e) {
-        return $e;
+		return $this->http_error(500, $e->getMessage());
       }
      }
 
 	public function getRegistrarEmpleado($tipoEmpleado){
-		if (preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $tipoEmpleado) != 1) {
-			return['resultado' => 'Error de tipo empleado', 'error' => 'tipo empleado invalido.'];
-		}
+		if (!$this->validarString('string' , $tipoEmpleado))
+		return $this->http_error(400, 'Tipo empleado invalido.');
 
 		$this->tipoEmpleado = $tipoEmpleado;
         $this->id = false;
@@ -91,19 +94,19 @@ class tipoEmpleado extends DBConnect{
   		$data = $new->fetchAll();
 
   		$resultado = ["resultado" => "registrado correctamente"];
+		$this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Registró un tipo de empleado.");
         parent::desconectarDB();
 
         return $resultado;
 
   		} catch (\PDOException $e) {
-  			return $e;
+			return $this->http_error(500, $e->getMessage());
   		}
   	}
 
   	public function validarExistencia($id){
-  		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-  			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-  		}
+		if (!$this->validarString('entero', $id))
+		return $this->http_error(400, 'id tipo empleado inválido.');
 
   		$this->id = $id;
 
@@ -127,14 +130,14 @@ class tipoEmpleado extends DBConnect{
   				return['resultado' => 'Error de empleado'];
   			}
   		} catch (\PDOException $e) {
-  			return $e;
+			return $this->http_error(500, $e->getMessage());
   		}
   	}
 
   	public function getMostrarEdit($id){
-  	 if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-        return ['resultado' => 'Error de id','error' => 'id inválida.'];
-      }
+	if (!$this->validarString('entero', $id))
+		return $this->http_error(400, 'id tipo empleado inválido.');
+
       $this->id = $id;
 
       return $this->mostrarEdit();
@@ -149,18 +152,17 @@ class tipoEmpleado extends DBConnect{
   			$data = $new->fetchAll(\PDO::FETCH_OBJ);
   			parent::desconectarDB();
   			return $data;
-  		}catch (\PDOexception $error) {
-  			return $error;
+  		}catch (\PDOexception $e) {
+			return $this->http_error(500, $e->getMessage());
   		}
   	}
 
   	public function getEditarEmpleado($tipoEmpleadoEdit , $id){
-  		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-  			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-  		}
-  		if (preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $tipoEmpleadoEdit) != 1) {
-  			return['resultado' => 'Error de tipo empleado', 'error' => 'tipo empleado invalido.'];
-  		}
+		if (!$this->validarString('entero', $id))
+		return $this->http_error(400, 'id tipo empleado inválido.');
+
+  		if (!$this->validarString('string' , $tipoEmpleadoEdit))
+		return $this->http_error(400, 'Tipo empleado invalido.');
 
   		$this->tipoEmpleado = $tipoEmpleadoEdit;
   		$this->id = $id;
@@ -181,19 +183,19 @@ class tipoEmpleado extends DBConnect{
   			$new->execute();
 
   			$resultado = ['resultado'=> 'Editado'];
+			$this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Editó un tipo de empleado.");
 
   			parent::desconectarDB();
   			return $resultado;
 
   		} catch (\PDOException $e) {
-  			return $e;
+			return $this->http_error(500, $e->getMessage());
   		}
   	}
 
   	public function getEliminarEmpleado($id){
-  		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-  			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-  		}
+		if (!$this->validarString('entero', $id))
+		return $this->http_error(400, 'id tipo empleado inválido.');
 
   		$this->id = $id;
 
@@ -209,12 +211,13 @@ class tipoEmpleado extends DBConnect{
   	 $new->execute();
   	 
   	 $resultado = ['resultado' => 'Eliminado'];
+	 $this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Eliminó un tipo de empleado");
   	 parent::desconectarDB();
 
   	 return $resultado;
 
   	 } catch (\PDOException $e) {
-  	 	return $e;
+		return $this->http_error(500, $e->getMessage());
   	 }
   	}
 
