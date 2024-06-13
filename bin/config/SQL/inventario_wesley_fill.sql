@@ -6,6 +6,11 @@ VALUES
   (1, 'Dolar', 0, 1),
   (2, 'Euro', 0, 1);
 
+ INSERT INTO 
+ cambio (id_cambio, cambio, fecha, moneda, status) 
+ VALUES
+ (1, 38.00, '2024-06-09 14:23:28', 1, 1);
+
 INSERT INTO
   sede (id_sede, nombre, telefono, direccion, status)
 VALUES
