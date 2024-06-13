@@ -130,6 +130,7 @@
         <table class="table table-hover">
           <thead>
             <th>Tipo de Pago</th>
+            <th>Referencia</th>
             <th>Cantidad</th>
           </thead>
           <tbody id="bodyDetalleTipo">
@@ -166,7 +167,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success factura" data-bs-dismiss="modal" id=" ">Exportar Factura</button>
+        <button type="button" class="btn btn-registrar factura" data-bs-dismiss="modal" id=" ">Exportar Ticket</button>
         <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal" id="cerrarDetalles">Cerrar</button>
       </div>
     </div>
@@ -222,7 +223,7 @@
               <div class="row">
                 <div class="table table-body-tipo form-group">
 
-                  <table class="table table-striped">
+                  <table class="table able-responsive table-striped">
                     <thead>
                       <tr>
                         <th></th>
@@ -257,7 +258,7 @@
         <div class="form-group col-md-12 my-3">  
           <div class="container-fluid">
             <div class="row">
-              <div class="table table-body form-group col-12">
+              <div class="table table-responsive table-body form-group col-12">
 
                 <table class="table table-striped">
                   <thead>
@@ -277,8 +278,8 @@
                           <option></option>
                         </select>
                       </td>
-                      <td width='10%' class="amount"><input class="select-asd stock" type="number" value=""/></td>
-                      <td width='15%' class="rate"><input class="select-asd precio" type="number" disabled value="" /></td>
+                      <td width='10%' class="amount"> <input class="select-asd stock" type="number" value=""/></td>
+                      <td width='15%' class="rate"><input class="select-asd precio" type="number" value="" /></td>
                       <td width='15%' class="sum"></td>
                     </tr>
                   </tbody>

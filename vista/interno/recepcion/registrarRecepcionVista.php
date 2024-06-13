@@ -96,15 +96,15 @@
 <!-- INICIO MODAL DE AGREGAR -->
 
 <div class="modal fade" id="Registrar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header alert alert-success">
-                <h3 class="modal-title"> <strong>Registrar Transferencia</strong> </h3>
+                <h3 class="modal-title"> <strong>Registrar Recepcion</strong> </h3>
                 <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
             </div>
 
             <div class="modal-body ">
-                <form id="agregarform">
+                <form id="agregarform" enctype='multipart/form-data'>
 
                     <div class="form-group col-md-12">
                         <div class="container-fluid">
@@ -114,18 +114,17 @@
                                     <label for="sede" class="col-sm-3 col-form-label"><strong>Sede</strong></label>
                                     <div class="input-group">
                                         <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione la sede que recibirá los productos."><i class="bi bi-person-fill"></i></button>
-                                        <select class="form-control select2" placeholder="Sede de recepcion" id="sede">
+                                        <select class="form-control select2" disabled placeholder="Sede de recepcion" id="sede" name="sede">
                                             <option value="0" selected disabled>Sede de recepción</option>
                                             <?php
                                             if (isset($sedes)) {
                                                 foreach ($sedes as $sede) {
-                                            ?>
+                                                    ?>
                                                     <option value="<?= $sede->id_sede; ?>" class="opcion"><?= $sede->nombre; ?></option>
                                             <?php
                                                 }
                                             }
-                                            ?>
-
+    ?>
                                         </select>
                                     </div>
                                     <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>
@@ -135,10 +134,21 @@
                                     <label class="col-form-label" for="fecha"><strong>Fecha</strong></label>
                                     <div class="input-group">
                                         <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Fecha en la que se hace la transferencia"><i class="bi bi-calendar2-date"></i></button>
-                                        <input class="form-control" type="datetime-local" id="fecha" />
+                                        <input class="form-control" type="datetime-local" id="fecha" name="fecha" />
                                     </div>
                                     <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
                                 </div>
+
+
+                                <div class="form-group col-lg-6">
+                                    <label class="col-form-label" for="formFile"><strong>Imagenes adjuntadas</strong></label>
+                                    <div class="input-group">
+                                        <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Fecha en la que se hace la transferencia"><i class="bi bi-images"></i></button>
+                                        <input class="form-control custom-file-input" multiple type="file" id="formFile" name="img[]">
+                                    </div>
+                                    <p class="error" style="color:#ff0000;text-align: center;" id="error2"></p>
+                                </div>
+                                <label class="custom-file-label col-lg-6 d-flex align-items-center" for="formFile"></label>
 
                             </div>
                         </div>
@@ -148,13 +158,14 @@
                         <div class="form-group my-3 ">
                             <div class="container-fluid">
                                 <div class="row">
-                                    <div class="table table-body-tipo form-group col-12">
+                                    <div class="table table-responsive table-body-tipo form-group col-12">
 
                                         <table class="table table-striped">
                                             <thead>
                                                 <tr>
                                                     <th>Producto</th>
                                                     <th>Cantidad</th>
+                                                    <th>Descripcion</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="tablaProductos">
@@ -164,7 +175,6 @@
 
                                         <p class="filaTipoPago error" id="error" style="color:#ff0000;text-align: center;"></p>
                                         <a class="agregarFila a-asd" role="button"></i> Nueva fila</a> <br>
-
                                     </div>
                                 </div>
                             </div>
@@ -200,6 +210,7 @@
                         <th>Lote</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
+                        <th>Descripcion</th>
                         <th>Vencimiento</th>
                     </thead>
                     <tbody>

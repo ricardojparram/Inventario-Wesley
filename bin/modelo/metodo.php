@@ -2,9 +2,11 @@
 
   namespace modelo;
   use config\connect\DBConnect as DBConnect;
+  use utils\validar;
 
   class metodo extends DBConnect{
       
+      use validar;
     	private $metodo;
       private $id;
 
@@ -15,20 +17,20 @@
           $new = $this->con->prepare("SELECT fp.id_forma_pago , fp.tipo_pago FROM forma_pago fp WHERE fp.status = 1");
           $new->execute();
           $data = $new->fetchAll(\PDO::FETCH_OBJ);
+          if ($bitacora)
+          $this->binnacle("Metodo", $_SESSION['cedula'], "Consultó listado metodo de pago.");
+        
           parent::desconectarDB();
           return $data;
           
-        }catch(\PDOexection $error){
-
-         return $error;
-
+        }catch(\PDOexection $e){
+          return $this->http_error(500, $e->getMessage());
        }
      }
 
      public function validarMetodo($metodo , $id){
-      if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
-          return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
-      }
+      if (!$this->validarString('string' , $metodo))
+		    return $this->http_error(400, 'metodo invalido.');
 
       $this->id = ($id === 'false') ? false : $id;
       $this->metodo = $metodo;
@@ -62,14 +64,13 @@
         return $resultado;
         
       } catch (\PDOException $e) {
-        return $e;
+        return $this->http_error(500, $e->getMessage());
       }
      }
 
      public function validarExitencia($id){
-      if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-        return ['resultado' => 'Error de id','error' => 'id inválida.'];
-      }
+      if (!$this->validarString('entero', $id))
+	    	return $this->http_error(400, 'id metodo inválido.');
       
       $this->id = $id;
 
@@ -93,14 +94,13 @@
           return['resultado' => 'Error de metodo'];
         }
       } catch (\PDOException $e) {
-        return $e;
+        return $this->http_error(500, $e->getMessage());
       }
      }
 
       public function getAgregarMetodo($metodo){
-        if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
-          return['resultado'=> 'error de metodo', 'error'=>'metodo invalido'];         
-        }
+        if (!$this->validarString('string' , $metodo))
+		     return $this->http_error(400, 'metodo invalido.');
        
         $this->metodo = $metodo;
 
@@ -123,22 +123,22 @@
         $data = $new->fetchAll();
         
         $resultado = ["resultado" => "registrado correctamente"];
+        $this->binnacle("Metodo", $_SESSION['cedula'], "Registró un metodo de pago.");
         parent::desconectarDB();
         return $resultado;
 
         
-      }catch(\PDOexection $error){
-       return $error;
+      }catch(\PDOexection $e){
+        return $this->http_error(500, $e->getMessage());
      }
 
    }
 
 
     public function mostrarEdit($id){
+      if (!$this->validarString('entero', $id))
+        return $this->http_error(400, 'id metodo inválido.');
 
-      if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-        return ['resultado' => 'Error de id','error' => 'id inválida.'];
-      }
       $this->id = $id;
 
       return $this->selectEdit();
@@ -155,19 +155,18 @@
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
       parent::desconectarDB();
       return $data;
-    }catch (\PDOexception $error) {
-     return $error;
+    }catch (\PDOexception $e) {
+      return $this->http_error(500, $e->getMessage());
    }
 
  }
 
   public function getEditarMetodo($metodo, $id){
-    if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $metodo) != 1){
-      return ['resultado' => 'Error de metodo' , 'error' => 'metodo inválido.'];
-    }
-    if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-      return ['resultado' => 'Error de id','error' => 'id inválida.'];
-    }
+    if (!$this->validarString('string' , $metodo))
+		    return $this->http_error(400, 'metodo invalido.');
+
+    if (!$this->validarString('entero', $id))
+        return $this->http_error(400, 'id metodo inválido.');
 
     $this->metodo = $metodo;
     $this->id = $id;
@@ -187,21 +186,21 @@
       $new->execute();
 
       $resultado = ['resultado'=> 'Editado'];
-      $this->binnacle("Metodo",$_SESSION['cedula'],"Editó un Valor de metodo.");
+      $this->binnacle("Metodo",$_SESSION['cedula'],"Editó un metodo de pago.");
 
       parent::desconectarDB();
       return $resultado;
 
-    }catch(\PDOexception $error){
-      return$error;
+    }catch(\PDOexception $e){
+      return $this->http_error(500, $e->getMessage());
     }
 
   }
 
     public function getEliminarMetodo($id){
-      if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-      return ['resultado' => 'Error de id','error' => 'id inválida.'];
-      }
+      if (!$this->validarString('entero', $id))
+        return $this->http_error(400, 'id metodo inválido.');
+      
       $this->id = $id;
 
       return $this->eliminarMetodo();
@@ -216,12 +215,13 @@
       $new->bindValue(1,$this->id);
       $new->execute();
       $resultado = ['resultado' => 'Eliminado'];
+      $this->binnacle("Metodo", $_SESSION['cedula'], "Eliminó un metodo de pago.");
       parent::desconectarDB();
 
       return $resultado;
     } 
-    catch (\PDOexception $error) {
-      return $error;
+    catch (\PDOexception $e) {
+      return $this->http_error(500, $e->getMessage());
     }
 
   }

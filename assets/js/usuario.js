@@ -53,25 +53,31 @@ $(document).ready(function () {
 	$("#password").keyup(() => { validarContraseña($("#password"), $("#errorContra"), "Error de Contraseña,") });
 	$("#select").change(() => { validarSelect($("#select"), $("#errorNivel"), "Error de Nivel,") })
 	$("#preDocument").change(() => {
-        let valid = validarCedula($("#cedula"), $("#errorCed"), "Error de Documento,", $("#preDocument"))
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            if (valid) {validarC(" ",$("#cedula") , $("#errorCed"), $("#preDocument")) }
-        },700)
-    })
+		let valid = validarCedula($("#cedula"), $("#errorCed"), "Error de Documento,", $("#preDocument"))
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			if (valid) { 
+				validarC(" ", $("#cedula"), $("#errorCed"), $("#preDocument"))
+				rellenarPersonal($("#cedula"), $("#preDocument"), $("#errorCed"))
+		}
+		}, 700)
+	})
 	$("#cedula").keyup(() => {
 		let valid = validarCedula($("#cedula"), $("#errorCed"), "Error de Documento,", $("#preDocument"))
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            if (valid) {validarC(" ",$("#cedula") , $("#errorCed"), $("#preDocument")) }
-        },700)
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			if (valid) {
+				validarC(" ", $("#cedula"), $("#errorCed"), $("#preDocument"))
+				rellenarPersonal($("#cedula"), $("#preDocument"), $("#errorCed"))
+			}
+		}, 700)
 	});
 	$("#email").keyup(() => {
 		let valid = validarCorreo($("#email"), $("#errorEmail"), "Error de Correo,")
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            if (valid) {validarE(" ", $("#email"), $("#errorEmail"))}
-        },700)
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			if (valid) { validarE(" ", $("#email"), $("#errorEmail")) }
+		}, 700)
 	});
 
 
@@ -79,7 +85,7 @@ $(document).ready(function () {
 		e.preventDefault();
 		if (click >= 1) throw new Error('Spam de clicks');
 		if (typeof permisos.Registrar === 'undefined') {
-			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
 		}
 
@@ -91,7 +97,7 @@ $(document).ready(function () {
 		nombre = validarNombre($("#name"), $("#errorNom"), "Error de Nombre,");
 		dni = validarCedula($("#cedula"), $("#errorCed"), "Error de Cedula,", $("#preDocument"));
 		if (dni) {
-			validarC(" ",$("#cedula") , $("#errorCed"), $("#preDocument")).then(() => {
+			validarC(" ", $("#cedula"), $("#errorCed"), $("#preDocument")).then(() => {
 				if (correo) {
 					validarE(" ", $("#email"), $("#errorEmail")).then(() => {
 
@@ -101,7 +107,7 @@ $(document).ready(function () {
 								url: '',
 								dataType: "json",
 								data: {
-									cedula: $("#preDocument").val()+"-"+$("#cedula").val(),
+									cedula: $("#preDocument").val() + "-" + $("#cedula").val(),
 									name: $("#name").val(),
 									apellido: $("#apellido").val(),
 									email: $("#email").val(),
@@ -112,7 +118,7 @@ $(document).ready(function () {
 									if (result.resultado === 'Registrado correctamente.') {
 										tabla.destroy();
 										$("#cerrarRegis").click();
-										Toast.fire({ icon: 'success', title: 'Usuario Registrado' })
+										Toast.fire({ icon: 'success', title: 'Usuario Registrado', showCloseButton: true })
 										refrescar();
 									} else {
 										tabla.destroy();
@@ -141,7 +147,7 @@ $(document).ready(function () {
 		if (click >= 1) throw new Error('Spam de clicks');
 
 		if (typeof permisos.Eliminar === 'undefined') {
-			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
 		}
 
@@ -158,15 +164,15 @@ $(document).ready(function () {
 					if (data.resultado === "Eliminado") {
 						tabla.destroy();
 						$("#cerrarModalDel").click();
-						Toast.fire({ icon: 'error', title: 'Usuario Eliminado' })
+						Toast.fire({ icon: 'error', title: 'Usuario Eliminado', showCloseButton: true })
 						refrescar();
-					}else if (data.resultado === "Error") {
+					} else if (data.resultado === "Error") {
 						$("#errorDel").text(data.msj);
-					}else {
-					   tabla.destroy();
-					   $("#errorDel").text("El Usuario no Pudo Ser Eliminado");
-					   refrescar();
-				   }
+					} else {
+						tabla.destroy();
+						$("#errorDel").text("El Usuario no Pudo Ser Eliminado");
+						refrescar();
+					}
 				}
 			})
 		})
@@ -177,6 +183,11 @@ $(document).ready(function () {
 	var id
 	$(document).on('click', '.editar', function () {
 		id = this.id;
+		$("#nameEdit").prop('disabled', true);
+		$("#apellidoEdit").prop('disabled', true);
+		$("#emailEdit").prop('disabled', true);
+		$("#passwordEdit").prop('disabled', true);
+		$("#selectEdit").prop('disabled', true);
 
 		$.ajax({
 			method: "post",
@@ -197,39 +208,48 @@ $(document).ready(function () {
 
 
 	$("#preDocumentEdit").change(() => {
-        let valid = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"))
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            if (valid) {validarC(id,$("#cedulaEdit") , $("#errorCedEdit"), $("#preDocumentEdit")) }
-        },700)
-    })
+		let valid = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"))
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			if (valid) { 
+				validarC(id, $("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit"))
+				rellenarPersonal($("#cedulaEdit"), $("#preDocumentEdit"), $("#errorCedEdit"), "Edit")
+			}
+		}, 700)
+	})
 	$("#cedulaEdit").keyup(() => {
 		let valid = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"))
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            if (valid) {validarC(id,$("#cedulaEdit") , $("#errorCedEdit"), $("#preDocumentEdit")) }
-        },700)
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			if (valid) { 
+				validarC(id, $("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit")) 
+				rellenarPersonal($("#cedulaEdit"), $("#preDocumentEdit"), $("#errorCedEdit"), "Edit")
+				
+			}
+		}, 700)
 	});
 	$("#emailEdit").keyup(() => {
 		let valid = validarCorreo($("#emailEdit"), $("#errorEmailEdit"), "Error de Correo,")
-        clearTimeout(timeout)
-        timeout = setTimeout(function(){
-            if (valid) {validarE(id, $("#emailEdit"), $("#errorEmailEdit"))}
-        },700)
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			if (valid) { validarE(id, $("#emailEdit"), $("#errorEmailEdit")) }
+		}, 700)
 	});
 	$("#nameEdit").keyup(() => { validarNombre($("#nameEdit"), $("#errorNomEdit"), "Error de Nombre,") });
 	$("#apellidoEdit").keyup(() => { validarNombre($("#apellidoEdit"), $("#errorApeEdit"), "Error de Apellido,") });
 	$("#passwordEdit").keyup(() => {
 		if ($("#passwordEdit").val() == "") {
-		$("#passwordEdit").attr("style","border-color: none; background-image: none"),  $("#errorContraEdit").text(" ")}
-		else{validarContraseña($("#passwordEdit"), $("#errorContraEdit"), "Error de Contraseña,");}})
+			$("#passwordEdit").attr("style", "border-color: none; background-image: none"), $("#errorContraEdit").text(" ")
+		}
+		else { validarContraseña($("#passwordEdit"), $("#errorContraEdit"), "Error de Contraseña,"); }
+	})
 	$("#selectEdit").keyup(() => { validarSelect($("#selectEdit"), $("#errorNivelEdit"), "Error de Nivel,") });
 
 	$("#enviarEdit").click((e) => {
 		e.preventDefault()
 		if (click >= 1) throw new Error('Spam de clicks');
 		if (typeof permisos.Editar === 'undefined') {
-			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.' });
+			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
 		}
 
@@ -240,7 +260,7 @@ $(document).ready(function () {
 		let nombre = validarNombre($("#nameEdit"), $("#errorNomEdit"), "Error de Nombre,");
 		let dni = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"));
 		if (dni) {
-			validarC(id,$("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit")).then(() => {
+			validarC(id, $("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit")).then(() => {
 				if (correo) {
 					validarE(id, $("#emailEdit"), $("#errorEmailEdit")).then(() => {
 
@@ -250,7 +270,7 @@ $(document).ready(function () {
 								url: '',
 								dataType: 'json',
 								data: {
-									cedulaEdit: $("#preDocumentEdit").val()+"-"+$("#cedulaEdit").val(),
+									cedulaEdit: $("#preDocumentEdit").val() + "-" + $("#cedulaEdit").val(),
 									nameEdit: $("#nameEdit").val(),
 									apellidoEdit: $("#apellidoEdit").val(),
 									emailEdit: $("#emailEdit").val(),
@@ -262,7 +282,7 @@ $(document).ready(function () {
 									if (edit.resultado === "Editado") {
 										tabla.destroy();
 										$("#cerrarRegisEdit").click();
-										Toast.fire({ icon: 'success', title: 'Usuario Actualizado' })
+										Toast.fire({ icon: 'success', title: 'Usuario Actualizado', showCloseButton: true })
 										refrescar();
 									} else {
 										tabla.destroy();
@@ -281,25 +301,34 @@ $(document).ready(function () {
 
 	$(document).on('click', '#cerrarRegisEdit', function () {
 		$('#editModal p').text(" ");
-		$("#editModal input, select").attr("style", "border-color: none;")
-		$("#editModal input, select").attr("style", "backgraund-image: none;");
+		$("#editModal select").removeClass('select-error')
+		$("#editModal input").removeClass('input-error')
 	})
 
 	$(document).on('click', '#cerrarRegis', function () {
 		$('#basicModal p').text(" ");
-		$("#basicModal input, select").attr("style", "border-color: none;")
-		$("#basicModal input, select").attr("style", "backgraund-image: none;");
+		$("#basicModal input").removeClass('input-error')
+		$("#basicModal select").removeClass('select-error')
 	})
 
 	$(document).on('click', '#cerrarModalDel', function () {
 		$("#delModal p").text(" ");
 	})
 
+	$("#agregarModalButton").click(() => {
+		$("#name").prop('disabled', true);
+		$("#apellido").prop('disabled', true);
+		$("#email").prop('disabled', true);
+		$("#password").prop('disabled', true);
+		$("#select").prop('disabled', true);
+
+	})
+
 
 	//Validacion para la Cedula 
 	let val
 	function validarC(valor, input, div, prefijo) {
-		val = (input.val() == undefined) ? " " : prefijo.val()+"-"+input.val()
+		val = (input.val() == undefined) ? " " : prefijo.val() + "-" + input.val()
 		return new Promise((resolve, reject) => {
 			$.getJSON('', {
 				cedula: val,
@@ -309,11 +338,11 @@ $(document).ready(function () {
 				function (valid) {
 					if (valid.resultado === "Error") {
 						div.text("Error de Cedula, " + valid.msj);
-						input.attr("style", "border-color: red;");
-						input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+						input.addClass('input-error')
 						return reject(false);
 					} else {
 						div.text("");
+						input.removeClass('input-error')
 						return resolve(true);
 					}
 				}
@@ -332,15 +361,38 @@ $(document).ready(function () {
 				function (valid) {
 					if (valid.resultado === "Error") {
 						div.text("Error de Correo, " + valid.msj);
-						input.attr("style", "border-color: red;");
-						input.attr("style", "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+						input.addClass('input-error')
 						return reject(false);
 					} else {
 						div.text("");
+						input.removeClass('input-error')
 						return resolve(true);
 					}
 				}
 			)
 		})
+	}
+
+	async function rellenarPersonal(cedula, prefijo, error, edit = "") {
+		await $.getJSON('', {
+			cedula: prefijo.val() + "-" + cedula.val(),
+			persona: "xd"
+		},
+			function (data) {
+				console.log(data);
+				$("#name"+edit).val(data[0].nombres);
+				$("#apellido"+edit).val(data[0].apellidos);
+				$("#email"+edit).val(data[0].correo);
+
+				$("#password"+edit).prop('disabled', false);
+				$("#select"+edit).prop('disabled', false);
+				return true
+				}).fail(e => {
+
+				error.text("Error de Cedula, " + e.responseJSON.msg);
+				input.addClass('input-error')
+				return false
+			})
+
 	}
 }) 

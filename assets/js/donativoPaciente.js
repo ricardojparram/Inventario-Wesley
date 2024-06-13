@@ -84,7 +84,7 @@ $(document).ready(function(){
  				success(data) {
  					$('#cedula').select2({
  						data: data.map(function(item) {
- 							return { id: item.ced_pac, text: item.ced_pac};
+ 							return { id: item.ced_pac, text: item.ced_pac +' '+ item.nombre + ' ' + item.apellido};
  						}),
  						theme: 'bootstrap-5',
  						dropdownParent: $('#agregar .modal-body'),
@@ -102,27 +102,6 @@ $(document).ready(function(){
  			});
 
  		}
-    	// Funcion select Sedes
-    	selectSedes(); 
-    	function selectSedes(){
-    		$.ajax({
-    			type: 'POST',
-    			url: '',
-    			dataType: 'json',
-    			data: { selectSedes: 'sedes' },
-    			success(data) {
-    				let selectSedes = $('#sede').select2({
-    					data: data.map(function(item) {
-    						return { id: item.id_sede, text: item.nombre};
-    					}),
-    					theme: 'bootstrap-5',
-    					dropdownParent: $('#agregar .modal-body'),
-    					width: '50%'
-    				});
-
-    			}
-    		});
-    	}
 
       //  fila que se inserta
 
@@ -134,16 +113,9 @@ $(document).ready(function(){
 		       <option></option>
 		     </select>
 	       </td>
-	      <td width='15%' class="cantidad"><input class="select-asd stock" disabled type="number" value=""/></td>
-	     <td width='15%' class="unidades"><input class="select-asd unidad" type="number" value="" /></td>
+	      <td width='20%' class="cantidad"><input class="select-asd stock" type="number" value=""/></td>
       </tr>`;
 
-      // Validar filas
-      function validarFila(filas, error) {
-      	let filaExiste = $(filas).find('tr').length > 0;
-        $(error).text(filaExiste? '' : 'No debe haber filas vacías')
-        return filaExiste;
-      }
 
     // Funcion de select para productos 
     selectProductos()
@@ -156,7 +128,7 @@ $(document).ready(function(){
     			selectProductos: "productos"
     		},
     		success(data){
-    			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.nombrepro} ${row.lote}</option>`).join('');
+    			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.id_producto_sede} - ${row.producto} ${row.lote}</option>`).join('');
 
     			$('.select-productos').each(function(){
     				if(this.children.length == 1){
@@ -173,70 +145,49 @@ $(document).ready(function(){
     	})
     }
 
-    // Validar producto vacios
-
-    function validarProductos(filas, productos, error , mensaje) {
-    	let vproductos = true;
-
-    	$(filas).each(function () {
-    		let producto = $(this).find(productos).val();
-    		if (producto == "" || producto == null) {
-    			vproductos = false;
-    			$(error).text(mensaje);
-    		} else {
-    			$(error).text('');
-    			vproductos = true;
-    		}
-    	});
-
-    	return vproductos;
+    let selectRepetidos, select_t;
+    const validarSelectRepetidos = (selected, error, status = true) => {
+        let validacion = [];
+        let $select = document.querySelectorAll(selected);
+        if ($select.length < 1) {
+            $(error).html('No hay filas.');
+            return false
+        } else {
+            $(error).html('');
+        }
+        select_t = Object.values(document.querySelectorAll(selected)).map(item => {
+            return item.value;
+        });
+        selectRepetidos = select_t.filter((elemento, index) => select_t.indexOf(elemento) !== index);
+        $(selected).each(function () {
+            if (this.value === "" || this.value === null) {
+                if (status != true) {
+                    $(this).closest('td').find('div.chosen-container').addClass('select-error')
+                }
+                validacion.push(false);
+            } else if (selectRepetidos.includes(this.value)) {
+                $(this).closest('td').find('div.chosen-container').addClass('select-error')
+                validacion.push(false);
+            } else {
+                $(this).closest('td').find('div.chosen-container').removeClass('select-error')
+                validacion.push(true);
+            }
+        })
+        return !validacion.includes(false);
     }
 
 
-	// Validar producto repetidos
+    const mostrarInventarioProducto = (item) => {
+        let $cantidad = $(item).closest('tr').find('.cantidad input');
+        let producto_inventario = item.value;
+        $.getJSON('', { producto : producto_inventario , filas : 'select fila'}, function (data) {
+            $cantidad.val(data[0].cantidad);
+            $cantidad.attr('placeholder', data[0].cantidad);
+            validarStock($cantidad , data[0].cantidad);
+        })
+    }
 
-	let productosRepetidos, productos;
-	function validarProductosRepetidos() {
-		productos = Object.values(document.querySelectorAll('.select-productos')).map(item => {
-			return item.value;
-		});
-		productosRepetidos = productos.filter((elemento, index) => productos.indexOf(elemento) !== index);
-		$(".select-productos").each(function () {
-			if (this.value == "") return;
-			if (productosRepetidos.includes(this.value)) {
-				$(this).attr('valid', false);
-				$(this).closest('td').find('div.chosen-container').addClass('select-error')
-			} else {
-				$(this).attr('valid', true);
-				$(this).closest('td').find('div.chosen-container').removeClass('select-error')
-			}
-		})
-	}
-
-	let cantidadStock , stock , select , unidades 
-	productoSeleccionado();
-	function productoSeleccionado(){
-		$('.select-productos').change(function() {
-			select = $(this);
-			producto = $(this).val();
-			cantidadStock = select.closest('tr').find('.cantidad input');
-			unidades = select.closest('tr').find('.unidades input');
-			fillData();
-		});
-	}
-
-	function fillData(){
-		$.getJSON('', {producto , filas : 'select fila'}, function(data) {
-			stock = data[0].cantidad;
-			unidad = data[0].unidades_restantes;
-			cantidadStock.val(stock);
-			unidades.val(unidad);
-			unidades.attr('placeholder', unidad);
-			validarUnidades(unidades , unidad);
-		});
-	}
-
-	function validarUnidades(input, max){
+	function validarStock(input, max){
 		$(input).keyup(()=>{
 			stock = Number(max);
 			num = Number(input.val());
@@ -252,49 +203,65 @@ $(document).ready(function(){
 		})
 	}
 
-	 validUnidades = () => {
-		let unidadValue = $('.unidad').val();
-		let isValidUnidad = !$('.unidad').is('[valid="false"]') && unidadValue !== "" && unidadValue !== '0';
+	 validCantidad = () => {
+		let stockValue = $('.stock').val();
+		let isValidStock = !$('.stock').is('[valid="false"]') && stockValue !== "" && stockValue !== '0';
 
-		$('#pValid').text(isValidUnidad ? '' : 'Cantidad inválida.');
-		return isValidUnidad;
+		$('#pValid').text(isValidStock ? '' : 'Cantidad inválida.');
+		return isValidStock;
 	}
 
     // Funcion de agregar fila 
     function addNewRow(){
     	$('#ASD').append(newRow);
-    	validarFila($('#ASD') ,$('.filaProductos'));
-    	selectProductos();  
-    	productoSeleccionado();
+    	selectProductos();   
     }
 
      // Agregar fila para insertar producto a donar
      $('.newRow').on('click',function(e){
-     	addNewRow();   
+     	addNewRow();  
+        validarSelectRepetidos('.select-productos' , '.filaProductos');  
      });
 
      // Evento de cambio en los productos 
      $(document).on("change", ".select-productos", function () {
-     	validarProductos($('.table-body tbody tr'),$(".select-productos"), $('.filaProductos') , 'No debe haber productos vacios');
-     	validarProductosRepetidos();
+     	validarSelectRepetidos('.select-productos' , '.filaProductos');  
+        mostrarInventarioProducto(this);
      });
 
      // ELiminar fila
      $('body').on('click','.removeRow', function(e){
      	$(this).closest('tr').remove();
-     	validarProductosRepetidos();
-     	validarFila($('#ASD') ,$('.filaProductos'));
+     	validarSelectRepetidos('.select-productos' , '.filaProductos');  
      });
 
+     function validarCedula(input, select2, div){
+      return new Promise((resolve , reject)=>{
+        $.getJSON('',{cedula : input.val(), tipo: 'paciente'}, function(data){
+          if(data.resultado === "error"){
+            div.text(data.msg);
+            select2.addClass('select-error')
+            return reject(false); 
+          }else{
+            div.removeClass('select-error')
+            return resolve(true);
+          }
+        })
+      })
+    }
 
-
-    $('#cedula').change(()=>{ validarSelec2($('#cedula'),$(".select2-selection"), $('#error1') , 'Error de cedula');  })
-    $('#beneficiario').keyup(()=> { validarStringLong($('#beneficiario'),  $('#error2') , 'Error de beneficiario'); });
-    $('#sede').change(()=>{ validarSelec2($('#sede'),$(".select2-selection"), $('#error3') , 'Error de sede');  })
-    
      let click = 0;
-     let cedula , beneficiario , sede, producto;
+     let valid;
+     let cedula , beneficiario , producto;
      setInterval(()=>{click = 0}, 2000);
+
+    $('#cedula').change(()=>{ 
+        valid = validarSelec2($('#cedula'),$(".select2-selection"), $('#error1') , 'Error de cedula');
+
+        if(valid) validarCedula($("#cedula"),$(".select2-selection") ,$("#error1"));
+
+      })
+  
 
      $('#registrar').click(function(e) {
      	e.preventDefault();
@@ -307,23 +274,19 @@ $(document).ready(function(){
      	 let datos = [];
 
      	 cedula = validarSelec2($('#cedula'),$(".select2-selection"), $('#error1') , 'Error de cedula');
-     	 beneficiario = validarStringLong($('#beneficiario'),  $('#error2') , 'Error de beneficiario');
-     	 sede = validarSelec2($('#sede'),$(".select2-selection"), $('#error3') , 'Error de sede');
-     	 filasValidas = validarFila($('#ASD') ,$('.filaProductos'));
-     	 producto = validarProductos($('.table-body tbody tr'),$(".select-productos"), $('.filaProductos') , 'No debe haber productos vacios');
-     	 repetidos = $('.select-productos').is('[valid="false"]')? false : true;
-     	 unidades = validUnidades();
+         valid_productos = validarSelectRepetidos('.select-productos' , '.filaProductos' , false);
+     	 cantidad = validCantidad();
 
 
-     	 if (cedula && beneficiario && sede && filasValidas && repetidos && producto && unidades){
+     	 if (cedula && valid_productos && cantidad){
 
      	 	$('.table-body tbody tr').each(function(){
      	 		productos = $(this).find('.select-productos').val();
-     	 		unidades = $(this).find('.unidad').val();
+     	 		stock = $(this).find('.stock').val();
 
      	 		let productoObj = {
      	 			producto : productos,
-     	 			unidades: unidades
+     	 			cantidad: stock
      	 		};
 
      	 		datos.push(productoObj);
@@ -333,7 +296,7 @@ $(document).ready(function(){
      	 		url: '',
      	 		type: 'POST',
      	 		dataType: 'json',
-     	 		data: {cedulaPaciente: $('#cedula').val(), beneficiario: $('#beneficiario').val() , datos },
+     	 		data: {cedulaPaciente: $('#cedula').val(), datos },
      	 		success(data){
      	 		if(data.resultado == 'registrado con exito'){
 	     	 		mostrar.destroy();
@@ -345,13 +308,12 @@ $(document).ready(function(){
 		            $('#error').text('');
 		            $('.removeRow').click();
 		            $('.cerrar').click(); 
-		            addNewRow();
 		            Toast.fire({ icon: 'success', title: 'Donacion registrada' , showCloseButton: true });
      	 		 }
      	 	   }
-     	 	})
-     	 	.fail(function() {
-     	 		console.log("error");
+     	 	}).fail(function(e) {
+              Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+              throw new Error(e.responseJSON.msg);
      	 	})
 
           
@@ -359,6 +321,16 @@ $(document).ready(function(){
 
      	 click++;
      });
+
+ $('#cerrar').click(()=>{
+    $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
+    $('#agregar .select2-selection').attr("style","borden-color:none;","borden-color:none;");
+    $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
+    $('.removeRow').click();
+    $('#error').text('');
+    $('.error').text(" ");
+    addNewRow();
+  })
 
      function validarExitencia(){
      	return new Promise((resolve, reject) =>{
@@ -368,7 +340,7 @@ $(document).ready(function(){
      			dataType: "json",
      			data: { validarE: "existe", id},
      			success(data) {
-     				if (data.resultado === "Error de donacion") {  
+     				if (data.resultado === "error") {  
      					mostrar.destroy();
      					rellenar();
      					$('.cerrar').click();

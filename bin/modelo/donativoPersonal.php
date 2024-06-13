@@ -2,9 +2,11 @@
 
 namespace modelo;
 use config\connect\DBConnect as DBConnect;
+use utils\validar;
 
 class donativoPersonal extends DBConnect{
-
+    
+    use validar;
 	private $id;
 	private $personal;
 	private $beneficiario;
@@ -16,14 +18,17 @@ class donativoPersonal extends DBConnect{
 		try {
 			parent::conectarDB();
 
-			$query = 'SELECT d.id_donaciones , d.beneficiario , d.fecha , dp.cedula FROM donaciones d INNER JOIN donativo_per dp ON dp.id_donaciones = d.id_donaciones WHERE d.status = 1';
+			$query = "SELECT d.id_donaciones, d.fecha , dp.cedula , CONCAT(p.nombres, ' ',p.apellidos) AS beneficiario FROM donaciones d INNER JOIN donativo_per dp ON dp.id_donaciones = d.id_donaciones INNER JOIN personal p ON p.cedula = dp.cedula WHERE d.status = 1";
 			$new = $this->con->prepare($query);
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
-			return $data;
+			if ($bitacora)
+			$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Consultó listado donativo personal.");
 
 			parent::desconectarDB();
+
+			return $data;
 
 		} catch (\PDOException $e) {
 
@@ -32,9 +37,8 @@ class donativoPersonal extends DBConnect{
 	}
 
 	public function getDetalleDonacion($id){
-		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-		}
+		if (!$this->validarString('entero' , $id))
+			return $this->http_error(400, 'id inválido.');
 
 		$this->id = $id;
 
@@ -77,11 +81,12 @@ class donativoPersonal extends DBConnect{
 		}
 	}
 
-	public function selectProductos(){
+	public function selectProductos($id_sede){
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare('SELECT ps.id_producto_sede, tp.nombrepro , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede WHERE p.status = 1 AND s.status = 1 ORDER BY ps.fecha_vencimiento');
+			$new = $this->con->prepare("SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida INNER JOIN detalle_recepcion_nacional drn ON drn.id_producto_sede = ps.id_producto_sede INNER JOIN recepcion_nacional rn ON rn.id_rep_nacional = drn.id_rep_nacional WHERE p.status = 1 AND s.status = 1 AND ps.cantidad > 0 AND s.id_sede = ? ORDER BY ps.fecha_vencimiento;");
 
+			$new->bindValue(1, $id_sede);
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
@@ -95,9 +100,8 @@ class donativoPersonal extends DBConnect{
 	}
 
 	public function detallesProductoFila($id){
-		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-		}
+		if (!$this->validarString('entero' , $id))
+			return $this->http_error(400, 'id inválido.');
 
 		$this->id = $id;
 
@@ -108,7 +112,7 @@ class donativoPersonal extends DBConnect{
 		try {
 			parent::conectarDB();
 
-			$new = $this->con->prepare('SELECT ps.cantidad , (pres.cantidad * ps.cantidad) AS unidades , (ps.cantidad * pres.cantidad) - COALESCE(SUM(dd.cantidad), 0) AS unidades_restantes FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN presentacion pres ON p.cod_pres = pres.cod_pres INNER JOIN det_donacion dd ON dd.id_producto_sede = ps.id_producto_sede WHERE p.status = 1 AND ps.id_producto_sede = ?');
+			$new = $this->con->prepare('SELECT ps.cantidad FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto WHERE p.status = 1 AND ps.id_producto_sede = ?');
 
 			$new->bindValue(1 ,$this->id);
 			$new->execute();
@@ -124,23 +128,108 @@ class donativoPersonal extends DBConnect{
 		}
 	}
 
-	public function getRegistrarDonacion($cedulaPersonal , $beneficiario , $datos){
-		if(preg_match_all("/^[VEJ]-[A-Z0-9]{7,12}$/", $cedulaPersonal) != 1){
-			return ['resultado' => 'Error cedula','error' => 'cedula inválida.'];
-		}
-		if(preg_match_all('/^[a-zA-ZÀ-ÿ]+([a-zA-ZÀ-ÿ0-9\s#\/,.-]){3,30}$/', $beneficiario) != 1){
-			return['resultado'=> 'error de beneficiario', 'error'=>'beneficiario invalido'];         
-		}
 
-		foreach ($datos as $dato) {
-			if (!is_array($dato) || !array_key_exists('producto', $dato) || !array_key_exists('unidades', $dato)) {
-				return ['resultado' => 'Error en los datos', 'error' => 'Formato de datos incorrecto en el array.'];
+	public function validarCedula($cedula){
+
+	if (!$this->validarString('documento' , $cedula))
+		return $this->http_error(400, 'Cedula inválido.');
+
+
+	$this->personal = $cedula;
+
+	return $this->validCedula();
+
+	}
+
+	private function validCedula(){
+		try {
+			parent::conectarDB();
+
+			$new = $this->con->prepare("SELECT 'Personal' AS tipo, pe.cedula AS cedula FROM personal pe WHERE pe.cedula = :cedula AND pe.status = 1");
+
+			$new->bindValue(':cedula', $this->personal);
+			$new->execute();
+			$data = $new->fetchAll();
+			parent::desconectarDB();
+
+			$mensaje = 'La cedula ' . $this->personal . ' no existe';
+
+			if(isset($data[0]['cedula'])){
+				return ['resultado' => 'cedula valida', 'res' => true];
+
+			}else{
+				return ['resultado' => 'error', 'msg' => $mensaje, 'res' => false];
 			}
+
+		}catch (\PDOException $e) {
+			return $e;
 		}
+	}
+
+	private function validProductos(){
+		try {
+			parent::conectarDB();
+
+			$mensaje = '';
+
+			foreach ($this->datos as $producto){
+
+				$id_producto_sede = $producto['producto'];
+				$cantidad  = $producto['cantidad'];
+
+
+				$new = $this->con->prepare("SELECT ps.cantidad , CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE ps.id_producto_sede = :id_producto_sede");
+				$new->bindValue(':id_producto_sede',  $id_producto_sede);
+				$new->execute();
+
+				$result = $new->fetchAll();
+
+
+				if (empty($result)) {
+					$mensaje .= "Error ID $id_producto_sede no existe. ";
+
+				} else if ($result[0]['cantidad'] < $cantidad) {
+					$producto = $result[0]['producto'];
+					$mensaje .= "Error no hay suficiente $producto disponible.";
+
+				}
+
+			}
+
+			if ($mensaje) {
+				return ['resultado' => 'error', 'msg' => $mensaje, 'res' => false];
+			} else {
+				return ['resultado' => 'producto valido', 'res' => true];
+			}
+
+		}catch (\PDOException $e) {
+			return $e;
+		}
+	}
+
+	public function getRegistrarDonacion($cedulaPersonal , $datos){
+		
+		if (!$this->validarString('documento', $cedulaPersonal))
+			return $this->http_error(400, 'Cedula inválido.');
+
+		$estructura_productos = [
+			'producto' => 'string',
+			'cantidad' => 'string',
+		];
+
+		if (!$this->validarEstructuraArray($datos, $estructura_productos, true))
+			return $this->http_error(400, 'Productos inválidos.');
 
 		$this->personal = $cedulaPersonal;
-		$this->beneficiario = $beneficiario;
 		$this->datos = $datos; 
+
+		$validarCedula = $this->validCedula();
+
+		if ($validarCedula['res'] === false) return $this->http_error(400, $validarCedula['msg']);
+
+		$validarProductos = $this->validProductos();
+
+       if ($validarProductos['res'] === false) return $this->http_error(400, $validarProductos['msg']);
 
 		return $this->registrarDonacion();
 
@@ -150,8 +239,7 @@ class donativoPersonal extends DBConnect{
 	 	try {
 		parent::conectarDB();
 
-		$new = $this->con->prepare('INSERT INTO `donaciones`(`id_donaciones`, `beneficiario`, `fecha`, `status`) VALUES (DEFAULT , ? , DEFAULT , 1)');
-		$new->bindValue(1 , $this->beneficiario);
+		$new = $this->con->prepare('INSERT INTO `donaciones`(`id_donaciones`, `fecha`, `status`) VALUES (DEFAULT ,DEFAULT , 1)');
 		$new->execute();
 
 		$this->id = $this->con->lastInsertId();
@@ -165,14 +253,30 @@ class donativoPersonal extends DBConnect{
 
 		foreach ($this->datos as $dato) {
 			$this->producto = $dato['producto'];
-			$this->unidades = $dato['unidades'];
+			$this->cantidad = $dato['cantidad'];
 
 			$new = $this->con->prepare('INSERT INTO `det_donacion`(`id_detalle`, `id_producto_sede`, `cantidad`, `id_donaciones`) VALUES (DEFAULT , ? , ? , ?)');
 			$new->bindValue(1 , $this->producto);
-			$new->bindValue(2 , $this->unidades);
+			$new->bindValue(2 , $this->cantidad);
 			$new->bindValue(3 , $this->id);
 			$new->execute();
+
+			$this->inventario_historial("Donativo Personal", "", "x", "",  $this->producto, $this->cantidad);
+
+			$new = $this->con->prepare('SELECT ps.cantidad FROM producto_sede ps WHERE ps.id_producto_sede = ?');
+			$new->bindValue(1 , $this->producto);
+			$new->execute();
+			$data = $new->fetchAll();
+
+			$NewCantidad = $data[0]['cantidad'] - $this->cantidad ;
+
+			$new = $this->con->prepare("UPDATE producto_sede ps SET ps.cantidad = ? WHERE ps.id_producto_sede = ?");
+			$new->bindValue(1, $NewCantidad);
+			$new->bindValue(2, $this->producto);
+			$new->execute();
 		}
+
+		$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Registró donativo por personal.");
 
 		parent::desconectarDB();
         
@@ -184,9 +288,8 @@ class donativoPersonal extends DBConnect{
 	 }
 
 	 public function validarExistencia($id){
-	 	if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-	 		return ['resultado' => 'Error de id','error' => 'id inválida.'];
-	 	}
+	 	if (!$this->validarString('entero' , $id))
+			return $this->http_error(400, 'id inválido.');
 
 	 	$this->id = $id;
 
@@ -205,10 +308,11 @@ class donativoPersonal extends DBConnect{
 	 		parent::desconectarDB();
 
 	 		if(isset($data[0]["id_donaciones"])){
-	 			return['resultado' => 'Si existe esta donacion.'];
-	 		}else{
-	 			return['resultado' => 'Error de donacion'];
-	 		}
+				return ['resultado' => 'donacion valida', 'res' => true];
+
+			}else{
+				return ['resultado' => 'error', 'msg' => 'La donación no existe', 'res' => false];
+			}
 	 	} catch (\PDOException $e) {
 	 		return $e;
 	 	}
@@ -216,11 +320,14 @@ class donativoPersonal extends DBConnect{
 
 
 	public function getEliminarDonacion($id){
-		if(preg_match_all("/^[0-9]{1,10}$/", $id) != 1){
-			return ['resultado' => 'Error de id','error' => 'id inválida.'];
-		}
+		if (!$this->validarString('entero' , $id))
+			return $this->http_error(400, 'id inválido.');
 
 		$this->id = $id;
+
+		$validarFactura = $this->validExistencia();
+
+		if ($validarFactura['res'] === false) return ['resultado' => 'error', 'msg' => 'La donacion no existe'];
 
 		return $this->eliminarDonacion();
 	}
@@ -229,9 +336,32 @@ class donativoPersonal extends DBConnect{
 		try {
 		parent::conectarDB();
 
+		$new = $this->con->prepare("SELECT ps.id_producto_sede, dd.cantidad , ps.cantidad as stock FROM det_donacion dd INNER JOIN producto_sede ps ON ps.id_producto_sede = dd.id_producto_sede WHERE dd.id_donaciones = ?");
+
+		$new->bindValue(1, $this->id);
+		$new->execute();
+		$result = $new->fetchAll(\PDO::FETCH_OBJ);
+
+		foreach ($result as $data){
+
+			$stockAct = $data->stock;
+			$cantidad = $data->cantidad;
+			$idProductoSede = $data->id_producto_sede;
+
+			$NewStock = $cantidad + $stockAct;
+
+			$new = $this->con->prepare("UPDATE producto_sede ps SET ps.cantidad = ? WHERE ps.id_producto_sede = ?");
+			$new->bindValue(1, $NewStock);
+			$new->bindValue(2, $idProductoSede);
+			$new->execute();
+
+		}
+
 		$new = $this->con->prepare('UPDATE donaciones d SET d.status = 0 WHERE d.id_donaciones = ?');
 		$new->bindValue(1 , $this->id);
 		$new->execute();
+
+		$this->binnacle("Donativo Personal", $_SESSION['cedula'], "Anulo donativo por personal.");
 
 		$resultado = ['resultado' => 'Eliminado'];
 

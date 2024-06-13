@@ -18,9 +18,9 @@ if (!isset($_SESSION['nivel'])) {
 if (!isset($permiso["Consultar"]))
 	die('<script> window.location = "?url=home" </script>');
 
-if (isset($_POST['notificacion'])) {
-	$objModel->getNotificacion();
-}
+// if (isset($_POST['notificacion'])) {
+// 	$objModel->getNotificacion();
+// }
 
 if (isset($_POST['getPermisos'], $permiso["Consultar"])) {
 	die(json_encode($permiso));
@@ -58,6 +58,11 @@ if (isset($_POST['select']) && isset($_POST['id']) && isset($permiso["Editar"]))
 
 if (isset($_POST['cedulaEdit']) && isset($_POST['nameEdit']) && isset($_POST['apellidoEdit']) && isset($_POST['emailEdit']) && isset($_POST['passwordEdit']) && isset($_POST['tipoUsuarioEdit']) && isset($_POST['id']) && isset($permiso["Editar"])) {
 	$res = $objModel->getEditar($_POST['cedulaEdit'], $_POST['nameEdit'], $_POST['apellidoEdit'], $_POST['emailEdit'], $_POST['passwordEdit'], $_POST['tipoUsuarioEdit'], $_POST['id']);
+	die(json_encode($res));
+}
+
+if (isset($_GET['cedula'], $_GET['persona'])){
+	$res = $objModel->getPersonal($_GET['cedula']);
 	die(json_encode($res));
 }
 

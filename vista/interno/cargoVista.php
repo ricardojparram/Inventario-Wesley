@@ -133,8 +133,8 @@
                 <button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
             </div>
 
-            <div class="modal-body ">
-                <form id="agregarform">
+            <form id="agregarform">
+                <div class="modal-body ">
 
                     <div class="form-group col-md-12">
                         <div class="container-fluid">
@@ -210,10 +210,10 @@
                         <button type="button" class="btn btn-secondary cerrar" id="cerrar" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
                     </div>
-                </form>
-            </div>
+            </form>
         </div>
     </div>
+</div>
 </div>
 
 <!-- FINAL MODAL DE AGREGAR -->

@@ -155,7 +155,7 @@
                 $data[0]->edad = floor($fecha / 31556926);
                 parent::desconectarDB();
                 return $data;
-            } catch (\PDOexection $error) {
+            } catch (\PDOException $error) {
                 return $error;
             }
         }
@@ -257,7 +257,7 @@
             parent::desconectarDB();
             return $resultado;
 
-            } catch (\PDOexection $error) {
+            } catch (\PDOException $error) {
             return $error;
             }
         }
@@ -374,7 +374,7 @@
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
             parent::desconectarDB();
             return $data;
-            } catch (\PDOexection $error) {
+            } catch (\PDOException $error) {
 
             return $error;
 
@@ -389,7 +389,7 @@
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
             parent::desconectarDB();
             return $data;
-            } catch (\PDOexection $error) {
+            } catch (\PDOException $error) {
 
             return $error;
 

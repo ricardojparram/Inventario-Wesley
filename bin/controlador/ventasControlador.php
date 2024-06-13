@@ -33,6 +33,11 @@
         die(json_encode($res));
       }
 
+      if (isset($_POST['detalleTipo'] , $_POST['id'])) {
+        $res = $objModel->detalleTipo($_POST['id']);
+        die(json_encode($res));
+      }
+      
       if (isset($_POST['selectCliente'])) {
         $res = $objModel->getMostrarClientes();
         die(json_encode($res));
@@ -56,6 +61,27 @@
       if (isset($_GET['producto'] , $_GET['filas']) ) {
         $res = $objModel->detallesProductoFila($_GET['producto']);
         die(json_encode($res));
+      }
+
+      if (isset($_GET['cedula'] , $_GET['tipo'])) {
+        $res = $objModel->validarCedula($_GET['cedula'] , $_GET['tipo']);
+        die(json_encode($res));
+      }
+
+      if(isset($_POST['cedula'] , $_POST['tipoCliente'] , $_POST['montoTotal'] , $_POST['totalDolares'] , $_POST['datosProducto'], $_POST['datosTipoPago'], $permiso['Registrar'])){
+
+        $res = $objModel->getRegistrarVenta($_POST['cedula'] , $_POST['tipoCliente'] , $_POST['montoTotal'] , $_POST['totalDolares'] , $_POST['datosProducto'], $_POST['datosTipoPago']);
+         die(json_encode($res));
+      }
+
+      if(isset($_POST['anular'] , $_POST['id'])) {
+        $res = $objModel->getAnularVenta($_POST['id']);
+        die(json_encode($res));
+      }
+
+      if (isset($_POST['ticket'] , $_POST['id'])) {
+       $res = $objModel->ExportarTicket($_POST['id']);
+       die(json_encode($res));
       }
       
      $VarComp = new initcomponents();

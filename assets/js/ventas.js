@@ -60,7 +60,7 @@ $(document).ready(function(){
 	$(document).on('click', '.detalleV' , function(){
 
 		id = this.id; 
-		$.post('',{detalleProductos : 'detV' , id}, function(data){
+		$.post('',{detalleProductos : 'detalleProductos' , id}, function(data){
 			let lista = JSON.parse(data);
 			let tabla;
 
@@ -73,11 +73,32 @@ $(document).ready(function(){
 				</tr>
 				`  
 			})
-			$('#ventaNombre').text(`Numero de Factura #${lista[0].num_fact}.`);
+			$('#ventaNombre').text(`Numero de Factura ${lista[0].num_fact}.`);
 			$('#bodyDetalle').html(tabla);
 			$('.factura').attr("id", id);
 		})
 	})
+
+  $(document).on('click', '.detalleTipo' , function(){
+
+       id = this.id; // id = id
+       $.post('',{detalleTipo : 'detTipoPago' , id}, function(data){
+        let lista = JSON.parse(data);
+        let tabla;
+
+        lista.forEach(row=>{
+          tabla += `
+          <tr>
+          <td>${row.tipo_pago}</td>
+          <td>${row.referencia}</td>
+          <td>${row.monto_pago}</td>                    
+          </tr>
+          `  
+        })
+        $('#ventaNombreTipoPago').text(`Numero de Factura ${lista[0].num_fact}.`);
+        $('#bodyDetalleTipo').html(tabla);
+      })
+     })
 
 
 		// Función para cargar y mostrar opciones de pacientes y personal en un formulario select
@@ -156,11 +177,43 @@ $(document).ready(function(){
     	 	cambio = "0"
     	 }
 
-    	$('#montos').text(`Total: ${precioTotal}`)
-    	$('#cambio').text(`Total Dolares: ${cambio}`)
-    	$('#monto').val(precioTotal)
+    	$('#montos').html(`Total: <strong>${precioTotal}</strong>`)
+    	$('#cambio').html(`Total Dolares: <strong>${cambio}</strong>`)
+    	$('#monto').val(precioTotal);
+
+      let totalRows = $('.precioPorTipo').length;
+      let precioPorFila = (total_price / totalRows).toFixed(2);
+
+      $('.precioPorTipo').each(function() {
+        $(this).find('input').val(precioPorFila);
+      });
+
 
     }
+
+    $(document).on('keyup', '.precio-tipo', () => {
+    let montoMax = parseFloat($('#monto').val());
+    let preciosPorTipo = $('.precio-tipo');
+    let numFilas = preciosPorTipo.length;
+
+    if (numFilas === 1) {
+      preciosPorTipo.val(montoMax.toFixed(2));
+    } 
+
+    let totalAsignado = 0;
+    preciosPorTipo.each(function() {
+      totalAsignado += parseFloat($(this).val());
+    });
+
+    if (totalAsignado !== montoMax || totalAsignado < 1) {
+      preciosPorTipo.css({"border": "solid 1px", "border-color": "red"});
+      preciosPorTipo.attr('valid', 'false');
+    } else {
+      preciosPorTipo.css({"border": "none"});
+      preciosPorTipo.attr('valid', 'true');
+    }
+  });
+
 
     //Evento keyup para que funcione calculate()
     $('#ASD').on('keyup','input',function(){
@@ -172,7 +225,6 @@ $(document).ready(function(){
     const validarSelectRepetidos = (selected, error, status = true) => {
     	let validacion = [];
     	let $select = document.querySelectorAll(selected);
-    	console.log($select.length)
     	if ($select.length < 1) {
     		$(error).html('No hay filas.');
     		return false
@@ -185,7 +237,6 @@ $(document).ready(function(){
     	selectRepetidos = select_t.filter((elemento, index) => select_t.indexOf(elemento) !== index);
     	$(selected).each(function () {
     		if (this.value === "" || this.value === null) {
-    			console.log(this);
     			if (status != true) {
     				$(this).closest('td').find('div.chosen-container').addClass('select-error')
     			}
@@ -240,8 +291,98 @@ $(document).ready(function(){
       	})
       }
 
+    function TipoPagoSeleccionado() {
+      $('.table-body-tipo tbody tr').each(function() {
+        let tipoPago = $(this).find('.select-tipo').find('option:selected').text().toLowerCase();
+        let disableRef = !(tipoPago === 'pago movil' || tipoPago === 'transferencia');
 
-    
+        let ref = $(this).find('.ref');
+        ref.prop('disabled', disableRef);
+        ref.attr("valid", "true"); 
+
+        if (disableRef) {
+          ref.val('');
+          ref.attr("valid", "false").css({'border': 'none'});
+        }
+      });
+    }
+         
+       
+      $(document).on('keyup', '.ref[valid="true"]', function() { validarReferencia() });
+      function validarReferencia() {
+        let isValid = true;
+        const referenciaInput = $('.ref[valid="true"]');
+        const regex = /^[0-9]{5,12}$/;
+        const filaTipoPago = $('.filaTipoPago');
+
+        referenciaInput.each(function() {
+          const referencia = $(this).val();
+          const isInputValid = regex.test(referencia);
+
+          if (!isInputValid) {
+            isValid = false;
+            const borderStyle = {'border': 'solid 1px', 'border-color': 'red'};
+            $(this).css(borderStyle);
+            filaTipoPago.text('referencia inválida.');
+          } else {
+            const borderStyle = {'border': 'none'};
+            $(this).css(borderStyle);
+            filaTipoPago.text('');
+          }
+        });
+
+        return isValid;
+      }
+   
+
+      function validarValoresPositivos(inputs) {
+        let isValid = true;
+        inputs.each(function() {
+          let value = parseFloat($(this).val());
+          if ( value == 0 || value < 1) {
+            $(this).css({ "border": "solid 1px", "border-color": "red" });
+            $(this).attr('valid', 'false');
+            isValid = false;
+          } else {
+            $(this).css({ "border": "none" });
+            $(this).attr('valid', 'true');
+          }
+        });
+        return isValid;
+      }
+
+      function validarTotal(montoM, precioXtipo) {
+        let isValid = true;
+        let montoMax = parseFloat(montoM.val());
+        let preciosPorTipo = precioXtipo;
+
+        let totalAsignado = 0;
+        preciosPorTipo.each(function() {
+          totalAsignado += parseFloat($(this).val());
+        });
+
+        let resto = montoMax - totalAsignado;
+
+        if (totalAsignado > montoMax) {
+          preciosPorTipo.css({ "border": "solid 1px", "border-color": "red" });
+          resto = Math.abs(resto)
+          $('#pValid').text('Excede el monto máximo por ' + resto.toFixed(2) + ' bs');
+           isValid = false;
+        } else if (totalAsignado < montoMax) {
+          preciosPorTipo.css({ "border": "solid 1px", "border-color": "red" });
+          $('#pValid').text('Falta ' + resto.toFixed(2) + ' bs para alcanzar el monto máximo');
+           isValid = false;
+        } else if (totalAsignado < 1) {
+          preciosPorTipo.css({ "border": "solid 1px", "border-color": "red" });
+          $('#pValid').text('');
+          isValid = false;
+        } else {
+          preciosPorTipo.css({ "border": "none" });
+        }
+        return isValid;
+      }
+
+
     // Caracteriticas de la fila Tipo Pago
       function addNewRowPago(){
         $('#FILL').append(newRowTipo);
@@ -254,9 +395,11 @@ $(document).ready(function(){
        validarSelectRepetidos('.select-tipo' , '.filaTipoPago');     
      });
 
-    // Evento de cambio en los productos 
+    // Evento de cambio en los tipo de pago 
     $(document).on("change", ".select-tipo", function () {
     	validarSelectRepetidos('.select-tipo' , '.filaTipoPago');
+      TipoPagoSeleccionado();
+      validarReferencia();
     });
 
 
@@ -264,6 +407,7 @@ $(document).ready(function(){
      $('body').on('click','.removeRowPagoTipo', function(e){
         $(this).closest('tr').remove();
         validarSelectRepetidos('.select-tipo' , '.filaTipoPago');
+        validarTotal($("#monto"), $('.precio-tipo'))
      });
 
  
@@ -277,7 +421,7 @@ $(document).ready(function(){
                         </select>
                       </td>
                       <td width='10%' class="amount"><input class="select-asd stock" type="number" value=""/></td>
-                      <td width='15%' class="rate"><input class="select-asd" type="number" disabled value="" /></td>
+                      <td width='15%' class="rate"><input class="select-asd precio" type="number" value="" /></td>
                       <td width='15%' class="sum"></td>
                     </tr>`;
 
@@ -292,7 +436,7 @@ $(document).ready(function(){
         			selectProductos: "productos"
         		},
         		success(data){
-        			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.producto} ${row.lote}</option>`).join('');
+        			let option = data.map(row => `<option value="${row.id_producto_sede}">${row.id_producto_sede} - ${row.producto} ${row.lote}</option>`).join('');
 
         			$('.select-productos').each(function(){
         				if(this.children.length == 1){
@@ -311,30 +455,19 @@ $(document).ready(function(){
 
      let producto, select , cantidad, stock;
     //Selecciona cada producto 
-    cambio();
-    function cambio(){
-    	$('.select-productos').change(function(){
-    		select = $(this);
-    		producto = $(this).val();
-    		cantidad = select.closest('tr').find('.amount input');
-    		fillData();
-    	})
-    }
 
-    //  Rellena los inputs con el precio y cantidad de cada producto
-    function fillData(){
-    	$.getJSON('',{producto, filas: "data"}, function(data){
-
-    		let precio = select.closest('tr').find('.rate input');
-    		stock = data[0].cantidad;
-    		valor = data[0].precio;
-    		cantidad.val(stock);
-    		cantidad.attr("placeholder", stock);
-    		precio.val(valor);
-    		calculate();
-    		validarStock(cantidad, stock);
-
-    	})
+    const mostrarInventarioProducto = (item) => {
+        let $cantidad = $(item).closest('tr').find('.amount input');
+        let precio = $(item).closest('tr').find('.rate input');
+        let producto_inventario = item.value;
+        $.getJSON('', { producto : producto_inventario , filas : 'select fila'}, function (data) {
+            $cantidad.val(data[0].cantidad);
+            precio.val(data[0].precio);
+            $cantidad.attr('placeholder', data[0].cantidad);
+            calculate();
+            validarStock($cantidad , data[0].cantidad);
+            validarPrecio(precio);
+        })
     }
 
     function validarStock(input, max){
@@ -353,12 +486,41 @@ $(document).ready(function(){
     	})
     }
 
+    function validarPrecio(input){
+      $(input).keyup(()=>{
+        num = Number(input.val());
+        if(num == 0 || num < 1 || !Number.isInteger(num)){
+          input.css({"border" : "solid 1px", "border-color" : "red"})
+          input.attr("valid", "false");
+          $('#pValid').text('Precio inválida.');
+        }else{
+          input.css({'border': 'none'})
+          input.attr("valid", "true");
+          $('#pValid').text(' ');
+        }
+      })
+    }
+
+    validCantidad = () => {
+      let cantidadValue = $('.stock').val();
+      let isValidCantidad = !$('.stock').is('[valid="false"]') && cantidadValue !== "" && cantidadValue !== '0';
+
+      $('#pValid').text(isValidCantidad ? '' : 'Cantidad inválida.');
+      return isValidCantidad;
+    }
+
+    validPrecio = () => {
+      let precioValue = $('.precio').val();
+      let isValidPrecio = !$('.precio').is('[valid="false"]') && precioValue !== "" && precioValue !== '0';
+
+      $('#pValid').text(isValidPrecio ? '' : 'Cantidad inválida.');
+      return isValidPrecio;
+    }
 
     // Caracteriticas de la fila Producto
     function addNewRow(){
       $('#ASD').append(newRow);
       selectProductos();
-      cambio();
     }
 
     // Agregar fila para insertar producto
@@ -371,6 +533,7 @@ $(document).ready(function(){
      // Evento de cambio en los productos 
     $(document).on("change", ".select-productos", function () {
     	validarSelectRepetidos('.select-productos' , '.filaProductos'); 
+      mostrarInventarioProducto(this);
     });
 
 
@@ -382,6 +545,206 @@ $(document).ready(function(){
      });
 
 
+     const FilasProducto = () => {
+     let datos = [];
+     $('.table-body tbody tr').each(function() {
+        producto = $(this).find('.select-productos').val();
+        cantidad = $(this).find('.amount input').val();
+        precio = $(this).find('.rate input').val();
+
+        let productoObj = {
+          producto : producto,
+          cantidad: cantidad,
+          precio: precio
+        }
+
+        datos.push(productoObj);
+        
+      });
+     
+     return datos
+
+     }
+
+     const FilasTipoPago = () => {     
+      let datos = [];
+      $('.table-body-tipo tbody tr').each(function() {
+        TipoPago = $(this).find('.select-tipo').val();
+        referencia = $(this).find('.ref').val();
+        precioTipo = $(this).find('.precio-tipo').val();
+
+        let productoObj = {
+          TipoPago : TipoPago,
+          referencia : referencia,
+          precioTipo : precioTipo
+        }
+
+        datos.push(productoObj);
+      
+      });
+      return datos
+
+    }
+
+    function validarCedula(input, tipoCliente , select2, div){
+      return new Promise((resolve , reject)=>{
+        $.getJSON('',{cedula : input.val(), tipo: tipoCliente}, function(data){
+          if(data.resultado === "error"){
+            div.text(data.msg);
+            select2.addClass('select-error')
+            return reject(false); 
+          }else{
+            div.removeClass('select-error')
+            return resolve(true);
+          }
+        })
+      })
+    }
+
+
+     let click = 0;
+     setInterval(()=>{click = 0}, 2000);
+
+     let cedula , tipoCliente , montoTotal , totalDolares , valid_productos , valid_precioTipo;
+
+    $('#cedula').change(()=>{ 
+      let cedula = validarSelec2($(".select2"),$(".select2-selection"),$("#error1"),"Error de Cedula"); 
+     
+      if(cedula){
+        tipoCliente = $('#cedula').find('option:selected').attr('class');
+        validarCedula($(".select2"), tipoCliente ,$(".select2-selection") ,$("#error1"));
+      } 
+
+    });
+
+    $('#registrar').click(function(e) {
+      e.preventDefault();
+
+      if(click >= 1) throw new Error('Spam de clicks');
+
+       cedula = validarSelec2($(".select2"),$(".select2-selection"),$("#error1"),"Error de Cedula");
+       montoTotal = validarNumero($("#monto"),$("#error3"),"Error de monto");
+       valid_productos = validarSelectRepetidos('.select-productos' , '.filaProductos' , false);
+       valid_tipoPago =  validarSelectRepetidos('.select-tipo' , '.filaTipoPago', false);
+       stock = validCantidad();
+       precio = validPrecio();
+       referencia = validarReferencia();
+       $('.precioPorTipo input').each(function(){ validarValoresPositivos($(this)); });
+       valid_precioTipo = $('.precio-tipo').is('[valid="false"]')? false : true;
+       
+       if(cedula && montoTotal && valid_productos && valid_tipoPago && stock && precio && referencia && valid_precioTipo && validarTotal($("#monto"), $('.precio-tipo'))){
+        
+        cedula = $('#cedula').val();
+        tipoCliente = $('#cedula').find('option:selected').attr('class');
+        montoTotal = $("#monto").val();
+        totalDolares = $('#cambio').find('strong').text();
+        datosProducto = FilasProducto();
+        datosTipoPago = FilasTipoPago()
+
+        $.ajax({
+          url: '',
+          type: 'POST',
+          dataType: 'json',
+          data: {cedula , tipoCliente , montoTotal , totalDolares , datosProducto , datosTipoPago},
+          success(data){
+            if(data.resultado === 'ok'){
+            mostrar.destroy();
+            rellenar();  // FUNCIÓN PARA RELLENAR
+            $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
+            $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
+            $('.select2').removeClass('select-error');
+            $('.cerrar').click(); // CERRAR EL MODAL
+            $('.removeRow').click(); 
+            $('.removeRowPagoTipo').click(); 
+            $('.error').text('');
+            addNewRow()
+            addNewRowPago()
+            Toast.fire({ icon: 'success', title: data.msg }) // ALERTA 
+            }
+          }
+        }).fail(function(e){
+          Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+          throw new Error(e.responseJSON.msg);
+        })
+               
+       }
+       click++;
+
+    });
+
+    $('#cerrar').click(()=>{
+     $('.select2').val(0).trigger('change'); // LIMPIA EL SELECT2
+     $('#agregarform').trigger('reset'); // LIMPIAR EL FORMULARIO
+     $('.select2 ').removeClass('select-error');
+     $('#Agregar input').removeClass('input-error');
+     $('.removeRow').click(); // LIMPIAR FILAS
+     $('.removeRowPagoTipo').click(); // LIMPIAR FILAS TIPO PAGO
+     $('.error').text(" ");
+     addNewRow() // 
+     addNewRowPago()
+  })
+
+
+    $(document).on('click', '.factura' , function(){
+      id = this.id;
+
+      $.ajax({
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: {id, ticket: "factura"},
+        success(data){
+         if(data.respuesta === 'Archivo guardado'){
+          Toast.fire({ icon: 'success', title: 'Exportado correctamente.' });
+          descargarArchivo(data.ruta);
+        }else{
+          Toast.fire({ icon: 'error', title: 'Error de Exportado.' });
+        }
+      }
+    }).fail((e)=>{
+      Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+      throw new Error(e.responseJSON.msg);
+
+    })
+  })
+
+    function descargarArchivo(ruta){
+      let link =document.createElement('a');
+      link.href = ruta;
+      link.download = ruta.substr(ruta.lastIndexOf('/') + 1);
+      link.click();
+    }
+
+
+    $(document).on('click', '.borrar' , function(){
+      id = this.id
+    })
+
+      $('#delete').click(function(e) {
+
+        if (click >= 1) throw new Error('Spam de clicks'); 
+
+        $.ajax({
+          url: '',
+          type: 'POST',
+          dataType: 'json',
+          data: {anular: 'anular venta' , id},
+          success(data){
+            if(data.resultado === 'Venta eliminada'){
+              mostrar.destroy();
+              rellenar();
+              $('.cerrar').click();
+              Toast.fire({ icon: 'success', title: 'Venta anulada' }); // ALERTA 
+           }  
+        }
+      }).fail(function(e) {
+        Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+        throw new Error(e.responseJSON.msg);
+
+      })
+
+
+    });
 
 	
 });
