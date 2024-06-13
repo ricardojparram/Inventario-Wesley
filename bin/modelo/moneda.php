@@ -17,17 +17,18 @@ class moneda extends DBConnect{
    public function getAgregarCambio($alcambio,$tipo){
 
    	 if(preg_match_all("/^[0-9]{1,30}$/", $tipo) != 1){
-            $resultado = ['resultado' => 'Error de moneda' , 'error' => 'moneda inválido.'];
-            die($resultado);
+            $resultado = ['resultado' => 'Error' , 'error' => 'moneda inválido.'];
+            return $resultado;
         }
      if(preg_match_all("/^([0-9]+\.+[0-9]|[0-9])+$/", $alcambio) != 1){
-            die("Error de cambio!") ;
+          $resultado = ['resultado' => 'Error' , 'error' => 'valor inválido.'];
+          return $resultado;
         }
     
     $this->moneda = $tipo;
     $this->alcambio = $alcambio;
 
-     $this->agregarCambio(); 
+     return $this->agregarCambio(); 
 
 
    }
@@ -39,14 +40,14 @@ class moneda extends DBConnect{
       $new->bindValue(1 , $this->alcambio);
       $new->bindValue(2 , $this->moneda);
       $new->execute();
-      $resultado = ['resultado' => 'Registado con exito'];
-      echo json_encode($resultado);
+      $idC = $this->con->lastInsertId();
+      $resultado = ['resultado' => 'Registado con exito', 'idC' => $idC];
       $this->binnacle("Moneda",$_SESSION['cedula'],"Registró un Valor de Moneda.");
       parent::desconectarDB();
-      die();
+      return $resultado;
 
      }catch(\PDOexection $error){
-    	die($error);
+    	return $error;
       }
 
    }
@@ -57,9 +58,8 @@ class moneda extends DBConnect{
       $new->bindValue(1 , $nombreMon);
        $new->execute();
        $data = $new->fetchAll();
-       echo json_encode($data);
        parent::desconectarDB();
-       die();
+       return $data;
 
      }catch(\PDOexection $error){
 
@@ -74,9 +74,8 @@ class moneda extends DBConnect{
        $new = $this->con->prepare("SELECT * FROM `moneda` WHERE status = 1");
        $new->execute();
        $data = $new->fetchAll();
-       echo json_encode($data);
        parent::desconectarDB();
-       die();
+       return $data;
 
      }catch(\PDOexection $error){
 
@@ -88,7 +87,7 @@ class moneda extends DBConnect{
   public function getEliminarCambio($id){
    $this->id = $id;
 
-   $this->eliminarCambio();
+   return $this->eliminarCambio();
   }
 
   private function eliminarCambio(){
@@ -100,9 +99,8 @@ class moneda extends DBConnect{
       $new->execute();
       $resultado = ['resultado' => 'Eliminado'];
       $this->binnacle("Moneda",$_SESSION['cedula'],"Eliminó un Valor de Moneda.");
-      echo json_encode($resultado);
       parent::desconectarDB();
-      die();
+      return $resultado;
     }
     catch (\PDOException $error) {
       return $error;
@@ -113,7 +111,7 @@ class moneda extends DBConnect{
   public function mostrarUnico($unico){
     $this->id = $unico;
 
-    $this->unico();
+    return $this->unico();
   }
 
   private function unico(){
@@ -123,9 +121,9 @@ class moneda extends DBConnect{
       $new->bindValue(1, $this->id);
       $new->execute();
       $datas = $new->fetchAll();
-      echo json_encode($datas);
+      
       parent::desconectarDB();
-      die();
+      return $datas;
       
     } catch (\PDOException $error) {
       return $error;
@@ -135,12 +133,12 @@ class moneda extends DBConnect{
   public function getEditarCambio($alcambio,$moneda, $unico){
 
      if(preg_match_all("/^[0-9]{1,30}$/", $moneda) != 1){
-            $resultado = ['resultado' => 'Error de Moneda' , 'error' => 'Moneda inválido.'];
-            echo json_encode($resultado);
-            die();
+            $resultado = ['resultado' => 'Error' , 'error' => 'Moneda inválido.'];
+            return $resultado;
         }
      if(preg_match_all("/^([0-9]+\.+[0-9]|[0-9])+$/", $alcambio) != 1){
-            die("Error de cambio!");
+      $resultado = ['resultado' => 'Error' , 'error' => 'Cambio inválido.'];
+      return $resultado;
         }
     
     $this->moneda = $moneda;
@@ -150,7 +148,7 @@ class moneda extends DBConnect{
     date_default_timezone_set("america/caracas");
     $this->fechaActual = date("Y-m-d G:i:s");
 
-     $this->editarCambio(); 
+     return $this->editarCambio(); 
 
 
    }
@@ -168,8 +166,8 @@ class moneda extends DBConnect{
       $resultado = ['resultado' => 'Editado'];
       $this->binnacle("Moneda",$_SESSION['cedula'],"Editó un Valor de Moneda.");
       parent::desconectarDB();
-      echo json_encode($resultado);      
-      die();
+      return $resultado;    
+      
 
      }catch(\PDOexection $error){
       return $error;
@@ -190,10 +188,10 @@ class moneda extends DBConnect{
                                     GROUP BY m.id_moneda;");
        $new->execute();
        $data = $new->fetchAll();
-       echo json_encode($data);
+       
        if($bitacora) $this->binnacle("Moneda",$_SESSION['cedula'],"Consultó listado.");
        parent::desconectarDB();
-       die();
+       return $data;
 
      }catch(\PDOexection $error){
 
@@ -203,8 +201,9 @@ class moneda extends DBConnect{
    }
 
    public function getAgregarMoneda($name){
-    if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $name) == false){
-      die('moneda inválido.');
+    if(preg_match_all("/^[a-zA-ZÀ-ÿ ]{3,30}$/", $name) == false){
+      $resultado = ['resultado' => 'error', 'error' => 'Nombre de Moneda Invalida'];
+      return $resultado;
     }
     
     $this->moneda = $name;
@@ -219,11 +218,11 @@ class moneda extends DBConnect{
       $new = $this->con->prepare("INSERT INTO `moneda`(`id_moneda`, `nombre`, `status`) VALUES (DEFAULT,?,1)");
       $new->bindValue(1, $this->moneda);
       $new->execute();
-      $resultado = ['resultado' => 'Registado con exito'];
+      $idR = $this->con->lastInsertId();
+      $resultado = ['resultado' => 'Registado con exito', 'idR' => $idR];
       $this->binnacle("Moneda",$_SESSION['cedula'],"Registró una Moneda.");
-      echo json_encode($resultado);
-      parent::desconectarDB();      
-      die();
+      parent::desconectarDB();
+      return $resultado;
 
     }catch(\PDOexection $error){
       return $error;
@@ -235,14 +234,12 @@ class moneda extends DBConnect{
     
     try{
       parent::conectarDB();
-       $new = $this->con->prepare("SELECT * FROM `moneda` WHERE status = 1 and id_moneda = ?");
+       $new = $this->con->prepare("SELECT * FROM `moneda` WHERE id_moneda = ?");
        $new->bindValue(1, $this->id);
        $new->execute();
        $data = $new->fetchAll();
-       echo json_encode($data);
        parent::desconectarDB();
-       die();
-
+      return $data;
      }catch(\PDOexection $error){
 
        return $error;
@@ -253,8 +250,8 @@ class moneda extends DBConnect{
    }
 
    public function getEditarM($nameEdit, $id){
-     if(preg_match_all("/^[a-zA-ZÀ-ÿ]{3,30}$/", $nameEdit) == false){
-      die('moneda inválido.');
+     if(preg_match_all("/^[a-zA-ZÀ-ÿ ]{3,30}$/", $nameEdit) == false){
+      return ['resultado' => 'error', 'error' => 'Nombre de Moneda Invalida'];
     }
     
     $this->id = $id;
@@ -272,9 +269,8 @@ class moneda extends DBConnect{
       $new->execute();
       $resultado = ['resultado' => 'Actualizado con exito'];
       $this->binnacle("Moneda",$_SESSION['cedula'],"Editó una Moneda.");
-      echo json_encode($resultado);
       parent::desconectarDB(); 
-      die();
+      return $resultado;
 
     }catch(\PDOexection $error){
       return $error;
@@ -291,40 +287,14 @@ class moneda extends DBConnect{
        $new->execute();
        $data = ['resultado' => 'Eliminado con exito'];
        $this->binnacle("Moneda",$_SESSION['cedula'],"Eliminó una Moneda.");
-       echo json_encode($data);
        parent::desconectarDB();
-       die();
+       return $data;
 
      }catch(\PDOexection $error){
 
        return $error;
 
      }
-  }
-
-  public function  actualizarMoneda(){
-  //   if (extension_loaded('openssl')) {
-  //     echo 'OpenSSL está habilitado en tu servidor.';
-  // } else {
-  //     echo 'OpenSSL no está habilitado en tu servidor.';
-  // }
-  // die();
-    
-    // Obtener el contenido HTML de una página web a través de su URL
-    $html = file_get_contents('https://www.bcv.org.ve/');
-
-    // Crear un objeto DOMDocument
-    $dom = new DOMDocument();
-
-    // Cargar el contenido HTML desde la variable
-    $dom->loadHTML($html);
-
-    // Crear un nuevo elemento y añadirlo al DOM
-    $newElement = $dom->createElement('p', 'Nuevo párrafo');
-    $dom->getElementsById('euro')->item(0)->appendChild($newElement);
-
-    echo $newElement;
-    die();
   }
 
 }

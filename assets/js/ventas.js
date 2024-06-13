@@ -155,7 +155,7 @@
             if(row.cambio == 0) alcambio = "" 
            option += `<option id="${alcambio}" class="option" value="${row.id_cambio}" >${row.nombre} ${alcambio}</option>`
          })
-          $('.select2M').each(function(){
+          $('.cedula').each(function(){
             if(this.children.length == 1){
               $(this).append(option);
               

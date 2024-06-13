@@ -54,7 +54,7 @@
   	die(json_encode($res));
   }
 
-  if(isset($_POST['eliminar']) && isset($_POST['id']) ) {
+  if(isset($_POST['eliminar']) && isset($_POST['id']) && $permiso["Eliminar"] == 1) {
   	$res = $objModel->getEliminarEmpleado($_POST['id']);
   	die(json_encode($res));
   }

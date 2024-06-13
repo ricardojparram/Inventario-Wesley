@@ -31,7 +31,7 @@ $(document).ready(function(){
             </tr>
             `;
           })
-          $('#tbody').html(tabla);
+          $('#tbody').html(tabla ? tabla : '');
           mostrar = $('#tabla').DataTable({
             resposive : true
           })
