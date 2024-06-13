@@ -110,7 +110,7 @@ $(document).ready(function () {
             Toast.fire({ icon: "success", title: data.msg });
         }, "json",).fail((m) => {
             Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-            throw new Error("Error: " + m);
+            console.error("Error: " + m);
         }).always(() => {
             $("#registrar").prop('disabled', false);
         });
@@ -166,7 +166,7 @@ $(document).ready(function () {
 
         if (!vnombre || !vdireccion || !vrif, !vcontacto) throw new Error("Error.");
 
-        
+
         const body = {
             rifEdit: $("#rifEdit").val(),
             razonEdit: $("#razonEdit").val(),
@@ -185,11 +185,11 @@ $(document).ready(function () {
             rellenar();
             $("#cerrarE").click();
             Toast.fire({ icon: "success", title: data.msg });
-        }, "json",).fail((e) => {
-            Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-            throw new Error("Error al mostrar listado: " + e);
-        }).always(() => {
+        }, "json",).always(() => {
             $("#editar").prop('disabled', false);
+        }).fail((e) => {
+            Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
+            console.error(e.responseJSON.msg);
         });
         click++
     });
@@ -203,8 +203,9 @@ $(document).ready(function () {
         if (click >= 1) throw new Error("spaaam");
 
         $("#borrar").prop('disabled', true);
+
         $.post("", { eliminar: "", cedulaId }, (data) => {
-            if (data.resultado != "ok") {
+            if (data.resultado !== "ok") {
                 Toast.fire({ icon: "error", title: data.msg });
                 throw new Error(data.msg);
             }
@@ -213,27 +214,27 @@ $(document).ready(function () {
             $("#cerrarB").click();
             rellenar();
             Toast.fire({ icon: "success", title: data.msg });
-        }, "json",).fail((e) => {
-            Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-            throw new Error("Error al mostrar listado: " + e);
-        }).always(() => {
+        }, "json").always(() => {
             $("#borrar").prop('disabled', false);
+        }).fail((e) => {
+            Toast.fire({ icon: "error", title: e.responseJSON.msg });
+            throw new Error(e.responseJSON.msg);
         });
         click++
     });
 
     // Vacio de Modales
-	$(document).on('click', '#cerrarE', function () {
-		$('#editarform p').text(" ");
-		$("#editarform input").removeClass('input-error')
-	})
-	$(document).on('click', '#cerraR', function () {
-		$('#agregarform p').text(" ");
-		$("#agregarform input").removeClass('input-error')
-	})
-	$(document).on('click', '#cerrarB', function () {
-		$("#deleteModal p").text(" ");
-	})
+    $(document).on('click', '#cerrarE', function () {
+        $('#editarform p').text(" ");
+        $("#editarform input").removeClass('input-error')
+    })
+    $(document).on('click', '#cerraR', function () {
+        $('#agregarform p').text(" ");
+        $("#agregarform input").removeClass('input-error')
+    })
+    $(document).on('click', '#cerrarB', function () {
+        $("#deleteModal p").text(" ");
+    })
 
 
 

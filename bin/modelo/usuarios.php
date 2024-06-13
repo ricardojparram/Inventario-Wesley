@@ -113,7 +113,7 @@ class usuarios extends DBConnect {
 
     try {
       parent::conectarDB();
-      $query = "SELECT u.cedula, u.nombre, u.apellido, u.correo, r.nombre as rol FROM usuario u INNER JOIN rol r ON u.rol = r.id_rol WHERE u.status = 1";
+      $query = "SELECT u.cedula, u.nombre, u.apellido, u.correo, r.nombre as rol FROM usuario u INNER JOIN rol r ON u.rol = r.id_rol WHERE u.status = 1 AND u.cedula <> 'V-123123123'";
 
       $new = $this->con->prepare($query);
       $new->execute();

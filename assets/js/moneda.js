@@ -196,7 +196,7 @@ $(document).ready(function () {
 				},
 				error(e) {
 					Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-					throw new Error(e.responseJSON.msg);
+					console.error(e.responseJSON.msg);
 				},
 				complete() {
 					$("#eliminar").prop('disabled', false);

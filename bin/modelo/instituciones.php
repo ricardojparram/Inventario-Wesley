@@ -218,6 +218,9 @@ class instituciones extends DBConnect
     private function eliminarInstituciones()
     {
         try {
+            $donacion = $this->validarInstitucionRegis($this->rif);
+            if(!$donacion) return $this->http_error(400, 'La Institucion no se puede eliminar');
+
             $this->conectarDB();
             $new = $this->con->prepare('UPDATE instituciones SET status = 0 WHERE rif_int = ?; ');
             $new->bindValue(1, $this->rif);
@@ -225,6 +228,21 @@ class instituciones extends DBConnect
             $this->binnacle('int', $_SESSION['cedula'], 'Eliminó una Institucion.');
             $this->desconectarDB();
             return ['resultado' => 'ok', 'msg' => "Se ha eliminado correctamente la Institucion {$this->rif}."];
+        } catch (\PDOException $e) {
+            return $this->http_error(500, $e->getMessage());
+        }
+    }
+
+    private function validarInstitucionRegis($rif){
+        try {
+            parent::conectarDB();
+            $new = $this->con->prepare('SELECT * FROM `donativo_int` WHERE rif_int = ?;');
+            $new->bindValue(1, $rif);
+            $new->execute();
+            $data = $new->fetchAll();
+            if (isset($data)) return false;
+            return true;
+            parent::desconectarDB();
         } catch (\PDOException $e) {
             return $this->http_error(500, $e->getMessage());
         }

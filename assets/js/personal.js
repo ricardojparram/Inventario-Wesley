@@ -306,7 +306,10 @@ $(document).ready(function() {
 						$("#cerrarDel").click();
 						Toast.fire({ icon: 'error', title: 'Personal Eliminado', showCloseButton: true })
 						rellenar();
-					} else {
+					} else if(data.resultado === "Error"){
+                        $("#errorDel").text("Error, "+data.msj);
+                    }
+                    else {
 						tabla.destroy();
 						$("#errorDel").text("El Personal no Pudo Ser Eliminado");
 						rellenar();

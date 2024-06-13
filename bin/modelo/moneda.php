@@ -135,6 +135,7 @@ class moneda extends DBConnect
   {
 
     try {
+      if ($id == 1 || $id == 2) return $this->http_error(400, 'No se Puede Eliminar esta Moneda');
       parent::conectarDB();
       $new = $this->con->prepare("UPDATE moneda SET status = 0 WHERE id_moneda = ? AND status = 1");
       $new->bindValue(1, $id);
@@ -247,7 +248,6 @@ class moneda extends DBConnect
   public function mostrarUnico($unico)
   {
     $this->id = $unico;
-
     return $this->unico();
   }
 
@@ -384,4 +384,8 @@ class moneda extends DBConnect
       return $this->http_error(500, $error);
     }
   }
+
+
+
+
 }
