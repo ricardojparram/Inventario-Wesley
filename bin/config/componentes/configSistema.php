@@ -4,7 +4,7 @@ namespace config\componentes;
 
 use Dotenv\Dotenv as Dotenv;
 
-if(!isset($_ENV["DB"])) {
+if (!isset($_ENV["DB"])) {
     $dotenv = Dotenv::createImmutable(__DIR__, "../../../.env");
     $dotenv->load();
 }
@@ -21,10 +21,6 @@ define("CONTROLADOR", "Controlador.php");
 define("_SMTP", $_ENV['SMTP']);
 define("_SMTP_USER", $_ENV['SMTP_USER']);
 define("_SMTP_PASS", $_ENV['SMTP_PASS']);
-define("KEY", $_ENV['KEY']);
-define("CIPHER", $_ENV['CIPHER']);
-define("IV", $_ENV['IV']);
-
 
 class configSistema
 {
@@ -70,20 +66,5 @@ class configSistema
     public function _Control_()
     {
         return CONTROLADOR;
-    }
-
-    public function KEY()
-    {
-        return KEY;
-    }
-
-    public function CIPHER()
-    {
-        return CIPHER;
-    }
-
-    public function IV()
-    {
-        return IV;
     }
 }

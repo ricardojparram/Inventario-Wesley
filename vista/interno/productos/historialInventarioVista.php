@@ -39,7 +39,7 @@
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <h1> Inventario de productos</h1>
+            <h1> Historial del Inventario de productos</h1>
           </li>
         </ol>
       </nav>
@@ -53,7 +53,6 @@
           <div class="col-6">
             <h5 class="card-title"></h5>
           </div>
-
           <br>
 
           <!-- COMIENZO DE TABLA -->
@@ -62,14 +61,15 @@
               <thead>
 
                 <tr>
-                  <th scope="col">Nombre</th>
-                  <th scope="col">Peso</th>
-                  <th scope="col">Medida</th>
+                  <th scope="col">Usuario</th>
+                  <th scope="col">Sede</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Producto</th>
+                  <th scope="col">Entrada</th>
+                  <th scope="col">Salida</th>
+                  <th scope="col">Tipo movimiento</th>
                   <th scope="col">Lote</th>
-                  <th scope="col">Fecha de vencimiento</th>
-                  <th scope="col">Inventario</th>
-                  <th scope="col">Tipo</th>
-                  <th scope="col">Clase</th>
+                  <th scope="col">Cantidad</th>
                 </tr>
               </thead>
 
@@ -93,7 +93,7 @@
 
 <?php $VarComp->js(); ?>
 
-<script src="assets/js/inventario.js"></script>
+<script src="assets/js/historialInventario.js"></script>
 
 
 

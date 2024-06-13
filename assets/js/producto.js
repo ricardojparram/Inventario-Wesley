@@ -58,31 +58,15 @@ $(document).ready(function () {
       $("#cod_producto"),
       $("#error1"),
       "Error de codigo",
-      50,
+      50
     );
   });
-  //$('#tipoprod').change(function(){
-  //  validarSelect($("#tipoprod"),$("#error2"),"Error, elige el nombre del producto");
-  //})
-  // $('#presentacion').change(function(){
-  //validarSelect($("#presentación"),$("#error3"),"Error, elige presentación");
-  //})
-  //$('#laboratorio').change(function(){
-  //validarSelect($("#laboratorio"),$("#error4"),"Error, elige laboratorio");
-  //})
-  //$('#tipoP').change(function(){
-  //validarSelect($("#tipoP"),$("#error5"),"Error, elige tipo producto");
-  //})
-  //$('#clase').change(function(){
-  //validarSelect($("#clase"),$("#error6"),"Error, elige clase");
-  //})
-  //$('#composicion').keyup(()=> {validarStringLength($("#composición"),$("#error7"),"Error de Composición", 50) });
   $("#posologia").keyup(() => {
     validarStringLength(
       $("#posologia"),
       $("#error8"),
       "Error de posologia",
-      400,
+      400
     );
   });
   $("#contraIn").keyup(() => {
@@ -90,7 +74,7 @@ $(document).ready(function () {
       $("#contraIn"),
       $("#error9"),
       "Error elige ubicación",
-      400,
+      400
     );
   });
 
@@ -101,24 +85,24 @@ $(document).ready(function () {
 
   /* --- AGREGAR --- */
 
-  $("#boton").click((e) => {
-    if (click >= 1) throw new Error("Spam de clicks");
+  $("#agregarform").submit((e) => {
+    e.preventDefault();
 
     let cod_producto = validarStringLength(
       $("#cod_producto"),
       $("#error1"),
       "Error del código",
-      50,
+      50
     );
     let tipoprod = validarSelect(
       $("#tipoprod"),
       $("#error2"),
-      "Error tipo producto",
+      "Error tipo producto"
     );
     let presentacion = validarSelect(
       $("#presentacion"),
       $("#error3"),
-      "Error presentación",
+      "Error presentación"
     );
     //let laboratorio = validarSelect($("#laboratorio"),$("#error4"),"Error laboratorio");
     let tipo = validarSelect($("#tipoP"), $("#error5"), "Error tipo producto");
@@ -127,26 +111,25 @@ $(document).ready(function () {
       $("#composicion"),
       $("#error7"),
       "Error de Composición",
-      50,
+      50
     );
     let posologia = validarStringLength(
       $("#posologia"),
       $("#error8"),
       "Error de posologia",
-      400,
+      400
     );
     let contraIn = validarStringLength(
       $("#contraIn"),
       $("#error9"),
       "Error contraindicaciones",
-      400,
+      400
     );
 
     if (
       cod_producto &&
       tipoprod &&
       presentacion &&
-      laboratorio &&
       tipoP &&
       clase &&
       composicion &&
@@ -190,10 +173,7 @@ $(document).ready(function () {
           Toast.fire({ icon: "success", title: "Producto registrado" });
         },
       });
-    } else {
-      e.preventDefault();
     }
-    click++;
   });
 
   /* --- CERRAR REGISTRAR --- */
@@ -203,12 +183,12 @@ $(document).ready(function () {
     $("#basicModal input").attr(
       "style",
       "borden-color:none;",
-      "borden-color:none;",
+      "borden-color:none;"
     );
     $("#basicModal select").attr(
       "style",
       "borden-color:none;",
-      "borden-color:none;",
+      "borden-color:none;"
     );
     $(".error").text("");
     fechaHoy($("#fecha"));
@@ -220,12 +200,12 @@ $(document).ready(function () {
     $("#editModal input").attr(
       "style",
       "borden-color:none;",
-      "borden-color:none;",
+      "borden-color:none;"
     );
     $("#editModal select").attr(
       "style",
       "borden-color:none;",
-      "borden-color:none;",
+      "borden-color:none;"
     );
     $("#error").text("");
     fechaHoy($("#fecha"));
@@ -260,17 +240,13 @@ $(document).ready(function () {
   });
 
   $("#cod_productoEd").keyup(() =>
-    validarStringLength(
-      $("#cod_productoEd"),
-      $("#errorE1"),
-      "Error del código",
-    ),
+    validarStringLength($("#cod_productoEd"), $("#errorE1"), "Error del código")
   );
   $("#tipoprodEd").change(function () {
     validarSelect(
       $("#tipoprodEd"),
       $("#errorE2"),
-      "Error al seleccionar el nombre del producto",
+      "Error al seleccionar el nombre del producto"
     );
   });
   $("#presentaciónEd").change(function () {
@@ -289,7 +265,7 @@ $(document).ready(function () {
     validarStringLength(
       $("#composicionEd"),
       $("#errorE7"),
-      "Error de Composición",
+      "Error de Composición"
     );
   });
   $("#posologiaEd").keyup(() => {
@@ -299,7 +275,7 @@ $(document).ready(function () {
     validarStringLength(
       $("#contraInEd"),
       $("#errorE9"),
-      "Error de contraindicaciones",
+      "Error de contraindicaciones"
     );
   });
 
@@ -311,53 +287,52 @@ $(document).ready(function () {
       $("#cod_productoEd"),
       $("#errorE1"),
       "Error del código",
-      50,
+      50
     );
     let tipoprodEd = validarSelect(
       $("#tipoprodEd"),
       $("#errorE2"),
-      "Error al seleccionar nombre del producto",
+      "Error al seleccionar nombre del producto"
     );
     let presentaciónEd = validarSelect(
       $("#presentacionEd"),
       $("#errorE3"),
-      "Error presentación",
+      "Error presentación"
     );
     let laboratorioEd = validarSelect(
       $("#laboratorioEd"),
       $("#errorE4"),
-      "Error laboratorio",
+      "Error laboratorio"
     );
     let tipoEd = validarSelect(
       $("#tipoEd"),
       $("#errorE5"),
-      "Error tipo producto",
+      "Error tipo producto"
     );
     let claseEd = validarSelect($("#claseEd"), $("#errorE6"), "Error clase");
     let composicionEd = validarStringLength(
       $("#composicionEd"),
       $("#errorE7"),
       "Error de Composición",
-      50,
+      50
     );
     let posologiaEd = validarStringLength(
       $("#posologiaEd"),
       $("#errorE8"),
       "Error de posologia",
-      400,
+      400
     );
     let contraInEd = validarStringLength(
       $("#contraInEd"),
       $("#errorE9"),
       "Error de contraindicaciones",
-      400,
+      400
     );
 
     if (
       cod_productoEd &&
       tipoprodEd &&
       presentaciónEd &&
-      laboratorioEd &&
       tipoEd &&
       claseEd &&
       composicionEd &&
@@ -545,7 +520,7 @@ $(document).ready(function () {
           $("#progressBar").html(porcentaje + "%");
         }
       },
-      false,
+      false
     );
     xhr.addEventListener(
       "progress",
@@ -559,7 +534,7 @@ $(document).ready(function () {
           $("#progressBar").html("Upload");
         }
       },
-      false,
+      false
     );
 
     return xhr;
