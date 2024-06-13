@@ -57,14 +57,14 @@
               <h5 class="card-title col-6 ml-3">Ventas de Productos</h5>
 
               <div class="text-end col-6 mt-3" >
-               <button type="button" id="#agregarModals" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
+               <button type="button" id="#agregarModals" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
               </div>
 
               </div>
               <!-- Table Inicio-->
               
               <div class="table-responsive">
-                <table class="table table-bordered" id="tableMostrar" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="tabla" width="100%" cellspacing="0">
                   <thead>
 
                     <tr>
@@ -192,51 +192,15 @@
                 <div class="form-group col-md-6">                          
                   <label for="inputText" class="col-sm-3 col-form-label"><strong>Cliente</strong></label>
                   <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una cédula registrada en el sistema."><i class="bi bi-person-fill"></i></button>
-                    <select class="form-control select2" placeholder="Cédula" id="cedula">
-                      <option value="0" selected disabled>Clientes</option>
-                      <?php if(isset($mostrarC)){
-                        foreach($mostrarC as $data){
-                          ?> 
-                          <option value="<?php echo $data->cedulaE;?>" class="opcion"><?php echo $data->nombre;?> <?php echo $data->apellido;?> <?php echo $data->cedula;?></option>
-                          <?php
-                        }
-                      }else{"";}?>
-                    </select> 
+                   <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una cédula registrada en el sistema."><i class="bi bi-person-fill"></i></button>
+                  <select class="form-control select2 grupo-opciones" data-placeholder="Cliente" id="cedula">
+                    <option></option>
+                    <optgroup label="Personal"> </optgroup>
+                    <optgroup label="Pacientes"> </optgroup>
+                  </select>
                   </div>
                   <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>
                 </div>
-
-                <div class="form-group col-md-6">                          
-                  <label class="col-form-label"> <strong>Moneda</strong> </label>
-                  <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Evaluara el Total al valor de la moneda Seleccionada"><i class="bi bi-currency-exchange"></i></button> 
-                    <select class="form-select select2M" id="moneda">
-                      <option selected disabled>Moneda</option>
-                    </select>
-                  </div>
-                  <p class="error" style="color:#ff0000;text-align: center;" id="error5"></p>
-                </div>
-
-              </div>
-            </div>
-          </div> 
-
-          <div class="form-group col-md-12">  
-            <div class="container-fluid">
-              <div class="row">
-
-
-
-              <div class="form-group col-md-6">  
-                <label class="col-form-label" for="config_iva"><strong>IVA</strong></label>
-                <div class="input-group">
-                  <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca un IVA para la venta">%</button> 
-                  <input class="form-control iva" type="text" id="config_iva" value="16"/>
-                </div>
-                <p class="error" style="color:#ff0000;text-align: center;" id="error4"></p>
-              </div>
-
 
               <div class="form-group col-md-6">                          
                 <label class="col-form-label"> <strong>Monto</strong> </label>
@@ -253,16 +217,17 @@
         
         <div class="row">
 
-          <div class="form-group col-md h-75 my-3">  
+          <div class="form-group col-md-12 h-75 my-3">  
             <div class="container-fluid">
               <div class="row">
-                <div class="table table-body-tipo form-group col-12">
+                <div class="table table-body-tipo form-group">
 
                   <table class="table table-striped">
                     <thead>
                       <tr>
                         <th></th>
                         <th>Tipo Pago</th>
+                        <th>Referencia</th>
                         <th>Precio</th>
                       </tr>
                     </thead>
@@ -274,22 +239,22 @@
                             <option></option>
                           </select>
                         </td>
+                        <td width='15%' class="referencia"><input class="select-asd ref" type="number" value=""/></td>
                         <td width='15%' class="precioPorTipo"><input class="select-asd precio-tipo" type="number" value=""/></td>
                       </tr>
-                     
+                    
                     </tbody>
                   </table>
 
                    <p class="filaTipoPago error" style="color:#ff0000;text-align: center;"></p>
-                  <a class="newRowPago a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva fila</a> <br>
-
+                   <a class="newRowPago a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva Fila</a><br>
                 </div>
               </div>
             </div>
 
           </div>
 
-        <div class="form-group col-md my-3">  
+        <div class="form-group col-md-12 my-3">  
           <div class="container-fluid">
             <div class="row">
               <div class="table table-body form-group col-12">
@@ -301,7 +266,6 @@
                       <th>Producto</th>
                       <th>Cantidad</th>
                       <th>Precio</th>
-                      <th>IVA</th>
                       <th>Total</th>
                     </tr>
                   </thead>
@@ -314,19 +278,17 @@
                         </select>
                       </td>
                       <td width='10%' class="amount"><input class="select-asd stock" type="number" value=""/></td>
-                      <td width='10%' class="rate"><input class="select-asd" type="number" disabled value="" /></td>
-                      <td width='10%'class="tax"></td>
-                      <td width='10%' class="sum"></td>
+                      <td width='15%' class="rate"><input class="select-asd precio" type="number" disabled value="" /></td>
+                      <td width='15%' class="sum"></td>
                     </tr>
                   </tbody>
                 </table>
 
                 <p class="filaProductos error" style="color:#ff0000;text-align: center;"></p>
-
                 <a class="newRow a-asd" href="#"><i class="bi bi-plus-circle-fill"></i> Nueva fila</a> <br>
                 <div class="text-end pt-4">
+                  <p class="dolar" style=" display:none "></p>
                   <p class="text-end" id="montos"></p>
-                  <p class="text-end" id="montos2"></p>
                   <p class="text-end"id="cambio"></p>
                 </div>
               </div>
@@ -340,7 +302,7 @@
       <p id="pValid" class="error" style="color:#ff0000;text-align: center;"></p>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary cerrar" id="cerrar" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
+        <button type="submit" class="btn btn-registrar" id="registrar">Registrar</button>
       </div>
     </form>
   </div>

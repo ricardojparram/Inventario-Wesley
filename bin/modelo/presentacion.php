@@ -18,27 +18,38 @@
 
       public function mostrarPresentacionAjax(){
 
+      try {
+            parent::conectarDB();
+        $query = "SELECT p.cod_pres, p.cantidad, m.nombre, p.peso FROM presentacion p, medida m WHERE p.status = 1 and  p.id_medida = m.id_medida ";
+            $new = $this->con->prepare($query);
+            $new->execute();
+            $data = $new->fetchAll(\PDO::FETCH_OBJ);
+            echo json_encode($data);
+            parent::desconectarDB();
+            die();
+      } catch (\PDOException $error) {
+        return $error;
+        
+      }
+      }
+
+       public function mostrarMedida(){
         try{
-          $this->conectarDB();
-          $new = $this->con->prepare("SELECT  cantidad, medida, peso, CONCAT('<button type=\"button\" id=\"', cod_pres ,'\" class=\"btn btn-success editar\" data-bs-toggle=\"modal\" data-bs-target=\"#Editar\"><i class=\"bi bi-pencil\"></i></button>
+      parent::conectarDB();
+      $new = $this->con->prepare("SELECT * FROM medida m  WHERE m.status = 1");
+      $new->execute();
+      $data = $new->fetchAll(\PDO::FETCH_OBJ);
+      parent::desconectarDB();
+      return $data;
 
-            <button type=\"button\" id=\"', cod_pres ,'\" class=\"btn btn-danger borrar\" data-bs-toggle=\"modal\" data-bs-target=\"#Borrar\"><i class=\"bi bi-trash3\"></i></button>') as opciones FROM presentacion WHERE status = 1;");
+    }catch(\PDOexection $error){
 
-          $new->execute();
-          $data = $new->fetchAll();
-          $this->desconectarDB();
-          echo json_encode($data);
-          die();
-
-        }catch(\PDOException $e){
-          return $e;
-        }
-      } 
+     return $error;   
+   } 
+  } 
 
 
       public function getDatosPres($medida,$cantidad,$peso){
-
-
 
         $this->medida = $medida;
         $this->cantidad = $cantidad;
@@ -53,7 +64,7 @@
 
         try{
               $this->conectarDB();
-              $new = $this->con->prepare("INSERT INTO presentacion(cod_pres,medida,cantidad,peso,status) VALUES(DEFAULT,?,?,?,1)");
+              $new = $this->con->prepare("INSERT INTO presentacion(cod_pres,id_medida,cantidad,peso,status) VALUES(DEFAULT,?,?,?,1)");
               
               $new->bindValue(1, $this->medida); 
               $new->bindValue(3, $this->cantidad); 
@@ -94,7 +105,9 @@
 
     }
 
-   public function getEditar($medida, $cantidad, $peso,$id){
+   public function getEditar($medida, $cantidad, $peso, $id){
+
+   
 
         $this->medida= $medida;
         $this->cantidad = $cantidad;
@@ -108,8 +121,7 @@
 
         try{
             $this->conectarDB();
-            $new = $this->con->prepare("
-              UPDATE presentacion SET medida = ?, cantidad= ?, peso= ? WHERE cod_pres= ?");
+            $new = $this->con->prepare("UPDATE presentacion SET id_medida = ?, cantidad= ?, peso= ? WHERE cod_pres= ?");
             $new->bindValue(1, $this->medida);
             $new->bindValue(2, $this->cantidad);
             $new->bindValue(3, $this->peso);
@@ -123,7 +135,7 @@
         }catch(\PDOException $error){
             echo json_encode($error);
             die();
-        }
+        } 
 
     } 
 

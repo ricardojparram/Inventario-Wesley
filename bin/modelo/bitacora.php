@@ -13,7 +13,7 @@ class bitacora extends DBConnect{
     public function mostrarBitacora(){
         try {
             parent::conectarDB();
-            $new = $this->con->prepare("SELECT b.modulo, concat(u.nombre,' ',u.apellido) as nombre, b.descripcion, b.fecha FROM bitacora b INNER JOIN usuario u ON b.usuario = u.cedula WHERE b.status = 1");
+            $new = $this->con->prepare("SELECT concat(u.nombre,' ',u.apellido) as nombre, b.descripcion, b.fecha FROM bitacora b INNER JOIN usuario u ON b.cedula = u.cedula WHERE b.status = 1");
             $new->execute();
             $data = $new->fetchAll();
             echo json_encode($data);

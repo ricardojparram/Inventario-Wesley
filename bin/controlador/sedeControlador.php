@@ -8,7 +8,6 @@
 	if(!isset($_SESSION['nivel'])) die('<script> window.location = "?url=login" </script>');
 
 	$model = new sede();
-
 	$permisos = $model->getPermisosRol($_SESSION['nivel']);
 	$permiso = $permisos['Sedes'];
 
@@ -19,40 +18,36 @@
 		$objModel->getNotificacion();
 	}
 
-	$selectEmpresa = $model->selectEmpresas();
-	$selectEstados = $model->selectEstados();
+	
 
 	if(isset($_POST['getPermisos'], $permiso['Consultar'])){
 		die(json_encode($permiso));
 	}
 
 	if(isset($_POST['mostrar'], $_POST['bitacora'])){
-		$res = $model->mostrarSedes($_POST['bitacora']);
+		$res = $model->getMostrarSede($_POST['bitacora']);
 		die(json_encode($res));
+
 	}
 
-	if(isset($_POST['validar'], $_POST['empresa'], $permiso['Consultar'])){
-		$validar = $model->getValidarEmpresa($_POST['empresa']);
-		die(json_encode(['resultado' => $validar]));
-	}
 
-	if(isset($_POST['registrar'], $_POST['empresa'], $_POST['estado'], $_POST['nombre'], $_POST['ubicacion'], $permiso['Registrar'])){
-		$res = $model->getRegistrarSede($_POST['empresa'], $_POST['estado'], $_POST['nombre'], $_POST['ubicacion']);
+	if(isset($_POST['registrar'], $_POST['nombre'],$_POST['telefono'], $_POST['direccion'], $permiso['Registrar'])){
+		$res = $model->getAgregarSede($_POST['nombre'],$_POST['telefono'], $_POST['direccion']);
 		die(json_encode($res));
 	}
 
 	if(isset($_POST['select'], $_POST['id'], $permiso['Editar'])){
-		$respuesta = $model->getSede($_POST['id']);
+		$respuesta = $model->mostrarSe($_POST['id']);
 		die(json_encode($respuesta));
 	}
 
-	if(isset($_POST['editar'], $_POST['id'], $_POST['empresa'], $_POST['estado'], $_POST['nombre'], $_POST['ubicacion'], $permiso['Editar'])){
-		$res = $model->getEditarSede( $_POST['empresa'], $_POST['estado'], $_POST['nombre'], $_POST['ubicacion'], $_POST['id']);
+	if(isset($_POST['editar'], $_POST['id'], $_POST['nombre'], $_POST['telefono'], $_POST['direccion'], $permiso['Editar'])){
+		$res = $model->getEditarSede($_POST['nombre'], $_POST['telefono'], $_POST['direccion'], $_POST['id']);
 		die(json_encode($res));
 	}
 
 	if(isset($_POST['eliminar'], $_POST['id'], $permiso['Eliminar'])){
-		$res = $model->getEliminarSede($_POST['id']);
+		$res = $model->getElimarSede($_POST['id']);
 		die(json_encode($res));
 	}
 

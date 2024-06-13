@@ -27,7 +27,7 @@ function rellenar(bitacora = false){
 		<tr>
 		<td>${row.nombre_t}</td>
 		<td class="d-flex justify-content-center">
-		<button type="button" ${editarPermiso} id="${row.id_tipo}" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
+		<button type="button" ${editarPermiso} id="${row.id_tipo}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
 		<button type="button" ${eliminarPermiso} id="${row.id_tipo}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
 		</td>
 		</tr>
@@ -101,7 +101,7 @@ $("#delete").click((e)=>{
 			if (tipoE.resultado === "Eliminado"){
 				mostrar.destroy();
 				$("#cerrar").click();
-				Toast.fire({icon: 'error', title:'tipo de Producto eliminado'})
+				Toast.fire({icon: 'success', title:'Tipo de Producto eliminado'})
 				rellenar();
 			}else{
 				console.log("No se elimino");
@@ -124,7 +124,7 @@ $(document).on('click', '.editar', function(){
 
 		success(log){
 			console.log(log);
-			$("#tipNomEdit").val(log[0].des_tipo);
+			$("#tipNomEdit").val(log[0].nombre_t);
 		}
 
 

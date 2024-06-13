@@ -47,6 +47,8 @@ if (isset($_POST["borrar"]) && isset($_POST["id"]) && $permiso['Eliminar'] == 1)
  if(isset($_POST["tipoEditar"]) && isset($_POST["tipoedit"]) && $permiso['Editar'] ==1){
  	$res = $objModel->getEditarTipo($_POST["tipoEditar"], $_POST["tipoedit"]);
 	die(json_encode($res));
+ 	$res = $objModel->getEditarTipo($_POST["tipoEditar"], $_POST["tipoedit"]);
+	die(json_encode($res));
  }
 
 	$VarComp = new initcomponents();

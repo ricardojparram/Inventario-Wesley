@@ -12,15 +12,16 @@
   $permiso = $permisos['Presentacion'];
   
 
-  if(isset($_POST['mostrar'], $permiso['Consultar'])){
+  if(isset($_POST['mostrars'])){
 
     $objModel->mostrarPresentacionAjax();
   }
 
-  if(isset($_POST['med'])  && isset($_POST['cant']) && isset($_POST['pes']) && isset($permiso['Registrar'])){
+  $mostrarMedida = $objModel->mostrarMedida();
 
-  	
-      
+  if(isset($_POST['med'])  && isset($_POST['cant']) && isset($_POST['pes']) ){
+
+    
     $respuesta = $objModel->getDatosPres($_POST['med'], $_POST['cant'], $_POST['pes']);
 
   }
@@ -32,13 +33,14 @@
 
 
 
-  if(isset($_POST['medEdit']) && isset($_POST['cantEdit']) && isset($_POST['pesEdit']) && isset($permiso['Editar'])){
+  if(isset($_POST['medEdit']) && isset($_POST['cantEdit']) && isset($_POST['pesEdit']) ){
+
 
     $respuesta = $objModel->getEditar($_POST['medEdit'], $_POST['cantEdit'], $_POST['pesEdit'], $_POST['id']);
 
   }
 
-  if(isset($_POST['eliminar'])  && isset($permiso['Eliminar'])){
+  if(isset($_POST['borrar'])  && isset($permiso['Eliminar'])){
     $objModel->getEliminar($_POST['id']);
   }
   

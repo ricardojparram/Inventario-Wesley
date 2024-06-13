@@ -2,7 +2,14 @@ $(document).ready(function(){
 
   let timeoutId;
   $("#cedula").keyup(()=>{ 
-    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,");
+    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,", $("#preDocument"));
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function() {
+      if(valid) validarCedulaBD();
+    }, 700);
+  })
+  $("#preDocument").change(()=>{ 
+    let valid = validarCedula($("#cedula"),$("#error") ,"Error de cedula,", $("#preDocument"));
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function() {
       if(valid) validarCedulaBD();
@@ -15,14 +22,14 @@ $(document).ready(function(){
     $.ajax({ type: "post", url: '', dataType: 'json',
       data: {
         login: '',
-        cedula: $("#cedula").val(),
+        cedula: $("#preDocument").val()+"-"+$("#cedula").val(),
         password: $("#pass").val()
       },
       success(data){
         e.preventDefault()
         let vcedula, vpassword
 
-        validarCedula($("#cedula"),$("#error") ,"Error de cedula,");
+        validarCedula($("#cedula"),$("#error") ,"Error de cedula,", $("#preDocument"));
         validarContraseña($("#pass"),$("#error") , "Error de contraseña,"); 
 
         if(data.resultado === "Error de cedula"){
@@ -61,7 +68,7 @@ $(document).ready(function(){
   })
 
   function validarCedulaBD(){
-    $.getJSON('',{cedula: $("#cedula").val(),validar: 'xd'},
+    $.getJSON('',{cedula:  $("#preDocument").val()+"-"+$("#cedula").val(),validar: 'xd'},
       function(data){
         if(data.resultado === "Error de cedula"){
           $("#error").text(data.error);
@@ -70,11 +77,5 @@ $(document).ready(function(){
         }
       })
   }
-  
-  if('carrito' in localStorage != false){
-    let car = (localStorage.getItem('carrito') === '') ? '' : JSON.parse(localStorage.getItem('carrito'));
-    let cantidad = Object.keys(car).length;
-    $('#carrito_badge').html(cantidad);
-  };
 
 });

@@ -12,15 +12,12 @@ $(document).ready(function () {
     });
 
   function rellenar(bitacora = false) {
-    $.post(
-      "",
-      { mostrar: "", bitacora },
-      (data) => {
-        let tabla;
-        const permisoEditar = !permisos["Editar"] ? "disabled" : "";
-        const permisoEliminar = !permisos["Eliminar"] ? "disabled" : "";
-        data.forEach((row) => {
-          tabla += `
+    $.post("", { mostrar: "", bitacora }, (data) => {
+      let tabla;
+      const permisoEditar = !permisos["Editar"] ? "disabled" : "";
+      const permisoEliminar = !permisos["Eliminar"] ? "disabled" : "";
+      data.forEach((row) => {
+        tabla += `
     			<tr>
 	    			<td>${row.rif_laboratorio}</th>
 	    			<td scope="col">${row.razon_social}</td>
@@ -32,12 +29,12 @@ $(document).ready(function () {
 		    			</span>
 	    			</td>
     			</tr>`;
-        });
-        $("#tableMostrar tbody").html(tabla ? tabla : "");
-        mostrar = $("#tableMostrar").DataTable({
-          resposive: true,
-        });
-      },
+      });
+      $("#tableMostrar tbody").html(tabla ? tabla : "");
+      mostrar = $("#tableMostrar").DataTable({
+        resposive: true,
+      });
+    },
       "json",
     ).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
@@ -45,29 +42,20 @@ $(document).ready(function () {
     });
   }
 
-  function validarRif(input, div, edit = false) {
+  function validarRifBD(input, div, edit = false) {
     if (input.val() === edit) return true;
-    $.post(
-      "",
-      { rif: input.val(), validar: "rif", edit },
-      function (data) {
-        if (data.resultado === "error") {
-          div.text(data.msg);
-          input.attr("style", "border-color: red;");
-          input.attr(
-            "style",
-            "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);",
-          );
-        }
-      },
-      "json",
-    );
+    $.getJSON("", { rif: input.val(), validar: "rif", edit })
+      .fail(e => {
+        div.text(e.responseJSON.msg);
+        input.addClass('input-error');
+      })
   }
-
+  $("#rif").inputmask("rif");
   $("#rif").keyup(() => {
-    let valid = validarCedula($("#rif"), $("#error"), "Error de RIF,");
-    if (valid) validarRif($("#rif"), $("#error"));
+    let valid = validarRif($("#rif"), $("#error"), "Error de RIF,");
+    if (valid) validarRifBD($("#rif"), $("#error"));
   });
+  $("#razon").inputmask("nombre");
   $("#razon").keyup(() => {
     validarNombre($("#razon"), $("#error"), "Error de nombre,");
   });
@@ -75,19 +63,12 @@ $(document).ready(function () {
     validarDireccion($("#direccion"), $("#error"), "Error de direccion,");
   });
 
-  let click = 0;
-  setInterval(() => {
-    click = 0;
-  }, 2000);
-
   $("#registrar").click((e) => {
     e.preventDefault();
     validarPermiso(permisos["Registrar"]);
 
-    if (click >= 1) throw new Error("Spam de clicks");
-
     let vrif, vnombre, vdireccion, vtelefono;
-    validarCedula($("#rif"), $("#error"), "Error de RIF,");
+    validarRif($("#rif"), $("#error"), "Error de RIF,");
     vnombre = validarNombre($("#razon"), $("#error"), "Error de nombre,");
     vdireccion = validarDireccion(
       $("#direccion"),
@@ -104,27 +85,24 @@ $(document).ready(function () {
       razon: $("#razon").val(),
       direccion: $("#direccion").val(),
     };
-    $.post(
-      "",
-      body,
-      (data) => {
-        if (data.resultado != "ok") {
-          Toast.fire({ icon: "error", title: data.msg });
-          throw new Error(data.msg);
-        }
+    $(this).prop('disabled', true);
+    $.post("", body, (data) => {
+      if (data.resultado != "ok") {
+        Toast.fire({ icon: "error", title: data.msg });
+        throw new Error(data.msg);
+      }
 
-        mostrar.destroy();
-        rellenar();
-        $("#agregarform").trigger("reset");
-        $(".cerrar").click();
-        Toast.fire({ icon: "success", title: data.msg });
-      },
-      "json",
-    ).fail((e) => {
+      mostrar.destroy();
+      rellenar();
+      $("#agregarform").trigger("reset");
+      $(".cerrar").click();
+      Toast.fire({ icon: "success", title: data.msg });
+    }, "json",).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
+    }).always(() => {
+      $(this).prop('disabled', false);
     });
-    click++;
   });
 
   let id;
@@ -132,25 +110,25 @@ $(document).ready(function () {
   $(document).on("click", ".editar", function () {
     id = this.id;
     validarPermiso(permisos["Editar"]);
-    $.post(
-      "",
-      { select: "", id },
-      (data) => {
-        $("#rifEdit").val(data[0].rif_laboratorio);
-        $("#razonEdit").val(data[0].razon_social);
-        $("#direccionEdit").val(data[0].direccion);
-      },
-      "json",
-    ).fail((e) => {
+    $(this).prop('disabled', true);
+    $.post("", { select: "", id }, (data) => {
+      $("#rifEdit").val(data[0].rif_laboratorio);
+      $("#razonEdit").val(data[0].razon_social);
+      $("#direccionEdit").val(data[0].direccion);
+    }, "json",).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
+    }).always(() => {
+      $(this).prop('disabled', false);
     });
   });
 
+  $("#rifEdit").inputmask("rif");
   $("#rifEdit").keyup(() => {
-    let valid = validarCedula($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
-    if (valid) validarRif($("#rifEdit"), $("#errorEdit"), id);
+    let valid = validarRif($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
+    if (valid) validarRifBD($("#rifEdit"), $("#errorEdit"), id);
   });
+  $("#razonEdit").inputmask("nombre");
   $("#razonEdit").keyup(() => {
     validarNombre($("#razonEdit"), $("#errorEdit"), "Error de nombre,");
   });
@@ -168,7 +146,7 @@ $(document).ready(function () {
     if (click >= 1) throw new Error("spaaam");
 
     let vrif, vnombre, vdireccion, vtelefono;
-    vrif = validarCedula($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
+    vrif = validarRif($("#rifEdit"), $("#errorEdit"), "Error de RIF,");
     vnombre = validarNombre(
       $("#razonEdit"),
       $("#errorEdit"),
@@ -188,40 +166,31 @@ $(document).ready(function () {
       direccionEdit: $("#direccionEdit").val(),
       id,
     };
-    $.post(
-      "",
-      body,
-      (data) => {
-        if (data.resultado != "ok") {
-          Toast.fire({ icon: "error", title: data.msg });
-          throw new Error(data.msg);
-        }
+    $(this).prop('disabled', true);
+    $.post("", body, (data) => {
+      if (data.resultado != "ok") {
+        Toast.fire({ icon: "error", title: data.msg });
+        throw new Error(data.msg);
+      }
 
-        mostrar.destroy();
-        rellenar();
-        $("#editarform").trigger("reset");
-        $(".cerrar").click();
-        Toast.fire({ icon: "success", title: data.msg });
-      },
-      "json",
-    ).fail((e) => {
+      mostrar.destroy();
+      rellenar();
+      $("#editarform").trigger("reset");
+      $(".cerrar").click();
+      Toast.fire({ icon: "success", title: data.msg });
+    }, "json",).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
+    }).always(() => {
+      $(this).prop('disabled', false);
     });
-    click++;
   });
 
   $(document).on("click", ".cerrar", function () {
     $("#agregarform").trigger("reset");
     $("#editarform").trigger("reset");
-    $("#agregarform input").attr(
-      "style",
-      "border-color: none; background-image: none;",
-    );
-    $("#editarform input").attr(
-      "style",
-      "border-color: none; background-image: none;",
-    );
+    $("#agregarform input").attr("style", "border-color: none; background-image: none;",);
+    $("#editarform input").attr("style", "border-color: none; background-image: none;",);
     $("#error").text("");
     $("#errorEdit").text("");
   });
@@ -233,26 +202,22 @@ $(document).ready(function () {
   $("#borrar").click(() => {
     validarPermiso(permisos["Eliminar"]);
 
-    if (click >= 1) throw new Error("spaaam");
-    $.post(
-      "",
-      { eliminar: "", id },
-      (data) => {
-        if (data.resultado != "ok") {
-          Toast.fire({ icon: "error", title: data.msg });
-          throw new Error(data.msg);
-        }
-        console.log(data);
-        mostrar.destroy();
-        $(".cerrar").click();
-        rellenar();
-        Toast.fire({ icon: "success", title: data.msg });
-      },
-      "json",
-    ).fail((e) => {
+    $(this).prop('disabled', true);
+    $.post("", { eliminar: "", id }, (data) => {
+      if (data.resultado != "ok") {
+        Toast.fire({ icon: "error", title: data.msg });
+        throw new Error(data.msg);
+      }
+      console.log(data);
+      mostrar.destroy();
+      $(".cerrar").click();
+      rellenar();
+      Toast.fire({ icon: "success", title: data.msg });
+    }, "json",).fail((e) => {
       Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
       throw new Error("Error al mostrar listado: " + e);
+    }).always(() => {
+      $(this).prop('disabled', false);
     });
-    click++;
   });
 });

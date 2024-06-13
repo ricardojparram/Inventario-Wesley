@@ -16,7 +16,7 @@ class login extends DBConnect{
 
 	
 	public function getLoginSistema($cedula ,$password){
-		if(preg_match_all("/^[0-9]{7,10}$/", $cedula) == false){
+		if(preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false){
 			die(json_encode(['resultado' => 'Error de cedula' , 'error' => 'Cédula inválida.']));
 		}
 		if(preg_match_all("/^[A-Za-z\d$@\/_.#-]{0,30}$/", $password) == false){
@@ -76,7 +76,7 @@ class login extends DBConnect{
 	}
 
 	public function getValidarCedula($cedula){
-		if(preg_match_all("/^[0-9]{7,10}$/", $cedula) == false){
+		if(preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false){
 			$resultado = ['resultado' => 'Error de cedula' , 'error' => 'Cédula inválida.'];
 			die(json_encode($resultado));
 		}

@@ -1,5 +1,5 @@
 {
-    "name": "medi-salud/bin",
+    "name": "wesley/bin",
     "description": "Proyecto",
     "type": "project",
     "require": {
@@ -14,6 +14,7 @@
     "autoload": {
         "psr-4": {
             "bin\\" : "bin/",
+            "utils\\": "bin/utils/",
             "component\\" : "bin/component",
             "config\\" : "bin/config/",
             "modelo\\" : "bin/modelo/"
@@ -35,4 +36,4 @@
     "require-dev": {
         "phpunit/phpunit": "^9.6"
     }
-}
+  }

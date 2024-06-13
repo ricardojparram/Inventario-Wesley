@@ -28,14 +28,13 @@ $(document).ready(function() {
             	tabla += `
             	<tr>
             	<td>${row.orden_compra}</td>
-            	<td>${row.razon_social}</td>
-            	<td><button class="btn btn-success detalleCompra" id="${row.cod_compra}" data-bs-toggle="modal" data-bs-target="#detalleCompra">Ver Detalles</button></td>
+            	<td>${row.ced_prove}</td>
+            	<td><button class="btn btn-registrar detalleCompra" id="${row.orden_compra}" data-bs-toggle="modal" data-bs-target="#detalleCompra">Ver Detalles</button></td>
             	<td>${row.fecha}</td>
-            	<td>${row.total_divisa}</td>
-            	<td>${row.total}</td>
+            	<td>${row.monto_total}</td>
             	<td class="d-flex justify-content-center">
             	
-            	<button type="button" ${eliminarPermiso} class="btn btn-danger borrar mx-2" id="${row.cod_compra}" data-bs-toggle="modal" data-bs-target="#Borrar"><i class="bi bi-trash3"></i></button>
+            	<button type="button" ${eliminarPermiso} class="btn btn-danger borrar mx-2" id="${row.orden_compra}" data-bs-toggle="modal" data-bs-target="#Borrar"><i class="bi bi-trash3"></i></button>
             	</td>
             	</tr>
             	`
@@ -47,31 +46,6 @@ $(document).ready(function() {
 			}
 		})
 
-	}
-	selectMoneda();
-	function selectMoneda(){
-		$.ajax({
-			url: '',
-			method: 'POST',
-			dataType: 'json',
-			data: {
-				selectM : 'moneda'
-			},
-			success(data){
-				let option = ""
-				data.forEach((row)=>{
-					let alcambio = row.cambio;
-					if(row.cambio == 0) alcambio = "" 
-						option += `<option id="${alcambio}" value="${row.id_cambio}">${row.nombre} ${alcambio}</option>`
-				})
-				$('#moneda').each(function(){
-					if(this.children.length == 1){
-						$(this).append(option);
-
-					}
-				})
-			}
-		})
 	}
 
 	let click = 0;
@@ -86,7 +60,7 @@ $(document).ready(function() {
 			lista.forEach(row => {
 				tabla += `
 				<tr>
-					<td>${row.descripcion}</td>
+					<td>${row.producto}</td>
 					<td>${row.cantidad}</td>
 					<td>${row.precio_compra}</td>                      
 				</tr>
@@ -98,174 +72,112 @@ $(document).ready(function() {
 		click++;
 	});
 
-    var iva = parseFloat($('#config_iva').val());
-
-	let money = 0;
-	$('#moneda').on("change", function(){
-		money = $(this).children(":selected").attr("id");
-		calculate();
-	})
-	calculate();
-	selectOptions();
-
-	function calculate(){
-
-		let total_price = 0,
-		total_tax = 0;
-
-		$('.table-body tbody tr').each( function(){
-			let row = $(this),
-			rate   = row.find('.rate input').val(),
-			amount = row.find('.amount input').val();
-
-			let sum = rate * amount;
-			let tax = ("0."+iva)*sum;
-
-
-			total_price = total_price + sum;
-			total_tax = total_tax + tax;
-
-			row.find('.sum').text( sum.toFixed(2) );
-			row.find('.tax').text( tax.toFixed(2) );   
-
-		});
-		let precioTotal = Math.abs((total_price + total_tax).toFixed(2));
-		let ivatotal = Math.abs(total_tax.toFixed(2));
-		let total = total_price.toFixed(2);
-		let cambio = (precioTotal / money).toFixed(2);
-		if(isNaN(cambio) || money == 0){
-			cambio = "0";
-		}
-
-		$('#montos').text(`IVA: ${ivatotal} - Total: ${total}`)
-		$('#montos2').text(`Total + IVA: ${precioTotal}`)
-		$('#cambio').text(`Al cambio: ${cambio}`)
-		$('#monto').val(precioTotal)
-
-	}
-
-	function selectOptions(){
+	selectProducto();
+	function selectProducto(){
 		$.ajax({
 			url:'',
 			type: 'post',
-			dataType: 'json',
-			data: {
-				select: 'xd'
+			dataType:'json',
+			data:{
+				select:'no'
 			},
 			success(data){
 				let option = ""
 				data.forEach((row)=>{
-					option += `<option value="${row.cod_producto}">${row.descripcion}</option>`;
+					option += `<option value="${row.cod_producto}">${row.producto}</option>`;
 				})
 				$('.select-productos').each(function(){
-					if(this.children.length == 1){
+					if(this.children.length ==1){
 						$(this).append(option)
 						$(this).chosen({
 							width: '100%',
 							no_results_text: 'No hay resultados para',
-							placeholder_text_single: "Selecciona producto",
-							allow_single_deselect: true,
+							placenholder_text_single:"selecciona producto",
 						});
-
-						calculate()
+					
 					}
 				})
-
 			}
+			
 		})
 	}
+	calculate();
+	function calculate(){
 
-	let producto;
-	let select;
+		let total_price = 0;
 
-	cambio();
-	function cambio(){
-		$('.select-productos').change(function(){
-			select = $(this);
-			producto  = $(this).val();
-			fillData($(this).val());
-		})
+		$('.table-body tbody tr').each( function(){
+			let row = $(this),
+			precio   = row.find('.precio input').val(),
+			cantidad = row.find('.cantidad input').val();
+
+			let sum = precio * cantidad;
+
+			total_price = total_price + sum;
+
+			row.find('.total').text( sum.toFixed(2) );  
+
+		});
+		let total = (total_price).toFixed(2);
+        //let cambio = (precioTotal / moneda).toFixed(2);
+    	// if(isNaN(cambio) || moneda == 0){
+    	// 	cambio = "0"
+    	// }
+
+		$('#montos').text(`Total: ${total}`)
+		//$('#cambio').text(`Al cambio: ${cambio}`)
+		$('#monto').val(total)
+
 	}
 
-	function fillData(val){
-		$.getJSON('', {producto, fill: 'data'}, function(data){
-			if(producto == val){
-				let cantidad = select.closest('tr').find('.amount input');
-				let precio = select.closest('tr').find('.rate input');
-				cantidad.val(data[0].stock);
-				precio.val(data[0].p_venta);
-				calculate()
-			}
-		})	
-	}
+	$('#ASD').on('keyup', 'input', function(){
+		calculate();
+	})
 
-	let newRow = `<tr>
+	const newRow = `<tr>
 					<td width="1%"><a class="removeRow a-asd" href="#"><i class="bi bi-trash-fill"></i></a></td>
-					<td width='30%'> 
-					<select class="select-productos select-asd">
+					<td width='20%'> 
+					<select class="select-productos select-asd" name="productos">
 						<option></option>
 					</select>
 					</td>
-					<td width='10%' class="amount"><input class="select-asd" type="number" value=""/></td>
-					<td width='10%' class="rate"><input class="select-asd" type="number" value="" /></td>
-					<td width='10%'class="tax"></td>
-					<td width='10%' class="sum"></td>
-				  </tr>`;
+					<td width='10%' class="lote"><input class="select-asd" type="number" value=""/></td>
+					<td width='10%' class="cantidad"><input class="select-asd" type="number" value=""/></td>
+					<td width='10%' class="precio"><input class="select-asd" type="number" value="" /></td>
+					<td width='10%'class="vencimiento"><input class="select-asd" type='text' /></td>
+					<td width='10%' class="total"></td>
+				</tr>`;
 
+	$('.vencimiento input').inputmask('fecha');
+	$('.cantidad input').inputmask('cantidad');
 
 	function validarValores(){
-		$('.amount input').keyup(function(){ validarStock($(this)) });
-		$('.rate input').keyup(function(){ validarPrecio($(this)) });
+		$('.cantidad input').keyup(function(){validarCantidad($(this)) });
+		$('.precio input').keyup(function(){validarPrecio($(this)) });
+		$('.lote input').keyup(function(){validarLote($(this)) });
+		$('.monto input').keyup(function(){validarMonto($(this)) });
+
 	}
 	validarValores();
-	function filaN(){
-		$('#ASD').append(newRow);
-		selectOptions();
-		cambio();
-		validarValores();
-	}
-	$('.newRow').on('click',function(e){
-		filaN()
-	});
-
-	$('body').on('click','.removeRow',function(e){
-		$(this).closest('tr').remove();
-		calculate();
-	});
-
-	$('.table-body').on('keyup','input',function(){
-		calculate();
-	});
-
-	$('#config_iva').on('keyup',function(){
-		iva = parseFloat($(this).val());
-
-		if (iva < 0 || iva > 100 || isNaN(iva)){
-			iva = 0;
-		}
-		calculate();
-	});
-
-	
-	function validarStock(input){
 		
-		let valor = Math.abs(input.val());
-		if(valor == 0 || isNaN(valor)){
-			$('#error').text('Cantidad inválida.');
+	function validarCantidad(input){
+		let valor = input.val();
+		if(valor <= 0 || isNaN(valor)){
+			$('#error').text('Cantidad invalido.');
 			input.css({'border': 'solid 2px', 'border-color':'red'})
 			input.attr('valid','false')
 			return false
 		}else{
 			$('#error').text('');
-			input.css({'border': 'none'});
+			input.css({'border':'none'});
 			input.attr('valid','true');
 			return true;
 		}
-
 	}
+
 	function validarPrecio(input){
-		let valor = Math.abs(input.val());
-		if(valor == 0 || isNaN(valor)){
+		let valor = input.val();
+		if(valor <= 0 || isNaN(valor)){
 			$('#error').text('Precio inválido.');
 			input.css({'border': 'solid 2px', 'border-color':'red'})
 			input.attr('valid','false')
@@ -278,128 +190,220 @@ $(document).ready(function() {
 		}
 	}
 
-	function validarOrden(input, div){
-		$.post('',{orden : Math.abs(input.val()), validar: "orden"}, function(data){
-			let mensaje = JSON.parse(data);
-			if(mensaje.resultado === "Error de orden"){
-				div.text(mensaje.error);
-				input.attr("style","border-color: red;")
-				input.attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
-			}
-		})
+	function validarLote(input){
+		let valor = input.val();
+		if(valor <= 0 || isNaN(valor)){
+			$('#error').text('Lote invalido.');
+			input.css({'border': 'solid 2px', 'border-color':'red'})
+			input.attr('valid','false')
+			return false;
+		}else{
+			$('#error').text('');
+			input.css({'border': 'none'});
+			input.attr('valid','true');
+			return true;
+		}
 	}
 
-	$('#orden').keyup(()=>{	let valid = validarNumero($('#orden'), $('#error'), "Error de Orden,");
-		if(valid){
-			validarOrden($('#orden'), $('#error'));
+	const validFecha = () => {
+        let validacion = [];
+        $("input.select-asd").each(function () {
+            if (this.value === "" || this.value === null) {
+                $(this).addClass('input-error')
+                validacion.push(false);
+            } else if ($(this).hasClass('vencimiento')) {
+                validarFecha($(this), $('#error'), 'Error de fecha,');
+            } else {
+                $(this).removeClass('input-error')
+                validacion.push(true);
+            }
+        })
+        return !validacion.includes(false);
+    }
+
+	function validarMonto(input){
+		let valor = input.val();
+		if(valor <= 0 || isNaN(valor)){
+			$('#error').text('Monto invalido.');
+			input.css({'border': 'solid 2px', 'border-color':'red'})
+			input.attr('valid','false')
+			return false;
+		}else{
+			$('#error').text('');
+			input.css({'border': 'none'});
+			input.attr('valid','true');
+			return true;
 		}
-	})
-	let vmoneda = false;
-	$('#moneda').change(function(){
-      vmoneda =  validarSelect($('#moneda'),$("#error5"),"Error de moneda")
-    })
+	}
+
+	let productosRepetidos, productos;
+    const validarProductosRepetidos = (status = true) => {
+        let validacion = [];
+        let $select = document.querySelectorAll('.select-productos');
+        if ($select.length < 1) {
+            $('.filaProductos').html('No hay filas.');
+            return false
+        } else {
+            $('.filaProductos').html('');
+        }
+        productos = Object.values(document.querySelectorAll('.select-productos')).map(item => {
+            return item.value;
+        });
+        productosRepetidos = productos.filter((elemento, index) => productos.indexOf(elemento) !== index);
+        $(".select-productos").each(function () {
+            if (this.value === "" || this.value === null) {
+                if (status != true) {
+                    $(this).closest('td').find('div.chosen-container').addClass('select-error')
+                }
+                validacion.push(false);
+            } else if (productosRepetidos.includes(this.value)) {
+                $(this).closest('td').find('div.chosen-container').addClass('select-error')
+                validacion.push(false);
+            } else {
+                $(this).closest('td').find('div.chosen-container').removeClass('select-error')
+                validacion.push(true);
+            }
+        })
+        return !validacion.includes(false);
+    }
+    
+	function filaN(){
+		$('#ASD').append(newRow);
+		selectProducto();
+		validarProductosRepetidos();
+		validarValores();
+		$('.vencimiento input').inputmask('fecha')
+		$('.cantidad input').inputmask('cantidad')		
+	}
+
+	$('.newRow').on('click',function(e){
+		filaN()
+	});
+
+	$('body').on('click','.removeRow',function(e){
+		$(this).closest('tr').remove();
+		validarProductosRepetidos();
+		calculate();
+	});
+
+	$(document).on('change','.select-productos',function(){
+		validarProductosRepetidos();
+	});
+
+	const getProductos = () => {
+        return Object.values(document.querySelectorAll('.select-productos')).map(item => {
+			let lote = $(item).closest('tr').find('.lote input').val();
+			let cantidad = $(item).closest('tr').find('.cantidad input').val();
+			let precio = $(item).closest('tr').find('.precio input').val();
+            let fecha_vencimiento = $(item).closest('tr').find('.vencimiento input').val();
+			
+            return { id_producto: item.value, lote, cantidad, precio ,fecha_vencimiento }; 
+        });
+    }
+
+	$('#proveedor').change(()=>{ validarSelect($('#proveedor'),$("#error1"),"Error de proveedor")})
+	$('#orden').keyup(()=>{ validarNumero($('#orden'), $('#error2'), "Error de Orden,")})
+	$('#fecha').change(()=>{ validarFecha($('#fecha'), $('#error3'), "Error de Fecha,") })
+	
 
 	$('#registrar').click((e)=>{
-		e.preventDefault()
+		e.preventDefault();
 
-		if(click >= 1) throw new Error('Spam de clicks');
+		let proveedor =  validarSelect($('#proveedor'),$("#error1"),"Error de proveedor");
+		let orden = validarNumero($('#orden'), $('#error2'), "Error de Orden,");
+		let fecha =  validarFecha($('#fecha'), $('#error3'), "Error de Fecha,");
+		let monto = validarNumero($('#monto'), $('#error4') , 'Error de monto');
 
-		let vorden, vproductos, vstock = true, vprecio = true;
-		vorden = validarNumero($('#orden'), $('#error'), "Error de Orden,");
-		vmoneda = validarSelect($('#moneda'),$("#error5"),"Error de moneda");
-		$('.amount input').each(function(){ validarStock($(this)) });
-		$('.rate input').each(function(){ validarPrecio($(this)) });
+		let validarProductos = validarProductosRepetidos(false);
+		let validFillFecha = validFecha();
 		
-		if($('.amount input').is('[valid="false"]')){
-			$('#error').text('Cantidad inválida.');
-			vstock = false;
+		$('.lote input').each(function(){validarLote($(this)) });
+		$('.precio input').each(function(){validarPrecio($(this)) });
+		$('.cantidad input').each(function(){validarCantidad($(this)) });
+
+		let lote = true, precio = true, cantidad = true;
+
+		if($('.lote input').is('[valid = "false"]')){
+			$('#error').text('Lote invalido.');
+			lote = false;
 		}
-		if($('.rate input').is('[valid="false"]')){
-			$('#error').text('Precio inválido.');
-			vprecio = false;
+		if($('.precio input').is('[valid = "false"]')){
+			$('#error').text('Precio invalido');
+			precio = false;
+		}
+		if($('.cantidad input').is('[valid= "false"]')){
+			$('#error').text('Cantidad invalida.');
+			cantidad = false;
 		}
 
+		if(proveedor && orden && fecha && validarProductos && lote && precio && cantidad && validFillFecha && monto){
+			
+			let proveedor = $('#proveedor').val();
+			let orden = $('#orden').val();
+			let fecha = $('#fecha').val();
+			let monto = $('#monto').val();
+			let productos = getProductos();
+			
 
-
-		$('.table-body tbody tr').each(function(){
-			let producto = $(this).find('.select-productos').val();
-			if(producto == "" || producto == null){
-				vproductos = false;
-				$('#error').text('No debe haber productos vacíos.');
-			}else{
-				$('#error').text('');
-				vproductos = true;
-			}
-		})
-
-		if(vorden && vproductos && vstock && vprecio && vmoneda){
-
-			$.post('',{
-				proveedor : $('#proveedor').val(),
-				orden : $('#orden').val(),
-				fecha : $('#fecha').val(),
-				montoT : $('#monto').val(),
-				cambio : $('#moneda').val()
-			},
-			function(response){
-				let data = JSON.parse(response);
-
-				if(data.resultado === "Error de orden"){
-					$('#error').text(data.error);
-					$('#orden').attr("style","border-color: red;")
-					$('#orden').attr("style","border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"); 
-					throw new Error('Orden de compra repetida.');
+			$.ajax({
+				type: "POST",
+				url:"",
+				dataType:"json",
+				data:{
+					proveedor,
+					orden,
+					fecha,
+					monto,
+				    productos
+				},
+				success(data){
+					if(data.resultado === 'Registrado con exito'){
+						tablaMostrar.destroy();
+						rellenar();
+						$('#agregarform').trigger('reset');
+						$('.cerrar').click();
+						$('.removeRow').click(); 
+						fechaHoy($('#fecha'));
+						Toast.fire({ icon: 'success', title: 'Compra registrada' })
+						filaN()
+					}else if(data.resultado === "Error de orden"){
+						$("#error").text(data.error);
+						$("#orden").attr("style","border-color:red;")
+						$("#orden").attr("style","border-color:red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);");
+						throw new Error('Orden de compra repetida.');
+					}
 				}
 
-				if(typeof data.id != 'undefined'){
-					enviarProductos(data.id);
-				}
-
-				tablaMostrar.destroy();
-				rellenar();
-				$('#agregarform').trigger('reset');
-				$('.cerrar').click();
-				$('.removeRow').click(); 
-				fechaHoy($('#fecha'));
-				Toast.fire({ icon: 'success', title: 'Compra registrada' })
-				filaN()
+			}).fail((e)=>{
+				Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+				throw new Error(e.responseJSON.msg);
 			})
-
+			
 		}
-		click++;
 	})
-
-	function enviarProductos(id){
-		$('.table-body tbody tr').each(function(){
-			let producto = $(this).find('.select-productos').val();
-			let cantidad = Math.abs($(this).find('.amount input').val());
-			let precio = Math.abs($(this).find('.rate input').val());
-
-			$.post('',{cantidad, precio, producto, id})
-
-		})
-	}
-
-	$(document).on('click', '.borrar', function() {
-    	id = this.id;
-    });
-
-	$('#borrar').click(()=>{
-
-		if(click >= 1) throw new Error('Spam de clicks');
-
+	
+	let id;
+	$(document).on('click', '.borrar',function (){
+		id = this.id;
+	})
+	$("#eliminar").click((e)=>{
+		e.preventDefault();
 		$.ajax({
-			type : 'post',
-			url : '',
-			data : {eliminar : 'asd', id},
+			type:"POST",
+			url:'',
+			dataType:'json',
+			data:{
+				borrar:'cualquiera',
+				id
+
+			},
 			success(data){
-				tablaMostrar.destroy();
-				$('.cerrar').click();
-				Toast.fire({ icon: 'success', title: 'Compra eliminada' })
+				mostrar.destroy();
+				$(".cerrar").click();
+				Toast.fire({icon: 'success', title:'compra eliminada'})
 				rellenar();
 			}
 		})
-		click++;
 	})
 
 	$('#cancelar').click(()=>{
@@ -411,7 +415,6 @@ $(document).ready(function() {
 		filaN()
 		fechaHoy($('#fecha'));
 	})
-
 
 });
 

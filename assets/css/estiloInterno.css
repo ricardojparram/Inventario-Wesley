@@ -221,3 +221,48 @@ body{
     color: #28d787 !important;
     text-decoration: underline;
 }
+
+.btn-registrar{
+  background: #96bd0d;
+  color:#ffffff;
+  
+  &:hover {
+    color:#ffffff;
+    background: #7d9c0a !important;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 0.25rem #c3d974;
+    background: #7d9c0a !important;
+    border: #7d9c0a;
+    color:#ffffff;
+  }
+}
+
+.btn-view{
+  background:  #41b7af;
+  color: #ffffff;
+
+  &:focus{
+    box-shadow: 0 0 0 0.25rem #41b7afb7;
+    background: #009f95 ;
+    border: #009f95;
+    color: #ffffff;
+  }
+
+  &:hover{
+    background: #009f95;
+    color: #ffffff;
+  }
+}
+
+.btn-danger{
+
+  &:hover{
+    border-color: #ffffff;
+  }
+
+  &:focus{
+    border: #b02a37;
+  }
+}

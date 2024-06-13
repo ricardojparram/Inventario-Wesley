@@ -27,7 +27,7 @@ function rellenar(bitacora = false){
 		<tr>
 		<td>${row.nombre}</td>
 		<td class="d-flex justify-content-center">
-		<button type="button" ${editarPermiso} id="${row.id_medida}" class="btn btn-success editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
+		<button type="button" ${editarPermiso} id="${row.id_medida}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#editarModal"><i class="bi bi-pencil"></i></button>
 		<button type="button" ${eliminarPermiso} id="${row.id_medida}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#delModal"><i class="bi bi bi-trash3"></i></button>
 		</td>
 		</tr>
@@ -77,7 +77,7 @@ $("#enviar").click((e)=>{
  	url:"",
  	dataType:"json",
  	data:{
-
+     
  		medida: $("#mediNom").val(),
 
  	},
@@ -87,7 +87,7 @@ $("#enviar").click((e)=>{
             rellenar();
             $('#user').trigger('reset'); 
             $("#closeRegis").click();
-            $("#mediNom").attr("style","borde-color:none; backgraund-image: none;");
+            $("#mediNom").attr("style","border-color:none; background-image: none;");
             $("#error").text("");
             Toast.fire({ icon: 'success', title: 'Medida de Producto registrado' , showCloseButton: true });
           }else if(data.resultado === 'error'){

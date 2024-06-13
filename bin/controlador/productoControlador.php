@@ -30,18 +30,15 @@
    $mostraPres = $objModel->mostrarPresentacion();
    $mostraTipo = $objModel->mostrarTipo();
    $mostrarClase = $objModel->mostrarClase();
+   $mostrarTipoPro = $objModel->mostrarTipoPro();
  
 
   if(isset(
-      $_POST['codigo'], $_POST['descripcion'], $_POST['fechaV'], 
-      $_POST['composicionP'],$_POST['posologia'], $_POST['ubicación'], 
-      $_POST['laboratorio'], $_POST['presentación'],$_POST['tipoP'], 
-      $_POST['clase'], $_POST['contraIn'], $_POST['cantidad'], 
-      $_POST['precioV'], $permiso['Registrar']
-      )
-    )  {
+      $_POST['cod_producto'], $_POST['tipoprod'], $_POST['presentacion'], $_POST['laboratorio'], $_POST['tipoP'], $_POST['clase'], $_POST['composicionP'],$_POST['posologia'], $_POST['contrain']))  {
 
-   	  $respuesta = $objModel->getRegistraProd($_POST['codigo'] , $_POST['descripcion'] , $_POST['fechaV'] , $_POST['composicionP'] , $_POST['posologia'] , $_POST['ubicación'] , $_POST['laboratorio'] , $_POST['presentación'] , $_POST['tipoP'] , $_POST['clase'] , $_POST['contraIn'] , $_POST['cantidad'] , $_POST['precioV'] );
+    
+
+   	  $respuesta = $objModel->getRegistraProd($_POST['cod_producto'] , $_POST['tipoprod'], $_POST['presentacion'], $_POST['laboratorio'] , $_POST['tipoP'] , $_POST['clase'], $_POST['composicionP'] , $_POST['posologia'] , $_POST['contrain'] );
    	  die(json_encode($respuesta));
    }
 
@@ -65,15 +62,12 @@
 
 
    if (isset(
-    $_POST['codigoEd'] , $_POST['descripcionEd'] , $_POST['fechaEd'] , 
-    $_POST['composicionEd'] , $_POST['posologiaEd'] , $_POST['ubicaciónEd'] , 
-    $_POST['laboratorioEd'] , $_POST['presentaciónEd'] , $_POST['tipoEd'] , 
-    $_POST['claseEd'] , $_POST['contraInEd'] , $_POST['cantidadEd'] , 
-    $_POST['VentaEd'] , $_POST['id'], $permiso['Editar']
+    $_POST['cod_productoEd'] , $_POST['tipoprodEd'] , $_POST['presentaciónEd'] , 
+    $_POST['laboratorioEd'] , $_POST['tipoEd'] , $_POST['claseEd'] , $_POST['composicionEd'] , $_POST['posologiaEd'] , $_POST['contraInEd'] , $_POST['id'], $permiso['Editar']
     )
   ) {
 
-      $respuesta = $objModel->getEditarProd($_POST['codigoEd'] , $_POST['descripcionEd'] , $_POST['fechaEd'] , $_POST['composicionEd'] , $_POST['posologiaEd'] , $_POST['ubicaciónEd'] , $_POST['laboratorioEd'] , $_POST['presentaciónEd'] , $_POST['tipoEd'] , $_POST['claseEd'] , $_POST['contraInEd'] , $_POST['cantidadEd'] , $_POST['VentaEd'] , $_POST['id'] );
+      $respuesta = $objModel->getEditarProd($_POST['cod_productoEd'] , $_POST['tipoprodEd'] , $_POST['presentaciónEd'] , $_POST['laboratorioEd'] , $_POST['tipoEd'] , $_POST['claseEd'] , $_POST['composicionEd'] , $_POST['posologiaEd']  , $_POST['contraInEd'] , $_POST['id'] );
       die(json_encode($respuesta));
       
    }

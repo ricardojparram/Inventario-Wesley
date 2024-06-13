@@ -47,35 +47,34 @@
             
               <div class="row">
                 <div class="col-6">
-                  <h5 class="card-title">Presentación</h5>
+                 
                 </div>
 
                 <div class="col-6 text-end mt-3">
-                  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
+                  <button type="button" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar">Agregar</button>
                 </div>
               </div>
 
-
               <!-- COMIENZO DE TABLA -->
          <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="tableMostrar" width="100%" cellspacing="0">
-                  <thead>
+                <table class="table table-bordered table-hover text-center" id="tablas" width="100%" cellspacing="0">
+                  <thead class="text-center">
 
                     <tr>
-                      <th scope="col">Cant</th>
-                      <th scope="col">U.Medida</th>
-                      <th scope="col">Peso</th>
-                      <th scope="col">Opciones</th>
+                      <th scope="col" class="text-center">#</th>
+                      <th scope="col" class="text-center">Cantidad</th>
+                      <th scope="col" class="text-center">Medida</th>
+                      <th scope="col" class="text-center">Peso</th>
+                      <th scope="col" class="text-center">Opciones</th>
 
                     
                     </tr>
                   </thead>
               
-                
-              <tbody id = "tbody">
-                
-                    
-                  </tbody>
+                <tbody id="tbody" class="text-center">
+
+            </tbody>
+            
                 </table>
               </div>
               <!-- FINAL DE TABLA -->
@@ -101,7 +100,7 @@
 
 <!-- MODAL AGERGAR -->
 <div class="modal fade " id="Agregar" tabindex="-1">
-  <div class="modal-dialog modal-xs ">
+  <div class="modal-dialog modal-lg ">
     <div class="modal-content">
       <div class="modal-header alert alert-success">
         <h4 class="modal-title"> <strong>Registrar Presentación</strong> </h4>
@@ -116,18 +115,30 @@
             <div class="container-fluid">
               <div class="row">
 
-                <div class="form-group col-4">                          
-                  <label class="col-form-label"> <strong>U. Medida</strong> </label>
+                <div class="form-group col-lg-4">
+                 <label class="col-form-label"> <strong>Medida</strong> </label>
                   <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el RIF del proveedor"><i class="bi bi-card-text"></i></button> 
-                    <input class="form-control" id="medida" required="" placeholder="">
+                  <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="  Descripción "><i class="bx  bxs-capsule"></i></button>
+                  <select class="form-control" aria-label="Default select example" id="medida">
+                  <option selected disabled>Seleccionar medida</option>
+                  <?php if(isset($mostrarMedida)){
+                    foreach($mostrarMedida as $data){
+                  ?> 
+                  <option value="<?php echo $data->id_medida; ?>" class="opcion"><?php echo $data->nombre; ?></option>
+                  <?php
+                    }
+                  }else{"";}?>
+
+                  </select>
                   </div>
+                  <p class="error" id="error" style="color: red"></p>  
                 </div>
+
 
                 <div class="form-group col-4">                          
                   <label class="col-form-label"> <strong>Cantidad</strong> </label>
                   <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca razon social"><i class="bi bi-people-fill"></i></button> 
+                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la cantidad"><i class="bi bi-people-fill"></i></button> 
                     <input class="form-control"  id="cantidad" placeholder="">
                   </div>
                 </div>
@@ -135,7 +146,7 @@
                 <div class="form-group col-4">                          
                   <label class="col-form-label"> <strong>Peso</strong> </label>
                   <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca razon social"><i class="bi bi-people-fill"></i></button> 
+                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la cantidad"><i class="bi bi-people-fill"></i></button> 
                     <input class="form-control"  id="peso" placeholder="">
                   </div>
                 </div>
@@ -151,9 +162,9 @@
 
         <p style="color:#ff0000;text-align: center;" id="error"><?php echo (isset($respuesta)) ? $respuesta : " "; ?></p>
         
-        <div class="modal-footer">
+       <div class="modal-footer">
           <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
+          <button type="submit" class="btn btn-registrar " id="registrar">Registrar</button>
         </div>
       </form>
     </div>
@@ -163,7 +174,7 @@
 
 
 <!-- MODAL EDITAR -->
-<div class="modal fade" id="Editar" tabindex="-1">
+<div class="modal fade" id="editModal" tabindex="-1">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header alert alert-success">
@@ -175,16 +186,29 @@
 
         <form id = "editarform">
 
+
+
           <div class="form-group col-md-12">  
             <div class="container-fluid">
               <div class="row">
 
-               <div class="form-group col-4">                          
-                  <label class="col-form-label"> <strong>U. Medida</strong> </label>
-                  <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el RIF del proveedor"><i class="bi bi-card-text"></i></button> 
-                    <input class="form-control" id="medEdit" required="" placeholder="">
-                  </div>
+                 <div class="form-group col-lg-4">
+                       <label class="col-form-label"> <strong>Medida</strong> </label>
+                        <div class="input-group">
+                        <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="  Descripción "><i class="bx  bxs-capsule"></i></button>
+                        <select class="form-control" aria-label="Default select example" id="medidas">
+                      
+                        <?php if(isset($mostrarMedida)){
+                          foreach($mostrarMedida as $data){
+                        ?> 
+                        <option value="<?php echo $data->id_medida; ?>" class="opcion" ><?php echo $data->nombre; ?></option>
+                        <?php
+                          }
+                        }else{"";}?>
+
+                        </select>
+                        </div>
+                        <p class="error" id="error" style="color: red"></p>  
                 </div>
 
                 <div class="form-group col-4">                          
@@ -198,7 +222,7 @@
                 <div class="form-group col-4">                          
                   <label class="col-form-label"> <strong>Peso</strong> </label>
                   <div class="input-group">
-                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca razon social"><i class="bi bi-people-fill"></i></button> 
+                    <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca el peso"><i class="bi bi-people-fill"></i></button> 
                     <input class="form-control"  id="pesEdit" placeholder="">
                   </div>
                 </div>
@@ -210,13 +234,13 @@
           
           
           
-        </div>
+          </div>
 
         <div style="color:#ff0000;text-align: center;" id="errorEdit"></div>
         
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-success" id="editar">Editar</button>
+          <button id="editarP" type="submit" class="btn btn-registrar" >Editar</button>
         </div>
       </form>
     </div>
@@ -225,21 +249,21 @@
 <!-- MODAL EDITAR FINAL --> 
 
 <!-- MODAL BORRAR -->
-<div class="modal fade" id="Borrar" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true" style="display: none; ">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Advertencia</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ¿Desea borrar los datos de la presentación?
-      </div>
-      <div class="modal-footer">
-       
-        <button id="borrar" type="button" class="btn btn-danger">Borrar</button>
-      </div>
-    </div> 
-  </div>
-</div>
+   <div class="modal fade" id="delModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="staticBackdropLabel">¿Estás seguro?</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button id="cerrar">
+              </div>
+              <div class="modal-body">
+                <h5>El tipo de presentacion serán eliminados del sistema</h5>
+              </div>
+              <div class="modal-footer">
+                <button id="cerrar" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button id="borrar" type="submit" class="btn btn-danger">Borrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
               <!-- MODAL BORRAR FINAL-->

@@ -62,10 +62,9 @@
             <thead>
 
               <tr>
-                <th scope="col">Empresa</th>
-                <th scope="col">Sede de envío</th>
-                <th scope="col">Ubicación</th>
-                <th scope="col">Estado</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Direccion</th>
                 <th scope="col">Opciones</th>
               </tr>
             </thead>
@@ -88,7 +87,7 @@
 
   <?php $VarComp->js(); ?>
 
-  <script src="assets/js/sedeEnvio.js"></script> 
+  <script src="assets/js/sede.js"></script> 
 
 
  
@@ -112,65 +111,36 @@
           <div class="form-group col-md-12">  
             <div class="container-fluid">
               <div class="row">
-
-                <div class="form-group col-12 ">                          
-                    <label for="inputText" class="col-form-label"><strong>Empresas de envío</strong></label>
-                    <div class="input-group">
-                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una empresa de envío."><i class="bi bi-building"></i></button>
-                      <select class="form-control" placeholder="Empresas de envío" id="empresa_envio">
-                        <option value="" selected disabled>Selecciona una empresa...</option>
-                        <?php if(isset($selectEmpresa)){
-                          foreach($selectEmpresa as $option){
-                        ?> 
-                            <option value="<?= $option->id_empresa ?>" class="opcion">
-                              <?= $option->nombre.' - '.$option->rif ?>
-                            </option>
-                        <?php
-                          }
-                        }else{"";}
-                        ?>
-                      </select> 
-                    </div>
-                    <p style="color:#ff0000;margin-left: 10px;" id="error1"></p>
-                </div>
-                <div class="form-group col-12 ">                          
-                    <label for="inputText" class="col-form-label"><strong>Estado</strong></label>
-                    <div class="input-group">
-                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una el estado de la sede de envío."><i class="bi bi-geo-alt-fill"></i></button>
-                      <select class="form-control" placeholder="Estado" id="estado_sede">
-                        <option value="" selected disabled>Selecciona un estado...</option>
-                        <?php if(isset($selectEstados)){
-                          foreach($selectEstados as $option){
-                        ?> 
-                            <option value="<?= $option->id_estado ?>" class="opcion">
-                              <?= $option->nombre ?>
-                            </option>
-                        <?php
-                          }
-                        }else{"";}
-                        ?>
-                      </select> 
-                    </div>
-                    <p style="color:#ff0000;margin-left: 10px;" id="error2"></p>
-                </div>
-
-                <div class="form-group col-12 ">                          
+              <div class="form-group col-12 ">                          
                   <label class="col-form-label"> <strong>Nombre de la sede</strong> </label>
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el nombre de la sede de envío."><i class="bi bi-card-text"></i></button> 
-                    <input class="form-control" id="nombre_sede" required="" placeholder="Nombre de la sede de envío">
+                    <input class="form-control" id="sedeNomb" required="" placeholder="Nombre de la sede de envío">
                   </div>
-                  <p style="color:#ff0000;margin-left: 10px;" id="error3"></p>
+                  <p style="color:#ff0000;margin-left: 10px;" id="error1"></p>
 
                 </div>
 
+
+
                 <div class="form-group col-12 ">                          
-                  <label class="col-form-label"> <strong>Ubicación de la sede</strong> </label>
+                    <label for="inputText" class="col-form-label"><strong>Telefono de la sede</strong></label>
+                    <div class="input-group">
+                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una empresa de envío."><i class="bi bi-building"></i></button>
+                      <input class="form-control" id="sedeTele" required="" placeholder="Telefono de la sede">
+                    </div>
+                    <p style="color:#ff0000;margin-left: 10px;" id="error2"></p>
+                </div>
+               
+               
+
+                <div class="form-group col-12 ">                          
+                  <label class="col-form-label"> <strong>Direccion de la sede</strong> </label>
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la ubicación de la sede de envío"><i class="bi bi-pin-map-fill"></i></button> 
-                    <input class="form-control" id="ubicacion" required="" placeholder="">
+                    <input class="form-control" id="sedeDirec" required="" placeholder="Direccion de la sede">
                   </div>
-                  <p style="color:#ff0000;margin-left: 10px;" id="error4"></p>
+                  <p style="color:#ff0000;margin-left: 10px;" id="error3"></p>
 
                 </div>
 
@@ -185,7 +155,7 @@
       <p style="color:#ff0000;text-align: center;" id="error"><?php echo (isset($respuesta)) ? $respuesta : " "; ?></p>
         
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
+        <button id ="cerraR" type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
       </div>
     </div>
@@ -210,59 +180,30 @@
             <div class="container-fluid">
               <div class="row">
 
-                <div class="form-group col-12 ">                          
-                    <label for="inputText" class="col-form-label"><strong>Empresas de envío</strong></label>
-                    <div class="input-group">
-                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una empresa de envío."><i class="bi bi-building"></i></button>
-                      <select class="form-control" placeholder="Empresas de envío" id="empresa_envioEdit">
-                        <option value="" selected disabled>Selecciona una empresa...</option>
-                        <?php if(isset($selectEmpresa)){
-                          foreach($selectEmpresa as $option){
-                        ?> 
-                            <option value="<?= $option->id_empresa ?>" class="opcion">
-                              <?= $option->nombre.' - '.$option->rif ?>
-                            </option>
-                        <?php
-                          }
-                        }else{"";}
-                        ?>
-                      </select> 
-                    </div>
-                    <p style="color:#ff0000;margin-left: 10px;" id="error1"></p>
-                </div>
-                <div class="form-group col-12 ">                          
-                    <label for="inputText" class="col-form-label"><strong>Estado</strong></label>
-                    <div class="input-group">
-                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una el estado de la sede de envío."><i class="bi bi-geo-alt-fill"></i></button>
-                      <select class="form-control" placeholder="Estado" id="estado_sedeEdit">
-                        <option value="" selected disabled>Selecciona un estado...</option>
-                        <?php if(isset($selectEstados)){
-                          foreach($selectEstados as $option){
-                        ?> 
-                            <option value="<?= $option->id_estado ?>" class="opcion">
-                              <?= $option->nombre ?>
-                            </option>
-                        <?php
-                          }
-                        }else{"";}
-                        ?>
-                      </select> 
-                    </div>
-                    <p style="color:#ff0000;margin-left: 10px;" id="error2"></p>
-                </div>
-
+               
                 <div class="form-group col-12 ">                          
                   <label class="col-form-label"> <strong>Nombre de la sede</strong> </label>
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Ingrese el nombre de la sede de envío."><i class="bi bi-card-text"></i></button> 
-                    <input class="form-control" id="nombre_sedeEdit" required="" placeholder="Nombre de la sede de envío">
+                    <input class="form-control" id="sedeNombEditar" required="" placeholder="Nombre de la sede de envío">
                   </div>
                   <p style="color:#ff0000;margin-left: 10px;" id="error3"></p>
 
                 </div>
 
+
+                <div class="form-group col-12 ">                          
+                    <label for="inputText" class="col-form-label"><strong>Telefono de la sede</strong></label>
+                    <div class="input-group">
+                      <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Seleccione una empresa de envío."><i class="bi bi-building"></i></button>
+                      <input class="form-control" id="sedeTeleEditar" required="" placeholder="Telefono de la sede">
+                    </div>
+                    <p style="color:#ff0000;margin-left: 10px;" id="error2"></p>
+                </div>
+
+
                 <div class="form-group col-12 ">                       
-                  <label class="col-form-label"> <strong>Ubicación de la sede</strong> </label>
+                  <label class="col-form-label"> <strong>Direccion de la sede</strong> </label>
                   <div class="input-group">
                     <button type="button" class="iconos btn btn-secondary" data-bs-trigger="hover focus"data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Introduzca la ubicación de la sede de envío"><i class="bi bi-pin-map-fill"></i></button> 
                     <input class="form-control" id="ubicacionEdit" required="" placeholder="">
@@ -283,7 +224,7 @@
         
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success" id="editar">Editar</button>
+        <button type="submit" class="btn btn-success" id="editar">Actualizar</button>
       </div>
     </div>
   </div>
@@ -302,7 +243,7 @@
         ¿Desea Borrar los Datos de la Sede de Envío?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
+        <button id = "borrars"type="button" class="btn btn-secondary cerrar" data-bs-dismiss="modal">Cerrar</button>
         <button id="borrar" type="button" class="btn btn-danger">Borrar</button>
       </div>
     </div> 

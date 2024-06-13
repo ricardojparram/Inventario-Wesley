@@ -21,8 +21,8 @@
     <div class="container container-md row text-white">
       <div class="col-12 col-md-6 row align-items-center">
         <div>
-          <h1 class="fw-bold">Farmacia MediSalud C.A</h1>
-          <p class="fs-6" style="text-align: justify;"><strong>Nuestra farmacia en línea ofrece una amplia variedad de medicamentos y productos de salud para satisfacer todas sus necesidades. Ofrecemos envíos a todo el país para que pueda recibir sus productos directamente en la comodidad de su hogar.</strong></p>
+          <h1 class="fw-bold">Centro Medico Wesley</h1>
+          <p class="fs-6" style="text-align: justify;"><strong></strong></p>
           <span class="row gap-4 align-items-center justify-content-center">
             <a href="?url=nosotros" class="btn btn-light col-6"> Más informacion</a>
             <a href="?url=catalogo" class="btn btn-success col-5"><b>¡Compra ya!</b></a>

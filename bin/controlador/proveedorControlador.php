@@ -13,15 +13,19 @@
 
   if(!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
 
-  if(isset($_POST['notificacion'])) {
-    $objModel->getNotificacion();
-  }
+  //if(isset($_POST['notificacion'])) {
+    //$objModel->getNotificacion();
+  //}
 
   if(isset($_POST['getPermisos'], $permiso["Consultar"])){
     die(json_encode($permiso));
   }
 
-  if(isset($_POST['mostrar'], $permiso["Consultar"])){
+  if(isset($_POST['mostrar'])){
+    $objModel->mostrarProveedorAjax($_POST['bitacora']);
+  }
+
+  if(isset($_POST["mostrar"]) && isset($_POST['bitacora'])) {
     $objModel->mostrarProveedorAjax($_POST['bitacora']);
   }
 
@@ -32,12 +36,13 @@
   }
 
   if(isset($_POST['select'], $permiso["Editar"])){
+    
     $objModel->getItem($_POST['id']);
   }
   
-  if(isset($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['telefonoEdit'], $_POST['contactoEdit'], $_POST['id'], $permiso["Editar"])){
+  if(isset($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['telefonoEdit'], $_POST['contactoEdit'], $permiso["Editar"])){
 
-    $objModel->getEditar($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['telefonoEdit'], $_POST['contactoEdit'], $_POST['id']);
+    $objModel->getEditar($_POST['rifEdit'], $_POST['direccionEdit'], $_POST['razonEdit'], $_POST['telefonoEdit'], $_POST['contactoEdit']);
 
   }
 
