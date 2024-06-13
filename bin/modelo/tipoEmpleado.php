@@ -1,227 +1,250 @@
-<?php  
+<?php
 
 namespace modelo;
+
 use config\connect\DBConnect as DBConnect;
 use utils\validar;
 
-class tipoEmpleado extends DBConnect{
+class tipoEmpleado extends DBConnect
+{
 
 	use validar;
 	private $tipoEmpleado;
 	private $id;
 
-	public function getMostrarEmpleado($bitacora = false){
+	public function getMostrarEmpleado($bitacora = false)
+	{
 		try {
-		parent::conectarDB();
+			parent::conectarDB();
 
-		$query = 'SELECT te.tipo_em , te.nombre_e FROM tipo_empleado te WHERE te.status = 1';
-		$new = $this->con->prepare($query);
-		$new->execute();
-		$data = $new->fetchAll(\PDO::FETCH_OBJ);
+			$query = 'SELECT te.tipo_em , te.nombre_e FROM tipo_empleado te WHERE te.status = 1';
+			$new = $this->con->prepare($query);
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
-		if ($bitacora)
-        $this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Consultó listado tipo de empleado.");
+			if ($bitacora)
+				$this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Consultó listado tipo de empleado.");
 
-		parent::desconectarDB();
+			parent::desconectarDB();
 
-		return $data;
-
+			return $data;
 		} catch (\PDOException $e) {
 			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
-	 public function validarTipoEmpleado($tipoEmpleado , $id){
-	 if (!$this->validarString('string' , $tipoEmpleado))
-		return $this->http_error(400, 'Tipo empleado invalido.');
+	public function validarTipoEmpleado($tipoEmpleado, $id)
+	{
+		if (!$this->validarString('string', $tipoEmpleado))
+			return $this->http_error(400, 'Tipo empleado invalido.');
 
-      $this->id = ($id === 'false') ? false : $id;
-      $this->tipoEmpleado = $tipoEmpleado;
+		$this->id = ($id === 'false') ? false : $id;
+		$this->tipoEmpleado = $tipoEmpleado;
 
-      return $this->validTipoEmpleado();
+		return $this->validTipoEmpleado();
+	}
 
-     }
+	private function validTipoEmpleado()
+	{
+		try {
+			parent::conectarDB();
+			if ($this->id === false) {
+				$new = $this->con->prepare('SELECT te.tipo_em FROM tipo_empleado te WHERE te.status = 1 AND te.nombre_e = ?');
+				$new->bindValue(1, $this->tipoEmpleado);
+			} else {
+				$new = $this->con->prepare('SELECT te.tipo_em FROM tipo_empleado te WHERE te.status = 1 AND te.nombre_e = ? AND te.tipo_em != ?');
+				$new->bindValue(1, $this->tipoEmpleado);
+				$new->bindValue(2, $this->id);
+			}
 
-     private function validTipoEmpleado(){
-      try {
-        parent::conectarDB();
-        if($this->id === false) {
-          $new = $this->con->prepare('SELECT te.tipo_em FROM tipo_empleado te WHERE te.status = 1 AND te.nombre_e = ?');
-          $new->bindValue(1, $this->tipoEmpleado);
-        }else{
-          $new = $this->con->prepare('SELECT te.tipo_em FROM tipo_empleado te WHERE te.status = 1 AND te.nombre_e = ? AND te.tipo_em != ?');
-          $new->bindValue(1, $this->tipoEmpleado);
-          $new->bindValue(2, $this->id);
-        }
+			$new->execute();
+			$data = $new->fetchAll();
 
-        $new->execute();
-        $data = $new->fetchAll();
+			if (isset($data[0]['tipo_em'])) {
+				$resultado = ['resultado' => 'error', 'msg' => 'El tipo empleado ya está registrado.', 'res' => false];
+			} else {
+				$resultado = ['resultado' => 'empleado valido', 'res' => true];
+			}
 
-        if(isset($data[0]['tipo_em'])) {
-          $resultado = ['resultado' => 'error', 'msg' => 'El tipo empleado ya está registrado.', 'res' => false];
-        }else{
-          $resultado = ['resultado' => 'empleado valido', 'res' => true];
-        }
+			parent::desconectarDB();
+			return $resultado;
+		} catch (\PDOException $e) {
+			return $this->http_error(500, $e->getMessage());
+		}
+	}
 
-        parent::desconectarDB();
-        return $resultado;
-        
-      } catch (\PDOException $e) {
-		return $this->http_error(500, $e->getMessage());
-      }
-     }
-
-	public function getRegistrarEmpleado($tipoEmpleado){
-		if (!$this->validarString('string' , $tipoEmpleado))
-		return $this->http_error(400, 'Tipo empleado invalido.');
+	public function getRegistrarEmpleado($tipoEmpleado)
+	{
+		if (!$this->validarString('string', $tipoEmpleado))
+			return $this->http_error(400, 'Tipo empleado invalido.');
 
 		$this->tipoEmpleado = $tipoEmpleado;
-        $this->id = false;
-        $validarTipoEmpleado = $this->validTipoEmpleado();
+		$this->id = false;
+		$validarTipoEmpleado = $this->validTipoEmpleado();
 
-        if ($validarTipoEmpleado['res'] === false) return ['resultado' => 'error', 'msg' => 'El tipo empleado ya está registrado.'];
+		if ($validarTipoEmpleado['res'] === false) return ['resultado' => 'error', 'msg' => 'El tipo empleado ya está registrado.'];
 
 		return $this->registrarEmpleado();
-  	}
+	}
 
-  	private function registrarEmpleado(){
-  		try {
-  		parent::conectarDB();
-      
-  		$new = $this->con->prepare('INSERT INTO `tipo_empleado`(`tipo_em`, `nombre_e`, `status`) VALUES (DEFAULT ,? ,1 )');
-  		$new->bindValue(1, $this->tipoEmpleado);
-  		$new->execute();
-  		$data = $new->fetchAll();
+	private function registrarEmpleado()
+	{
+		try {
+			parent::conectarDB();
 
-  		$resultado = ["resultado" => "registrado correctamente"];
-		$this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Registró un tipo de empleado.");
-        parent::desconectarDB();
+			$new = $this->con->prepare('INSERT INTO `tipo_empleado`(`tipo_em`, `nombre_e`, `status`) VALUES (DEFAULT ,? ,1 )');
+			$new->bindValue(1, $this->tipoEmpleado);
+			$new->execute();
+			$data = $new->fetchAll();
 
-        return $resultado;
+			$resultado = ["resultado" => "registrado correctamente"];
+			$this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Registró un tipo de empleado.");
+			parent::desconectarDB();
 
-  		} catch (\PDOException $e) {
+			return $resultado;
+		} catch (\PDOException $e) {
 			return $this->http_error(500, $e->getMessage());
-  		}
-  	}
+		}
+	}
 
-  	public function validarExistencia($id){
+	public function validarExistencia($id)
+	{
 		if (!$this->validarString('entero', $id))
-		return $this->http_error(400, 'id tipo empleado inválido.');
+			return $this->http_error(400, 'id tipo empleado inválido.');
 
-  		$this->id = $id;
+		$this->id = $id;
 
-  		return $this->validExistencia();
+		return $this->validExistencia();
+	}
 
-  	}
+	private function validExistencia()
+	{
+		try {
+			parent::conectarDB();
+			$new = $this->con->prepare('SELECT te.nombre_e FROM tipo_empleado te WHERE te.status = 1 AND te.tipo_em = ?');
+			$new->bindValue(1,  $this->id);
+			$new->execute();
+			$data = $new->fetchAll();
 
-  	private function validExistencia(){
-  		try {
-  			parent::conectarDB();
-  			$new = $this->con->prepare('SELECT te.nombre_e FROM tipo_empleado te WHERE te.status = 1 AND te.tipo_em = ?');
-  			$new->bindValue(1,  $this->id);
-  			$new->execute();
-  			$data = $new->fetchAll();
+			parent::desconectarDB();
 
-  			parent::desconectarDB();
-
-  			if(isset($data[0]["nombre_e"])){
-  				return['resultado' => 'Si existe este tipo de empleado.'];
-  			}else{
-  				return['resultado' => 'Error de empleado'];
-  			}
-  		} catch (\PDOException $e) {
+			if (isset($data[0]["nombre_e"])) {
+				return ['resultado' => 'Si existe este tipo de empleado.'];
+			} else {
+				return ['resultado' => 'Error de empleado'];
+			}
+		} catch (\PDOException $e) {
 			return $this->http_error(500, $e->getMessage());
-  		}
-  	}
+		}
+	}
 
-  	public function getMostrarEdit($id){
-	if (!$this->validarString('entero', $id))
-		return $this->http_error(400, 'id tipo empleado inválido.');
-
-      $this->id = $id;
-
-      return $this->mostrarEdit();
-  	}
-
-  	private function mostrarEdit(){
-  		try{
-  			parent::conectarDB();
-  			$new = $this->con->prepare("SELECT te.nombre_e FROM tipo_empleado te WHERE te.status = 1 AND te.tipo_em = ?");
-  			$new->bindValue(1, $this->id);
-  			$new->execute();
-  			$data = $new->fetchAll(\PDO::FETCH_OBJ);
-  			parent::desconectarDB();
-  			return $data;
-  		}catch (\PDOexception $e) {
-			return $this->http_error(500, $e->getMessage());
-  		}
-  	}
-
-  	public function getEditarEmpleado($tipoEmpleadoEdit , $id){
+	public function getMostrarEdit($id)
+	{
 		if (!$this->validarString('entero', $id))
-		return $this->http_error(400, 'id tipo empleado inválido.');
+			return $this->http_error(400, 'id tipo empleado inválido.');
 
-  		if (!$this->validarString('string' , $tipoEmpleadoEdit))
-		return $this->http_error(400, 'Tipo empleado invalido.');
+		$this->id = $id;
 
-  		$this->tipoEmpleado = $tipoEmpleadoEdit;
-  		$this->id = $id;
+		return $this->mostrarEdit();
+	}
 
-  		$validarTipoEmpleado = $this->validTipoEmpleado();
-  		if ($validarTipoEmpleado['res'] === false) return ['resultado' => 'error', 'msg' => 'El tipo empleado ya está registrado.'];
+	private function mostrarEdit()
+	{
+		try {
+			parent::conectarDB();
+			$new = $this->con->prepare("SELECT te.nombre_e FROM tipo_empleado te WHERE te.status = 1 AND te.tipo_em = ?");
+			$new->bindValue(1, $this->id);
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
+			parent::desconectarDB();
+			return $data;
+		} catch (\PDOexception $e) {
+			return $this->http_error(500, $e->getMessage());
+		}
+	}
 
-  		return $this->editarEmpleado();
+	public function getEditarEmpleado($tipoEmpleadoEdit, $id)
+	{
+		if (!$this->validarString('entero', $id))
+			return $this->http_error(400, 'id tipo empleado inválido.');
 
-  	}
+		if (!$this->validarString('string', $tipoEmpleadoEdit))
+			return $this->http_error(400, 'Tipo empleado invalido.');
 
-  	private function editarEmpleado(){
-  		try {
-  			parent::conectarDB();
-  			$new = $this->con->prepare("UPDATE tipo_empleado te SET te.nombre_e = ? WHERE te.status = 1 AND te.tipo_em = ?");
-  			$new->bindValue(1, $this->tipoEmpleado);
-  			$new->bindValue(2,$this->id);
-  			$new->execute();
+		$this->tipoEmpleado = $tipoEmpleadoEdit;
+		$this->id = $id;
 
-  			$resultado = ['resultado'=> 'Editado'];
+		$validarTipoEmpleado = $this->validTipoEmpleado();
+		if ($validarTipoEmpleado['res'] === false) return ['resultado' => 'error', 'msg' => 'El tipo empleado ya está registrado.'];
+
+		return $this->editarEmpleado();
+	}
+
+	private function editarEmpleado()
+	{
+		try {
+			parent::conectarDB();
+			$new = $this->con->prepare("UPDATE tipo_empleado te SET te.nombre_e = ? WHERE te.status = 1 AND te.tipo_em = ?");
+			$new->bindValue(1, $this->tipoEmpleado);
+			$new->bindValue(2, $this->id);
+			$new->execute();
+
+			$resultado = ['resultado' => 'Editado'];
 			$this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Editó un tipo de empleado.");
 
-  			parent::desconectarDB();
-  			return $resultado;
-
-  		} catch (\PDOException $e) {
+			parent::desconectarDB();
+			return $resultado;
+		} catch (\PDOException $e) {
 			return $this->http_error(500, $e->getMessage());
-  		}
-  	}
+		}
+	}
 
-  	public function getEliminarEmpleado($id){
+	public function getEliminarEmpleado($id)
+	{
 		if (!$this->validarString('entero', $id))
-		return $this->http_error(400, 'id tipo empleado inválido.');
+			return $this->http_error(400, 'id tipo empleado inválido.');
 
-  		$this->id = $id;
+		if (!$this->validarTipoEmpleadoSiTieneRegistros($id)) {
+			return $this->http_error(403, "No se puede eliminar el tipo empleado porque ya tiene registros.");
+		}
 
-  		return $this->eliminarEmpleado();
-  	}
+		$this->id = $id;
 
-  	private function eliminarEmpleado(){
-  	 try {
-     parent::conectarDB();
+		return $this->eliminarEmpleado();
+	}
 
-  	 $new = $this->con->prepare('UPDATE tipo_empleado te SET te.status = 0 WHERE te.status = 1 AND te.tipo_em = ?');
-  	 $new->bindValue(1, $this->id);
-  	 $new->execute();
-  	 
-  	 $resultado = ['resultado' => 'Eliminado'];
-	 $this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Eliminó un tipo de empleado");
-  	 parent::desconectarDB();
+	private function eliminarEmpleado()
+	{
+		try {
+			parent::conectarDB();
 
-  	 return $resultado;
+			$new = $this->con->prepare('UPDATE tipo_empleado te SET te.status = 0 WHERE te.status = 1 AND te.tipo_em = ?');
+			$new->bindValue(1, $this->id);
+			$new->execute();
 
-  	 } catch (\PDOException $e) {
-		return $this->http_error(500, $e->getMessage());
-  	 }
-  	}
+			$resultado = ['resultado' => 'Eliminado'];
+			$this->binnacle("Tipo Empleado", $_SESSION['cedula'], "Eliminó un tipo de empleado");
+			parent::desconectarDB();
 
+			return $resultado;
+		} catch (\PDOException $e) {
+			return $this->http_error(500, $e->getMessage());
+		}
+	}
 
+	private function validarTipoEmpleadoSiTieneRegistros($id)
+	{
+		try {
+			$this->conectarDB();
+			$sql = "SELECT (COUNT(p.tipo_em)) AS count FROM tipo_empleado te LEFT JOIN personal p ON p.tipo_em = te.tipo_em WHERE te.tipo_em = :id";
+			$new = $this->con->prepare($sql);
+			$new->bindValue(':id', $id);
+			$new->execute();
+			$data = $new->fetch(\PDO::FETCH_OBJ);
+			$this->desconectarDB();
+			return intval($data->count) === 0;
+		} catch (\PDOException $error) {
+			return $this->http_error(500, $error->getMessage());
+		}
+	}
 }
-
-?>

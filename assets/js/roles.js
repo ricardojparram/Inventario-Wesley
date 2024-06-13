@@ -37,11 +37,11 @@ $(document).ready(function () {
         $("#tabla tbody").html(tabla);
         mostrar = $("#tabla").DataTable({ resposive: true });
       },
-      "json",
+      "json"
     ).fail((e) => {
       Toast.fire({
         icon: "error",
-        title: e.responseJSON.msg || "Ha ocurrido un error.",
+        title: e.responseJSON?.msg || "Ha ocurrido un error.",
       });
       console.error(e);
     });
@@ -98,12 +98,12 @@ $(document).ready(function () {
         });
         $("#tabla_permisos").html(tabla);
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error(e);
       })
@@ -132,12 +132,12 @@ $(document).ready(function () {
           $(".cerrar").click();
         }
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error(e);
       })
@@ -165,12 +165,12 @@ $(document).ready(function () {
         $(".cerrar").click();
         Toast.fire({ icon: "success", title: "Rol registrado" });
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error(e);
       })
@@ -189,12 +189,12 @@ $(document).ready(function () {
       (data) => {
         $("#rol_nombre_edit").val(data[0].nombre);
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error(e);
       })
@@ -212,7 +212,7 @@ $(document).ready(function () {
     vrol = validarNombre(
       $("#rol_nombre_edit"),
       $("#error2"),
-      "Error de nombre,",
+      "Error de nombre,"
     );
     if (!vrol) throw new Error("Error de validacion.");
 
@@ -227,12 +227,12 @@ $(document).ready(function () {
         $(".cerrar").click();
         Toast.fire({ icon: "success", title: data.msg });
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error(e);
       })
@@ -258,12 +258,12 @@ $(document).ready(function () {
         rellenar();
         Toast.fire({ icon: "success", title: data.msg });
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error(e);
       })

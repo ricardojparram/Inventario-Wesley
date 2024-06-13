@@ -55,7 +55,7 @@ $(document).ready(function () {
       .fail((e) => {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error(e);
       })
@@ -88,7 +88,7 @@ $(document).ready(function () {
       error(e) {
         Toast.fire({
           icon: "error",
-          title: e.responseJSON.msg || "Ha ocurrido un error.",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
         });
         console.error("Error al exportar el reporte: " + e);
       },
@@ -242,7 +242,7 @@ $(document).ready(function () {
         labels: productos.labels,
         datasets: [
           {
-            label: "Productos",
+            label: "Cantidad",
             data: productos.data,
             borderColor: "rgba(94, 166, 48, 0.7)",
             borderRadius: 5,
@@ -281,7 +281,7 @@ $(document).ready(function () {
         labels: productos.labels,
         datasets: [
           {
-            label: "Productos",
+            label: "Cantidad",
             data: productos.data,
             borderColor: "rgba(94, 166, 48, 0.7)",
             borderRadius: 5,

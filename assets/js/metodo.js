@@ -112,6 +112,10 @@ $(document).ready(function () {
             $("#tipo").addClass('input-error');
           }
         }
+      }).fail((e) => {
+        Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+        throw new Error(e.responseJSON.msg);
+
       })
     }
     click++;
@@ -176,6 +180,9 @@ $(document).ready(function () {
             rellenar();
           }
         }
+      }).fail((e) => {
+        Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+        throw new Error(e.responseJSON.msg);
       })
     }).catch(() => {
       throw new Error('No exite.');
@@ -244,6 +251,10 @@ $(document).ready(function () {
               $("#tipoEdit").addClass('input-error')
             }
           }
+        }).fail((e) => {
+          Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+          throw new Error(e.responseJSON.msg);
+
         })
       }
     }).catch(() => {

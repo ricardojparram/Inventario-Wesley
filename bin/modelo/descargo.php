@@ -98,9 +98,10 @@ class descargo extends DBConnect
                     AND cod_producto = (
                         SELECT cod_producto FROM producto_sede WHERE id_producto_sede = :id_producto_sede
                     ) 
-                    AND id_sede = 1;";
+                    AND id_sede = :id_sede;";
             $new = $this->con->prepare($sql);
             $new->bindValue(":id_producto_sede", $this->id_producto);
+            $new->bindValue(":id_sede", $_SESSION['id_sede']);
             $new->execute();
             return $new->fetch(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
@@ -110,7 +111,7 @@ class descargo extends DBConnect
     public function getAgregarDescargo($num_descargo, $fecha, $productos, $img = false): array
     {
         if (!$this->validarString('numero', $num_descargo)) {
-            return $this->http_error(400, 'Numero de cargo inválido.');
+            return $this->http_error(400, 'Numero de descargo inválido.');
         }
 
         $fecha =  date('Y-m-d', strtotime($fecha));

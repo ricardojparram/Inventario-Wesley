@@ -22,7 +22,7 @@ class cargo extends DBConnect
                     WHERE status = 1;";
             $new = $this->con->prepare($sql);
             $new->execute();
-            // if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
+            if ($bitacora == "true") $this->binnacle("Laboratorio", $_SESSION['cedula'], "Consultó listado.");
             $this->desconectarDB();
             return $new->fetchAll(\PDO::FETCH_OBJ);
         } catch (\PDOException $e) {
@@ -92,8 +92,8 @@ class cargo extends DBConnect
     }
     public function getAgregarCargo($num_cargo, $fecha, $productos): array
     {
-        if (!$this->validarString('entero', $num_cargo)) {
-            return $this->http_error(400, 'Transferencia inválida.');
+        if (!$this->validarString('numero', $num_cargo)) {
+            return $this->http_error(400, 'Numero de cargo inválido.');
         }
 
         $fecha =  date('Y-m-d', strtotime($fecha));
@@ -144,12 +144,13 @@ class cargo extends DBConnect
 
                 $inventario = intval($producto_sede->cantidad) + intval($cantidad);
                 $version = intval($producto_sede->version) + 1;
-                $sql = "UPDATE producto_sede SET cantidad = :inventario, version = :version
-                        WHERE id_producto_sede = :id_producto_sede";
+                $sql = "UPDATE producto_sede SET cantidad = :inventario, version = :version_nueva
+                        WHERE id_producto_sede = :id_producto_sede AND version = :version_leida";
                 $new = $this->con->prepare($sql);
                 $new->bindValue(":inventario", $inventario);
-                $new->bindValue(":version", $version);
+                $new->bindValue(":version_nueva", $version);
                 $new->bindValue(":id_producto_sede", $producto_sede->id_producto_sede);
+                $new->bindValue(":version_leida", $producto->version);
                 $new->execute();
                 $this->id_producto = $producto_sede->id_producto_sede;
                 if ($new->rowCount() == 0) {
@@ -166,18 +167,20 @@ class cargo extends DBConnect
                 $new->execute();
                 $this->inventario_historial("Cargo", "x", "", "", $this->id_producto, $producto["cantidad"]);
             }
-
-            $this->desconectarDB();
+            $this->con->commit();
             return ['resultado' => 'ok', 'msg' => 'Se ha registrado el cargo correctamente.'];
         } catch (\PDOException $e) {
+            $this->con->rollBack();
             return ['error' => $e->getMessage()];
+        } finally {
+            $this->desconectarDB();
         }
     }
 
     public function getEliminarCargo($id_cargo): array
     {
         if (!$this->validarString('entero', $id_cargo)) {
-            return $this->http_error(400, 'Cargo inválido.');
+            return $this->http_error(400, 'Id cargo inválida.');
         }
 
         $this->id_cargo = $id_cargo;
@@ -209,6 +212,7 @@ class cargo extends DBConnect
             $new->execute();
             $detalle_cargo = $new->fetchAll(\PDO::FETCH_OBJ);
             foreach ($detalle_cargo as $producto) {
+                $this->id_producto = $producto->id_producto_sede;
                 $producto_sede = $this->verificarExistenciaDelLote();
                 if (is_array($producto_sede)) {
                     $this->con->rollBack();
@@ -220,7 +224,7 @@ class cargo extends DBConnect
                     return $this->http_error(400, 'Cantidad insuficiente en el inventario.');
                 }
 
-                $inventario = intval($producto->cantidad) - intval($producto->inventario);
+                $inventario = intval($producto->inventario) - intval($producto->cantidad);
                 $version = intval($producto->version) + 1;
                 $sql = "UPDATE
                             producto_sede
@@ -232,8 +236,9 @@ class cargo extends DBConnect
                             AND version = :version_leida";
                 $new = $this->con->prepare($sql);
                 $new->bindValue(':cantidad', $inventario);
-                $new->bindValue(':version', $version);
+                $new->bindValue(':version_nueva', $version);
                 $new->bindValue(':id', $producto->id_producto_sede);
+                $new->bindValue(':version_leida', $producto->version);
                 $new->execute();
                 if ($new->rowCount() == 0) {
                     $this->con->rollBack();

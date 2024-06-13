@@ -1,42 +1,40 @@
 $(document).ready(function () {
   let mostrar;
-  let editarPermiso, eliminarPermiso, registrarPermiso;
-  $.ajax({
-    method: "POST",
-    url: "",
-    dataType: "json",
-    data: { getPermisos: "a" },
-    success(permisos) {
-      registrarPermiso =
-        typeof permisos.Registrar === "undefined" ? "disabled" : "";
-      editarPermiso = typeof permisos.Editar === "undefined" ? "disabled" : "";
-      eliminarPermiso =
-        typeof permisos.Eliminar === "undefined" ? "disabled" : "";
-    },
-  }).then(() => rellenar(true));
+  let permisos;
+  $.post("", { getPermisos: "" })
+    .fail((e) => {
+      Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
+      throw new Error("Error al mostrar listado: " + e);
+    })
+    .then((data) => {
+      permisos = JSON.parse(data);
+      rellenar(true);
+    });
 
   function rellenar(bitacora = false) {
     $.ajax({
       type: "GET",
       url: "",
       dataType: "json",
-      data: { mostrar: "xd", bitacora },
+      data: { mostrar: "", bitacora },
       success(data) {
+        const permisoEditar = !permisos["Editar"] ? "disabled" : "";
+        const permisoEliminar = !permisos["Eliminar"] ? "disabled" : "";
         let tabla;
         data.forEach((row) => {
           tabla += `
-		<tr>
-		<td>${row.nombre}</td>
-		<td>${row.telefono}</td>
-		<td>${row.direccion}</td>
-		<td class="d-flex justify-content-center">
-		<button type="button" ${editarPermiso} id="${row.id_sede}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button>
-		<button type="button" ${eliminarPermiso} id="${row.id_sede}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#Borrar"><i class="bi bi bi-trash3"></i></button>
-		</td>
-		</tr>
-		`;
+            <tr>
+              <td>${row.nombre}</td>
+              <td>${row.telefono}</td>
+              <td>${row.direccion}</td>
+              <td class="d-flex justify-content-center">
+                <button type="button" ${permisoEditar} id="${row.id_sede}" class="btn btn-registrar editar mx-2" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button>
+                <button type="button" ${permisoEliminar} id="${row.id_sede}" class="btn btn-danger borrar mx-2" data-bs-toggle="modal" data-bs-target="#Borrar"><i class="bi bi bi-trash3"></i></button>
+              </td>
+            </tr>
+        `;
         });
-        $("#tbody").html(tabla);
+        $("#tbody").html(tabla || "");
         mostrar = $("#tableMostrar").DataTable({
           resposive: true,
         });
@@ -44,192 +42,208 @@ $(document).ready(function () {
     });
   }
 
-  let click = 0;
-  setInterval(() => {
-    click = 0;
-  }, 2000);
-
-  $("#sedeNomb").keyup(() => {
-    validarNombre($("#sedeNomb"), $("#error1"), "Error de Nombre de sede");
-  });
-  $("#sedeTele").keyup(() => {
-    validarTelefono($("#sedeTele"), $("#error2"), "Error de Telefono de sede");
-  });
-  $("#sedeDirec").keyup(() => {
+  $("#sedeNombre").inputmask("nombre");
+  $("#sedeNombre").keyup(() =>
+    validarNombre($("#sedeNombre"), $("#error1"), "Error de Nombre de sede")
+  );
+  $("#sedeTelefono").inputmask({ mask: "99999999999", placeholder: "" });
+  $("#sedeTelefono").keyup(() =>
+    validarTelefono(
+      $("#sedeTelefono"),
+      $("#error2"),
+      "Error de Telefono de sede"
+    )
+  );
+  $("#sedeDireccion").inputmask("direccion");
+  $("#sedeDireccion").keyup(() =>
     validarDireccion(
-      $("#sedeDirec"),
+      $("#sedeDireccion"),
       $("#error3"),
-      "Error de direccion de sede",
-    );
-  });
+      "Error de direccion de sede"
+    )
+  );
 
-  $("#registrar").click((e) => {
-    if (registrarPermiso === "disabled") {
-      Toast.fire({
-        icon: "error",
-        title: "No tienes permisos para esta acción.",
-      });
-      throw new Error("Permiso denegado.");
-    }
-
+  $("#agregarform").submit(function (e) {
     e.preventDefault();
-
-    if (click >= 1) throw new Error("Spam de clicks");
+    validarPermiso(permisos["Registrar"]);
 
     let vnombre, vtelefono, vdireccion;
     vnombre = validarNombre(
-      $("#sedeNomb"),
+      $("#sedeNombre"),
       $("#error1"),
-      "Error de Nombre de sede",
+      "Error de Nombre de sede"
     );
     vtelefono = validarTelefono(
-      $("#sedeTele"),
+      $("#sedeTelefono"),
       $("#error2"),
-      "Error de Telefono de sede",
+      "Error de Telefono de sede"
     );
     vdireccion = validarDireccion(
-      $("#sedeDirec"),
+      $("#sedeDireccion"),
       $("#error3"),
-      "Error de direccion de sede",
+      "Error de direccion de sede"
     );
 
     if (!vnombre || !vtelefono || !vdireccion) {
       throw new Error("Error en las entradas de los inputs.");
     }
 
-    $.ajax({
-      type: "post",
-      dataType: "json",
-      url: "",
-      data: {
-        nombre: $("#sedeNomb").val(),
-        telefono: $("#sedeTele").val(),
-        direccion: $("#sedeDirec").val(),
+    $(this).find('button[type="submit"]').prop("disabled", true);
+    $.post(
+      "",
+      {
+        nombre: $("#sedeNombre").val(),
+        telefono: $("#sedeTelefono").val(),
+        direccion: $("#sedeDireccion").val(),
         registrar: "",
       },
-      success(data) {
-        if (data.resultado) {
-          mostrar.destroy();
-          rellenar();
-          $(".cerrar").click();
-          $("#agregarform").trigger("reset");
-          Toast.fire({ icon: "success", title: "Registrado con exito." });
-        } else {
-          Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-        }
+      function (data) {
+        mostrar.destroy();
+        rellenar();
+        $("#registrar").trigger("reset");
+        $(".cerrar").click();
+        Toast.fire({ icon: "success", title: "Registrado con exito." });
       },
-    });
+      "json"
+    )
+      .fail((e) => {
+        Toast.fire({
+          icon: "error",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
+        });
+        console.error(e.responseJSON?.msg || "Ha ocurrido un error");
+      })
+      .always(() => {
+        $(this).find('button[type="submit"]').prop("disabled", false);
+      });
   });
 
   let id;
   $(document).on("click", ".editar", function () {
+    validarPermiso(permisos["Editar"]);
     id = this.id;
     $.ajax({
-      method: "post",
+      method: "GET",
       url: "",
       dataType: "json",
       data: { select: "", id },
       success(data) {
-        $("#sedeNombEditar").val(data[0].nombre);
-        $("#sedeTeleEditar").val(data[0].telefono);
-        $("#ubicacionEdit").val(data[0].direccion);
+        $("#sedeNombreEditar").val(data.nombre);
+        $("#sedeTelefonoEditar").val(data.telefono);
+        $("#sedeDireccionEditar").val(data.direccion);
       },
     });
   });
 
-  $("#editar").click((e) => {
-    if (editarPermiso === "disabled") {
-      Toast.fire({
-        icon: "error",
-        title: "No tienes permisos para esta acción.",
-      });
-      throw new Error("Permiso denegado.");
-    }
-
-    e.preventDefault();
-
-    if (click >= 1) throw new Error("Spam de clicks");
-
-    vnombre = validarNombre($("#sedeNombEditar"), $("#error1"), "Nombre,");
-    vtelefono = validarTelefono($("#sedeTeleEditar"), $("#error2"), "Telefono");
-    vdireccion = validarDireccion(
-      $("#ubicacionEdit"),
+  $("#sedeNombreEditar").inputmask("nombre");
+  $("#sedeNombreEditar").keyup(() =>
+    validarNombre(
+      $("#sedeNombreEditar"),
+      $("#error1"),
+      "Error de Nombre de sede"
+    )
+  );
+  $("#sedeTelefonoEditar").inputmask({ mask: "99999999999", placeholder: "" });
+  $("#sedeTelefonoEditar").keyup(() =>
+    validarTelefono(
+      $("#sedeTelefonoEditar"),
+      $("#error2"),
+      "Error de Telefono de sede"
+    )
+  );
+  $("#sedeDireccionEditar").inputmask("direccion");
+  $("#sedeDireccionEditar").keyup(() =>
+    validarDireccion(
+      $("#sedeDireccionEditar"),
       $("#error3"),
-      "Sede de envío,",
+      "Error de direccion de sede"
+    )
+  );
+  $("#editarform").submit((e) => {
+    e.preventDefault();
+    validarPermiso(permisos["Editar"]);
+
+    vnombre = validarNombre($("#sedeNombreEditar"), $("#error1"), "Nombre,");
+    vtelefono = validarTelefono(
+      $("#sedeTelefonoEditar"),
+      $("#error2"),
+      "Telefono"
+    );
+    vdireccion = validarDireccion(
+      $("#sedeDireccionEditar"),
+      $("#error3"),
+      "Sede de envío,"
     );
 
     if (!vnombre || !vtelefono || !vdireccion) {
       throw new Error("Error en las entradas de los inputs.");
     }
 
-    $.ajax({
-      type: "post",
-      dataType: "json",
-      url: "",
-      data: {
+    $(this).find('button[type="submit"]').prop("disabled", true);
+    $.post(
+      "",
+      {
         id,
         editar: "",
-        nombre: $("#sedeNombEditar").val(),
-        telefono: $("#sedeTeleEditar").val(),
-        direccion: $("#ubicacionEdit").val(),
+        nombre: $("#sedeNombreEditar").val(),
+        telefono: $("#sedeTelefonoEditar").val(),
+        direccion: $("#sedeDireccionEditar").val(),
       },
-      success(data) {
-        if (data.resultado) {
-          mostrar.destroy();
-          rellenar();
-          $("#editarform").trigger("reset");
-          $(".cerrar").click();
-          Toast.fire({
-            icon: "success",
-            title: "Se ha editado con exito.",
-            showCloseButton: true,
-          });
-        } else {
-          Toast.fire({
-            icon: "error",
-            title: "Ha ocurrido un error.",
-            showCloseButton: true,
-          });
-        }
+      function (data) {
+        mostrar.destroy();
+        rellenar();
+        $("#editarform").trigger("reset");
+        $(".cerrar").click();
+        Toast.fire({
+          icon: "success",
+          title: "Se ha editado con exito.",
+          showCloseButton: true,
+        });
       },
-    });
-    click++;
+      "json"
+    )
+      .fail((e) => {
+        Toast.fire({
+          icon: "error",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
+        });
+        console.error(
+          e.responseJSON?.msg ? e.responseJSON?.msg : "Ha ocurrido un error"
+        );
+      })
+      .always(() => {
+        $(this).find('button[type="submit"]').prop("disabled", false);
+      });
   });
 
   $(document).on("click", ".borrar", function () {
+    validarPermiso(permisos["Eliminar"]);
     id = this.id;
   });
 
   $("#borrar").click(() => {
-    if (eliminarPermiso === "disabled") {
-      Toast.fire({
-        icon: "error",
-        title: "No tienes permisos para esta acción.",
-      });
-      throw new Error("Permiso denegado.");
-    }
+    validarPermiso(permisos["Eliminar"]);
 
-    if (click >= 1) throw new Error("spaaam");
-
-    $.ajax({
-      type: "post",
-      dataType: "json",
-      url: "",
-      data: { eliminar: "", id },
-      success(data) {
-        if (data.resultado) {
-          mostrar.destroy();
-          $(".cerrar").click();
-          rellenar();
-          Toast.fire({ icon: "success", title: "Sede eliminado con exito." });
-        } else {
-          mostrar.destroy();
-          rellenar();
-          $(".cerrar").click();
-          Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-        }
+    $.post(
+      "",
+      { eliminar: "", id },
+      function (data) {
+        mostrar.destroy();
+        $(".cerrar").click();
+        rellenar();
+        Toast.fire({ icon: "success", title: "Sede eliminado con exito." });
       },
-    });
-    click++;
+      "json"
+    )
+      .fail((e) => {
+        Toast.fire({
+          icon: "error",
+          title: e.responseJSON?.msg || "Ha ocurrido un error.",
+        });
+        console.error(e.responseJSON?.msg || "Ha ocurrido un error");
+      })
+      .always(() => {
+        $(this).find('button[type="submit"]').prop("disabled", false);
+      });
   });
 });

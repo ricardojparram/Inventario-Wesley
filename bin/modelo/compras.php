@@ -6,7 +6,8 @@ use config\connect\DBConnect as DBConnect;
 use utils\validar;
 use utils\fechas;
 
-class compras extends DBConnect {
+class compras extends DBConnect
+{
 
 	use validar;
 	use fechas;
@@ -18,11 +19,13 @@ class compras extends DBConnect {
 	private $productos;
 
 
-	public function __construct() {
+	public function __construct()
+	{
 		parent::__construct();
 	}
 
-	public function mostrarCompras($bitacora = false) {
+	public function mostrarCompras($bitacora = false)
+	{
 
 		try {
 
@@ -47,7 +50,8 @@ class compras extends DBConnect {
 		}
 	}
 
-	public function mostrarProveedor() {
+	public function mostrarProveedor()
+	{
 		try {
 
 			parent::conectarDB();
@@ -63,7 +67,8 @@ class compras extends DBConnect {
 		}
 	}
 
-	public function productoDetalle($id) {
+	public function productoDetalle($id)
+	{
 		if (preg_match_all("/^[0-9]{1,10}$/", $id) != 1) {
 			die(json_encode(['error' => 'Id invalido.']));
 		}
@@ -84,7 +89,8 @@ class compras extends DBConnect {
 		}
 	}
 
-	public function mostrarSelect() {
+	public function mostrarSelect()
+	{
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("SELECT p.cod_producto, CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre)AS producto FROM producto p INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE p.status = 1;
@@ -98,7 +104,8 @@ class compras extends DBConnect {
 		}
 	}
 
-	public function getRegistrarCompra($proveedor, $orden, $fecha, $monto, $productos) {
+	public function getRegistrarCompra($proveedor, $orden, $fecha, $monto, $productos)
+	{
 		if (!$this->validarString('rif', $proveedor))
 			return $this->http_error(400, 'Proveedor inválido.');
 
@@ -131,9 +138,18 @@ class compras extends DBConnect {
 		return $this->registrarCompra();
 	}
 
-	private function registrarCompra() {
+	private function registrarCompra()
+	{
 		try {
 			parent::conectarDB();
+			$new = $this->con->prepare("SELECT orden_compra FROM compra WHERE status = 1 AND orden_compra = ?");
+			$new->bindValue(1, $this->orden);
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
+
+			if (isset($data[0]->orden_compra)) {
+				die(json_encode(['resultado' => 'Error de orden', 'error' => 'Orden de compra ya registrada.']));
+			}
 			$new = $this->con->prepare("INSERT INTO `compra`(`orden_compra`, `fecha`, `monto_total`, `ced_prove`, `status`) VALUES (?,?,?,?,1)");
 			$new->bindValue(1, $this->orden);
 			$new->bindValue(2, $this->fecha);
@@ -171,45 +187,26 @@ class compras extends DBConnect {
 		}
 	}
 
-	public function getEliminarCompra($id) {
+	public function getEliminarCompra($id)
+	{
 		$this->id = $id;
 		return $this->eliminarCompra();
 	}
 
-	private function eliminarCompra() {
+	private function eliminarCompra()
+	{
 
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("UPDATE `compra` SET status = 0 WHERE `orden_compra`= ? ");
 			$new->bindValue(1, $this->id);
 			$new->execute();
-
-			$sql = 'SELECT cp.id_producto_sede, cp.cantidad , ps.cantidad AS stock FROM compra_producto cp INNER JOIN producto_sede ps WHERE cp.orden_compra = ?';
-
-			$new = $this->con->prepare($sql);
-			$new->bindValue(1, $this->id);
-			$new->execute();
-			$data = $new->fetchAll(\PDO::FETCH_OBJ);
-
-			foreach ($data as $producto) {
-				$res = $producto->cantidad - $producto->stock;
-				$new = $this->con->prepare("UPDATE producto_sede SET cantidad = ? WHERE id_producto_sede = ?");
-				$new->bindValue(1, $res);
-				$new->bindValue(2, $producto->id_producto_sede);
-				$new->execute();
-			}
-
-
-			$resultado = ['resultado' => 'Eliminado'];
-
-
-
+			$resultado = ['resultado' => 'Eliminado con exito.'];
+			echo json_encode($resultado);
 			parent::desconectarDB();
-
-			return $resultado;
+			die();
 		} catch (\PDOException $error) {
 			return $error;
 		}
 	}
-	
 }

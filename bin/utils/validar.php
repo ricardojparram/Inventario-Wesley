@@ -10,8 +10,10 @@ trait validar
     {
         $d = DateTime::createFromFormat($format, $date);
         $errors = DateTime::getLastErrors();
-        if ($errors) {
-            return false;
+        if (is_array($errors)) {
+            if ($errors['error_count'] > 0 || $errors['warning_count'] > 0) {
+                return false;
+            }
         }
         return $d && $d->format($format) == $date;
     }

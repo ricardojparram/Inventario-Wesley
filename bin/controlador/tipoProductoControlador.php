@@ -13,7 +13,7 @@
 	$permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 	$permiso = $permisos['Tipo'];
 
-	 if(!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`); 
+	 if(!isset($permiso['Consultar'])) die('<script> window.location = "?url=home" </script>'); 
 
 	 if(isset($_POST['notificacion'])) {
 	 	$objModel->getNotificacion();
@@ -22,6 +22,11 @@
      if(isset($_POST['getPermisos'])&& $permiso['Consultar'] ==1){
     	die(json_encode($permiso));
     }
+
+	if (isset($_POST["tipoProducto"]) && isset($_POST['validarTipo']) && isset($_POST['id'])) {
+		$res = $objModel->validarTipo($_POST["tipoProducto"] , $_POST["id"]);
+		die(json_encode($res));
+	}
 
 	if(isset($_POST["tipoProducto"]) && $permiso['Registrar'] == 1) {
 		$objModel->getAgregarTipoProducto($_POST["tipoProducto"]);

@@ -112,6 +112,10 @@ $(document).ready(function () {
             $("#tipoEmpleado").addClass('input-error');
           }
         }
+      }).fail((e) => {
+        Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+        throw new Error(e.responseJSON.msg);
+
       }).always(() => {
         $(this).find('button[type="submit"]').prop("disabled", false);
       });
@@ -176,12 +180,12 @@ $(document).ready(function () {
 
   $('#tipoEmpleadoEdit').keyup(() => {
     if (e.key !== 'Enter') {
-    valid = validarStringLong($("#tipoEmpleadoEdit"), $("#error2"), "Error de tipo empleado");
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(function () {
-      if (valid) validarTipoEmpleado($("#tipoEmpleadoEdit"), $("#error2"), id);
-    }, 700);
-   }
+      valid = validarStringLong($("#tipoEmpleadoEdit"), $("#error2"), "Error de tipo empleado");
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(function () {
+        if (valid) validarTipoEmpleado($("#tipoEmpleadoEdit"), $("#error2"), id);
+      }, 700);
+    }
   })
 
   let tipoEmpleadoEdit;
@@ -213,6 +217,10 @@ $(document).ready(function () {
               $("#tipoEmpleadoEdit").addClass('input-error');
             }
           }
+        }).fail((e) => {
+          Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+          throw new Error(e.responseJSON.msg);
+
         })
 
       }
@@ -254,6 +262,10 @@ $(document).ready(function () {
             rellenar();
           }
         }
+      }).fail((e) => {
+        Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error." });
+        throw new Error(e.responseJSON.msg);
+
       })
     }).catch(() => {
       throw new Error('No exite.');
