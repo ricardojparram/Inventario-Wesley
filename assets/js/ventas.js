@@ -339,7 +339,7 @@ $(document).ready(function(){
         let isValid = true;
         inputs.each(function() {
           let value = parseFloat($(this).val());
-          if ( value == 0 || value < 1) {
+          if (value === '' || isNaN(value) || value <= 0){
             $(this).css({ "border": "solid 1px", "border-color": "red" });
             $(this).attr('valid', 'false');
             isValid = false;
@@ -631,6 +631,8 @@ $(document).ready(function(){
        referencia = validarReferencia();
        $('.precioPorTipo input').each(function(){ validarValoresPositivos($(this)); });
        valid_precioTipo = $('.precio-tipo').is('[valid="false"]')? false : true;
+
+       console.log(cedula && montoTotal && valid_productos && valid_tipoPago && stock && precio && referencia && valid_precioTipo && validarTotal($("#monto"), $('.precio-tipo')));
        
        if(cedula && montoTotal && valid_productos && valid_tipoPago && stock && precio && referencia && valid_precioTipo && validarTotal($("#monto"), $('.precio-tipo'))){
         
