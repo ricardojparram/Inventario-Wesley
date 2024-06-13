@@ -229,12 +229,19 @@ class moneda extends DBConnect
       $new = $this->con->prepare("UPDATE `cambio` SET `status` = '0' WHERE `id_cambio` = ? and status = 1");
       $new->bindValue(1, $this->id);
       $new->execute();
-      $resultado = ['resultado' => 'Eliminado'];
       $this->binnacle("Moneda", $_SESSION['cedula'], "Eliminó un Valor de Moneda.");
+      
+      $new = $this->con->prepare("SELECT m.id_moneda, c2.id_cambio, c2.cambio, c2.fecha FROM cambio c1 JOIN moneda m ON c1.moneda = m.id_moneda JOIN cambio c2 ON m.id_moneda = c2.moneda WHERE c1.id_cambio = ? AND c2.status = 1 AND c2.fecha = ( SELECT MAX(c3.fecha) FROM cambio c3 WHERE c3.moneda = c1.moneda AND c3.status = 1 );");
+      $new->bindValue(1, $this->id);
+      
+      $new->execute();
+      $dato = $new->fetchAll();
       parent::desconectarDB();
+      $this->actualizarValor($dato[0]['cambio'], $dato[0]['id_moneda']);
+      $resultado = ['resultado' => 'Eliminado'];
       return $resultado;
     } catch (\PDOException $error) {
-      return $this->http_error(500, $error);
+      return $this->http_error(500, $error->getMessage());
     }
   }
 
