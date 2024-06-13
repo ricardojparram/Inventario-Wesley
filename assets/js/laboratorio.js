@@ -40,8 +40,7 @@ $(document).ready(function () {
       },
       "json"
     ).fail((e) => {
-      Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
-      throw new Error("Error al mostrar listado: " + e);
+      console.error(e.responseJSON?.msg || "Ha ocurrido un error");
     });
   }
 
