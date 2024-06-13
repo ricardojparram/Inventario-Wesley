@@ -73,10 +73,8 @@ class moneda extends DBConnect
       }
 
       parent::conectarDB();
-      $numeroAleatorio = $this->generarNumeroAleatorio(); // Esto se debe quitar
-      $new = $this->con->prepare("INSERT INTO `moneda`(`id_moneda`, `nombre`, `status`) VALUES (?,?,1)");
-      $new->bindValue(1, $numeroAleatorio);
-      $new->bindValue(2, $this->moneda);
+      $new = $this->con->prepare("INSERT INTO `moneda`(`id_moneda`, `nombre`, `status`) VALUES (DEFAULT,?,1)");
+      $new->bindValue(1, $this->moneda);
       $new->execute();
       $resultado = ['resultado' => 'Registado con exito'];
       $this->binnacle("Moneda", $_SESSION['cedula'], "Registró una Moneda.");
@@ -230,10 +228,10 @@ class moneda extends DBConnect
       $new->bindValue(1, $this->id);
       $new->execute();
       $this->binnacle("Moneda", $_SESSION['cedula'], "Eliminó un Valor de Moneda.");
-      
+
       $new = $this->con->prepare("SELECT m.id_moneda, c2.id_cambio, c2.cambio, c2.fecha FROM cambio c1 JOIN moneda m ON c1.moneda = m.id_moneda JOIN cambio c2 ON m.id_moneda = c2.moneda WHERE c1.id_cambio = ? AND c2.status = 1 AND c2.fecha = ( SELECT MAX(c3.fecha) FROM cambio c3 WHERE c3.moneda = c1.moneda AND c3.status = 1 );");
       $new->bindValue(1, $this->id);
-      
+
       $new->execute();
       $dato = $new->fetchAll();
       parent::desconectarDB();
@@ -339,11 +337,6 @@ class moneda extends DBConnect
     }
   }
 
-  private function generarNumeroAleatorio()
-  {
-    return rand(10, 99);
-  }
-
   public function getValidarMon($id, $moneda)
   {
     if ($moneda != " ") {
@@ -380,7 +373,7 @@ class moneda extends DBConnect
         $new->execute();
         $data = $new->fetchAll();
         parent::desconectarDB();
-        if (isset($data[0]['status'])){
+        if (isset($data[0]['status'])) {
           if ($data[0]['status'] == 1) return $this->http_error(400, 'Moneda ya Registrada');
           if ($data[0]['status'] == 0 && $this->id != " ") return $this->http_error(400, 'No se Puede Editar');
         }
