@@ -37,22 +37,31 @@ class login extends DBConnect
             $this->http_error(500, $e->getMessage());
         }
     }
-    public function getLoginSistema($cedula, $password, $sede, $login)
+    public function getLoginSistema($data)
     {
-        if (!$this->validarString('documento', $cedula)) {
+        if (isset($data['data'])) {
+            $crypto = new CryptoService;
+            $decrypted = $crypto->decrypt($data['data']);
+            if ($decrypted['resultado'] !== "ok") {
+                return $decrypted;
+            }
+            $data = json_decode($decrypted['msg'], true);
+            $this->login = "app";
+        }
+
+        if (!$this->validarString('documento', $data['cedula'])) {
             return $this->http_error(400, 'Cédula inválida.');
         }
-        if (!$this->validarString('contraseña', $password)) {
+        if (!$this->validarString('contraseña', $data['password'])) {
             return $this->http_error(400, 'Contraseña inválida.');
         }
-        if (!$this->validarString('entero', $sede)) {
+        if (!$this->validarString('entero', $data['sede'])) {
             return $this->http_error(400, 'Sede inválida.');
         }
 
-        $this->cedula = $cedula;
-        $this->password = $password;
-        $this->sede = $sede;
-        $this->login = $login;
+        $this->cedula = $data['cedula'];
+        $this->password = $data['password'];
+        $this->sede = $data['sede'];
 
         $validCedula = $this->validarCedula();
         if (!isset($validCedula['res'])) {
