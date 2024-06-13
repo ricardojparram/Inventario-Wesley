@@ -19,7 +19,53 @@ class productos extends DBConnect
     private $contraindicaciones;
     private $id;
 
+    public function mostrarProductos()
+    {
+        try {
+            $this->conectarDB();
+            $query = "SELECT
+                        p.cod_producto,
+                        t.nombrepro,
+                        concat(cantidad, ' x ', peso, ' ', nombre) as pres
+                    FROM
+                        producto p,
+                        tipo_producto t,
+                        presentacion pr,
+                        medida m
+                    WHERE
+                        p.status = 1
+                        and t.id_tipoprod = p.id_tipoprod
+                        and pr.cod_pres = p.cod_pres
+                        and m.id_medida = pr.id_medida;";
+            $new = $this->con->prepare($query);
+            $new->execute();
+            $this->desconectarDB();
+            return $new->fetchAll();
+        } catch (\PDOException $error) {
+            return  $this->http_error(500, $error->getMessage());
+        }
+    }
 
+    private function validarRegistrosProductos($id)
+    {
+        try {
+            $sql = "SELECT
+                        COUNT(ps.cod_producto) as count
+                    FROM
+                        producto p
+                        LEFT JOIN producto_sede ps ON ps.cod_producto = p.cod_producto
+                    WHERE
+                        p.cod_producto = :cod_producto";
+            $this->conectarDB();
+            $new = $this->con->prepare($sql);
+            $new->bindValue(':cod_producto', $id);
+            $new->execute();
+            $res = $new->fetch(\PDO::FETCH_OBJ);
+            return intval($res->count) === 0;
+        } catch (\PDOException $e) {
+            return $this->http_error(500, $e->getMessage());
+        }
+    }
 
     public function getRegistrarProducto($cod_producto, $nombre_prod, $presentacion, $laboratorio, $tipo, $clase, $composicion, $posologia, $contraindicaciones)
     {
@@ -101,7 +147,7 @@ class productos extends DBConnect
             $new = $this->con->prepare($sql);
             $new->bindValue(':cod_producto', $this->cod_producto);
             $new->bindValue(':composicion', $this->composicion);
-            $new->bindValue(':contraincidaciones', $this->contraindicaciones);
+            $new->bindValue(':contraindicaciones', $this->contraindicaciones);
             $new->bindValue(':posologia', $this->posologia);
             $new->bindValue(':rif_laboratorio', $this->laboratorio);
             $new->bindValue(':id_tipo', $this->tipo);
@@ -254,6 +300,9 @@ class productos extends DBConnect
         if (!$this->validarString('cod_producto', $id)) {
             return $this->http_error(400, "Código del producto a editar inválido.");
         }
+        if (!$this->validarRegistrosProductos($id)) {
+            return $this->http_error(400, "El producto ya tiene registros.");
+        }
         $this->id = $id;
         return $this->eliminarProducto();
     }
@@ -265,38 +314,13 @@ class productos extends DBConnect
             $new->bindValue(1, $this->id);
             $new->execute();
             $this->desconectarDB();
-            return $new->fetchAll(\PDO::FETCH_OBJ);
+            return ['resultado' => 'ok', 'msg' => 'El producto ha sido eliminado correctamente.'];
         } catch (\PDOException $error) {
             return  $this->http_error(500, $error->getMessage());
         }
     }
 
-    public function mostrarProductos()
-    {
-        try {
-            $this->conectarDB();
-            $query = "SELECT
-                        p.cod_producto,
-                        t.nombrepro,
-                        concat(cantidad, ' x ', peso, ' ', nombre) as pres
-                    FROM
-                        producto p,
-                        tipo_producto t,
-                        presentacion pr,
-                        medida m
-                    WHERE
-                        p.status = 1
-                        and t.id_tipoprod = p.id_tipoprod
-                        and pr.cod_pres = p.cod_pres
-                        and m.id_medida = pr.id_medida;";
-            $new = $this->con->prepare($query);
-            $new->execute();
-            $this->desconectarDB();
-            return $new->fetchAll();
-        } catch (\PDOException $error) {
-            return  $this->http_error(500, $error->getMessage());
-        }
-    }
+
 
 
     public function mostrarLaboratorio()
