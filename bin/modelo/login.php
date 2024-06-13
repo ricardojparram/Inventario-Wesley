@@ -5,6 +5,7 @@ namespace modelo;
 use utils\validar;
 use utils\JWTService;
 use config\connect\DBConnect as DBConnect;
+use utils\CryptoService;
 
 class login extends DBConnect
 {
@@ -24,6 +25,16 @@ class login extends DBConnect
             return $new->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\PDOStatement $e) {
             return $this->http_error(500, $e);
+        }
+    }
+    public function getPublicKey()
+    {
+        try {
+            $crypto = new CryptoService;
+            $public_key = $crypto->getPublicKey();
+            return ['resultado' => 'ok', 'key' => base64_encode($public_key)];
+        } catch (\Exception $e) {
+            $this->http_error(500, $e->getMessage());
         }
     }
     public function getLoginSistema($cedula, $password, $sede, $login)
