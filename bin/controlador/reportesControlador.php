@@ -23,10 +23,6 @@ if (!isset($permiso["Consultar"])) {
 }
 $tipo_reporte = $objModel->tiposDeReporte();
 
-if (isset($_POST['notificacion'])) {
-    $objModel->getNotificacion();
-}
-
 if (isset($_POST['getPermisos'], $permiso['Consultar'])) {
     die(json_encode($permiso));
 }
