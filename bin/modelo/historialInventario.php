@@ -14,6 +14,7 @@ class historialInventario extends DBConnect
             parent::conectarDB();
             $query = "
               SELECT 
+                  h.id_historial as id,  
                   u.cedula as usuario,
                   s.nombre as nombre_sede,
                   h.fecha as fecha,

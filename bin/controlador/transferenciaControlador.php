@@ -26,11 +26,6 @@ if (isset($_GET['getPermisos'], $permiso['Consultar'])) {
     die(json_encode($permiso));
 }
 
-if (isset($_POST['notificacion'])) {
-    $model->getNotificacion();
-}
-
-
 if (isset($_GET['detalle'], $_GET["id_transferencia"], $permiso['Consultar'])) {
     $res = $model->getMostrarDetalle($_GET["id_transferencia"]);
     die(json_encode($res));
@@ -41,10 +36,9 @@ if (isset($_GET['producto_inventario'], $permiso['Consultar'])) {
     die(json_encode($res));
 }
 
-if($_SESSION['id_sede'] != 1) {
+if ($_SESSION['id_sede'] != 1) {
     die('<script> window.location = "?url=home" </script>');
 }
-
 
 if (isset($_GET['select_producto'])) {
     $res = $model->mostrarProductos();

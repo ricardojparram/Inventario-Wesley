@@ -186,11 +186,11 @@ class sede extends DBConnect
 						) AS count
 					FROM
 						sede s
-						LEFT JOIN producto_sede ps ON ps.id_sede = s.id_sede
-						LEFT JOIN personal p ON p.id_sede = s.id_sede
-						LEFT JOIN transferencia t ON t.id_sede = s.id_sede
-						LEFT JOIN cargo ca ON ca.id_sede = s.id_sede
-						LEFT JOIN descargo d ON d.id_sede = s.id_sede
+						LEFT JOIN (SELECT id_sede FROM producto_sede WHERE cantidad > 0) as ps ON ps.id_sede = s.id_sede
+						LEFT JOIN (SELECT id_sede FROM personal WHERE status = 1) as p ON ps.id_sede = s.id_sede
+						LEFT JOIN (SELECT id_sede FROM transferencia WHERE status = 1) as t ON t.id_sede = s.id_sede
+						LEFT JOIN (SELECT id_sede FROM cargo WHERE status = 1) as ca ON ca.id_sede = s.id_sede
+						LEFT JOIN (SELECT id_sede FROM descargo WHERE status = 1) as d ON d.id_sede = s.id_sede
 						LEFT JOIN historial h ON h.id_sede = s.id_sede
 					WHERE
 						s.id_sede = :id_sede;";
