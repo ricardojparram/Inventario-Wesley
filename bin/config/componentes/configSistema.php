@@ -2,13 +2,6 @@
 
 namespace config\componentes;
 
-use Dotenv\Dotenv as Dotenv;
-
-if (!isset($_ENV["DB"])) {
-    $dotenv = Dotenv::createImmutable(__DIR__, "../../../.env");
-    $dotenv->load();
-}
-
 define("_URL_", $_ENV["URL"]);
 define("_BD_", $_ENV['DB']);
 define("_PASS_", $_ENV['DB_PASS']);
