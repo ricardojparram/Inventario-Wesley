@@ -1,4 +1,7 @@
 --  BASE DE DATOS PARA LA FUNDACION CENTRO MEDICO WESLEY
+SET
+  SESSION sql_require_primary_key = 0;
+
 DROP DATABASE IF EXISTS wesley;
 
 CREATE DATABASE wesley CHARACTER SET utf8mb4;
@@ -13,7 +16,7 @@ CREATE TABLE rol (
   id_rol int(11) AUTO_INCREMENT PRIMARY KEY,
   nombre varchar(50) NOT NULL,
   status tinyint(1) NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -23,7 +26,7 @@ CREATE TABLE modulos (
   id_modulo int(11) AUTO_INCREMENT PRIMARY KEY,
   nombre varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -39,7 +42,7 @@ CREATE TABLE usuario (
   img varchar(300) DEFAULT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (rol) REFERENCES rol (id_rol) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -52,7 +55,7 @@ CREATE TABLE bitacora (
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (cedula) REFERENCES usuario (cedula) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -66,7 +69,7 @@ CREATE TABLE permisos (
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (id_rol) REFERENCES rol (id_rol) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_modulo) REFERENCES modulos (id_modulo) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -77,7 +80,7 @@ CREATE TABLE moneda (
   nombre varchar(50) NOT NULL,
   valor decimal(10, 0) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -90,7 +93,7 @@ CREATE TABLE cambio (
   moneda int(11) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (moneda) REFERENCES moneda (id_moneda) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -100,7 +103,7 @@ CREATE TABLE tipo_producto (
   id_tipoprod int(11) AUTO_INCREMENT PRIMARY KEY,
   nombrepro varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -110,7 +113,7 @@ CREATE TABLE tipo (
   id_tipo int(11) AUTO_INCREMENT PRIMARY KEY,
   nombre_t varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -120,7 +123,7 @@ CREATE TABLE clase (
   id_clase int(11) AUTO_INCREMENT PRIMARY KEY,
   nombre_c varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -130,7 +133,7 @@ CREATE TABLE medida (
   id_medida int(15) AUTO_INCREMENT PRIMARY KEY,
   nombre varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -143,7 +146,7 @@ CREATE TABLE presentacion (
   peso decimal(10, 2) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (id_medida) REFERENCES medida (id_medida) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -155,7 +158,7 @@ CREATE TABLE proveedor (
   razon_social varchar(200) NOT NULL,
   contacto varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -166,7 +169,7 @@ CREATE TABLE contacto_prove (
   telefono varchar(20) NOT NULL,
   rif_proveedor varchar(20) NOT NULL,
   FOREIGN KEY (rif_proveedor) REFERENCES proveedor (rif_proveedor) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -177,7 +180,7 @@ CREATE TABLE laboratorio (
   direccion varchar(200) NOT NULL,
   razon_social varchar(200) DEFAULT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -199,7 +202,7 @@ CREATE TABLE producto (
   FOREIGN KEY (rif_laboratorio) REFERENCES laboratorio (rif_laboratorio),
   FOREIGN KEY (id_tipoprod) REFERENCES tipo_producto (id_tipoprod) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_tipo) REFERENCES tipo (id_tipo) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -207,10 +210,10 @@ CREATE TABLE producto (
 --
 CREATE TABLE img_producto (
   cod_producto varchar(15) NOT NULL,
-  img varchar(300) CHARACTER SET utf16 COLLATE utf16_spanish2_ci NOT NULL,
+  img varchar(300) CHARACTER SET utf16 COLLATE utf16 NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (cod_producto) REFERENCES producto (cod_producto) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -222,7 +225,7 @@ CREATE TABLE sede (
   telefono varchar(15) NOT NULL,
   direccion varchar(200) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -230,7 +233,7 @@ CREATE TABLE sede (
 --
 CREATE TABLE producto_sede (
   id_producto_sede int(50) AUTO_INCREMENT PRIMARY KEY,
-  cod_producto varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  cod_producto varchar(15) NOT NULL,
   lote varchar(15) NOT NULL,
   fecha_vencimiento date NOT NULL,
   id_sede int(11) NOT NULL,
@@ -238,7 +241,7 @@ CREATE TABLE producto_sede (
   version int(11) DEFAULT 0,
   FOREIGN KEY (id_sede) REFERENCES sede (id_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (cod_producto) REFERENCES producto (cod_producto) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -250,7 +253,7 @@ CREATE TABLE descargo (
   id_sede int(11) NOT NULL,
   num_descargo varchar(11) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -261,7 +264,7 @@ CREATE TABLE descargo (
 --   cantidad smallint(10) UNSIGNED NOT NULL,
 --   id_descargo int(11) NOT NULL,
 --   FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf;
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla detalle_descargo
@@ -271,10 +274,10 @@ CREATE TABLE detalle_descargo (
   id_descargo int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
-  descripcion varchar(200) CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  descripcion varchar(200),
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -282,10 +285,10 @@ CREATE TABLE detalle_descargo (
 --
 CREATE TABLE img_descargo (
   id_descargo int(11) NOT NULL,
-  img varchar(300) CHARACTER SET utf16 COLLATE utf16_spanish2_ci NOT NULL,
+  img varchar(300) CHARACTER SET utf16 COLLATE utf16 NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (id_descargo) REFERENCES descargo (id_descargo) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -298,7 +301,7 @@ CREATE TABLE compra (
   ced_prove varchar(20) NOT NULL,
   status tinyint(11) UNSIGNED NOT NULL,
   FOREIGN KEY (ced_prove) REFERENCES proveedor (rif_proveedor) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -312,7 +315,7 @@ CREATE TABLE compra_producto (
   precio_compra decimal(10, 2) NOT NULL,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (orden_compra) REFERENCES compra (orden_compra) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -322,7 +325,7 @@ CREATE TABLE donaciones (
   id_donaciones int(11) AUTO_INCREMENT PRIMARY KEY,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -335,7 +338,7 @@ CREATE TABLE det_donacion (
   id_donaciones int(11) NOT NULL,
   FOREIGN KEY (id_donaciones) REFERENCES donaciones (id_donaciones) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -346,7 +349,7 @@ CREATE TABLE donativo_pac (
   ced_pac varchar(15) NOT NULL,
   id_donaciones int(11) NOT NULL,
   FOREIGN KEY (id_donaciones) REFERENCES donaciones (id_donaciones) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -354,10 +357,10 @@ CREATE TABLE donativo_pac (
 --
 CREATE TABLE donativo_per (
   id_donativo int(11) AUTO_INCREMENT PRIMARY KEY,
-  cedula varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  cedula varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4 NOT NULL,
   id_donaciones int(11) NOT NULL,
   FOREIGN KEY (id_donaciones) REFERENCES donaciones (id_donaciones) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -365,11 +368,11 @@ CREATE TABLE donativo_per (
 --
 CREATE TABLE instituciones (
   rif_int varchar(20) PRIMARY KEY,
-  razon_social varchar(200) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
-  direccion varchar(200) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
-  contacto varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  razon_social varchar(200) NOT NULL,
+  direccion varchar(200) NOT NULL,
+  contacto varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -382,7 +385,7 @@ CREATE TABLE donativo_int (
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (id_donaciones) REFERENCES donaciones (id_donaciones) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (rif_int) REFERENCES instituciones (rif_int) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -392,7 +395,7 @@ CREATE TABLE tipo_empleado (
   tipo_em int(11) AUTO_INCREMENT PRIMARY KEY,
   nombre_e varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -412,7 +415,7 @@ CREATE TABLE personal (
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (tipo_em) REFERENCES tipo_empleado (tipo_em) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_sede) REFERENCES sede (id_sede) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -423,7 +426,7 @@ CREATE TABLE pacientes (
   nombre varchar(50) NOT NULL,
   apellido varchar(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -435,7 +438,7 @@ CREATE TABLE venta (
   monto_dolares decimal(10, 2) NOT NULL,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -449,7 +452,7 @@ CREATE TABLE venta_producto (
   precio_actual decimal(10, 2) NOT NULL,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (num_fact) REFERENCES venta (num_fact) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -457,11 +460,11 @@ CREATE TABLE venta_producto (
 --
 CREATE TABLE venta_pacientes (
   id_venta int(11) AUTO_INCREMENT PRIMARY KEY,
-  num_fact varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  num_fact varchar(15) NOT NULL,
   ced_pac varchar(15) NOT NULL,
   FOREIGN KEY (num_fact) REFERENCES venta (num_fact) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (ced_pac) REFERENCES pacientes (ced_pac) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -469,11 +472,11 @@ CREATE TABLE venta_pacientes (
 --
 CREATE TABLE venta_personal (
   id_venta int(11) AUTO_INCREMENT PRIMARY KEY,
-  cedula varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
-  num_fact varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  cedula varchar(15) NOT NULL,
+  num_fact varchar(15) NOT NULL,
   FOREIGN KEY (cedula) REFERENCES personal (cedula) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (num_fact) REFERENCES venta (num_fact) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -481,10 +484,10 @@ CREATE TABLE venta_personal (
 --
 CREATE TABLE pagos_recibidos (
   id_pago int(11) AUTO_INCREMENT PRIMARY KEY,
-  num_fact varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  num_fact varchar(15) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (num_fact) REFERENCES venta (num_fact) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -494,7 +497,7 @@ CREATE TABLE forma_pago (
   id_forma_pago int(11) AUTO_INCREMENT PRIMARY KEY,
   tipo_pago varchar(15) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -508,7 +511,7 @@ CREATE TABLE detalle_pago (
   monto_pago decimal(10, 2) NOT NULL,
   FOREIGN KEY (id_pago) REFERENCES pagos_recibidos (id_pago) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_forma_pago) REFERENCES forma_pago (id_forma_pago) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -519,7 +522,7 @@ CREATE TABLE recepcion_sede (
   id_transferencia int(11) NOT NULL,
   fecha datetime NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -529,10 +532,10 @@ CREATE TABLE detalle_recepcion (
   id_recepcion int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
-  descripcion varchar(200) CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  descripcion varchar(200),
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -540,10 +543,10 @@ CREATE TABLE detalle_recepcion (
 --
 CREATE TABLE img_recepcion (
   id_recepcion int(11) NOT NULL,
-  img varchar(300) CHARACTER SET utf16 COLLATE utf16_spanish2_ci NOT NULL,
+  img varchar(300) CHARACTER SET utf16 COLLATE utf16 NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (id_recepcion) REFERENCES recepcion_sede (id_recepcion) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -554,7 +557,7 @@ CREATE TABLE transferencia (
   id_sede int(11) NOT NULL,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 -- --------------------------------------------------------
 --
@@ -564,10 +567,10 @@ CREATE TABLE detalle_transferencia (
   id_transferencia int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
-  descripcion varchar(200) CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  descripcion varchar(200),
   FOREIGN KEY (id_transferencia) REFERENCES transferencia (id_transferencia) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -579,7 +582,7 @@ CREATE TABLE cargo (
   id_sede int(11) NOT NULL,
   num_cargo int(50) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -589,10 +592,10 @@ CREATE TABLE detalle_cargo (
   id_cargo int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
-  descripcion varchar(200) CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  descripcion varchar(200),
   FOREIGN KEY (id_cargo) REFERENCES cargo (id_cargo) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -603,7 +606,7 @@ CREATE TABLE recepcion_nacional (
   id_proveedor varchar(20) NOT NULL,
   fecha date NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -613,10 +616,10 @@ CREATE TABLE detalle_recepcion_nacional (
   id_rep_nacional int(11) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
-  descripcion varchar(200) CHARACTER SET utf8 COLLATE utf8_spanish2_ci,
+  descripcion varchar(200),
   FOREIGN KEY (id_rep_nacional) REFERENCES recepcion_nacional (id_rep_nacional) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -625,19 +628,19 @@ CREATE TABLE detalle_recepcion_nacional (
 CREATE TABLE historial (
   id_historial int(11) AUTO_INCREMENT PRIMARY KEY,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
-  tipo_movimiento varchar(20) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
-  entrada varchar(20) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
-  salida varchar(20) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  tipo_movimiento varchar(20) NOT NULL,
+  entrada varchar(20) NOT NULL,
+  salida varchar(20) NOT NULL,
   id_sede int(11) NOT NULL,
-  id_lote varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
+  id_lote varchar(15) NOT NULL,
   id_producto_sede int(50) NOT NULL,
   cantidad int(11) NOT NULL,
-  descripcion varchar(50) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
-  id_usuario varchar(15) CHARACTER SET utf8 COLLATE utf8_spanish2_ci NOT NULL,
+  descripcion varchar(50) NOT NULL,
+  id_usuario varchar(15) NOT NULL,
   status tinyint(1) UNSIGNED NOT NULL,
   FOREIGN KEY (id_producto_sede) REFERENCES producto_sede (id_producto_sede) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (id_usuario) REFERENCES usuario (cedula) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
 -- --------------------------------------------------------
 --
@@ -649,4 +652,4 @@ CREATE TABLE notificaciones (
   mensaje VARCHAR(255) NOT NULL,
   fecha datetime NOT NULL DEFAULT current_timestamp(),
   status tinyint(1) UNSIGNED NOT NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_spanish2_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;

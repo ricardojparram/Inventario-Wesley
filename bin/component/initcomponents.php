@@ -3,12 +3,14 @@
 namespace component;
 
 
-class initcomponents {
+class initcomponents
+{
 
 
-  public static function header() {
+  public static function header()
+  {
 
-    $varHeader = '<link rel="icon" href="' . _URL_ . 'assets/img/Logo_Medi.png">
+    $varHeader = '<link rel="icon" href="' . _URL_ . 'assets/img/Logos Wesley/logo_wesley_sin_titulo.svg">
               <!-- Vendor CSS Files -->
               <link href="' . _URL_ . 'assets/sw2/sweetalert2.min.css" rel="stylesheet">
               <link href="' . _URL_ . 'assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,7 +28,8 @@ class initcomponents {
     echo $varHeader;
   }
 
-  public function footer() {
+  public function footer()
+  {
     $footer = '
          <footer class="py-0 pt-5 footer">
             <!-- <section> begin ============================-->
@@ -93,7 +96,8 @@ class initcomponents {
   }
 
 
-  public static function js() {
+  public static function js()
+  {
     $varJs = '
               <script src="' . _URL_ . 'assets/js/jquery-3.6.0.js"></script>  
               <script src="' . _URL_ . 'assets/sw2/sweetalert2.all.min.js"></script>
