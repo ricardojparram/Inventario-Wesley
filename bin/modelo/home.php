@@ -16,14 +16,14 @@ class home extends DBConnect{
         parent::__construct();
     }
 
-    public function mostrarClientes(){
+    public function mostrarPersonal(){
     	try {
             parent::conectarDB();
     		$new = $this->con->prepare("SELECT 
                 (SELECT count(*) FROM usuario WHERE status = 1) AS usuario, 
                 (SELECT count(*) FROM proveedor WHERE status = 1) AS proveedor, 
-                (SELECT count(*) FROM cliente WHERE status = 1) AS cliente, 
-                (SELECT SUM(stock) FROM producto WHERE status = 1) as producto");
+                (SELECT count(*) FROM personal WHERE status = 1) AS personal, 
+                (SELECT SUM(cantidad) FROM producto_sede ps INNER JOIN producto p ON ps.cod_producto = p.cod_producto WHERE p.status = 1) as producto");
     		$new->execute();
     		$data = $new->fetchAll();
             echo json_encode($data);
@@ -156,10 +156,6 @@ private function compraFecha(){
 
 public function getGrafico(){
 
-    $compras;
-    $ventas;
-    $fechas;
-
     try {
         parent::conectarDB();
         $new = $this->con->prepare("SELECT CAST(fecha AS DATE) as x, COUNT(num_fact) as y
@@ -169,7 +165,7 @@ public function getGrafico(){
         $new->execute();
         $ventas = $new->fetchAll(\PDO::FETCH_OBJ);
 
-        $new = $this->con->prepare("SELECT CAST(fecha AS DATE) as x, COUNT(cod_compra) as y 
+        $new = $this->con->prepare("SELECT CAST(fecha AS DATE) as x, COUNT(orden_compra) as y 
             FROM compra WHERE CAST(fecha AS DATE) >= DATE_SUB(NOW(), INTERVAL 7 DAY) 
             AND status = 1 GROUP BY CAST(fecha AS DATE)");
         $new->execute();
