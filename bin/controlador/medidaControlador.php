@@ -20,36 +20,37 @@
     }
 
 
-     if(isset($_POST['getPermisos'])&& $permiso['Consultar'] == 1){
+     if(isset($_POST['getPermisos'],$permiso['Consultar'])){
     	die(json_encode($permiso));
     }
     
 
-	if(isset($_POST["mostrar"]) && isset($_POST['bitacora'])){
+	if(isset($_POST["mostrar"],$_POST['bitacora'])){
 		($_POST['bitacora'] == 'true')
 		? $objModel->getMostrarMedida(true)
 		: $objModel->getMostrarMedida();
 	}
 
-	if (isset($_POST["medida"]) && isset($_POST['validarMedida']) && isset($_POST['id'])) {
+	if (isset($_POST["medida"],$_POST['validarMedida'],$_POST['id'])) {
 		$res = $objModel->validarMedida($_POST["medida"] , $_POST["id"]);
 		die(json_encode($res));
 	}
 
-	if (isset($_POST["medida"]) && $permiso['Registrar'] == 1){
+	if (isset($_POST["medida"],$permiso['Registrar'])){
 		$res = $objModel->getAgregarMedida($_POST["medida"]);
 		die(json_encode($res)); 
 
 	}
 
-	if (isset($_POST["borrar"]) && isset($_POST["id"]) && $permiso['Eliminar'] == 1){
-		$objModel->getEliminarMedida($_POST["id"]);
+	if (isset($_POST["borrar"],$_POST["id"], $permiso['Eliminar'])){
+		$res = $objModel->getEliminarMedida($_POST["id"]);
+		die(json_encode($res));
 	}
-	if (isset($_POST["editar"]) && isset($_POST["medidaEdit"]) && $permiso['Consultar'] == 1){
+	if (isset($_POST["editar"],$_POST["medidaEdit"],$permiso['Consultar'])){
 	   $res	= $objModel->mostrarlot($_POST["medidaEdit"]);
 	   die(json_encode($res));
 	}
-	if(isset($_POST["medidaEditar"]) && isset($_POST["medidaEdit"]) && $permiso['Editar'] ==1){
+	if(isset($_POST["medidaEditar"],$_POST["medidaEdit"],$permiso['Editar'])){
 	   $res	= $objModel->getEditarMedida($_POST["medidaEditar"], $_POST["medidaEdit"]);
 	   die(json_encode($res));
 	}

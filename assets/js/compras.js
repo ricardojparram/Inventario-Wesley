@@ -42,7 +42,7 @@ $(document).ready(function () {
             	</tr>
             	`;
         });
-        $("#tbody").html(tabla);
+        $('#tbody').html(tabla ? tabla: "");
         tablaMostrar = $("#tableMostrar").DataTable({
           resposive: true,
         });
@@ -447,34 +447,32 @@ $(document).ready(function () {
   });
   $("#eliminar").click((e) => {
     e.preventDefault();
+
     $.ajax({
       type: "POST",
       url: "",
       dataType: "json",
-      data: {
-        borrar: "cualquiera",
-        id,
-      },
+      data: {borrar: "cualquiera", id },
+
       success(data) {
+
         mostrar.destroy();
         $(".cerrar").click();
-        Toast.fire({ icon: "success", title: "compra eliminada" });
         rellenar();
-      },
-    });
+        Toast.fire({ icon: "error", title: "compra eliminada" });
+        rellenar();
+      }
+    }).fail((e)=>{
+      Toast.fire({icon: "error", title: e.responseJSON?.msg || "Ha ocurido un error"});
+      throw new Error(e.responseJSON?.msg);
+      })
   });
 
   $("#cancelar").click(() => {
     $("#agregarform").trigger("reset");
     $(".removeRow").click();
-    $("#Agregar input").attr(
-      "style",
-      "border-color: none; background-image: none;"
-    );
-    $("#Agregar select").attr(
-      "style",
-      "border-color: none; background-image: none;"
-    );
+    $("#Agregar input").attr("style","border-color: none; background-image: none;");
+    $("#Agregar select").attr("style","border-color: none; background-image: none;");
     $("#error").text("");
     filaN();
     fechaHoy($("#fecha"));

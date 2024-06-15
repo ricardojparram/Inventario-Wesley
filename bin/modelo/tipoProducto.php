@@ -3,9 +3,10 @@
 namespace modelo;
 
 Use config\connect\DBConnect as DBConnect;
+use utils\validar;
 
 class tipoProducto extends DBConnect{
-
+    use validar;
 	private $tipoProducto;
 	private $id;
 	private $idEdit;
@@ -57,7 +58,13 @@ class tipoProducto extends DBConnect{
     	}
     }
 
-    public function getEliminar($id){
+    public function getEliminar($id)
+    {
+        
+            if (!$this->validarTipoProductoSiTieneRegistros($id)) {
+                return $this->http_error(400, "No se puede eliminar el tipo de producto ya tiene registros.");
+            }
+
     	$this->id = $id;
 
     	$this->eliminarTipoProducto();
@@ -77,7 +84,20 @@ class tipoProducto extends DBConnect{
     		return $error;
     	}
     }
-
+    private function validarTipoProductoSiTieneRegistros($id)
+    {
+        try{
+            $this->conectarDB();
+            $sql = "SELECT (COUNT(p.id_tipoprod)) AS count FROM tipo_producto tp LEFT JOIN producto p ON p.id_tipoprod = tp.id_tipoprod WHERE tp.id_tipoprod = :id_tipoprod;";
+            $new = $this->con->prepare($sql);
+            $new->execute([':id_tipoprod'=>$id]);
+            $data = $new->fetch(\PDO::FETCH_OBJ);
+            $this->desconectarDB();
+            return intval($data->count) === 0;
+        }catch (\PDOException $error) {
+            return $this->http_error(500, $error->getMessage());
+        }
+    }
     public function getItem($item){
     	$this->id = $item;
 

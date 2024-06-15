@@ -33,7 +33,7 @@ function rellenar(bitacora = false){
 		</tr>
 		`;
 		})
-		$('#tbody').html(tabla);
+		$('#tbody').html(tabla ? tabla: "");
 		mostrar = $('#tabla').DataTable({
 		resposive : true
 		})
@@ -125,15 +125,16 @@ $("#delete").click((e)=>{
 
 		},
 		success(medidaE){
-			if (medidaE.resultado === "Eliminado"){
+			
 				mostrar.destroy();
 				$("#cerrar").click();
 				Toast.fire({icon: 'error', title:'medida de Producto eliminado'})
 				rellenar();
-			}else{
-				console.log("No se elimino");
-			}
+
 		}
+	}).fail((e)=>{
+		Toast.fire({icon: "error", title: e.responseJSON?.msg || "Ha ocuuriido un error"});
+		throw new Error(e.responseJSON?.msg);
 	})
 })
 let medidaEdit

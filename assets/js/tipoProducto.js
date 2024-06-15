@@ -34,7 +34,7 @@ $(document).ready(function(){
                 </tr>
                 `;
               })
-               $('#tbody').html(tabla);
+              $('#tbody').html(tabla ? tabla: "");
                 mostrar = $('#tabla').DataTable({
                   resposive : true
                 })
@@ -86,12 +86,17 @@ $(document).on('click', '.borrar', function() {
             dataType: 'json',
             data : {borrar : 'asd', id},
             success(data){
+
                 mostrar.destroy();
                 $('#cerrar').click();
                 rellenar();
                 Toast.fire({ icon: 'error', title: 'Tipo de producto eliminado' })
             }
-        })
+        }).fail((e)=>{
+		Toast.fire({icon: "error", title: e.responseJSON?.msg || "Ha ocuuriido un error"});
+		throw new Error(e.responseJSON?.msg);
+    })
+    
     })
 
 

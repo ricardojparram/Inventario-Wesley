@@ -31,22 +31,21 @@
 		
 	}
 
-	if (isset($_POST["tipo"]) && $permiso['Registrar'] == 1){
+	if (isset($_POST["tipo"],$permiso['Registrar'])){
 		$res = $objModel->getAgregarTipo($_POST["tipo"]);
 	 	die(json_encode($res));
 
 	}
 
-if (isset($_POST["borrar"]) && isset($_POST["id"]) && $permiso['Eliminar'] == 1){
-	$objModel->getEliminarTipo($_POST["id"]);
+if (isset($_POST["borrar"],$_POST["id"],$permiso['Eliminar'])){
+	$res = $objModel->getEliminarTipo($_POST["id"]);
+	die(json_encode($res));
 }
- if (isset($_POST["editar"]) && isset($_POST["tipoedit"]) && $permiso['Consultar'] == 1){
- 	$eres = $objModel->mostrarlot($_POST["tipoedit"]);
+ if (isset($_POST["editar"],$_POST["tipoedit"],$permiso['Consultar'])){
+ 	$res = $objModel->mostrarlot($_POST["tipoedit"]);
 	die(json_encode($res));
  }
- if(isset($_POST["tipoEditar"]) && isset($_POST["tipoedit"]) && $permiso['Editar'] ==1){
- 	$res = $objModel->getEditarTipo($_POST["tipoEditar"], $_POST["tipoedit"]);
-	die(json_encode($res));
+ if(isset($_POST["tipoEditar"],$_POST["tipoedit"],$permiso['Editar'])){
  	$res = $objModel->getEditarTipo($_POST["tipoEditar"], $_POST["tipoedit"]);
 	die(json_encode($res));
  }

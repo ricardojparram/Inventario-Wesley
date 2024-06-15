@@ -19,28 +19,31 @@
 	 	$objModel->getNotificacion();
 	 }
 
-     if(isset($_POST['getPermisos'])&& $permiso['Consultar'] ==1){
+     if(isset($_POST['getPermisos'],$permiso['Consultar'])){
     	die(json_encode($permiso));
     }
 
-	if(isset($_POST["tipoProducto"]) && $permiso['Registrar'] == 1) {
-		$objModel->getAgregarTipoProducto($_POST["tipoProducto"]);
+	if(isset($_POST["tipoProducto"], $permiso['Registrar'])) {
+		$res = $objModel->getAgregarTipoProducto($_POST["tipoProducto"]);
+		die(json_encode($res));
 	}
 
-	if(isset($_POST["mostrar"]) && isset($_POST['bitacora']) && $permiso['Consultar'] == 1) {
-		$objModel->mostrarTipoProducto();
+	if(isset($_POST["mostrar"],$permiso['Consultar'])) {
+		$res = $objModel->mostrarTipoProducto($_POST['bitacora']);
+		die(json_encode($res));
 	}
 
-	if(isset($_POST["id"]) && isset($_POST["borrar"]) && $permiso['Eliminar'] == 1){
-		$objModel->getEliminar($_POST["id"]);
+	if(isset($_POST["id"],$_POST["borrar"], $permiso['Eliminar'])){
+		$res =$objModel->getEliminar($_POST["id"]);
+		die(json_encode($res));
 	}
 
-	if(isset($_POST["idedit"]) && isset($_POST["item"]) && $permiso['Consultar'] == 1){
+	if(isset($_POST["idedit"],$_POST["item"],$permiso['Consultar'])){
 		$res = $objModel->getItem($_POST["idedit"]);
 		die(json_encode ($res));
 	}
 
-	if(isset($_POST["tipoProductoEdit"]) && isset($_POST["idedit"]) && $permiso['Editar'] == 1) {
+	if(isset($_POST["tipoProductoEdit"],$_POST["idedit"],$permiso['Editar'])) {
 		$res = $objModel->getEditarTipoProducto($_POST["tipoProductoEdit"], $_POST["idedit"]);
 		die(json_encode ($res));
 	}

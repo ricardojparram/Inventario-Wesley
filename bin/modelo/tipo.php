@@ -1,10 +1,10 @@
 <?php
 namespace modelo;
 use config\connect\DBConnect as DBConnect;
-
+use  utils\validar;
 
 class tipo extends DBConnect{
-
+	use validar;
 	private $tipo;
 	private $id;
 	private $idedit;
@@ -40,7 +40,7 @@ class tipo extends DBConnect{
 		 return $resultado;
 
 
- 	}catch(\PDOexection $error){
+ 	}catch(\PDOexception $error){
  		return $error;
  	}
  }
@@ -56,7 +56,7 @@ class tipo extends DBConnect{
      parent::desconectarDB();
      die();
 
-    }catch(\PDOexection $error){
+    }catch(\PDOexception $error){
 
      return $error;
 
@@ -66,6 +66,14 @@ class tipo extends DBConnect{
 
 
 public function getEliminartipo($id){
+
+	if (!$this->validarTipoSiTieneRegistros($id)) {
+		return $this->http_error(400, "No se puede eliminar el tipo de producto ya tiene registros.");
+	}
+
+
+
+
 	$this->id = $id;
 
 	$this->eliminartipo();
@@ -87,6 +95,20 @@ private function eliminartipo(){
       return $error;
     }
 }
+
+public function validarTipoSiTieneRegistros($id){
+	try{
+		$this->conectarDB();
+		$sql = "SELECT (COUNT( p.id_tipo)) AS count FROM tipo t LEFT JOIN producto p ON p.id_tipo = t.id_tipo WHERE t.id_tipo = :id_tipo;";
+		$new = $this->con->prepare($sql);
+		$new->execute([':id_tipo' => $id]);
+		$data = $new->fetch(\PDO::FETCH_OBJ);
+		$this->desconectarDB();
+		return intval($data->count) === 0;
+	}catch(\PDOException $error){
+		return $this->http_error(500, $error->getMessage());
+	}
+}
 public function mostrarlot($lott){
 	$this->idedit = $lott;
 
@@ -95,7 +117,6 @@ public function mostrarlot($lott){
 private function gol(){
 	try{
     parent::conectarDB();
-		$new = $this->con->prepare("SELECT * FROM tipo WHERE id_tipo= ?");
 		$new = $this->con->prepare("SELECT * FROM tipo WHERE id_tipo= ?");
 		$new->bindValue(1, $this->idedit);
 		$new->execute();
@@ -109,9 +130,9 @@ private function gol(){
 public function getEditarTipo($tipo, $id){
 	if(preg_match_all("/^[a-zA-Z]{3,30}$/", $tipo) == false){
             $resultado = ['resultado' => 'Error de tipo de Producto' , 'error' => 'Tipo inválido.'];
-			echo json_encode($resultado);
-			die();
+		
         }
+
         $this->tipo = $tipo;
         $this->idedit = $id;
 
@@ -122,17 +143,13 @@ private function editarTipo(){
 	try {
     parent::conectarDB();
 		$new = $this->con->prepare("UPDATE `tipo` SET `id_tipo`= ? WHERE nombre_t = ?");
-
-      $new->bindValue(1, $this->tipo);
-      $new->bindValue(2, $this->idedit);
-      $new->execute();
-      $data = $new->fetchAll();
+		$new->bindValue(1, $this->tipo);
+		$new->bindValue(2, $this->idedit);
+		$new->execute();
+		$data = $new->fetchAll();
       
       $resultado = ['resultado' => 'Editado'];
-      parent::desconectarDB();  
-	  
-	  return $resultado;
-      
+      parent::desconectarDB();   
 	} catch (\PDOexception $error) {
 		return $error;
 	}

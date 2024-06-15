@@ -34,7 +34,7 @@ $(document).ready(function () {
             </tr>
         `;
         });
-        $("#tbody").html(tabla || "");
+        $('#tbody').html(tabla ? tabla: "");
         mostrar = $("#tableMostrar").DataTable({
           resposive: true,
         });
@@ -100,12 +100,15 @@ $(document).ready(function () {
       function (data) {
         mostrar.destroy();
         rellenar();
-        $("#registrar").trigger("reset");
+        $("#agregarform").trigger("reset");
         $(".cerrar").click();
         Toast.fire({ icon: "success", title: "Registrado con exito." });
+        
       },
       "json"
+    
     )
+
       .fail((e) => {
         Toast.fire({
           icon: "error",
@@ -118,6 +121,9 @@ $(document).ready(function () {
       });
   });
 
+  
+
+  $
   let id;
   $(document).on("click", ".editar", function () {
     validarPermiso(permisos["Editar"]);

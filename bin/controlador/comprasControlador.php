@@ -23,7 +23,7 @@
 
     $proveedores = $objModel->mostrarProveedor();
   
-    if(isset($_POST['getPermisos'])&& $permiso['Consultar'] ==1){
+    if(isset($_POST['getPermisos'], $permiso['Consultar'])){
     	die(json_encode($permiso));
     }
     
@@ -37,7 +37,7 @@
 		die(json_encode($res)); 
 	}
 
-	if(isset($_POST['select'])&& $permiso['Consultar'] == 1){
+	if(isset($_POST['select'],$permiso['Consultar'])){
 		$res= $objModel->mostrarSelect();
 		die(json_encode($res));
 	}
@@ -47,7 +47,7 @@
 		die(json_encode($res));
 	}
 
-	if (isset($_POST["borrar"]) && isset($_POST["id"]) && $permiso['Eliminar'] == 1){
+	if (isset($_POST["borrar"],$_POST["id"],$permiso['Eliminar'])){
 		$res = $objModel->getEliminarCompra($_POST["id"]);
 		die(json_encode($res));  
 	}

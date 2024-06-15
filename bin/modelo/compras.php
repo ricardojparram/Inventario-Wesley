@@ -72,13 +72,13 @@ class compras extends DBConnect
 		if (preg_match_all("/^[0-9]{1,10}$/", $id) != 1) {
 			die(json_encode(['error' => 'Id invalido.']));
 		}
-		$this->producto = $id;
+		$this->productos = $id;
 
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("SELECT cp.cantidad, cp.precio_compra , CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre) AS producto,c.orden_compra FROM compra_producto cp INNER JOIN compra c ON cp.orden_compra = c.orden_compra INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede INNER JOIN producto p ON ps.cod_producto = p.cod_producto INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON p.cod_pres = pr.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE c.status = 1 AND c.orden_compra = ? ;
 		");
-			$new->bindValue(1, $this->producto);
+			$new->bindValue(1, $this->productos);
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
@@ -189,6 +189,9 @@ class compras extends DBConnect
 
 	public function getEliminarCompra($id)
 	{
+            if (!$this->validarCompraSiTieneRegistros($id)) {
+                return $this->http_error(400, "No se puede eliminar la compra ya tiene registros.");
+            }
 		$this->id = $id;
 		return $this->eliminarCompra();
 	}
@@ -208,5 +211,16 @@ class compras extends DBConnect
 		} catch (\PDOException $error) {
 			return $error;
 		}
+	}
+	private function validarCompraSiTieneRegistros($id){
+		try{
+            $this->conectarDB();
+            $sql = "SELECT cp.cantidad as cantidaCompra, ps.cantidad as cantidadSede FROM compra c INNER JOIN compra_producto cp ON c.orden_compra = cp.orden_compra INNER JOIN producto_sede ps ON cp.id_producto_sede = ps.id_producto_sede WHERE cp.orden_compra = :orde_compra;";
+            $new = $this->con->prepare($sql);
+            $new->execute([':orde_compra'=>$id]);
+            $this->desconectarDB();
+        }catch (\PDOException $error) {
+            return $this->http_error(500, $error->getMessage());
+        }
 	}
 }

@@ -34,7 +34,7 @@ $(document).ready(function(){
 			        </tr>
 			        `;
 			      })
-			       $('#tbody').html(tabla);
+				  $('#tbody').html(tabla ? tabla: "");
 			        mostrar = $('#tabla').DataTable({
 			          resposive : true
 			        })
@@ -91,7 +91,10 @@ $(document).ready(function(){
     				rellenar();
     				Toast.fire({ icon: 'error', title: 'Clase eliminada' })
     			}
-    		})
+    		}).fail((e)=>{
+				Toast.fire({icon: "error", title: e.responseJSON?.msg || "Ha ocuuriido un error"});
+				throw new Error(e.responseJSON?.msg);
+			})	
     	})
 
 

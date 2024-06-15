@@ -19,28 +19,31 @@
 	 	$objModel->getNotificacion();
 	 }
 
-     if(isset($_POST['getPermisos'])&& $permiso['Consultar'] ==1){
+     if(isset($_POST['getPermisos'],$permiso['Consultar'])){
     	die(json_encode($permiso));
     }
 
-	if(isset($_POST["clase"]) && $permiso['Registrar'] == 1) {
-		$objModel->getAgregarClase($_POST["clase"]);
+	if(isset($_POST["clase"],$permiso['Registrar'])) {
+		$res = $objModel->getAgregarClase($_POST["clase"]);
+		die(json_encode ($res));
 	}
 
-	if(isset($_POST["mostrar"]) && isset($_POST['bitacora']) && $permiso['Consultar'] == 1) {
-		$objModel->mostrarClase();
+	if(isset($_POST["mostrar"],$permiso['Consultar'])) {
+		$res = $objModel->mostrarClase($_POST['bitacora']);
+		die(json_encode ($res));
 	}
 
-	if(isset($_POST["id"]) && isset($_POST["borrar"]) && $permiso['Eliminar'] == 1){
-		$objModel->getEliminar($_POST["id"]);
+	if(isset($_POST["id"],$_POST["borrar"], $permiso['Eliminar'])){
+		$res = $objModel->getEliminar($_POST["id"]);
+		die(json_encode($res));
 	}
 
-	if(isset($_POST["idedit"]) && isset($_POST["item"]) && $permiso['Consultar'] == 1){
+	if(isset($_POST["idedit"],$_POST["item"],$permiso['Consultar'])){
 		$res = $objModel->getItem($_POST["idedit"]);
 		die(json_encode ($res));
 	}
 
-	if(isset($_POST["claseEdit"]) && isset($_POST["idedit"]) && $permiso['Editar'] == 1) {
+	if(isset($_POST["claseEdit"],$_POST["idedit"], $permiso['Editar'])) {
 		$res = $objModel->getEditarClase($_POST["claseEdit"], $_POST["idedit"]);
 		die(json_encode ($res));
 	}

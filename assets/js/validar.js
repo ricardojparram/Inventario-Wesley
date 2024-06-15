@@ -28,8 +28,8 @@ function validarNombre(input, div, mensaje) {
     div.text(mensaje + " el nombre debe ser solo letras");
     input.addClass("input-error");
     return false;
-  } else if (parametro.length < 3) {
-    div.text(mensaje + " el nombre debe tener mínimo 3 carácteres.");
+  } else if (parametro.length < 2) {
+    div.text(mensaje + " el nombre debe tener mínimo 2 carácteres.");
     input.addClass("input-error");
     return false;
   } else {
