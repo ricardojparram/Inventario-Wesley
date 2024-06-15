@@ -17,7 +17,7 @@ $(document).ready(function(){
 			success(clin){
 				$('#usuarios').text(clin[0].usuario);
 				$('#proveedores').text(clin[0].proveedor);
-				$('#clientes').text(clin[0].cliente);
+				$('#personal').text(clin[0].personal);
 				$('#producto').text((clin[0].producto == null) ? '0' : clin[0].producto);
 			}
 		})

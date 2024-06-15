@@ -195,14 +195,14 @@
               <div class="card info-card customers-card">
 
                 <div class="card-body">
-                  <h5 class="card-title">Clientes <span></span></h5>
+                  <h5 class="card-title">Personal<span></span></h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3">
-                      <h6 id="clientes"></h6>
+                      <h6 id="personal"></h6>
 
                     </div>
                   </div>

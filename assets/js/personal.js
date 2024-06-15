@@ -127,7 +127,7 @@ $(document).ready(function() {
                                         rellenar();
                                     } else {
                                         tabla.destroy();
-                                        $("#error").text(result.resultado + ", " + result.error);
+                                        $("#errorRegis").text(result.resultado + ", " + result.error);
                                         rellenar();
                                     }
                                 }
@@ -140,7 +140,7 @@ $(document).ready(function() {
         click++
     })
 
-    let cedulaId 
+    
     $(document).on('click', '.editar', function () {
 		cedulaId = this.id;
         $.ajax({
@@ -306,7 +306,10 @@ $(document).ready(function() {
 						$("#cerrarDel").click();
 						Toast.fire({ icon: 'error', title: 'Personal Eliminado', showCloseButton: true })
 						rellenar();
-					} else {
+					} else if(data.resultado === "Error"){
+                        $("#errorDel").text("Error, "+data.msj);
+                    }
+                    else {
 						tabla.destroy();
 						$("#errorDel").text("El Personal no Pudo Ser Eliminado");
 						rellenar();
