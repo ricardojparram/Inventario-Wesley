@@ -25,7 +25,7 @@ class metodo extends DBConnect
 
       parent::desconectarDB();
       return $data;
-    } catch (\PDOexection $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }
@@ -132,7 +132,7 @@ class metodo extends DBConnect
       $this->binnacle("Metodo", $_SESSION['cedula'], "Registró un metodo de pago.");
       parent::desconectarDB();
       return $resultado;
-    } catch (\PDOexection $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }
@@ -159,7 +159,7 @@ class metodo extends DBConnect
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
       parent::desconectarDB();
       return $data;
-    } catch (\PDOexception $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }
@@ -196,7 +196,7 @@ class metodo extends DBConnect
 
       parent::desconectarDB();
       return $resultado;
-    } catch (\PDOexception $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }
@@ -229,7 +229,7 @@ class metodo extends DBConnect
       parent::desconectarDB();
 
       return $resultado;
-    } catch (\PDOexception $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }
