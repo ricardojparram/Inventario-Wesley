@@ -16,6 +16,7 @@ class donativoPersonal extends DBConnect
 	private $producto;
 	private $cantidad;
 
+
 	public function getMostrarDonativosPersonal($bitacora = false)
 	{
 		try {
@@ -33,6 +34,65 @@ class donativoPersonal extends DBConnect
 
 			return $data;
 		} catch (\PDOException $e) {
+			return $this->http_error(500, $e->getMessage());
+		}
+	}
+
+	public function getMostrarDonaciones()
+	{
+
+		try {
+			parent::conectarDB();
+
+			$query = "SELECT 
+					d.id_donaciones, 
+					d.fecha, 
+					CONVERT(dp.cedula USING utf8mb4) AS identificador, 
+					CONCAT(p.nombres, ' ', p.apellidos) AS beneficiario,
+					'personal' AS tipo_donativo
+				FROM donaciones d
+				INNER JOIN donativo_per dp ON dp.id_donaciones = d.id_donaciones
+				INNER JOIN personal p ON p.cedula = dp.cedula
+				WHERE d.status = 1
+				UNION ALL
+
+				SELECT 
+					d.id_donaciones, 
+					d.fecha, 
+					CONVERT(dp.ced_pac USING utf8mb4) AS identificador,
+					CONCAT(p.nombre, ' ', p.apellido) AS beneficiario,
+					'paciente' AS tipo_donativo
+				FROM donaciones d
+					INNER JOIN donativo_pac dp ON d.id_donaciones = dp.id_donaciones
+					INNER JOIN det_donacion dd ON dd.id_donaciones = d.id_donaciones
+					INNER JOIN pacientes p ON p.ced_pac = dp.ced_pac
+				WHERE d.status = 1
+
+				UNION ALL
+
+				SELECT 
+					d.id_donaciones, 
+					d.fecha, 
+					CONVERT(di.rif_int USING utf8mb4) AS identificador,
+					i.razon_social AS beneficiario,
+					'instituciones' AS tipo_donativo
+				FROM donaciones d
+					INNER JOIN donativo_int di ON d.id_donaciones = di.id_donaciones
+					INNER JOIN det_donacion dd ON dd.id_donaciones = d.id_donaciones
+					INNER JOIN instituciones i ON i.rif_int = di.rif_int 
+				WHERE d.status = 1
+				GROUP BY d.id_donaciones;";
+
+			$new = $this->con->prepare($query);
+			$new->execute();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
+
+			parent::desconectarDB();
+
+			return $data;
+
+		} catch (\PDOException $e) {
+			return $this->http_error(500, $e->getMessage());
 		}
 	}
 
@@ -290,7 +350,7 @@ class donativoPersonal extends DBConnect
 
 				$NewCantidad = $data[0]['cantidad'] - $this->cantidad;
 
-				if($NewCantidad < 0) {
+				if ($NewCantidad < 0) {
 					$this->con->rollBack();
 					return $this->http_error(400, "Cantidad insuficiente para el producto ID {$this->producto}.");
 				}
@@ -364,10 +424,10 @@ class donativoPersonal extends DBConnect
 
 			$validarFactura = $this->validExistencia();
 
-		     if ($validarFactura['res'] === false){
+			if ($validarFactura['res'] === false) {
 				$this->con->rollBack();
 				return ['resultado' => 'error', 'msg' => 'La donacion no existe'];
-			 } 
+			}
 
 			$new = $this->con->prepare("SELECT ps.id_producto_sede, dd.cantidad , ps.cantidad as stock FROM det_donacion dd INNER JOIN producto_sede ps ON ps.id_producto_sede = dd.id_producto_sede WHERE dd.id_donaciones = ?");
 
@@ -407,5 +467,3 @@ class donativoPersonal extends DBConnect
 		}
 	}
 }
-
-?>

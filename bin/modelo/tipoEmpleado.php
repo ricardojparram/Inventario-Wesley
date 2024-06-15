@@ -236,7 +236,8 @@ class tipoEmpleado extends DBConnect
 	{
 		try {
 			$this->conectarDB();
-			$sql = "SELECT (COUNT(p.tipo_em)) AS count FROM tipo_empleado te LEFT JOIN personal p ON p.tipo_em = te.tipo_em WHERE te.tipo_em = :id";
+			$sql = "SELECT (COUNT(p.tipo_em)) AS count FROM tipo_empleado te 
+			LEFT JOIN personal p ON p.tipo_em = te.tipo_em WHERE te.tipo_em = :id";
 			$new = $this->con->prepare($sql);
 			$new->bindValue(':id', $id);
 			$new->execute();
