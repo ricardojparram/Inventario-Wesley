@@ -52,7 +52,7 @@ $(document).ready(function () {
 	}
 
 	let click = 0;
-	//setInterval(() => { click = 0; }, 1500);
+	setInterval(() => { click = 0; }, 1500);
 
 	let name;
 	$('#moneda').keyup((e) => {
@@ -178,7 +178,7 @@ $(document).ready(function () {
 			throw new Error('Permiso denegado.');
 		}
 		$("#eliminar").prop('disabled', true);
-		validarM($('#editMon'), $('#ms2'), id).then(() => {
+		validarM($('#editMona'), $('#ms2'), id).then(() => {
 
 			$.ajax({
 				type: "POST",
@@ -196,7 +196,7 @@ $(document).ready(function () {
 				},
 				error(e) {
 					Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-					throw new Error(e.responseJSON.msg);
+					console.error(e.responseJSON.msg);
 				},
 				complete() {
 					$("#eliminar").prop('disabled', false);
@@ -257,7 +257,6 @@ $(document).ready(function () {
 	})
 
 	$('#editHistory').on('hidden.bs.modal', function () {
-		// Aquí va el código que deseas ejecutar cuando se cierra el modal
 		$(".history").prop('disabled', false);
 	});
 
@@ -477,14 +476,15 @@ $(document).ready(function () {
 
 	// Validacion de Moneda
 	async function validarM(input, div, id = " ") {
-		input = (input.val() == "undefined") ? " " : input
+		let inputVal
+		inputVal = (input.val() == undefined) ? " " : input.val()
 		let resultado = false
-		await $.getJSON('', { nomMoneda: input.val(), id, validar: 'xd' }, function (res) {
+		await $.getJSON('', { nomMoneda: inputVal, id, validar: 'xd' }) .done(function (res) {
 			div.text("");
 			input.removeClass('input-error')
 			resultado = true;
-		}).fail(e => {
-			div.text("Error de Moneda, " + e.responseJSON.msg);
+		}).fail(function (e) {
+			div.text("Error de Moneda, " + e.responseJSON.e);
 			input.addClass('input-error')
 			resultado = false;
 

@@ -18,7 +18,7 @@
   $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 
   if (isset($_POST['clien'])) {
-    $objModel->mostrarClientes();
+    $objModel->mostrarPersonal();
   }
 
   if(isset($_POST['grafico'])){
