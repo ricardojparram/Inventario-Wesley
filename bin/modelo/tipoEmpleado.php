@@ -158,7 +158,7 @@ class tipoEmpleado extends DBConnect
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 			parent::desconectarDB();
 			return $data;
-		} catch (\PDOexception $e) {
+		} catch (\PDOException $e) {
 			return $this->http_error(500, $e->getMessage());
 		}
 	}
