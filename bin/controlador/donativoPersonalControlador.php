@@ -36,9 +36,8 @@
         die(json_encode($res));
       }
 
-
-      if(isset($_POST['detalleD']) && isset($_POST['id'])) {
-        $res = $objModel->getDetalleDonacion($_POST['id']);
+      if(isset($_GET['detalleD']) && isset($_GET['id'])) {
+        $res = $objModel->getDetalleDonacion($_GET['id']);
         die(json_encode($res));
       }
 

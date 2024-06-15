@@ -111,7 +111,7 @@ class donativoPersonal extends DBConnect
 		try {
 			parent::conectarDB();
 
-			$new = $this->con->prepare('SELECT d.id_donaciones , dd.cantidad , tp.nombrepro FROM det_donacion dd INNER JOIN donaciones d ON d.id_donaciones = dd.id_donaciones INNER JOIN producto_sede ps ON ps.id_producto_sede = dd.id_producto_sede INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod WHERE d.status = 1 AND d.id_donaciones = ?');
+			$new = $this->con->prepare("SELECT d.id_donaciones , dd.cantidad , CONCAT(tp.nombrepro,' ',pr.peso ,'',m.nombre) AS nombrepro FROM det_donacion dd INNER JOIN donaciones d ON d.id_donaciones = dd.id_donaciones INNER JOIN producto_sede ps ON ps.id_producto_sede = dd.id_producto_sede INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida WHERE d.status = 1 AND d.id_donaciones = ?");
 			$new->bindValue(1, $this->id);
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
