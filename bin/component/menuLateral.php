@@ -20,6 +20,7 @@ class menuLateral
     $compras = ($_GET['url'] == 'compras') ? "" : "collapsed";
     $pagosRecibidos = ($_GET['url'] == 'pagosRecibidos') ? "" : "collapsed";
     $sede = ($_GET['url'] == 'sede') ? "" : "collapsed";
+    $instituciones = ($_GET['url'] == 'instituciones') ? "" : "collapsed";
     $transferencia = ($_GET['url'] == 'transferencia') ? "" : "collapsed";
     $recepcion = ($_GET['url'] == 'recepcion') ? "" : "collapsed";
     $recepcionNacional = ($_GET['url'] == 'recepcionNacional') ? "" : "collapsed";
@@ -95,6 +96,14 @@ class menuLateral
         <a class="nav-link ' . $sede . '" href="?url=sede">
             <i class="bi bi-hospital"></i>
             <span>Sedes</span>
+        </a>
+    </li>' : '';
+
+    $institucionesLi = (isset($this->permisos['Instituciones']["Consultar"])) ?
+      '<li class="nav-item"> 
+        <a class="nav-link ' . $instituciones . '" href="?url=instituciones">
+            <i class="bi bi-building"></i>
+            <span>Instituciones</span>
         </a>
     </li>' : '';
 
@@ -406,6 +415,8 @@ class menuLateral
            <!-- Final de Donaciones desplegable -->
 
            ' . $sedeLi . '
+
+           ' . $institucionesLi . '
 
            ' . $transferenciaLi . '
 
