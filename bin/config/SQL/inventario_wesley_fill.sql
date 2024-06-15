@@ -6,10 +6,10 @@ VALUES
   (1, 'Dolar', 0, 1),
   (2, 'Euro', 0, 1);
 
- INSERT INTO 
- cambio (id_cambio, cambio, fecha, moneda, status) 
- VALUES
- (1, 38.00, '2024-06-09 14:23:28', 1, 1);
+INSERT INTO
+  cambio (id_cambio, cambio, fecha, moneda, status)
+VALUES
+  (1, 38.00, '2024-06-09 14:23:28', 1, 1);
 
 INSERT INTO
   sede (id_sede, nombre, telefono, direccion, status)
@@ -264,7 +264,8 @@ VALUES
   (29, 'Cargo', 1),
   (30, 'Descargo', 1),
   (31, 'Mantenimiento', 1),
-  (32, 'Tipo producto', 1);
+  (32, 'Tipo producto', 1),
+  (33, 'Instituciones', 1);
 
 INSERT INTO
   permisos (id_rol, id_modulo, nombre_accion, status)
@@ -372,6 +373,10 @@ VALUES
   (1, 32, 'Editar', 1),
   (1, 32, 'Eliminar', 1),
   (1, 32, 'Consultar', 1),
+  (1, 33, 'Registrar', 1),
+  (1, 33, 'Editar', 1),
+  (1, 33, 'Eliminar', 1),
+  (1, 33, 'Consultar', 1),
   -- siguiente rol
   (2, 1, 'Registrar', 1),
   (2, 1, 'Editar', 1),
@@ -476,6 +481,10 @@ VALUES
   (2, 32, 'Editar', 1),
   (2, 32, 'Eliminar', 1),
   (2, 32, 'Consultar', 1),
+  (2, 33, 'Registrar', 1),
+  (2, 33, 'Editar', 1),
+  (2, 33, 'Eliminar', 1),
+  (2, 33, 'Consultar', 1),
   -- siguiente rol
   (3, 1, 'Registrar', 1),
   (3, 1, 'Editar', 1),
@@ -579,4 +588,8 @@ VALUES
   (3, 32, 'Registrar', 1),
   (3, 32, 'Editar', 1),
   (3, 32, 'Eliminar', 1),
-  (3, 32, 'Consultar', 1);
+  (3, 32, 'Consultar', 1),
+  (3, 33, 'Registrar', 1),
+  (3, 33, 'Editar', 1),
+  (3, 33, 'Eliminar', 1),
+  (3, 33, 'Consultar', 1);
