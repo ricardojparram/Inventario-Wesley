@@ -236,12 +236,11 @@ class instituciones extends DBConnect
     private function validarInstitucionRegis($rif){
         try {
             parent::conectarDB();
-            $new = $this->con->prepare('SELECT * FROM `donativo_int` WHERE rif_int = ?;');
+            $new = $this->con->prepare('SELECT count(id_donativo_int) as count FROM donativo_int WHERE rif_int = ?;');
             $new->bindValue(1, $rif);
             $new->execute();
-            $data = $new->fetchAll();
-            if (isset($data)) return false;
-            return true;
+            $data = $new->fetch(\PDO::FETCH_OBJ);
+            return $data->count === 0;
             parent::desconectarDB();
         } catch (\PDOException $e) {
             return $this->http_error(500, $e->getMessage());
