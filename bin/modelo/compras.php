@@ -215,10 +215,13 @@ class compras extends DBConnect
 	private function validarCompraSiTieneRegistros($id){
 		try{
             $this->conectarDB();
-            $sql = "SELECT cp.cantidad as cantidaCompra, ps.cantidad as cantidadSede FROM compra c INNER JOIN compra_producto cp ON c.orden_compra = cp.orden_compra INNER JOIN producto_sede ps ON cp.id_producto_sede = ps.id_producto_sede WHERE cp.orden_compra = :orde_compra;";
+            $sql = "SELECT cp.cantidad as cantidadCompra, ps.cantidad as cantidadSede FROM compra c INNER JOIN compra_producto cp ON c.orden_compra = cp.orden_compra INNER JOIN producto_sede ps ON cp.id_producto_sede = ps.id_producto_sede WHERE cp.orden_compra = :orden_compra;";
             $new = $this->con->prepare($sql);
-            $new->execute([':orde_compra'=>$id]);
+            $new->execute([':orden_compra'=>$id]);
             $this->desconectarDB();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
+			if ($data[0]->cantidadCompra !== $data[0]->cantidadSede) return false;
+			return true;	
         }catch (\PDOException $error) {
             return $this->http_error(500, $error->getMessage());
         }
