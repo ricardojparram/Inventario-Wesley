@@ -45,7 +45,7 @@ class DBConnect extends configSistema
         $this->con = null;
     }
 
-    protected function binnacle($modulo = "", $usuario, $descripcion)
+    protected function binnacle($modulo, $usuario, $descripcion)
     {
         try {
             $new = $this->con->prepare("INSERT INTO bitacora(id_bitacora, cedula, descripcion, fecha, status) VALUES (DEFAULT,?,?,DEFAULT,1)");
