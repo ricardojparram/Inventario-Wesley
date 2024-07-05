@@ -11,7 +11,7 @@ class JWTService
     use validar;
     private static $secret_key;
     private static $encrypt = 'HS256';
-    private static $exp = ['1h' => 3600];
+    private static $exp = ['1h' => 3600, '24h' => 86400];
 
     public static function init()
     {
@@ -32,7 +32,7 @@ class JWTService
             $time = time();
             $token = [
                 'iat' => $time, // Tiempo en que fue generado el token
-                'exp' => $time + self::$exp['1h'], // Tiempo en el que expirará el token (1 hora)
+                'exp' => $time + self::$exp['24h'], // Tiempo en el que expirará el token (1 hora)
                 'data' => $data
             ];
 
@@ -51,14 +51,14 @@ class JWTService
         try {
             $decoded = JWT::decode($token, new Key(self::$secret_key, self::$encrypt));
             if ($returnType) {
-                return (object)['resultado' => 'ok', 'msg' => 'Token valido', 'valid' => true];
+                return ['resultado' => 'ok', 'msg' => 'Token valido', 'valid' => true];
             }
-            return (object) $decoded->data;
+            return (array) $decoded->data;
         } catch (\Exception $e) {
             die(json_encode(self::http_error(403, "Token inválido.")));
         }
     }
-    public static function validateSession($returnType = false): bool | object
+    public static function validateSession($returnType = false): bool | array
     {
         $headers = apache_request_headers();
 
@@ -75,6 +75,20 @@ class JWTService
             return false;
         }
         return self::validateToken($token[1], $returnType);
+    }
+    public static function updateToken($token)
+    {
+        if (empty($token)) {
+            return self::http_error(403, "Token inválido.");
+        }
+
+        try {
+            $decoded = JWT::decode($token, new Key(self::$secret_key, self::$encrypt));
+
+            return (object) $decoded->data;
+        } catch (\Exception $e) {
+            die(json_encode(self::http_error(403, "Token inválido.")));
+        }
     }
 }
 JWTService::init();

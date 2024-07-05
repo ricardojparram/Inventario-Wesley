@@ -17,7 +17,7 @@ if (!isset($_SESSION['nivel']) && !$JWToken) {
     die('<script> window.location = "?url=login" </script>');
 }
 
-$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
+$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
 $permisos = $model->getPermisosRol($nivel);
 $permiso = $permisos['Sedes'];
 
