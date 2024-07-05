@@ -6,19 +6,19 @@ use component\menuLateral as menuLateral;
 use modelo\perfil as perfil;
 use utils\JWTService;
 
-$objModel = new perfil();
 
 $JWToken = JWTService::validateSession();
 if (!isset($_SESSION['nivel']) && !$JWToken) {
     die('<script> window.location = "?url=login" </script>');
 }
-$cedula = (isset($_SESSION['cedula'])) ? $_SESSION['cedula'] : $JWToken->cedula;
-$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
+$session = (isset($_SESSION['nivel'])) ? $_SESSION : $JWToken;
 
-$permisos = $objModel->getPermisosRol($nivel);
+$objModel = new perfil($session);
+$permisos = $objModel->getPermisosRol($session['nivel']);
 
-if (isset($cedula) && isset($_POST['mostrar'])) {
-    $data = $objModel->mostrarDatos($cedula);
+
+if (isset($session['cedula']) && isset($_POST['mostrar'])) {
+    $data = $objModel->mostrarDatos();
     die(json_encode($data));
 }
 
@@ -27,35 +27,38 @@ if (isset($_POST['usuarios'], $_POST['lista'])) {
     die(json_encode($data));
 }
 
-if (isset($_POST['password'], $_POST['validarContraseña'])) {
-    $data = $objModel->getValidarContraseña($_POST['password'], $cedula);
+if (isset($_POST['password'], $_POST['validarContraseña'], $session['cedula'])) {
+    $data = $objModel->getValidarContraseña($_POST['password']);
     die(json_encode($data));
 }
 
-if (isset($_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'], $cedula)) {
-
-    $data = "";
-    if (isset($_POST['borrar'])) {
-        $data = $objModel->getEditar('', $_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'], $cedula, $_POST['borrar']);
-    } elseif (isset($_FILES['foto'])) {
-        $data = $objModel->getEditar($_FILES['foto'], $_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'], $cedula);
-    }
+if (isset($_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'], $session['cedula'])) {
+    $data = match (true) {
+        isset($_POST['borrar']) => $objModel->getEditar('', $_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'], $session['cedula'], $_POST['borrar']),
+        isset($_FILES['foto']) => $objModel->getEditar($_FILES['foto'], $_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'], $session['cedula']),
+        isset($_POST['app']) => $objModel->getEditar('', $_POST['nombre'], $_POST['apellido'], $session['cedula'], $_POST['email'], $session['cedula'])
+    };
 
     die(json_encode($data));
 }
 
-if (isset($cedula, $_POST['passwordAct'], $_POST['passwordNew'])) {
-    $data = $objModel->getCambioContra($cedula, $_POST['passwordAct'], $_POST['passwordNew']);
+if (isset($session['cedula'], $_POST['passwordAct'], $_POST['passwordNew'])) {
+    $data = $objModel->getCambioContra($session['cedula'], $_POST['passwordAct'], $_POST['passwordNew']);
+    die(json_encode($data));
+}
+
+if (isset($session['cedula'], $_POST['data'], $_POST['passwordNew'])) {
+    $data = $objModel->getCambioContra($session['cedula'], ['passwordAct' => $_POST['passwordAct'], 'passwordNew' => $_POST['passwordNew']]);
     die(json_encode($data));
 }
 
 if (isset($_GET['validarCedula'], $_GET["cedula"])) {
-    $res = $objModel->getValidarCedula($_GET['cedula'], $cedula);
+    $res = $objModel->getValidarCedula($_GET['cedula'], $session['cedula']);
     die(json_encode($res));
 }
 
 if (isset($_GET['validarCorreo'])) {
-    $res = $objModel->getValidarCorreo($_GET['correo'], $cedula);
+    $res = $objModel->getValidarCorreo($_GET['correo'], $session['cedula']);
     die(json_encode($res));
 }
 

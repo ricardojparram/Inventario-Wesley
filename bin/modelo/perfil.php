@@ -4,8 +4,11 @@ namespace modelo;
 
 use config\connect\DBConnect as DBConnect;
 use utils\validar;
+use utils\CryptoService;
+use utils\JWTService;
 
-class perfil extends DBConnect {
+class perfil extends DBConnect
+{
 	use validar;
 	private $id;
 	private $cedula;
@@ -21,20 +24,22 @@ class perfil extends DBConnect {
 
 	private $passwordAct;
 	private $passwordNew;
+	private $session;
 
-	public function mostrarDatos($cedula) {
-		if (!$this->validarString('documento', $cedula))
-			return $this->http_error(400, 'Cedula invalida.');
-
-		$this->cedula = $cedula;
-		return $this->datosUsuario();
+	public function __construct($session)
+	{
+		$this->session = $session;
+		parent::__construct();
 	}
 
-	private function datosUsuario() {
+
+	public function mostrarDatos()
+	{
 		try {
+
 			parent::conectarDB();
 			$new = $this->con->prepare("SELECT u.cedula, u.nombre, u.apellido, u.correo, n.nombre as nivel FROM usuario u INNER JOIN rol n ON n.id_rol = u.rol WHERE u.cedula = ?");
-			$new->bindValue(1, $this->cedula);
+			$new->bindValue(1, $this->session['cedula']);
 			$new->execute();
 			parent::desconectarDB();
 			return $new->fetchAll(\PDO::FETCH_OBJ);
@@ -43,7 +48,8 @@ class perfil extends DBConnect {
 		}
 	}
 
-	public function mostrarUsuarios() {
+	public function mostrarUsuarios()
+	{
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("SELECT img, CONCAT(nombre, ' ', apellido) AS nombre FROM usuario
@@ -57,20 +63,19 @@ class perfil extends DBConnect {
 		}
 	}
 
-	public function getValidarContraseña($pass, $cedula) {
+	public function getValidarContraseña($pass)
+	{
 		if (!$this->validarString('contraseña', $pass))
 			return $this->http_error(400, 'Contraseña invalida.');
 
-		if (!$this->validarString('documento', $cedula))
-			return $this->http_error(400, 'Cedula invalida.');
-
-		$this->cedulaVieja = $cedula;
+		$this->cedulaVieja = $this->session['cedula'];
 		$this->passwordAct = $pass;
 
 		return $this->validarContraseña();
 	}
 
-	private function validarContraseña() {
+	private function validarContraseña()
+	{
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("SELECT password FROM usuario WHERE cedula = ? AND status = 1");
@@ -87,7 +92,8 @@ class perfil extends DBConnect {
 		}
 	}
 
-	public function getEditar($foto = false, $nombre, $apellido, $cedulaNueva, $correo, $cedulaVieja, $borrar = false) {
+	public function getEditar($foto, $nombre, $apellido, $cedulaNueva, $correo, $cedulaVieja, $borrar = false)
+	{
 		if (!$this->validarString('nombre', $nombre))
 			return $this->http_error(400, 'Nombre inválido.');
 
@@ -119,7 +125,8 @@ class perfil extends DBConnect {
 		return ['edit' => $resultadoEdit, 'foto' => $resultadoFoto];
 	}
 
-	private function editarDatos() {
+	private function editarDatos()
+	{
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("UPDATE usuario SET cedula= ?,nombre= ?,apellido= ?,correo= ? WHERE cedula = ?");
@@ -130,18 +137,31 @@ class perfil extends DBConnect {
 			$new->bindValue(5, $this->cedulaVieja);
 			$new->execute();
 			parent::desconectarDB();
-			$_SESSION['cedula'] = $this->cedulaNueva;
-			$_SESSION['nombre'] = $this->nombre;
-			$_SESSION['apellido'] = $this->apellido;
-			$_SESSION['correo'] = $this->correo;
 
-			return ['respuesta' => 'ok', 'msg' => "Editado correctamente"];;
+			$resultado = ['respuesta' => 'ok', 'msg' => "Editado correctamente"];
+			if (isset($_SESSION['nivel'])) {
+				$_SESSION['cedula'] = $this->cedulaNueva;
+				$_SESSION['nombre'] = $this->nombre;
+				$_SESSION['apellido'] = $this->apellido;
+				$_SESSION['correo'] = $this->correo;
+			} else {
+				$userData = [
+					'cedula' => $this->cedulaNueva,
+					'nombre' => $this->nombre,
+					'apellido' => $this->apellido,
+					'correo' => $this->correo
+				];
+				$resultado['token'] = JWTService::updateToken($userData);
+			}
+
+			return $resultado;
 		} catch (\PDOException $e) {
 			return $this->http_error(500, $e);
 		}
 	}
 
-	private function subirImagen() {
+	private function subirImagen()
+	{
 
 		if ($this->foto['error'] > 0)
 			return ['respuesta' => 'Imagen Error', 'error' => 'Error de imágen'];
@@ -184,7 +204,8 @@ class perfil extends DBConnect {
 		}
 	}
 
-	private function borrarImagen() {
+	private function borrarImagen()
+	{
 
 		try {
 			parent::conectarDB();
@@ -205,25 +226,34 @@ class perfil extends DBConnect {
 		}
 	}
 
-	public function getCambioContra($cedula, $passwordAct, $passwordNew) {
-
-		if ($passwordAct === $passwordNew)
+	public function getCambioContra($cedula, $data)
+	{
+		if (isset($data['data'])) {
+			$crypto = new CryptoService;
+			$decrypted = $crypto->decrypt($data['data']);
+			if ($decrypted['resultado'] !== "ok") {
+				return $decrypted;
+			}
+			$data = json_decode($decrypted['msg'], true);
+		}
+		if ($data['passwordAct'] === $data['passwordNew'])
 			return $this->http_error(400, 'No hubo cambio en la contraseña.');
 
-		if (!$this->validarString('contraseña', $passwordAct))
+		if (!$this->validarString('contraseña', $data['passwordAct']))
 			return $this->http_error(400, 'Contraseña actual invalida.');
 
-		if (!$this->validarString('contraseña', $passwordNew))
+		if (!$this->validarString('contraseña', $data['passwordNew']))
 			return $this->http_error(400, 'Contraseña nueva invalida.');
 
 		$this->cedula = $cedula;
-		$this->passwordAct = $passwordAct;
-		$this->passwordNew = $passwordNew;
+		$this->passwordAct = $data['passwordAct'];
+		$this->passwordNew = $data['passwordNew'];
 
 		return $this->cambioContra();
 	}
 
-	private function cambioContra() {
+	private function cambioContra()
+	{
 		try {
 			parent::conectarDB();
 
@@ -250,13 +280,15 @@ class perfil extends DBConnect {
 		}
 	}
 
-	public function getValidarCedula($cedula, $id) {
+	public function getValidarCedula($cedula, $id)
+	{
 		$this->cedula = $cedula;
 		$this->id = $id;
 		return $this->validarCedula();
 	}
 
-	private function validarCedula() {
+	private function validarCedula()
+	{
 		try {
 
 			if ($this->cedula === $this->id)
@@ -281,13 +313,15 @@ class perfil extends DBConnect {
 		}
 	}
 
-	public function getValidarCorreo($correo, $id) {
+	public function getValidarCorreo($correo, $id)
+	{
 		$this->correo = $correo;
 		$this->id = $id;
 		return $this->validarCorreo();
 	}
 
-	private function validarCorreo() {
+	private function validarCorreo()
+	{
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("SELECT correo, status FROM usuario WHERE cedula != ? and correo = ?");
