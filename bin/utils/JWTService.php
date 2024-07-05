@@ -25,18 +25,32 @@ class JWTService
         };
         return $validar->http_error($code, $msg);
     }
+    private static function getToken()
+    {
+        $headers = apache_request_headers();
 
+        $auth = match (true) {
+            isset($headers['Authorization']) => $headers['Authorization'],
+            isset($headers['authorization']) => $headers['authorization'],
+            default => false
+        };
+        if (!$auth) return false;
+
+        $token = explode(' ', $auth);
+
+        return isset($token[1]) ? $token[1] : false;
+    }
     public static function generateToken($data)
     {
         try {
             $time = time();
-            $token = [
+            $payload = [
                 'iat' => $time, // Tiempo en que fue generado el token
                 'exp' => $time + self::$exp['24h'], // Tiempo en el que expirará el token (1 hora)
                 'data' => $data
             ];
 
-            return JWT::encode($token, self::$secret_key, self::$encrypt);
+            return JWT::encode($payload, self::$secret_key, self::$encrypt);
         } catch (\Throwable $th) {
             die(json_encode(self::http_error(403, "Token inválido.")));
         }
@@ -60,34 +74,30 @@ class JWTService
     }
     public static function validateSession($returnType = false): bool | array
     {
-        $headers = apache_request_headers();
-
-        $auth = match (true) {
-            isset($headers['Authorization']) => $headers['Authorization'],
-            isset($headers['authorization']) => $headers['authorization'],
-            default => false
-        };
-        if (!$auth) return false;
-
-        $token = explode(' ', $auth);
-
-        if (!isset($token[1])) {
+        $token = self::getToken();
+        if (!$token) {
             return false;
         }
-        return self::validateToken($token[1], $returnType);
+        return self::validateToken($token, $returnType);
     }
-    public static function updateToken($token)
+    public static function updateToken($data): string | array
     {
+        $token = self::getToken();
         if (empty($token)) {
-            return self::http_error(403, "Token inválido.");
+            return self::http_error(403, "Token no existe.");
         }
 
         try {
-            $decoded = JWT::decode($token, new Key(self::$secret_key, self::$encrypt));
+            $decoded = (array) JWT::decode($token, new Key(self::$secret_key, self::$encrypt),);
 
-            return (object) $decoded->data;
+            $newData = (array) $decoded['data'];
+            foreach ($data as $key => $value) {
+                $newData[$key] = $value;
+            }
+            $decoded['data'] = $newData;
+            return JWT::encode($decoded, self::$secret_key, self::$encrypt);
         } catch (\Exception $e) {
-            die(json_encode(self::http_error(403, "Token inválido.")));
+            die(json_encode(self::http_error(403, "Token ekisde.")));
         }
     }
 }
