@@ -310,8 +310,9 @@ $(document).ready(function () {
     if (!actContra || !contra || !reContra) throw new Error("Datos invalidos");
 
     const body = {
-      passwordAct: $("#password").val(),
-      passwordNew: $("#newPassword").val(),
+      changePassword: "",
+      actPassword: $("#password").val(),
+      newPassword: $("#newPassword").val(),
     };
     $(this).prop("disabled", true);
     $.post(

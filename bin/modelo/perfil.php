@@ -22,8 +22,8 @@ class perfil extends DBConnect
 	private $imagenPorDefecto = 'assets/img/profile_photo.jpg';
 
 
-	private $passwordAct;
-	private $passwordNew;
+	private $actPassword;
+	private $newPassword;
 	private $session;
 
 	public function __construct($session)
@@ -69,7 +69,7 @@ class perfil extends DBConnect
 			return $this->http_error(400, 'Contraseña invalida.');
 
 		$this->cedulaVieja = $this->session['cedula'];
-		$this->passwordAct = $pass;
+		$this->actPassword = $pass;
 
 		return $this->validarContraseña();
 	}
@@ -83,7 +83,7 @@ class perfil extends DBConnect
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 			parent::desconectarDB();
-			if (!password_verify($this->passwordAct, $data[0]->password))
+			if (!password_verify($this->actPassword, $data[0]->password))
 				return $this->http_error(400, 'Contraseña incorrecta.');
 
 			return ['resultado' => 'Contraseña válida.'];
@@ -226,7 +226,7 @@ class perfil extends DBConnect
 		}
 	}
 
-	public function getCambioContra($cedula, $data)
+	public function getCambioContra($data)
 	{
 		if (isset($data['data'])) {
 			$crypto = new CryptoService;
@@ -236,18 +236,18 @@ class perfil extends DBConnect
 			}
 			$data = json_decode($decrypted['msg'], true);
 		}
-		if ($data['passwordAct'] === $data['passwordNew'])
+		if ($data['actPassword'] === $data['newPassword'])
 			return $this->http_error(400, 'No hubo cambio en la contraseña.');
 
-		if (!$this->validarString('contraseña', $data['passwordAct']))
+		if (!$this->validarString('contraseña', $data['actPassword']))
 			return $this->http_error(400, 'Contraseña actual invalida.');
 
-		if (!$this->validarString('contraseña', $data['passwordNew']))
+		if (!$this->validarString('contraseña', $data['newPassword']))
 			return $this->http_error(400, 'Contraseña nueva invalida.');
 
-		$this->cedula = $cedula;
-		$this->passwordAct = $data['passwordAct'];
-		$this->passwordNew = $data['passwordNew'];
+		$this->cedula = $this->session['cedula'];
+		$this->actPassword = $data['actPassword'];
+		$this->newPassword = $data['newPassword'];
 
 		return $this->cambioContra();
 	}
@@ -257,14 +257,14 @@ class perfil extends DBConnect
 		try {
 			parent::conectarDB();
 
-			$hash = password_hash($this->passwordNew, PASSWORD_BCRYPT);
+			$hash = password_hash($this->newPassword, PASSWORD_BCRYPT);
 
 			$new = $this->con->prepare("SELECT password FROM usuario WHERE cedula = ?");
 			$new->bindValue(1, $this->cedula);
 			$new->execute();
 			$data = $new->fetchAll();
 
-			if (!password_verify($this->passwordAct, $data[0]['password'])) {
+			if (!password_verify($this->actPassword, $data[0]['password'])) {
 				parent::desconectarDB();
 				return $this->http_error(400, "Contraseña incorrecta.");
 			}
@@ -274,7 +274,7 @@ class perfil extends DBConnect
 			$new->bindValue(2, $this->cedula);
 			$new->execute();
 			parent::desconectarDB();
-			return ['resultado' => 'Editada Contraseña'];;
+			return ['resultado' => 'ok', 'msg' => 'Contraseña editada correctamente.'];
 		} catch (\PDOException $e) {
 			return $this->http_error(500, $e);
 		}

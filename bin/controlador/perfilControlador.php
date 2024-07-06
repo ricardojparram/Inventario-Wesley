@@ -42,13 +42,11 @@ if (isset($_POST['nombre'], $_POST['apellido'], $_POST['cedula'], $_POST['email'
     die(json_encode($data));
 }
 
-if (isset($session['cedula'], $_POST['passwordAct'], $_POST['passwordNew'])) {
-    $data = $objModel->getCambioContra($session['cedula'], $_POST['passwordAct'], $_POST['passwordNew']);
-    die(json_encode($data));
-}
-
-if (isset($session['cedula'], $_POST['data'], $_POST['passwordNew'])) {
-    $data = $objModel->getCambioContra($session['cedula'], ['passwordAct' => $_POST['passwordAct'], 'passwordNew' => $_POST['passwordNew']]);
+if (isset($session['cedula'], $_POST['changePassword'])) {
+    $data = match (true) {
+        isset($_POST['actPassword'], $_POST['newPassword']) => $objModel->getCambioContra(['actPassword' => $_POST['actPassword'], 'newPassword' => $_POST['newPassword']]),
+        $_POST['changePassword'] === 'app' => $objModel->getCambioContra(['data' => $_POST['data']]),
+    };
     die(json_encode($data));
 }
 
