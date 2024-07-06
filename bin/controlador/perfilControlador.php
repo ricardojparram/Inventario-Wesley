@@ -13,10 +13,6 @@ if (!isset($_SESSION['nivel'])) {
   die('<script> window.location = "?url=login" </script>');
 }
 
-if (isset($_POST['notificacion'])) {
-  $objModel->getNotificacion();
-}
-
 $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 
 if (isset($_SESSION['cedula']) && isset($_POST['mostrar'])) {

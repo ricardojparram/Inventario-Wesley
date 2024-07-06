@@ -51,7 +51,7 @@ class ventas extends DBConnect
       parent::desconectarDB();
 
       return $data;
-    } catch (\PDOexection $e) {
+    } catch (\PDOException $e) {
 
       return $this->http_error(500, $e->getMessage());
     }
@@ -596,7 +596,7 @@ class ventas extends DBConnect
       parent::desconectarDB();
 
       return ['resultado' => 'Venta eliminada'];
-    } catch (\PDOexection $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }
@@ -609,10 +609,6 @@ class ventas extends DBConnect
 
     $this->id = $id;
 
-    $validarFactura = $this->validFactura();
-
-    if ($validarFactura['res'] === false) return $this->http_error(400, $validarFactura['msg']);
-
     return $this->exportar();
   }
 
@@ -620,6 +616,15 @@ class ventas extends DBConnect
   {
     try {
       parent::conectarDB();
+
+      $this->con->beginTransaction();
+
+      $validarFactura = $this->validFactura();
+
+      if ($validarFactura['res'] === false){
+        $this->con->rollBack();
+        return $this->http_error(400, $validarFactura['msg']);
+      } 
 
       $query = "SELECT v.num_fact, v.monto_fact, pe.cedula AS cedula, pe.nombres AS nombre, pe.apellidos AS apellido, v.fecha, pe.telefono AS telefono, pe.direccion AS direccion, v.monto_dolares AS total_divisa
           FROM venta v 
@@ -733,11 +738,12 @@ class ventas extends DBConnect
 
       $respuesta = ['respuesta' => 'Archivo guardado', 'ruta' => $repositorio];
 
+      $this->con->commit();
       $this->binnacle("Venta", $_SESSION['cedula'], "Exporto Ticket de Venta");
       parent::desconectarDB();
 
       return $respuesta;
-    } catch (\PDOexection $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }

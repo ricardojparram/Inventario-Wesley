@@ -1,8 +1,26 @@
 $(document).ready(function(){
 
+  //  const ws = new WebSocket('ws://localhost:8080');
+
+  //  ws.onopen = function() {
+  //      console.log('Connected to the WebSocket server');
+  //  };
+  
+  //  ws.onmessage = function(event) {
+  //      const data = JSON.parse(event.data);
+  //      mostrarNotificacion([data]);
+  //  };
+  
+  //  ws.onerror = function(error) {
+  //      console.log('WebSocket Error: ' + error);
+  //  };
+  
+  //  ws.onclose = function() {
+  //      console.log('Disconnected from the WebSocket server');
+  //  };
+  
 
   getNotificaciones();
-  setInterval(getNotificaciones, 600000);
 
   function getNotificaciones(){
     $.ajax({ type : 'POST', url: '?url=notificaciones', dataType: 'json', data: {notificaciones: 'consultar'},

@@ -1,7 +1,4 @@
 <?php
-	use component\initcomponents as initcomponents;
-	use component\header as header;
-	use component\menuLateral as menuLateral;
 	use modelo\notificaciones;
 
 	$model = new notificaciones();
@@ -21,8 +18,6 @@
 	if(isset($_POST['notificacionVista'], $_POST['notificationId'])) {
 		$model->notificacionVista($_POST['notificationId']);
 	}
-
-
 
 	die("<script> window.location = '?url=login' </script>");
 
