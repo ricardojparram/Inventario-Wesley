@@ -136,20 +136,27 @@ class perfil extends DBConnect
 			$new->bindValue(4, $this->correo);
 			$new->bindValue(5, $this->cedulaVieja);
 			$new->execute();
+
+			$new = $this->con->prepare("SELECT u.cedula, u.nombre, u.apellido, u.correo, u.img FROM usuario u WHERE u.cedula = ?");
+			$new->bindValue(1, $this->cedulaNueva);
+			$new->execute();
+			$data = $new->fetch(\PDO::FETCH_OBJ);
 			parent::desconectarDB();
 
 			$resultado = ['respuesta' => 'ok', 'msg' => "Editado correctamente"];
 			if (isset($_SESSION['nivel'])) {
-				$_SESSION['cedula'] = $this->cedulaNueva;
-				$_SESSION['nombre'] = $this->nombre;
-				$_SESSION['apellido'] = $this->apellido;
-				$_SESSION['correo'] = $this->correo;
+				$_SESSION['cedula'] = $data->cedula;
+				$_SESSION['nombre'] = $data->nombre;
+				$_SESSION['apellido'] = $data->apellido;
+				$_SESSION['correo'] = $data->correo;
+				$_SESSION['fotoPerfil'] = $data->img;
 			} else {
 				$userData = [
-					'cedula' => $this->cedulaNueva,
-					'nombre' => $this->nombre,
-					'apellido' => $this->apellido,
-					'correo' => $this->correo
+					'cedula' => $data->cedula,
+					'nombre' => $data->nombre,
+					'apellido' => $data->apellido,
+					'correo' => $data->correo,
+					'fotoPerfil' => $data->img
 				];
 				$resultado['token'] = JWTService::updateToken($userData);
 			}
