@@ -12,10 +12,37 @@ $(document).ready(function(){
 		$('#agregarMoneda, #agregarCambio').attr(exportarPermiso, '');
 	});
 
+    let tabla;
+    rellenar();
+    function rellenar(){
+        $.ajax({
+            method: "post",
+            url: '',
+            dataType: 'JSON',
+            data: {mostrar: "xd"},
+            success(list){
+                list.forEach(row => {
+                    tabla+=`
+                    <tr>
+                        <td>${row.nombre}</td>
+                        <td>${row.descripcion}</td>
+                        <td>${row.fecha}</td>
+                    </tr>
+                    `;
+                });
+                $('#tabla tbody').html(tabla);
+                tabla = $("#tabla").DataTable({
+                    responsive: true,
+                    "order": [[ 2, "desc" ]]
+                });
+            }
+        })
+    }
+
 
     $('#exportar').click((e)=> {
         e.preventDefault()
-
+        $("#exportar").prop('disabled', true);
         $.ajax({
             type: "POST",
             url: '',
@@ -24,18 +51,18 @@ $(document).ready(function(){
                 exportar: 'xd'
             },
             success(data) {
-                tablaM.destroy();
+                tabla.destroy();
                 $('#cerrar').click();
-                mostrar();
+                rellenar();
                 Toast.fire({ icon: 'success', title: 'Copia de Seguridad Creada', showCloseButton: true  });
             },
             error(e) {
                 Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-                throw new Error(e.responseJSON.msg);
+                console.error(e.responseJSON.msg);
             },
-            // complete() {
-            //     $("#eliminar").prop('disabled', false);
-            // }
+            complete() {
+                $("#exportar").prop('disabled', false);
+            }
         })
     })
 })

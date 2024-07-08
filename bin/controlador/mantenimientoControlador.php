@@ -22,6 +22,11 @@ if (isset($_POST['exportar'])) {
     die(json_encode($res));
 }
 
+if(isset($_POST['mostrar']) && isset($permiso['Consultar'])){
+	$res = $objModel->getHistorial();
+	die(json_encode($res));
+}
+
 
 $VarComp = new initcomponents();
 $header = new header();
