@@ -52,7 +52,7 @@
                         <h5 class="card-title">Instituciones</h5>
                     </div>
                     <div class="col-6 text-end mt-3">
-                        <button type="button" id="agregarModalButton" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Agregar" <?= (isset($permiso['Registrar'])) ? "" : "disabled" ?>>
+                        <button type="button" id="agregarModalButton" class="btn btn-registrar" data-bs-toggle="modal" data-bs-target="#Agregar" <?= (isset($permiso['Registrar'])) ? "" : "disabled" ?>>
                             Agregar
                         </button>
                     </div>
@@ -155,7 +155,7 @@
 
                 <div class="modal-footer">
                     <button type="reset" class="btn btn-secondary" id="cerraR" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success " id="registrar">Registrar</button>
+                    <button type="submit" class="btn btn-registrar " id="registrar">Registrar</button>
                 </div>
 
             </form>
@@ -230,7 +230,7 @@
 
                 <div class="modal-footer">
                     <button type="reset" class="btn btn-secondary" id="cerrarE" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success" id="editar">Editar</button>
+                    <button type="submit" class="btn btn-registrar" id="editar">Editar</button>
                 </div>
             </form>
         </div>

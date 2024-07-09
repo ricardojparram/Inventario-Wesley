@@ -40,13 +40,13 @@ class instituciones extends DBConnect
             return $this->http_error(400, 'Rif inválido.');
         }
         if (!$this->validarString('nombre', $razon)) {
-            return $this->http_error(400, 'Rif inválido.');
+            return $this->http_error(400, 'Razon inválida.');
         }
         if (!$this->validarString('direccion', $direccion)) {
             return $this->http_error(400, 'Dirección inválida.');
         }
-        if (!$this->validarString('entero', $contacto)) {
-            return $this->http_error(400, 'Dirección inválida.');
+        if (!$this->validarString('numero', $contacto)) {
+            return $this->http_error(400, 'Contacto inválido.');
         }
         
         $this->rif = $rif;
@@ -151,16 +151,16 @@ class instituciones extends DBConnect
             return $this->http_error(400, 'Rif inválido.');
         }
         if (!$this->validarString('nombre', $razon)) {
-            return $this->http_error(400, 'Rif inválido.');
+            return $this->http_error(400, 'Razon inválida.');
         }
         if (!$this->validarString('direccion', $direccion)) {
             return $this->http_error(400, 'Dirección inválida.');
         }
+        if (!$this->validarString('numero', $contacto)) {
+            return $this->http_error(400, 'Contacto inválido.');
+        }
         if (!$this->validarString('rif', $id)) {
             return $this->http_error(400, 'Rif inválido.');
-        }
-        if (!$this->validarString('entero', $contacto)) {
-            return $this->http_error(400, 'Dirección inválida.');
         }
 
         $this->rif = $rif;
@@ -240,9 +240,9 @@ class instituciones extends DBConnect
             $new->bindValue(1, $rif);
             $new->execute();
             $data = $new->fetchAll();
-            if (isset($data)) return false;
-            return true;
             parent::desconectarDB();
+            if (isset($data[0])) {return false;}
+            return true;
         } catch (\PDOException $e) {
             return $this->http_error(500, $e->getMessage());
         }

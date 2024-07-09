@@ -25,7 +25,7 @@ $(document).ready(function () {
                             <td scope="col">${row.contacto}</td>
                             <td >
                                 <span class="d-flex justify-content-center">
-                                    <button type="button" ${permisoEditar} class="btn btn-success editar mx-2" id="${row.rif_int}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button>
+                                    <button type="button" ${permisoEditar} class="btn btn-registrar editar mx-2" id="${row.rif_int}" data-bs-toggle="modal" data-bs-target="#Editar"><i class="bi bi-pencil"></i></button>
                                     <button type="button" ${permisoEliminar} class="btn btn-danger borrar mx-2" id="${row.rif_int}" data-bs-toggle="modal" data-bs-target="#Borrar"><i class="bi bi-trash3"></i></button>
                                 </span>
                             </td>

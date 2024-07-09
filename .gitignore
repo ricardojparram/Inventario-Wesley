@@ -9,3 +9,4 @@ phpunit.xml
 \.phpintel
 .env
 /assets/img/inventario/*
+bin/config/SQL/Respaldos/*

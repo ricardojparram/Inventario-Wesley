@@ -25,16 +25,13 @@ if (!isset($permiso["Consultar"])) {
     die('<script> window.location = "?url=home" </script>');
 }
 
-
-if (isset($_POST['notificacion'])) {
-    $objModel->getNotificacion();
-}
-
 if (isset($_POST['getPermisos'], $permiso['Consultar'])) {
     die(json_encode($permiso));
 }
 
-
+if (isset($_POST['cambiarSede'])) {
+    return $model->cambiarSede($_POST['cambiarSede']);
+}
 
 if (isset($_POST['registrar'], $_POST['nombre'], $_POST['telefono'], $_POST['direccion'], $permiso['Registrar'])) {
     $res = $model->getAgregarSede($_POST['nombre'], $_POST['telefono'], $_POST['direccion']);
