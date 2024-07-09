@@ -55,11 +55,10 @@ $(document).ready(function(){
   $(document).on('click', '.detalleD' , function(){
 
        id = this.id; // id = id
-       $.post('',{detalleD : 'detalle Donacion' , id}, function(data){
-       	let lista = JSON.parse(data);
+       $.getJSON('',{detalleD : 'detalle Donacion' , id}, function(data){
        	let tabla;
 
-       	lista.forEach(row=>{
+       	data.forEach(row=>{
        		tabla += `
        		<tr>
        		<td>${row.nombrepro}</td>
@@ -67,7 +66,7 @@ $(document).ready(function(){
        		</tr>
        		`  
        	})
-       	$('#DonacionTitle').text(`Numero de Donacion #${lista[0].id_donaciones}.`);
+       	$('#DonacionTitle').text(`Numero de Donacion #${data[0].id_donaciones}.`);
        	$('#bodyDetalle').html(tabla);
        })
 

@@ -4,20 +4,23 @@
   use component\header as header;
   use component\menuLateral as menuLateral;
   use modelo\donativoPersonal as donativoPersonal;
-
-      if(!isset($_SESSION['nivel'])){
+  use utils\JWTService;
+  
+      $JWToken = JWTService::validateSession();
+      if(!isset($_SESSION['nivel']) && !$JWToken){
        die('<script> window.location = "?url=login" </script>');
      }
 
+     $nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
+     $sede = (isset($_SESSION['id_sede'])) ? $_SESSION['id_sede'] : $JWToken->id_sede;
+
      $objModel = new donativoPersonal();
-     $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
+     $permisos = $objModel->getPermisosRol($nivel);
      $permiso = $permisos['Donativos personal'];
 
       if(!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);
 
-      if(isset($_POST['notificacion'])) {
-        $objModel->getNotificacion();
-      }
+
 
       if (isset($_POST['getPermiso']) && $permiso['Consultar'] == 1) {
         die(json_encode($permiso));
@@ -28,8 +31,13 @@
         die(json_encode($res));
       }
 
-      if(isset($_POST['detalleD']) && isset($_POST['id'])) {
-        $res = $objModel->getDetalleDonacion($_POST['id']);
+      if (isset($_GET['mostrar']) && isset($_GET['app'])) {
+        $res = $objModel->getMostrarDonaciones();
+        die(json_encode($res));
+      }
+
+      if(isset($_GET['detalleD']) && isset($_GET['id'])) {
+        $res = $objModel->getDetalleDonacion($_GET['id']);
         die(json_encode($res));
       }
 
