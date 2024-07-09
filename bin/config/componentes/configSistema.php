@@ -3,10 +3,16 @@
 namespace config\componentes;
 
 use Dotenv\Dotenv as Dotenv;
+use Dotenv\Exception\InvalidPathException;
 
 if (!isset($_ENV["DB"])) {
+  try {
     $dotenv = Dotenv::createImmutable(__DIR__, "../../../.env");
     $dotenv->load();
+  }catch(\Exception $e){
+    print $e->getMessage();
+    die();
+  }
 }
 
 define("_URL_", $_ENV["URL"]);
