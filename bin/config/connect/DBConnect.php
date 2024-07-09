@@ -141,8 +141,9 @@ class DBConnect extends configSistema
             $new->bindValue(":cantidad", $cantidad);
             $new->bindValue(":usuario", $_SESSION['cedula']);
             $new->execute();
-        } catch (\Throwable $th) {
-            die($th->getMessage());
+        } catch (\PDOException $e) {
+            print "¡Error!: " . $e->getMessage() . "<br/>";
+            die();
         }
     }
 }
