@@ -21,7 +21,7 @@ class sede extends DBConnect
 			$this->conectarDB();
 			$new = $this->con->prepare("SELECT s.id_sede , s.nombre , s.telefono , s.direccion  FROM sede s WHERE s.status = 1");
 			$new->execute();
-			$data = $new->fetchAll();
+			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 			if ('true' == $bitacora) {
 				$this->binnacle('Sede', $_SESSION['cedula'], 'Consultó el listado de sedes.');
 			}
@@ -31,6 +31,20 @@ class sede extends DBConnect
 			return $this->http_error(500, $error->getMessage());
 		}
 	}
+
+	public function cambiarSede($id)
+	{
+		try {
+			$sede = $this->getSede($id);
+			$_SESSION['id_sede'] = $id;
+			$_SESSION['sede'] = $sede->nombre;
+			header("Location: {$_SERVER['HTTP_REFERER']}");
+			return $sede;
+		} catch (\Throwable $th) {
+			return $th->getMessage();
+		}
+	}
+
 	public function getAgregarSede($nombre, $telefono, $direccion)
 	{
 
