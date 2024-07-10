@@ -13,9 +13,9 @@ if (!isset($_SESSION['nivel'])) {
   die('<script> window.location = "?url=login" </script>');
 }
 
-if (isset($_POST['notificacion'])) {
-  $objModel->getNotificacion();
-}
+// if (isset($_POST['notificacion'])) {
+//   $objModel->getNotificacion();
+// }
 
 $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 

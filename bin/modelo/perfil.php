@@ -122,15 +122,14 @@ class perfil extends DBConnect {
 	private function editarDatos() {
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare("UPDATE usuario SET cedula= ?,nombre= ?,apellido= ?,correo= ? WHERE cedula = ?");
-			$new->bindValue(1, $this->cedulaNueva);
-			$new->bindValue(2, $this->nombre);
-			$new->bindValue(3, $this->apellido);
-			$new->bindValue(4, $this->correo);
-			$new->bindValue(5, $this->cedulaVieja);
+			$new = $this->con->prepare("UPDATE usuario SET nombre= ?,apellido= ?,correo= ? WHERE cedula = ?");
+			$new->bindValue(1, $this->nombre);
+			$new->bindValue(2, $this->apellido);
+			$new->bindValue(3, $this->correo);
+			$new->bindValue(4, $this->cedulaVieja);
 			$new->execute();
 			parent::desconectarDB();
-			$_SESSION['cedula'] = $this->cedulaNueva;
+			$_SESSION['cedula'] = $this->cedulaVieja;
 			$_SESSION['nombre'] = $this->nombre;
 			$_SESSION['apellido'] = $this->apellido;
 			$_SESSION['correo'] = $this->correo;
