@@ -2,29 +2,37 @@
 	
 	namespace modelo;
     use config\connect\DBConnect as DBConnect;
+    require __DIR__ . '/../../vendor/autoload.php';
+
 
     class notificaciones extends DBConnect{
 
     	private $id;
 
 
-		public function getNotificaciones(){
-			try{
+		public function getNotificaciones() {
+			try {
 				parent::conectarDB();
-
+	
 				$this->mostraProductoVencido();
-
+	
 				$query = "SELECT n.id , n.titulo , n.fecha FROM notificaciones n WHERE n.status = 1 ORDER BY n.id DESC";
-
 				$new = $this->con->prepare($query);
 				$new->execute();
 				$data = $new->fetchAll(\PDO::FETCH_OBJ);
-				
-				return $data;
-
+	
 				parent::desconectarDB();
-
-			}catch(\PDOException $e){
+	
+				// Conectar al servidor WebSocket y enviar las notificaciones
+				\Ratchet\Client\connect('ws://localhost:8080')->then(function($conn) use ($data) {
+					$conn->send(json_encode($data));
+					$conn->close();
+				}, function ($e) {
+					echo "Could not connect: {$e->getMessage()}\n";
+				});
+	
+	
+			} catch(\PDOException $e) {
 				print "¡Error!: " . $e->getMessage() . "<br/>";
 				die();
 			}

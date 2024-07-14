@@ -1,38 +1,27 @@
 $(document).ready(function(){
 
-  //  const ws = new WebSocket('ws://localhost:8080');
+    const ws = new WebSocket('ws://localhost:8080');
 
-  //  ws.onopen = function() {
-  //      console.log('Connected to the WebSocket server');
-  //  };
+   ws.onopen = function() {
+       console.log('Connected to the WebSocket server');
+    };
   
-  //  ws.onmessage = function(event) {
-  //      const data = JSON.parse(event.data);
-  //      mostrarNotificacion([data]);
-  //  };
+    ws.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      console.log(data);
+      mostrarNotificacion(data);
+    };
   
-  //  ws.onerror = function(error) {
-  //      console.log('WebSocket Error: ' + error);
-  //  };
+    ws.onerror = function(error) {
+        console.log('WebSocket Error: ' + error);
+    };
   
-  //  ws.onclose = function() {
-  //      console.log('Disconnected from the WebSocket server');
-  //  };
+    ws.onclose = function() {
+       console.log('Disconnected from the WebSocket server');
+    };
   
 
   getNotificaciones();
-
-  function getNotificaciones(){
-    $.ajax({ type : 'POST', url: '?url=notificaciones', dataType: 'json', data: {notificaciones: 'consultar'},
-      success(data){
-        notificaciones = data;
-        mostrarNotificacion(notificaciones);
-      },
-      error: function(xhr, status, error){
-        console.log(xhr.responseText);
-      }
-    })
-  }
 
   function mostrarNotificacion(notificaciones){
      let mostrar = '';
@@ -124,6 +113,7 @@ $(document).ready(function(){
         $(`#${notificationId}`).closest('.divNotificacion').fadeOut(500, function() {
           $(this).remove();  
         });
+        getNotificaciones();
       },
       error: function(xhr, status, error) {
         console.log(error);

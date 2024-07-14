@@ -661,6 +661,7 @@ $(document).ready(function(){
             $('.error').text('');
             addNewRow()
             addNewRowPago()
+            getNotificaciones();
             Toast.fire({ icon: 'success', title: data.msg }) // ALERTA 
             }
           }

@@ -9,7 +9,8 @@
         "phpoffice/phpspreadsheet": "^2.0",
         "cboden/ratchet": "^0.4.4",
         "vlucas/phpdotenv": "*",
-        "firebase/php-jwt": "^6.10"
+        "firebase/php-jwt": "^6.10",
+        "ratchet/pawl": "^0.4.1"
     },
     "license": "proprietary",
     "autoload": {

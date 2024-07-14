@@ -11,8 +11,7 @@
        die('<script> window.location = "?url=login" </script>');
      }
 
-     $nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
-     $sede = (isset($_SESSION['id_sede'])) ? $_SESSION['id_sede'] : $JWToken->id_sede;
+     $nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
 
      $objModel = new donativoPersonal();
      $permisos = $objModel->getPermisosRol($nivel);

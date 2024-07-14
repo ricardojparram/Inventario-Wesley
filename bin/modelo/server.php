@@ -37,6 +37,8 @@ class NotificationServer implements MessageComponentInterface {
         echo "An error has occurred: {$e->getMessage()}\n";
         $conn->close();
     }
+
+
 }
 
 $server = IoServer::factory(
