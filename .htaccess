@@ -1,7 +1,29 @@
+# bloqueo de accesso a este archivo
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+# bloqueo de acceso a extensiones de archivos
+<FilesMatch "\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|sql|env|lock|json)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+
 RewriteEngine On
 
+# bloqueo de acceso para archivos .php (solo se permite acceso a index.php)
+RewriteCond %{THE_REQUEST} "^.+? [^?]+\.php(?:[?/# ]|$)" [NC]
+RewriteRule !^index\.php$ - [F,L,NC]
+
+# url amigable /login => ?url=login
 RewriteRule ^([a-z-]{3,})$ ?url=$1 [QSA,NC]
 
+# url amigable /recepcion/registrar => ?url=recepcion&registrar
 RewriteRule ^([a-z-]{3,})/([a-z-]{3,})$ ?url=$1&$2 [QSA,NC]
 
+# bloqueo de acceso a directorios
+Options All -Indexes
 
+# limite de body enviado de 10mb
+LimitRequestBody 10000000
