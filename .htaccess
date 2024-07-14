@@ -1,9 +1,3 @@
-# bloqueo de accesso a este archivo
-<Files .htaccess>
-order allow,deny
-deny from all
-</Files>
-
 # bloqueo de acceso a extensiones de archivos
 <FilesMatch "\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|sql|env|lock|json)$">
 Order Allow,Deny
