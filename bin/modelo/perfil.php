@@ -129,12 +129,11 @@ class perfil extends DBConnect
 	{
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare("UPDATE usuario SET cedula= ?,nombre= ?,apellido= ?,correo= ? WHERE cedula = ?");
-			$new->bindValue(1, $this->cedulaNueva);
-			$new->bindValue(2, $this->nombre);
-			$new->bindValue(3, $this->apellido);
-			$new->bindValue(4, $this->correo);
-			$new->bindValue(5, $this->cedulaVieja);
+			$new = $this->con->prepare("UPDATE usuario SET nombre= ?,apellido= ?,correo= ? WHERE cedula = ?");
+			$new->bindValue(1, $this->nombre);
+			$new->bindValue(2, $this->apellido);
+			$new->bindValue(3, $this->correo);
+			$new->bindValue(4, $this->cedulaVieja);
 			$new->execute();
 
 			$new = $this->con->prepare("SELECT u.cedula, u.nombre, u.apellido, u.correo, u.img FROM usuario u WHERE u.cedula = ?");
