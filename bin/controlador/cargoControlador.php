@@ -5,14 +5,14 @@ use component\header as header;
 use component\menuLateral as menuLateral;
 use modelo\cargo;
 
-if (!isset($_SESSION['nivel'])) die('<script> window.location = "?url=login" </script>');
+if (!isset($_SESSION['nivel'])) die('<script> window.location = "login" </script>');
 
 $model = new cargo();
 
 $permisos = $model->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Cargo'];
 
-if (!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
+if (!isset($permiso["Consultar"])) die('<script> window.location = "home" </script>');
 
 if (isset($_GET['getPermisos'], $permiso['Consultar'])) {
     die(json_encode($permiso));

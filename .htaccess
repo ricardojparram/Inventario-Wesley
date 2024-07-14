@@ -1,7 +1,7 @@
 RewriteEngine On
 
-# Condición para detectar el parámetro 'url' en la cadena de consulta
-RewriteCond %{QUERY_STRING} ^url=([^&]+) [NC]
+RewriteRule ^([a-z-]{3,})$ ?url=$1 [QSA,NC]
 
-# Regla para reescribir la URL, manteniendo la ruta y los parámetros
-RewriteRule ^Inventario-Wesley/?$ /Inventario-Wesley/%1?%{QUERY_STRING} [L,R=301]
+RewriteRule ^([a-z-]{3,})/([a-z-]{3,})$ ?url=$1&$2 [QSA,NC]
+
+

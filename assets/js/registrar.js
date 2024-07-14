@@ -39,13 +39,13 @@ $(document).ready(function () {
     vapellido = validarNombre(
       $("#apellido"),
       $("#error"),
-      "Error de apellido,",
+      "Error de apellido,"
     );
     validarCorreo($("#email"), $("#error"), "Error de correo,");
     vpassword = validarContraseña(
       $("#password"),
       $("#error"),
-      "Error de contraseña,",
+      "Error de contraseña,"
     );
     vrepass = validarRepContraseña($("#repass"), $("#error"), $("#password"));
 
@@ -72,7 +72,7 @@ $(document).ready(function () {
           $("#cedula").attr("style", "border-color: red;");
           $("#cedula").attr(
             "style",
-            "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);",
+            "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"
           );
           throw new Error("Cedula ya registrada.");
         }
@@ -81,7 +81,7 @@ $(document).ready(function () {
           $("#email").attr("style", "border-color: red;");
           $("#email").attr(
             "style",
-            "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);",
+            "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"
           );
           throw new Error("Correo ya registrado.");
         }
@@ -102,7 +102,7 @@ $(document).ready(function () {
             icon: "success",
           });
           setTimeout(function () {
-            window.location = "?url=login";
+            window.location = "login";
           }, 1600);
         }
       },
@@ -127,7 +127,7 @@ $(document).ready(function () {
         $("#email").attr("style", "border-color: red;");
         $("#email").attr(
           "style",
-          "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);",
+          "border-color: red; background-image: url(assets/img/Triangulo_exclamacion.png); background-repeat: no-repeat; background-position: right calc(0.375em + 0.1875rem) center; background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);"
         );
       }
     });

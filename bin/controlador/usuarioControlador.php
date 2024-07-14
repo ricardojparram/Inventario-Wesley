@@ -12,11 +12,11 @@ $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Usuarios'];
 
 if (!isset($_SESSION['nivel'])) {
-	die('<script> window.location = "?url=login" </script>');
+	die('<script> window.location = "login" </script>');
 }
 
 if (!isset($permiso["Consultar"]))
-	die('<script> window.location = "?url=home" </script>');
+	die('<script> window.location = "home" </script>');
 
 // if (isset($_POST['notificacion'])) {
 // 	$objModel->getNotificacion();
@@ -61,7 +61,7 @@ if (isset($_POST['cedulaEdit']) && isset($_POST['nameEdit']) && isset($_POST['ap
 	die(json_encode($res));
 }
 
-if (isset($_GET['cedula'], $_GET['persona'])){
+if (isset($_GET['cedula'], $_GET['persona'])) {
 	$res = $objModel->getPersonal($_GET['cedula']);
 	die(json_encode($res));
 }
@@ -73,5 +73,3 @@ $menu = new menuLateral($permisos);
 if (file_exists("vista/interno/usuarioVista.php")) {
 	require_once("vista/interno/usuarioVista.php");
 }
-
-?>

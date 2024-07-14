@@ -21,10 +21,10 @@ $(document).ready(function () {
           icon: "success",
         });
         setTimeout(function () {
-          location = "?url=login";
+          location = "login";
         }, 1600);
       },
-      "json",
+      "json"
     )
       .fail((e) => {
         Swal.fire({

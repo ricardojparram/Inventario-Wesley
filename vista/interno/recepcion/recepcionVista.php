@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recepcion</title>
     <?php $VarComp->header(); ?>
-    <link rel="stylesheet" href="assets/css/estiloInterno.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="assets/css/chosen.min.css">
+    <link rel="stylesheet" href="<?= _URL_ . 'assets/css/estiloInterno.css' ?>">
+    <link rel="stylesheet" type="text/css" href="<?= _URL_ . 'assets/css/dataTables.bootstrap5.min.css' ?>">
+    <link rel="stylesheet" href="<?= _URL_ . 'assets/css/chosen.min.css' ?>">
 </head>
 
 <body>
@@ -39,7 +39,8 @@
             <h1>Recepcion</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item">Recepcion</li> </ol>
+                    <li class="breadcrumb-item">Recepcion</li>
+                </ol>
             </nav>
 
         </div>
@@ -52,7 +53,7 @@
                         <h5 class="card-title">Recepciones registradas</h5>
                     </div>
                     <div class="col-6 text-end mt-3">
-                        <a href="?url=recepcion&registrar" class="btn btn-success agregar">Agregar</a>
+                        <a href="recepcion/registrar" class="btn btn-success agregar">Agregar</a>
                     </div>
                 </div>
 
@@ -87,9 +88,9 @@
 </body>
 
 <?php $VarComp->js(); ?>
-<script src="assets/js/chosen.jquery.min.js"></script>
-<script src="assets/js/select2.full.min.js"></script>
-<script type="text/javascript" src="assets/js/recepcion/recepcion.js"></script>
+<script src="<?= _URL_ . 'assets/js/chosen.jquery.min.js' ?>"></script>
+<script src="<?= _URL_ . 'assets/js/select2.full.min.js' ?>"></script>
+<script type="text/javascript" src="<?= _URL_ . 'assets/js/recepcion/recepcion.js' ?>"></script>
 
 </html>
 <!-- MODAL DE MOSTRAR DETALLES -->
@@ -103,7 +104,7 @@
             <div class="modal-body">
                 <div class="d-flex justify-content-center align-items-center gap-2 images"></div>
                 <div class="container-sm mt-3">
-                  <dl class='row detalle_dl'></dl>
+                    <dl class='row detalle_dl'></dl>
                 </div>
                 <table id="tabla_detalle" class="table table-hover">
                     <thead>

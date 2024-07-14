@@ -9,7 +9,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Error 404</title>
-  <?php  $VarComp->header();?>
+  <?php $VarComp->header(); ?>
 
 <body>
 
@@ -19,7 +19,7 @@
       <section class="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
         <h1>404</h1>
         <h2>No Existe la Pagina Que Buscas</h2>
-        <a class="btn" href="?url=inicio">Regresar a la Pagina Principal</a>
+        <a class="btn" href="<?= _URL_ ?>">Regresar a la Pagina Principal</a>
         <img src="assets/img/not-found.svg" class="img-fluid py-5" alt="Esta página no existe.">
         <div class="credits">
           <!-- All the links in the footer should remain intact. -->
@@ -36,5 +36,6 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
 </body>
-<?php $VarComp->js();?>  
+<?php $VarComp->js(); ?>
+
 </html>

@@ -32,8 +32,8 @@ class header
     $header = '
     <header id="header" class="header fixed-top d-flex align-items-center">
       <div class="d-flex align-items-center justify-content-between">
-        <a href="?url=inicio" class="logo d-none d-sm-block">
-          <img src="assets/img/Logos Wesley/logo_wesley_con_titulo.svg" alt="Wesley">
+        <a href="' . _URL_ . '" class="logo d-none d-sm-block">
+          <img src="' . _URL_ . 'assets/img/Logos Wesley/logo_wesley_con_titulo.svg" alt="Wesley">
         </a>
         <i class="bi bi-list toggle-sidebar-btn"></i>
       </div><!-- End Logo -->
@@ -49,7 +49,7 @@ class header
             </a>
 
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-              <form method="POST" action="?url=sede" id="changeSede">
+              <form method="POST" action="sede" id="changeSede">
               ' . $liSedes . '
               </form>
               <li class="dropdown-item d-flex align-items-center">
@@ -99,7 +99,7 @@ class header
           <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-              <img class="fotoPerfil rounded-circle" src="' . $_SESSION['fotoPerfil'] . '" alt="Profile">
+              <img class="fotoPerfil rounded-circle" src="' . _URL_ . $_SESSION['fotoPerfil'] . '" alt="Profile">
               <span class="d-none d-md-block dropdown-toggle ps-2 nombreCompleto">' . $_SESSION["nombre"] . ' ' . $_SESSION['apellido'] . '</span>
             </a><!-- End Profile Iamge Icon -->
 
@@ -115,7 +115,7 @@ class header
               </li>
 
               <li>
-                <a class="dropdown-item d-flex align-items-center" href="?url=perfil">
+                <a class="dropdown-item d-flex align-items-center" href="perfil">
                   <i class="bi bi-person"></i>
                   <span>Mi perfil</span>
                 </a>
@@ -125,7 +125,7 @@ class header
               </li>
 
               <li>
-                <a class="dropdown-item d-flex align-items-center" href="?url=ayuda">
+                <a class="dropdown-item d-flex align-items-center" href="ayuda">
                   <i class="bi bi-question-circle"></i>
                   <span>¿Necesitas ayuda?</span>
                 </a>
@@ -135,7 +135,7 @@ class header
               </li>
 
               <li>
-                <a class="dropdown-item d-flex align-items-center" href="?url=cerrar">
+                <a class="dropdown-item d-flex align-items-center" href="cerrar">
                   <i class="bi bi-box-arrow-right"></i>
                   <span>Cerrar sesion</span>
                 </a>

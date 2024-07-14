@@ -169,14 +169,11 @@ $(document).ready(function () {
     id = this.id;
 
     $(this).prop("disabled", true);
-    $.getJSON(
-      "?url=transferencia",
-      { detalle: "", id_transferencia: id },
-      (res) => {
-        let tabla = "";
-        $("#Detalle h5").html(res[0].nombre_sede);
-        res.forEach((row) => {
-          tabla += `
+    $.getJSON("transferencia", { detalle: "", id_transferencia: id }, (res) => {
+      let tabla = "";
+      $("#Detalle h5").html(res[0].nombre_sede);
+      res.forEach((row) => {
+        tabla += `
               <tr>
                 <td>${row.lote}</th>
                 <td>${row.presentacion_producto}</th>
@@ -184,10 +181,9 @@ $(document).ready(function () {
                 <td>${row.descripcion}</td>
                 <td>${row.fecha_vencimiento ? row.fecha_vencimiento : ""}</td>
               </tr>`;
-        });
-        $("#tabla_detalle tbody").html(tabla || "");
-      }
-    )
+      });
+      $("#tabla_detalle tbody").html(tabla || "");
+    })
       .fail((e) => {
         Toast.fire({ icon: "error", title: "Ha ocurrido un error." });
         console.error(e);

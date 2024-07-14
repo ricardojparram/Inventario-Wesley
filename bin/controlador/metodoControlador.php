@@ -12,10 +12,10 @@
   $permiso = $permisos['Metodo pago'];
 
   if (!isset($_SESSION['nivel'])) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
   }
 
-  if (!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);
+  if (!isset($permiso['Consultar'])) die(`<script> window.location = "home" </script>`);
 
   if (isset($_POST['notificacion'])) {
     $objModel->getNotificacion();

@@ -6,7 +6,7 @@ use component\menuLateral as menuLateral;
 use modelo\descargo;
 
 if (!isset($_SESSION['nivel'])) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 
 $model = new descargo();
@@ -15,7 +15,7 @@ $permisos = $model->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Descargo'];
 
 if (!isset($permiso["Consultar"])) {
-    die('<script> window.location = "?url=home" </script>');
+    die('<script> window.location = "home" </script>');
 }
 
 if (isset($_GET['getPermisos'], $permiso['Consultar'])) {
@@ -39,8 +39,8 @@ if (isset($_GET['select_producto'], $permiso["Consultar"])) {
 
 if (isset($_POST['num_descargo'], $_POST['fecha'], $_POST['productos'], $permiso["Consultar"])) {
     $res = (isset($_FILES['img']))
-    ? $model->getAgregarDescargo($_POST['num_descargo'], $_POST['fecha'], $_POST['productos'], $_FILES['img'])
-    : $model->getAgregarDescargo($_POST['num_descargo'], $_POST['fecha'], $_POST['productos']);
+        ? $model->getAgregarDescargo($_POST['num_descargo'], $_POST['fecha'], $_POST['productos'], $_FILES['img'])
+        : $model->getAgregarDescargo($_POST['num_descargo'], $_POST['fecha'], $_POST['productos']);
     die(json_encode($res));
 }
 

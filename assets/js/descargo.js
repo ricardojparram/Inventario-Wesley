@@ -158,7 +158,7 @@ $(document).ready(function () {
   const mostrarInventarioProducto = (item) => {
     let $cantidad = $(item).closest("tr").find(".cantidad input");
     let producto_inventario = item.value;
-    $.getJSON("?url=transferencia", { producto_inventario }, function (data) {
+    $.getJSON("transferencia", { producto_inventario }, function (data) {
       $cantidad.val(data.cantidad);
     });
   };
@@ -173,23 +173,19 @@ $(document).ready(function () {
     let cantidad = item.value;
     let valid = false;
     if (!Number.isInteger(Number(cantidad))) return false;
-    await $.getJSON(
-      "?url=transferencia",
-      { producto_inventario },
-      function (data) {
-        if (cantidad > data.cantidad) {
-          $cantidad.attr("valid", false);
-          $error
-            .html(`No hay suficiente.(Disponible: ${data.cantidad})`)
-            .removeClass("d-none");
-          valid = false;
-        } else {
-          $cantidad.attr("valid", true);
-          $error.addClass("d-none");
-          valid = true;
-        }
+    await $.getJSON("transferencia", { producto_inventario }, function (data) {
+      if (cantidad > data.cantidad) {
+        $cantidad.attr("valid", false);
+        $error
+          .html(`No hay suficiente.(Disponible: ${data.cantidad})`)
+          .removeClass("d-none");
+        valid = false;
+      } else {
+        $cantidad.attr("valid", true);
+        $error.addClass("d-none");
+        valid = true;
       }
-    );
+    });
     return valid;
   };
 

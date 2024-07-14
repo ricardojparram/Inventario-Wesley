@@ -1,6 +1,5 @@
 <?php
 
-
 session_start();
 
 if (file_exists('vendor/autoload.php')) {
@@ -22,4 +21,3 @@ $GlobalConfig->_int();
 use bin\controlador\frontControlador as frontControlador;
 
 $IndexSystem = new frontControlador($_REQUEST);
-?>

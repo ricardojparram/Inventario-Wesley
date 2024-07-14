@@ -9,7 +9,7 @@ use modelo\transferencia;
 // die();
 //
 if (!isset($_SESSION['nivel'])) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 
 $model = new transferencia();
@@ -17,7 +17,7 @@ $permisos = $model->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Transferencia'];
 
 if (!isset($permiso["Consultar"])) {
-    die('<script> window.location = "?url=home" </script>');
+    die('<script> window.location = "home" </script>');
 }
 
 $sedes = $model->mostrarSedes();
@@ -37,7 +37,7 @@ if (isset($_GET['producto_inventario'], $permiso['Consultar'])) {
 }
 
 if ($_SESSION['id_sede'] != 1) {
-    die('<script> window.location = "?url=home" </script>');
+    die('<script> window.location = "home" </script>');
 }
 
 if (isset($_GET['select_producto'])) {

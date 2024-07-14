@@ -1,14 +1,11 @@
-<?php 
+<?php
 
-if(isset($_SESSION['cedula'])){
+if (isset($_SESSION['cedula'])) {
 	session_destroy();
 	$script = '
 		<script>
 			localStorage.clear();
-			window.location = "?url=login"
+			window.location = "login"
 		</script>';
 	die($script);
-	
 }
-
-?>

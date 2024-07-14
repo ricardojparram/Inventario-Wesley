@@ -8,7 +8,7 @@ use utils\JWTService;
 $objModel = new login();
 
 if (isset($_SESSION['nivel']) || JWTService::validateSession()) {
-    die('<script>window.location = "?url=inicio" </script>');
+    die('<script>window.location = "' . _URL_ . '" </script>');
 }
 
 if (isset($_GET['cedula'], $_GET['validar'])) {

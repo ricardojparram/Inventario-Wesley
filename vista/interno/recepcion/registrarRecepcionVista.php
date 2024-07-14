@@ -37,11 +37,11 @@
     <main class="main" id="main">
         <div class="pagetitle">
             <div>
-                <!-- <a href="?url=recepcion" class="btn"><i class="bi bi-arrow-bar-left"></i></a> -->
+                <!-- <a href="recepcion" class="btn"><i class="bi bi-arrow-bar-left"></i></a> -->
                 <h1>Registrar recepcion</h1>
                 <nav>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="?url=recepcion">Recepcion</a></li>
+                        <li class="breadcrumb-item"><a href="recepcion">Recepcion</a></li>
                         <li class="breadcrumb-item">Registrar</li>
                     </ol>
                 </nav>
@@ -119,12 +119,12 @@
                                             <?php
                                             if (isset($sedes)) {
                                                 foreach ($sedes as $sede) {
-                                                    ?>
+                                            ?>
                                                     <option value="<?= $sede->id_sede; ?>" class="opcion"><?= $sede->nombre; ?></option>
                                             <?php
                                                 }
                                             }
-    ?>
+                                            ?>
                                         </select>
                                     </div>
                                     <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>

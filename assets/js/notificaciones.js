@@ -1,27 +1,28 @@
-$(document).ready(function(){
-
-
+$(document).ready(function () {
   getNotificaciones();
   setInterval(getNotificaciones, 600000);
 
-  function getNotificaciones(){
-    $.ajax({ type : 'POST', url: '?url=notificaciones', dataType: 'json', data: {notificaciones: 'consultar'},
-      success(data){
+  function getNotificaciones() {
+    $.ajax({
+      type: "POST",
+      url: "notificaciones",
+      dataType: "json",
+      data: { notificaciones: "consultar" },
+      success(data) {
         notificaciones = data;
         mostrarNotificacion(notificaciones);
       },
-      error: function(xhr, status, error){
+      error: function (xhr, status, error) {
         console.log(xhr.responseText);
-      }
-    })
+      },
+    });
   }
 
-  function mostrarNotificacion(notificaciones){
-     let mostrar = '';
-     let notifications = 0
-     
-     notificaciones.forEach((row) => {
-    
+  function mostrarNotificacion(notificaciones) {
+    let mostrar = "";
+    let notifications = 0;
+
+    notificaciones.forEach((row) => {
       mostrar += `
       <div class='divNotificacion'>
         <li id="${row.id}" class="notification-item notificacion w-100"  data-bs-toggle="modal" data-bs-target="#notificacion">
@@ -52,69 +53,67 @@ $(document).ready(function(){
 
       `;
       notifications++;
-   })
-
-    let total_notificaciones = notifications 
-
-    $('.notifications .item').html('');
-    $('.notifications .item').append(mostrar);
-    $('.contador').text(total_notificaciones);
-    $('.numNoti').text(total_notificaciones);
- 
-}
-
-
-
-  $(document).on('click' , '.notificacion' , function(e){
-    const notificationId = $(this).attr('id');
-
-    $.getJSON('?url=notificaciones', {detalleNotificacion: 'detalle' , notificationId}, function(data) {
-        $('.titulo').html(`<b>Titulo</b>: ${data[0].titulo}.`);
-        $('.fecha').html(`<b>Fecha</b>: ${data[0].fecha}.`);
-        $('.mensaje').html(`<b>Descripción</b>:<br> ${data[0].mensaje}.`);
     });
 
-  })
+    let total_notificaciones = notifications;
 
-  $(document).on('click', '.leido', function(e) {
+    $(".notifications .item").html("");
+    $(".notifications .item").append(mostrar);
+    $(".contador").text(total_notificaciones);
+    $(".numNoti").text(total_notificaciones);
+  }
+
+  $(document).on("click", ".notificacion", function (e) {
+    const notificationId = $(this).attr("id");
+
+    $.getJSON(
+      "notificaciones",
+      { detalleNotificacion: "detalle", notificationId },
+      function (data) {
+        $(".titulo").html(`<b>Titulo</b>: ${data[0].titulo}.`);
+        $(".fecha").html(`<b>Fecha</b>: ${data[0].fecha}.`);
+        $(".mensaje").html(`<b>Descripción</b>:<br> ${data[0].mensaje}.`);
+      }
+    );
+  });
+
+  $(document).on("click", ".leido", function (e) {
     e.stopPropagation();
-    
+
     const $notificationButton = $(this);
-    const notificationId = $notificationButton.attr('id');
-  
+    const notificationId = $notificationButton.attr("id");
+
     // Deshabilitar el botón para evitar múltiples clics
-    $notificationButton.prop('disabled', true);
-  
-    $.ajax({ 
-      type: 'POST', 
-      url: '?url=notificaciones', 
-      dataType: 'json', 
-      data: { notificacionVista: '', notificationId },
-      success: function(data) {
-        let total_notificaciones = parseInt($('.contador').text());
-  
+    $notificationButton.prop("disabled", true);
+
+    $.ajax({
+      type: "POST",
+      url: "notificaciones",
+      dataType: "json",
+      data: { notificacionVista: "", notificationId },
+      success: function (data) {
+        let total_notificaciones = parseInt($(".contador").text());
+
         // Solo disminuir el contador si es mayor que 0
         if (total_notificaciones > 0) {
           total_notificaciones--;
         }
-  
+
         // Actualizar los elementos de la UI
-        $('.contador').text(total_notificaciones);
-        $('.numNoti').text(total_notificaciones);
-  
+        $(".contador").text(total_notificaciones);
+        $(".numNoti").text(total_notificaciones);
+
         // Eliminar la notificación visualmente
-        $(`#${notificationId}`).closest('.divNotificacion').fadeOut(500, function() {
-          $(this).remove();  
-        });
+        $(`#${notificationId}`)
+          .closest(".divNotificacion")
+          .fadeOut(500, function () {
+            $(this).remove();
+          });
       },
-      error: function(xhr, status, error) {
+      error: function (xhr, status, error) {
         console.log(error);
-        $notificationButton.prop('disabled', false);
-      }
+        $notificationButton.prop("disabled", false);
+      },
     });
   });
-  
-
-   
-    
-})
+});
