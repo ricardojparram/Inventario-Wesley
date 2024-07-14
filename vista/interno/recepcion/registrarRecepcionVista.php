@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recepcion</title>
     <?php $VarComp->header(); ?>
-    <link rel="stylesheet" href="assets/css/estiloInterno.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="assets/css/chosen.min.css">
+    <link rel="stylesheet" href="<?= _URL_ . 'assets/css/estiloInterno.css' ?>">
+    <link rel="stylesheet" type="text/css" href="<?= _URL_ . 'assets/css/dataTables.bootstrap5.min.css' ?>">
+    <link rel="stylesheet" href="<?= _URL_ . 'assets/css/chosen.min.css' ?>">
 </head>
 
 <body>
@@ -87,9 +87,9 @@
 </body>
 
 <?php $VarComp->js(); ?>
-<script src="assets/js/chosen.jquery.min.js"></script>
-<script src="assets/js/select2.full.min.js"></script>
-<script type="text/javascript" src="assets/js/recepcion/registrarRecepcion.js"></script>
+<script src="<?= _URL_ . 'assets/js/chosen.jquery.min.js' ?>"></script>
+<script src="<?= _URL_ . 'assets/js/select2.full.min.js' ?>"></script>
+<script type="text/javascript" src="<?= _URL_ . 'assets/js/recepcion/registrarRecepcion.js' ?>"></script>
 
 </html>
 
