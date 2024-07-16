@@ -150,7 +150,7 @@ class instituciones extends DBConnect
         if (!$this->validarString('rif', $rif)) {
             return $this->http_error(400, 'Rif inválido.');
         }
-        if (!$this->validarString('nombre', $razon)) {
+        if (!$this->validarString('razon_social', $razon)) {
             return $this->http_error(400, 'Razon inválida.');
         }
         if (!$this->validarString('direccion', $direccion)) {

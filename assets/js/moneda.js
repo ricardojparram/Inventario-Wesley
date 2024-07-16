@@ -46,7 +46,7 @@ $(document).ready(function () {
 			},
 			error(e) {
 				Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-				throw new Error(e.responseJSON.msg);
+				console.error(e.responseJSON.msg);
 			}
 		})
 	}
@@ -91,7 +91,7 @@ $(document).ready(function () {
 					},
 					error(e) {
 						Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-						throw new Error(e.responseJSON.msg);
+						console.error(e.responseJSON.msg);
 					},
 					complete() {
 						$("#registrar").prop('disabled', false);
@@ -155,7 +155,7 @@ $(document).ready(function () {
 					},
 					error(e) {
 						Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-						throw new Error(e.responseJSON.msg);
+						console.error(e.responseJSON.msg);
 					},
 					complete() {
 						$("#editar").prop('disabled', false);
@@ -242,7 +242,7 @@ $(document).ready(function () {
 			},
 			error(e) {
 				Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-				throw new Error(e.responseJSON.msg);
+				console.error(e.responseJSON.msg);
 			}
 		})
 		// mostrar()
@@ -328,7 +328,7 @@ $(document).ready(function () {
 				},
 				error(e) {
 					Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-					throw new Error(e.responseJSON.msg);
+					console.error(e.responseJSON.msg);
 				},
 				complete() {
 					$("#enviar").prop('disabled', false);
@@ -344,11 +344,11 @@ $(document).ready(function () {
 	})
 	$("#delete").click((e) => {
 		e.preventDefault()
-		$("#delete").prop('disabled', true);
 		if (typeof permisos.Eliminar === 'undefined') {
 			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true  });
 			throw new Error('Permiso denegado.');
 		}
+		$("#delete").prop('disabled', true);
 		$.ajax({
 			type: "POST",
 			url: '',
@@ -366,7 +366,7 @@ $(document).ready(function () {
 			},
 			error(e) {
 				Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-				throw new Error(e.responseJSON.msg);
+				console.error(e.responseJSON.msg);
 			},
 			complete() {
 				$("#delete").prop('disabled', false);
@@ -396,7 +396,7 @@ $(document).ready(function () {
 
 			}, error(e) {
 				Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-				throw new Error(e.responseJSON.msg);
+				console.error(e.responseJSON.msg);
 			}
 
 		})
@@ -438,7 +438,7 @@ $(document).ready(function () {
 				},
 				error(e) {
 					Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
-					throw new Error(e.responseJSON.msg);
+					console.error(e.responseJSON.msg);
 				},
 				complete() {
 					$("#enviarEdit").prop('disabled', false);

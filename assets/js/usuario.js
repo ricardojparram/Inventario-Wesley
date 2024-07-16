@@ -52,17 +52,19 @@ $(document).ready(function () {
 	$("#apellido").keyup(() => { validarNombre($("#apellido"), $("#errorApe"), "Error de Apellido,") });
 	$("#password").keyup(() => { validarContraseña($("#password"), $("#errorContra"), "Error de Contraseña,") });
 	$("#select").change(() => { validarSelect($("#select"), $("#errorNivel"), "Error de Nivel,") })
-	$("#preDocument").change(() => {
+	$("#preDocument").change((e) => {
+		if (e.which === 13) return clearTimeout(timeout);
 		let valid = validarCedula($("#cedula"), $("#errorCed"), "Error de Documento,", $("#preDocument"))
 		clearTimeout(timeout)
 		timeout = setTimeout(function () {
-			if (valid) { 
+			if (valid) {
 				validarC(" ", $("#cedula"), $("#errorCed"), $("#preDocument"))
 				rellenarPersonal($("#cedula"), $("#preDocument"), $("#errorCed"))
-		}
+			}
 		}, 700)
 	})
-	$("#cedula").keyup(() => {
+	$("#cedula").keyup((e) => {
+		if (e.which === 13) return clearTimeout(timeout);
 		let valid = validarCedula($("#cedula"), $("#errorCed"), "Error de Documento,", $("#preDocument"))
 		clearTimeout(timeout)
 		timeout = setTimeout(function () {
@@ -72,7 +74,8 @@ $(document).ready(function () {
 			}
 		}, 700)
 	});
-	$("#email").keyup(() => {
+	$("#email").keyup((e) => {
+		if (e.which === 13) return clearTimeout(timeout);
 		let valid = validarCorreo($("#email"), $("#errorEmail"), "Error de Correo,")
 		clearTimeout(timeout)
 		timeout = setTimeout(function () {
@@ -81,9 +84,8 @@ $(document).ready(function () {
 	});
 
 
-	$("#enviar").click((e) => {
+	$("#regisForm").submit((e) => {
 		e.preventDefault();
-		if (click >= 1) throw new Error('Spam de clicks');
 		if (typeof permisos.Registrar === 'undefined') {
 			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
@@ -102,6 +104,7 @@ $(document).ready(function () {
 					validarE(" ", $("#email"), $("#errorEmail")).then(() => {
 
 						if (tipo && contra && lastName && nombre) {
+							$("#enviar").prop('disabled', true);
 							$.ajax({
 								type: 'POST',
 								url: '',
@@ -122,9 +125,16 @@ $(document).ready(function () {
 										refrescar();
 									} else {
 										tabla.destroy();
-										$("#error").text(result.resultado + ", " + result.error);
+										$("#error").text(result.resultado + ", " + result.msg);
 										refrescar();
 									}
+								},
+								error(e) {
+									Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
+									console.error(e.responseJSON.msg);
+								},
+								complete() {
+									$("#enviar").prop('disabled', false);
 								}
 							})
 						}
@@ -132,7 +142,6 @@ $(document).ready(function () {
 				}
 			})
 		}
-		click++
 	})
 
 
@@ -144,14 +153,13 @@ $(document).ready(function () {
 
 	$("#delete").click((e) => {
 		e.preventDefault()
-		if (click >= 1) throw new Error('Spam de clicks');
-
 		if (typeof permisos.Eliminar === 'undefined') {
 			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
 		}
 
 		validarC(cedulaDel, $("Noa"), $("#errorDel")).then(() => {
+			$("#delete").prop('disabled', true);
 			$.ajax({
 				type: "POST",
 				url: '',
@@ -167,16 +175,22 @@ $(document).ready(function () {
 						Toast.fire({ icon: 'error', title: 'Usuario Eliminado', showCloseButton: true })
 						refrescar();
 					} else if (data.resultado === "Error") {
-						$("#errorDel").text(data.msj);
+						$("#errorDel").text(data.msg);
 					} else {
 						tabla.destroy();
 						$("#errorDel").text("El Usuario no Pudo Ser Eliminado");
 						refrescar();
 					}
+				},
+				error(e) {
+					Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
+					console.error(e.responseJSON.msg);
+				},
+				complete() {
+					$("#delete").prop('disabled', false);
 				}
 			})
 		})
-		click++
 	})
 
 
@@ -186,8 +200,8 @@ $(document).ready(function () {
 		$("#nameEdit").prop('disabled', true);
 		$("#apellidoEdit").prop('disabled', true);
 		$("#emailEdit").prop('disabled', true);
-		$("#passwordEdit").prop('disabled', true);
-		$("#selectEdit").prop('disabled', true);
+		//$("#passwordEdit").prop('disabled', true);
+		//$("#selectEdit").prop('disabled', true);
 
 		$.ajax({
 			method: "post",
@@ -207,28 +221,31 @@ $(document).ready(function () {
 	})
 
 
-	$("#preDocumentEdit").change(() => {
+	$("#preDocumentEdit").change((e) => {
+		if (e.which === 13) return clearTimeout(timeout);
 		let valid = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"))
 		clearTimeout(timeout)
 		timeout = setTimeout(function () {
-			if (valid) { 
+			if (valid) {
 				validarC(id, $("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit"))
 				rellenarPersonal($("#cedulaEdit"), $("#preDocumentEdit"), $("#errorCedEdit"), "Edit")
 			}
 		}, 700)
 	})
-	$("#cedulaEdit").keyup(() => {
+	$("#cedulaEdit").keyup((e) => {
+		if (e.which === 13) return clearTimeout(timeout);
 		let valid = validarCedula($("#cedulaEdit"), $("#errorCedEdit"), "Error de Documento,", $("#preDocumentEdit"))
 		clearTimeout(timeout)
 		timeout = setTimeout(function () {
-			if (valid) { 
-				validarC(id, $("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit")) 
+			if (valid) {
+				validarC(id, $("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit"))
 				rellenarPersonal($("#cedulaEdit"), $("#preDocumentEdit"), $("#errorCedEdit"), "Edit")
-				
+
 			}
 		}, 700)
 	});
-	$("#emailEdit").keyup(() => {
+	$("#emailEdit").keyup((e) => {
+		if (e.which === 13) return clearTimeout(timeout);
 		let valid = validarCorreo($("#emailEdit"), $("#errorEmailEdit"), "Error de Correo,")
 		clearTimeout(timeout)
 		timeout = setTimeout(function () {
@@ -245,9 +262,8 @@ $(document).ready(function () {
 	})
 	$("#selectEdit").keyup(() => { validarSelect($("#selectEdit"), $("#errorNivelEdit"), "Error de Nivel,") });
 
-	$("#enviarEdit").click((e) => {
+	$("#editarForm").submit((e) => {
 		e.preventDefault()
-		if (click >= 1) throw new Error('Spam de clicks');
 		if (typeof permisos.Editar === 'undefined') {
 			Toast.fire({ icon: 'error', title: 'No tienes permisos para esta acción.', showCloseButton: true });
 			throw new Error('Permiso denegado.');
@@ -263,8 +279,9 @@ $(document).ready(function () {
 			validarC(id, $("#cedulaEdit"), $("#errorCedEdit"), $("#preDocumentEdit")).then(() => {
 				if (correo) {
 					validarE(id, $("#emailEdit"), $("#errorEmailEdit")).then(() => {
-
 						if (tipo && contra && lastName && nombre) {
+							$("#enviarEdit").prop('disabled', true);
+
 							$.ajax({
 								type: 'POST',
 								url: '',
@@ -289,6 +306,13 @@ $(document).ready(function () {
 										$("#error2").text(edit.resultado + ", " + edit.error)
 										refrescar();
 									}
+								},
+								error(e) {
+									Toast.fire({ icon: "error", title: e.responseJSON.msg || "Ha ocurrido un error.", showCloseButton: true })
+									console.error(e.responseJSON.msg);
+								},
+								complete() {
+									$("#enviarEdit").prop('disabled', false);
 								}
 							})
 						}
@@ -296,7 +320,6 @@ $(document).ready(function () {
 				}
 			})
 		}
-		click++
 	})
 
 	$(document).on('click', '#cerrarRegisEdit', function () {
@@ -337,7 +360,7 @@ $(document).ready(function () {
 			},
 				function (valid) {
 					if (valid.resultado === "Error") {
-						div.text("Error de Cedula, " + valid.msj);
+						div.text("Error de Cedula, " + valid.msg);
 						input.addClass('input-error')
 						return reject(false);
 					} else {
@@ -360,7 +383,7 @@ $(document).ready(function () {
 			},
 				function (valid) {
 					if (valid.resultado === "Error") {
-						div.text("Error de Correo, " + valid.msj);
+						div.text("Error de Correo, " + valid.msg);
 						input.addClass('input-error')
 						return reject(false);
 					} else {
@@ -380,14 +403,14 @@ $(document).ready(function () {
 		},
 			function (data) {
 				console.log(data);
-				$("#name"+edit).val(data[0].nombres);
-				$("#apellido"+edit).val(data[0].apellidos);
-				$("#email"+edit).val(data[0].correo);
+				$("#name" + edit).val(data[0].nombres);
+				$("#apellido" + edit).val(data[0].apellidos);
+				$("#email" + edit).val(data[0].correo);
 
-				$("#password"+edit).prop('disabled', false);
-				$("#select"+edit).prop('disabled', false);
+				$("#password").prop('disabled', false);
+				$("#select" + edit).prop('disabled', false);
 				return true
-				}).fail(e => {
+			}).fail(e => {
 
 				error.text("Error de Cedula, " + e.responseJSON.msg);
 				input.addClass('input-error')

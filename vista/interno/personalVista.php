@@ -78,12 +78,12 @@
     <div class="modal fade modal-lg" id="basicModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header alert alert-success">
-                    <h5 class="modal-title"><strong>Agregar Nuevo Personal</strong></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="">
+                <form action="" id="regisForm">
+                    <div class="modal-header alert alert-success">
+                        <h5 class="modal-title"><strong>Agregar Nuevo Personal</strong></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
                         <div class="row form-group col-md-12">
                             <div class="col-lg-6">
                                 <label for="inputText" class="col-form-label"><strong>Nombre</strong></label>
@@ -193,11 +193,11 @@
                             </div>
                             <p id="errorRegis" style="color:#ff0000;text-align: center;"></p>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" id="cerrarRegis">Cerrar</button>
-                    <button type="button" class="btn btn-registrar" id="enviar">Registrar</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" id="cerrarRegis">Cerrar</button>
+                        <button type="submit" class="btn btn-registrar" id="enviar">Registrar</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -207,12 +207,12 @@
     <div class="modal fade modal-lg" id="editModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header alert alert-success">
-                    <h5 class="modal-title"><strong>Editar Personal</strong></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="">
+                <form id="editarForm">
+                    <div class="modal-header alert alert-success">
+                        <h5 class="modal-title"><strong>Editar Personal</strong></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
                         <div class="row form-group col-md-12">
                             <div class="col-lg-6">
                                 <label for="inputText" class="col-form-label"><strong>Nombre</strong></label>
@@ -322,11 +322,11 @@
                             </div>
                             <p id="errorEdit" style="color:#ff0000;text-align: center;"></p>
                         </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" id="cerrarEdit">Cerrar</button>
-                    <button type="button" class="btn btn-registrar" id="editar">Actualizar</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" id="cerrarEdit">Cerrar</button>
+                        <button type="submit" class="btn btn-registrar" id="editar">Actualizar</button>
+                    </div>
                 </form>
             </div>
         </div>
