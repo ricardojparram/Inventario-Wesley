@@ -596,14 +596,3 @@ const validarPermiso = (permiso) => {
     throw new Error("Permiso denegado.");
   }
 };
-
-  function getNotificaciones(){
-    $.ajax({ type : 'POST', url: '?url=notificaciones', dataType: 'json', data: {notificaciones: 'consultar'},
-      success(data){
-        console.log(data);
-      },
-      error: function(xhr, status, error){
-        console.log(xhr.responseText);
-      }
-    })
-  }

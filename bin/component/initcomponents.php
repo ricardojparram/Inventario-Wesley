@@ -117,7 +117,7 @@ class initcomponents {
               <!-- Page level custom scripts -->
               <script src="' . _URL_ . 'assets/js/datatables-demo.js"></script>
               <script src="' . _URL_ . 'assets/js/validar.js"></script> 
-              <script src="' . _URL_ . 'assets/js/notificaciones.js"></script>
+              <script src="' . _URL_ . 'assets/js/barraNotificaciones.js"></script>
               <script src="' . _URL_ . 'assets/js/lib/jquery.inputmask.min.js"></script>
               <script src="' . _URL_ . 'assets/js/lib/inputmask.extend.js"></script>
               ';

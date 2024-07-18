@@ -3,7 +3,7 @@ use wesley;
 INSERT INTO
   moneda (id_moneda, nombre, valor, status)
 VALUES
-  (1, 'Dolar', 0, 1),
+  (1, 'Dolar', 38, 1),
   (2, 'Euro', 0, 1);
 
 INSERT INTO
@@ -181,19 +181,31 @@ VALUES
   );
 
 INSERT INTO
-  personal (
-    cedula,
-    nombres,
-    apellidos,
-    direccion,
-    id_sede,
-    edad,
-    telefono,
-    correo,
-    tipo_em,
-    status
+  `personal` (
+    `cedula`,
+    `nombres`,
+    `apellidos`,
+    `direccion`,
+    `id_sede`,
+    `edad`,
+    `telefono`,
+    `correo`,
+    `tipo_em`,
+    `status`
   )
 VALUES
+  (
+    'V-16794406',
+    'Jose',
+    'Ramon',
+    'Cabudare ',
+    1,
+    '1980-01-23',
+    '042145699810',
+    'Jose33@gmail.com',
+    2,
+    1
+  ),
   (
     'V-30125380',
     'Roberto',
@@ -205,7 +217,28 @@ VALUES
     'ricardo.prxr16@gmail.com',
     2,
     1
+  ),
+  (
+    'V-30233547',
+    'Enmanuel Josue',
+    'Torres Rodriguez',
+    'Tierra Negra',
+    1,
+    '2001-07-20',
+    '04123799406',
+    'enmanuel.josue.torres13@gmail.com',
+    1,
+    1
   );
+
+INSERT INTO
+  `pacientes` (`ced_pac`, `nombre`, `apellido`, `status`)
+VALUES
+  ('21727935', 'Eduardo', 'Torres', 1),
+  ('28256649', 'Yelimar ', 'Hernández', 1),
+  ('30125380', 'Ricardo ', 'Parra ', 1),
+  ('30233547', 'Enmanuel', 'Torres', 1),
+  ('30349137', 'Aparicio', 'Víctor ', 1);
 
 INSERT INTO
   usuario (
