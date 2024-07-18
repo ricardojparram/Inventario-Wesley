@@ -5,7 +5,8 @@ namespace modelo;
 use config\connect\DBConnect as DBConnect;
 use utils\validar;
 
-class usuarios extends DBConnect {
+class usuarios extends DBConnect
+{
   use validar;
   private $cedula;
   private $name;
@@ -19,35 +20,31 @@ class usuarios extends DBConnect {
   private $iv;
   private $cipher;
 
-  function __construct() {
+  function __construct()
+  {
     parent::__construct();
   }
 
-  public function getAgregarUsuario($cedula, $name, $apellido, $email, $password, $tipoUsuario) {
+  public function getAgregarUsuario($cedula, $name, $apellido, $email, $password, $tipoUsuario)
+  {
 
-    if (!$this->validarString('nombre', $name) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
-      return $resultado;
+    if (!$this->validarString('nombre', $name)) {
+      return $this->http_error(400, 'Nombre inválido.');
     }
-    if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $apellido) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
-      return $resultado;
+    if (!$this->validarString('nombre', $apellido)) {
+      return $this->http_error(400, 'Apellido invalido.');
     }
-    if (preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
-      return $resultado;
+    if (!$this->validarString('documento', $cedula)) {
+      return $this->http_error(400, 'Documento invalido.');
     }
-    if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
-      return $resultado;
+    if (!$this->validarString('correo', $email)) {
+      return $this->http_error(400, 'Correo invalido.');
     }
-    if (preg_match_all("/^[A-Za-z\d$@\/_.#-]{3,30}$/", $password) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
-      return $resultado;
+    if (!$this->validarString('contraseña', $password)) {
+      return $this->http_error(400, 'Contraseña invalida.');
     }
-    if (preg_match_all("/^[0-9]{1,2}$/", $tipoUsuario) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'rol invalido.'];
-      return $resultado;
+    if (!$this->validarString('numero', $tipoUsuario)) {
+      return $this->http_error(400, 'Tipo de Usuario invalido.');
     }
 
     $this->cedula = $cedula;
@@ -60,7 +57,8 @@ class usuarios extends DBConnect {
     return $this->agregarUsuario();
   }
 
-  private function agregarUsuario() {
+  private function agregarUsuario()
+  {
     try {
       parent::conectarDB();
       $new = $this->con->prepare("SELECT `cedula`, `status` FROM `usuario` WHERE `cedula` = ?");
@@ -101,15 +99,16 @@ class usuarios extends DBConnect {
         $this->binnacle("Usuario", $_SESSION['cedula'], "Registró un usuario");
         parent::desconectarDB();
       } else {
-        $resultado = ['resultado' => 'Error', 'error' => 'error desconocido.'];
+        return $this->http_error(500, "error desconocido");
       }
       return $resultado;
     } catch (\PDOException $error) {
-      return $error;
+      return $this->http_error(500, $error);
     }
   }
 
-  public function getMostrarUsuario($bitacora = false) {
+  public function getMostrarUsuario($bitacora = false)
+  {
 
     try {
       parent::conectarDB();
@@ -126,11 +125,12 @@ class usuarios extends DBConnect {
       return $data;
     } catch (\PDOException $error) {
 
-      return $error;
+      return $this->http_error(500, $error);
     }
   }
 
-  public function mostrarRol() {
+  public function mostrarRol()
+  {
     try {
       parent::conectarDB();
       $new = $this->con->prepare("SELECT * FROM `rol` WHERE status = 1");
@@ -140,20 +140,22 @@ class usuarios extends DBConnect {
       return $data;
     } catch (\PDOException $error) {
 
-      return $error;
+      return $this->http_error(500, $error);
     }
   }
 
-  public function getEliminar($cedula) {
+  public function getEliminar($cedula)
+  {
     $this->cedula = $cedula;
 
     return $this->eliminarUsuario();
   }
 
-  private function eliminarUsuario() {
+  private function eliminarUsuario()
+  {
     try {
       if ($this->cedula == $_SESSION['cedula']) {
-        $resultado = ['resultado' => 'Error', 'msj' => 'No se puede Eliminar su Propia Cuenta'];
+        $resultado = ['resultado' => 'Error', 'msg' => 'No se puede Eliminar su Propia Cuenta'];
         return $resultado;
       }
 
@@ -167,17 +169,19 @@ class usuarios extends DBConnect {
       parent::desconectarDB();
       return $resultado;
     } catch (\PDOException $error) {
-      return $error;
+      return $this->http_error(500, $error);
     }
   }
 
-  public function getUnico($cedula) {
+  public function getUnico($cedula)
+  {
     $this->cedula = $cedula;
 
     return $this->seleccionarUnico();
   }
 
-  private function seleccionarUnico() {
+  private function seleccionarUnico()
+  {
     try {
       parent::conectarDB();
       $new = $this->con->prepare("SELECT cedula, nombre, apellido, correo, rol FROM `usuario` WHERE `usuario`.`cedula` = ?");
@@ -193,37 +197,35 @@ class usuarios extends DBConnect {
       return $data;
     } catch (\PDOException $error) {
 
-      return $error;
+      return $this->http_error(500, $error);
     }
   }
 
-  public function getEditar($cedula, $name, $apellido, $email, $password, $tipoUsuario, $id) {
+  public function getEditar($cedula, $name, $apellido, $email, $password, $tipoUsuario, $id)
+  {
 
-    if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $name) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
-      return $resultado;
+    if (!$this->validarString('nombre', $name)) {
+      return $this->http_error(400, 'Nombre inválido.');
     }
-    if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $apellido) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
-      return $resultado;
+    if (!$this->validarString('nombre', $apellido)) {
+      return $this->http_error(400, 'Apellido invalido.');
     }
-    if (preg_match_all("/^[VEJ]-[A-Z0-9]{7,12}$/", $cedula) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
-      return $resultado;
+    if (!$this->validarString('documento', $cedula)) {
+      return $this->http_error(400, 'Documento invalido.');
     }
-    if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $email) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'Correo invalida.'];
-      return $resultado;
+    if (!$this->validarString('correo', $email)) {
+      return $this->http_error(400, 'Correo invalido.');
     }
-    if ($password != "") {
-      if (preg_match_all("/^[A-Za-z\d$@\/_.#-]{3,30}$/", $password) == false) {
-        $resultado = ['resultado' => 'Error', 'error' => 'Contraseña invalida.'];
-        return $resultado;
+    if ($password !== "") {
+      if (!$this->validarString('contraseña', $password)) {
+        return $this->http_error(400, 'Contraseña invalida.');
       }
     }
-    if (preg_match_all("/^[0-9]{1,2}$/", $tipoUsuario) == false) {
-      $resultado = ['resultado' => 'Error', 'error' => 'rol invalido.'];
-      return $resultado;
+    if (!$this->validarString('numero', $tipoUsuario)) {
+      return $this->http_error(400, 'Tipo de Usuario invalido.');
+    }
+    if (!$this->validarString('documento', $id)) {
+      return $this->http_error(400, 'Documento invalido.');
     }
 
     $this->cedula = $cedula;
@@ -237,11 +239,12 @@ class usuarios extends DBConnect {
     return $this->editarUsuario();
   }
 
-  private function editarUsuario() {
+  private function editarUsuario()
+  {
 
     try {
       parent::conectarDB();
-      if ($this->password != "") {
+      if ($this->password !== "") {
         $this->password = password_hash($this->password, PASSWORD_BCRYPT);
         $new = $this->con->prepare("UPDATE `usuario` SET `password`=? WHERE `usuario`.`cedula` = ?");
         $new->bindValue(1, $this->password);
@@ -256,24 +259,27 @@ class usuarios extends DBConnect {
       $new->bindValue(5, $this->rol);
       $new->bindValue(6, $this->id);
       $new->execute();
+      
       $resultado = ['resultado' => 'Editado'];
       $this->binnacle("Usuario", $_SESSION['cedula'], "Editó un usuario");
       parent::desconectarDB();
       return $resultado;
     } catch (\PDOException $error) {
 
-      return $error;
+      return $this->http_error(500, $error);
     }
   }
 
-  public function getValidarC($cedula, $id) {
+  public function getValidarC($cedula, $id)
+  {
     $this->cedula = $cedula;
     $this->id = $id;
 
     return $this->validarC();
   }
 
-  private function validarC() {
+  private function validarC()
+  {
     try {
       if ($this->cedula == " ") {
         parent::conectarDB();
@@ -283,9 +289,9 @@ class usuarios extends DBConnect {
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['cedula'])) {
-          $resultado = ['resultado' => 'Correcto', 'msj' => 'El documento está registrado.'];
+          $resultado = ['resultado' => 'Correcto', 'msg' => 'El documento está registrado.'];
         } else {
-          $resultado = ['resultado' => 'Error', 'msj' => 'Documento no Registrado'];
+          $resultado = ['resultado' => 'Error', 'msg' => 'Documento no Registrado'];
         }
       } elseif ($this->id == " ") {
         parent::conectarDB();
@@ -295,7 +301,7 @@ class usuarios extends DBConnect {
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['cedula'])) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya está registrado.'];
+          $resultado = ['resultado' => 'Error', 'msg' => 'El documento ya está registrado.'];
         } else {
           $resultado = ['resultado' => 'Correcto'];
         }
@@ -307,9 +313,9 @@ class usuarios extends DBConnect {
         $data = $new->fetchAll();
         parent::desconectarDB();
         if (isset($data[0]['status']) && $data[0]['status'] == 0) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrado'];
+          $resultado = ['resultado' => 'Error', 'msg' => 'No Puede Ser Registrado'];
         } elseif (isset($data[0]['cedula']) && $data[0]['cedula'] == $this->cedula && $data[0]['status'] == 1) {
-          $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya esta Registrado'];
+          $resultado = ['resultado' => 'Error', 'msg' => 'El documento ya esta Registrado'];
         } else {
           $resultado = ['resultado' => 'Correcto'];
         }
@@ -319,18 +325,20 @@ class usuarios extends DBConnect {
       }
       return $resultado;
     } catch (\PDOException $error) {
-      return $error;
+      return $this->http_error(500, $error);
     }
   }
 
-  public function getValidarE($correo, $id) {
+  public function getValidarE($correo, $id)
+  {
     $this->email = $correo;
     $this->id = $id;
 
     return $this->validarE();
   }
 
-  private function validarE() {
+  private function validarE()
+  {
     try {
       parent::conectarDB();
       $new = $this->con->prepare("SELECT `correo`, `status` FROM usuario WHERE cedula <> ? and correo = ?");
@@ -340,21 +348,22 @@ class usuarios extends DBConnect {
       $data = $new->fetchAll();
       parent::desconectarDB();
       if (isset($data[0]['correo']) && $data[0]['status'] === 1) {
-        $resultado = ['resultado' => 'Error', 'msj' => 'El Correo ya esta Registrado'];
+        $resultado = ['resultado' => 'Error', 'msg' => 'El Correo ya esta Registrado'];
         return $resultado;
       }
       // elseif (isset($data[0]['correo']) && $data[0]['status'] === 0 ) {
-      //     $resultado = ['resultado' => 'Error', 'msj' => 'El Correo no Puede Ser Registrado'];
+      //     $resultado = ['resultado' => 'Error', 'msg' => 'El Correo no Puede Ser Registrado'];
       //     return $resultado;
       // } -------> Preguntar si dejo esta validacion <-------
       $resultado = ['resultado' => 'Correcto'];
       return $resultado;
     } catch (\PDOException $error) {
-      return $error;
+      return $this->http_error(500, $error);
     }
   }
 
-  public function getPersonal($cedula){
+  public function getPersonal($cedula)
+  {
     try {
       parent::conectarDB();
       $new = $this->con->prepare("SELECT cedula, nombres, apellidos, correo, status FROM personal WHERE cedula = ?");
@@ -362,7 +371,7 @@ class usuarios extends DBConnect {
       $new->execute();
       $data = $new->fetchAll();
       parent::desconectarDB();
-      if(!isset($data[0]['cedula']) || $data[0]['cedula'] == 0) return  $this->http_error(404, 'Registre Primero en Personal');
+      if (!isset($data[0]['cedula']) || $data[0]['cedula'] == 0) return  $this->http_error(404, 'Registre Primero en Personal');
       return $data;
     } catch (\PDOException $error) {
       return $this->http_error(500, $error);
