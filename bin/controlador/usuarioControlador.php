@@ -18,10 +18,6 @@ if (!isset($_SESSION['nivel'])) {
 if (!isset($permiso["Consultar"]))
 	die('<script> window.location = "home" </script>');
 
-// if (isset($_POST['notificacion'])) {
-// 	$objModel->getNotificacion();
-// }
-
 if (isset($_POST['getPermisos'], $permiso["Consultar"])) {
 	die(json_encode($permiso));
 }

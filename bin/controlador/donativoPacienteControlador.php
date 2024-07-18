@@ -13,11 +13,7 @@ $objModel = new donativoPaciente();
 $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Donativos pacientes'];
 
-if (!isset($permiso['Consultar'])) die(`<script> window.location = "home" </script>`);
-
-if (isset($_POST['notificacion'])) {
-  $objModel->getNotificacion();
-}
+if (!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);
 
 if (isset($_POST['getPermiso']) && $permiso['Consultar'] == 1) {
   die(json_encode($permiso));

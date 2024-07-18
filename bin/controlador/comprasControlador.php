@@ -15,11 +15,7 @@ $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Compras'];
 
 
-if (!isset($permiso['Consultar'])) die(`<script> window.location = "home" </script>`);
-
-if (isset($_POST['notificacion'])) {
-	$objModel->getNotificacion();
-}
+if (!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);
 
 $proveedores = $objModel->mostrarProveedor();
 

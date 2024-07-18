@@ -85,12 +85,21 @@ class header
                   <li class="item list-group">
                     
                   </li>
-
-
+                  <li class="list-group">
+                    <a href="?url=notificaciones" class="btn btn-notifaciones">Ver mas</a>
+                  </li>
+                  <li class="dropdown-header text-start">
+                    Anteriores
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider">
+                  </li>
                    <li class="itemVisto list-group">
                     
                   </li>
-
+                  <li class="list-group">
+                    <a href="?url=notificaciones" class="btn btn-notifaciones">Ver mas</a>
+                  </li>
 
                 </ul><!-- End Notification Dropdown Items -->
 
@@ -128,6 +137,16 @@ class header
                 <a class="dropdown-item d-flex align-items-center" href="ayuda">
                   <i class="bi bi-question-circle"></i>
                   <span>¿Necesitas ayuda?</span>
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+
+               <li>
+                <a class="dropdown-item d-flex align-items-center" href="?url=notificaciones">
+                  <i class="bi bi bi-bell"></i>
+                  <span>Notificaciones</span>
                 </a>
               </li>
               <li>

@@ -11,15 +11,13 @@ if (!isset($_SESSION['nivel']) && !$JWToken) {
   die('<script> window.location = "login" </script>');
 }
 
-$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
-$sede = (isset($_SESSION['id_sede'])) ? $_SESSION['id_sede'] : $JWToken->id_sede;
+$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
 
 $objModel = new donativoPersonal();
 $permisos = $objModel->getPermisosRol($nivel);
 $permiso = $permisos['Donativos personal'];
 
 if (!isset($permiso['Consultar'])) die(`<script> window.location = "home" </script>`);
-
 
 
 if (isset($_POST['getPermiso']) && $permiso['Consultar'] == 1) {
