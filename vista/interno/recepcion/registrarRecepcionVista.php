@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recepcion</title>
     <?php $VarComp->header(); ?>
-    <link rel="stylesheet" href="assets/css/estiloInterno.css">
-    <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="assets/css/chosen.min.css">
+    <link rel="stylesheet" href="<?= _URL_ . 'assets/css/estiloInterno.css' ?>">
+    <link rel="stylesheet" type="text/css" href="<?= _URL_ . 'assets/css/dataTables.bootstrap5.min.css' ?>">
+    <link rel="stylesheet" href="<?= _URL_ . 'assets/css/chosen.min.css' ?>">
 </head>
 
 <body>
@@ -37,11 +37,11 @@
     <main class="main" id="main">
         <div class="pagetitle">
             <div>
-                <!-- <a href="?url=recepcion" class="btn"><i class="bi bi-arrow-bar-left"></i></a> -->
+                <!-- <a href="recepcion" class="btn"><i class="bi bi-arrow-bar-left"></i></a> -->
                 <h1>Registrar recepcion</h1>
                 <nav>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="?url=recepcion">Recepcion</a></li>
+                        <li class="breadcrumb-item"><a href="recepcion">Recepcion</a></li>
                         <li class="breadcrumb-item">Registrar</li>
                     </ol>
                 </nav>
@@ -87,9 +87,9 @@
 </body>
 
 <?php $VarComp->js(); ?>
-<script src="assets/js/chosen.jquery.min.js"></script>
-<script src="assets/js/select2.full.min.js"></script>
-<script type="text/javascript" src="assets/js/recepcion/registrarRecepcion.js"></script>
+<script src="<?= _URL_ . 'assets/js/chosen.jquery.min.js' ?>"></script>
+<script src="<?= _URL_ . 'assets/js/select2.full.min.js' ?>"></script>
+<script type="text/javascript" src="<?= _URL_ . 'assets/js/recepcion/registrarRecepcion.js' ?>"></script>
 
 </html>
 
@@ -119,12 +119,12 @@
                                             <?php
                                             if (isset($sedes)) {
                                                 foreach ($sedes as $sede) {
-                                                    ?>
+                                            ?>
                                                     <option value="<?= $sede->id_sede; ?>" class="opcion"><?= $sede->nombre; ?></option>
                                             <?php
                                                 }
                                             }
-    ?>
+                                            ?>
                                         </select>
                                     </div>
                                     <p class="error" style="color:#ff0000;text-align: center;" id="error1"></p>

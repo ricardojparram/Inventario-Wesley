@@ -8,7 +8,7 @@ use utils\JWTService;
 
 $JWToken = JWTService::validateSession();
 if (!isset($_SESSION['nivel']) && !$JWToken) {
-  die('<script> window.location = "?url=login" </script>');
+  die('<script> window.location = "login" </script>');
 }
 
 $nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
@@ -17,7 +17,7 @@ $permisos = $model->getPermisosRol($nivel);
 $permiso = $permisos['Producto dañado'];
 
 
-if (!isset($permiso["Consultar"])) die('<script> window.location = "?url=home" </script>');
+if (!isset($permiso["Consultar"])) die('<script> window.location = "home" </script>');
 
 if (isset($_GET['getPermisos'], $permiso['Consultar'])) {
   die(json_encode($permiso));

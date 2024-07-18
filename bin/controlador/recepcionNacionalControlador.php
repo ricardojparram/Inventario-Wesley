@@ -6,10 +6,10 @@ use component\menuLateral as menuLateral;
 use modelo\recepcionNacional;
 
 if (!isset($_SESSION['nivel'])) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 if ($_SESSION['id_sede'] != 1) {
-    die('<script> window.location = "?url=home" </script>');
+    die('<script> window.location = "home" </script>');
 }
 
 $model = new recepcionNacional();
@@ -17,7 +17,7 @@ $permisos = $model->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Recepcion nacional'];
 
 if (!isset($permiso["Consultar"])) {
-    die('<script> window.location = "?url=home" </script>');
+    die('<script> window.location = "home" </script>');
 }
 
 if (isset($_GET['getPermisos'], $permiso["Consultar"])) {

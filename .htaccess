@@ -1,0 +1,22 @@
+# Bloqueo de acceso a extensiones de archivos
+<FilesMatch "\.(htaccess|htpasswd|ini|phps|fla|psd|log|sh|sql|env|lock|json)$">
+Require all denied
+</FilesMatch>
+
+RewriteEngine On
+
+# Bloqueo de acceso para archivos .php (solo se permite acceso a index.php)
+RewriteCond %{THE_REQUEST} "^.+? [^?]+\.php(?:[?/# ]|$)" [NC]
+RewriteRule !^index\.php$ - [F,L,NC]
+
+# URL amigable /login => ?url=login
+RewriteRule ^([a-z-]{3,})$ ?url=$1 [QSA,NC]
+
+# URL amigable /recepcion/registrar => ?url=recepcion&registrar
+RewriteRule ^([a-z-]{3,})/([a-z-]{3,})$ ?url=$1&$2 [QSA,NC]
+
+# Bloqueo de acceso a directorios
+Options All -Indexes
+
+# Límite de body enviado de 10MB
+LimitRequestBody 10000000

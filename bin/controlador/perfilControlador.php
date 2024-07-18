@@ -9,7 +9,7 @@ use utils\JWTService;
 
 $JWToken = JWTService::validateSession();
 if (!isset($_SESSION['nivel']) && !$JWToken) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 $session = (isset($_SESSION['nivel'])) ? $_SESSION : $JWToken;
 

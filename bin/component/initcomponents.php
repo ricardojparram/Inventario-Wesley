@@ -3,10 +3,12 @@
 namespace component;
 
 
-class initcomponents {
+class initcomponents
+{
 
 
-  public static function header() {
+  public static function header()
+  {
 
     $varHeader = '<link rel="icon" href="' . _URL_ . 'assets/img/Logo_Medi.png">
               <!-- Vendor CSS Files -->
@@ -26,7 +28,8 @@ class initcomponents {
     echo $varHeader;
   }
 
-  public function footer() {
+  public function footer()
+  {
     $footer = '
          <footer class="py-0 pt-5 footer">
             <!-- <section> begin ============================-->
@@ -36,9 +39,9 @@ class initcomponents {
               <div class="col-6 col-lg-2 mb-3">
                 <h5 class="lh-lg fw-bold text-white">Enlaces Utiles</h5>
                 <ul class="list-unstyled mb-md-4 mb-lg-0">
-                  <li class="lh-lg"><a class="text-white link" href="?url=inicio">Inicio</a></li>
-                  <li class="lh-lg"><a class="text-white link" href="#!">Nosotros</a></li>
-                  <li class="lh-lg"><a class="text-white link" href="#!">Catalogo</a></li>
+                  <li class="lh-lg"><a class="text-white link" href="inicio">Inicio</a></li>
+                  <li class="lh-lg"><a class="text-white link" href="nosotros">Nosotros</a></li>
+                  <li class="lh-lg"><a class="text-white link" href="catalogo">Catalogo</a></li>
                    <li class="lh-lg"><a class="text-white link" href="#!">contactos</a></li>
                 </ul>
               </div>
@@ -93,7 +96,8 @@ class initcomponents {
   }
 
 
-  public static function js() {
+  public static function js()
+  {
     $varJs = '
               <script src="' . _URL_ . 'assets/js/jquery-3.6.0.js"></script>  
               <script src="' . _URL_ . 'assets/sw2/sweetalert2.all.min.js"></script>

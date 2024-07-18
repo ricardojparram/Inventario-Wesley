@@ -41,7 +41,7 @@
       <h1>Resumen</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="?url=home">Inicio</a></li>
+          <li class="breadcrumb-item"><a href="home">Inicio</a></li>
           <li class="breadcrumb-item active">Resumen</li>
         </ol>
       </nav>
