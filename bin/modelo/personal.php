@@ -121,9 +121,11 @@ class personal extends DBConnect
     {
         try {
             parent::conectarDB();
-            $new = $this->con->prepare("SELECT p.cedula, p.nombres, p.apellidos, p.direccion, s.nombre as sede, e.nombre_e as tipo FROM personal p INNER JOIN sede s ON p.id_sede = s.id_sede INNER JOIN tipo_empleado e ON p.tipo_em = e.tipo_em WHERE p.status = 1");
+            $new = $this->con->prepare("SELECT p.cedula, p.nombres, p.apellidos, p.direccion, s.nombre as sede, p.edad as fecha, e.nombre_e as tipo, p.telefono, p.correo FROM personal p INNER JOIN sede s ON p.id_sede = s.id_sede INNER JOIN tipo_empleado e ON p.tipo_em = e.tipo_em WHERE p.status = 1");
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
+            $fecha = time() - strtotime($data[0]->fecha);
+            $data[0]->edad = floor($fecha / 31556926);
             if ($bitacora) $this->binnacle("", $_SESSION['cedula'], "Consultó listado Personal.");
             parent::desconectarDB();
             return $data;
