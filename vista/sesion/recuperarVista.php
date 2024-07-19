@@ -50,7 +50,6 @@
                   <hr>
                   <div class="my-3 text-center asd">
                     <span>Ya tienes cuenta? <a href="login">Iniciar sesión</a></span><br>
-                    <span>No tienes cuenta? <a href="registro">Regístrate</a></span>
                   </div>
                 </div>
               </form>

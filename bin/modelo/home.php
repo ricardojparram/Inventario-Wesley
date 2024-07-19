@@ -26,9 +26,9 @@ class home extends DBConnect{
                 (SELECT SUM(cantidad) FROM producto_sede ps INNER JOIN producto p ON ps.cod_producto = p.cod_producto WHERE p.status = 1) as producto");
     		$new->execute();
     		$data = $new->fetchAll();
-            echo json_encode($data);
+            return $data;
             parent::desconectarDB();
-            die();
+    
         }catch (\PDOException $error) {
           return $error;
       }

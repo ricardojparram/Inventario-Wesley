@@ -5,6 +5,9 @@ use component\header as header;
 use component\menuLateral as menuLateral;
 use component\footer as footer;
 use modelo\home as home;
+use utils\JWTService;
+
+$JWToken = JWTService::validateSession();
 
 if (isset($_SESSION['nivel'])) {
   if ($_SESSION['nivel'] == 4) {
@@ -14,11 +17,14 @@ if (isset($_SESSION['nivel'])) {
   die('<script> window.location = "login" </script>');
 }
 
-$objModel = new home();
-$permisos = $objModel->getPermisosRol($_SESSION['nivel']);
+$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
 
-if (isset($_POST['clien'])) {
-  $objModel->mostrarPersonal();
+$objModel = new home();
+$permisos = $objModel->getPermisosRol($nivel);
+
+if (isset($_GET['clien'])) {
+ $res = $objModel->mostrarPersonal();
+ die(json_encode($res));
 }
 
 if (isset($_POST['grafico'])) {
