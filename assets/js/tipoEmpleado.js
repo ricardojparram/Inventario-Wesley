@@ -178,7 +178,7 @@ $(document).ready(function () {
   })
 
 
-  $('#tipoEmpleadoEdit').keyup(() => {
+  $('#tipoEmpleadoEdit').keyup((e) => {
     if (e.key !== 'Enter') {
       valid = validarStringLong($("#tipoEmpleadoEdit"), $("#error2"), "Error de tipo empleado");
       clearTimeout(timeoutId);

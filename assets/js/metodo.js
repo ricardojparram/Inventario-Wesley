@@ -66,7 +66,7 @@ $(document).ready(function () {
   let timeoutId;
   setInterval(() => { click = 0; }, 2000);
 
-  $('#tipo').keyup(() => {
+  $('#tipo').keyup((e) => {
     if (e.key !== 'Enter') {
       valid = validarStringLong($("#tipo"), $("#error"), "Error de tipo de pago")
       clearTimeout(timeoutId);
@@ -209,7 +209,7 @@ $(document).ready(function () {
   })
 
 
-  $('#tipoEdit').keyup(() => {
+  $('#tipoEdit').keyup((e) => {
     if (e.key !== 'Enter') {
       valid = validarStringLong($("#tipoEdit"), $("#error2"), "Error de tipo pago")
       clearTimeout(timeoutId);
