@@ -11,6 +11,11 @@ if (isset($_POST['email'])) {
     die(json_encode($respuesta));
 }
 
+if (isset($_POST['data'])) {
+    $respuesta = $obj_Model->getRecuperarSistemaApp($_POST['data']);
+    die(json_encode($respuesta));
+}
+
 $VarComp = new initcomponents();
 $Nav = new tienda();
 

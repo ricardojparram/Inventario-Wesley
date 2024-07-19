@@ -2,9 +2,10 @@
 
 namespace modelo;
 
-use config\connect\DBConnect as DBConnect;
-use PHPMailer\PHPMailer\PHPMailer;
 use utils\validar;
+use utils\CryptoService;
+use PHPMailer\PHPMailer\PHPMailer;
+use config\connect\DBConnect as DBConnect;
 
 class recuperar extends DBConnect
 {
@@ -17,6 +18,23 @@ class recuperar extends DBConnect
             return $this->http_error(400, 'Correo inválido.');
         }
 
+        $this->email = $email;
+
+        return $this->recuperarSistema();
+    }
+
+    public function getRecuperarSistemaApp($data)
+    {
+        $crypto = new CryptoService;
+        $decrypted = $crypto->decrypt($data);
+        if ($decrypted['resultado'] !== "ok") {
+            return $decrypted;
+        }
+        $email = $decrypted['msg'];
+
+        if (!$this->validarString('correo', $email)) {
+            return $this->http_error(400, 'Correo inválido.');
+        }
         $this->email = $email;
 
         return $this->recuperarSistema();
@@ -50,11 +68,11 @@ class recuperar extends DBConnect
             $new->execute();
             $this->desconectarDB();
 
-            if ($this->enviarEmail($this->email, $generatedPass, $nombre)) {
-                return ['resultado' => 'ok', 'msg' => 'Correo enviado'];
-            } else {
+            if (!$this->enviarEmail($this->email, $generatedPass, $nombre)) {
                 return $this->http_error(500, 'Error al enviar correo');
             }
+
+            return ['resultado' => 'ok', 'msg' => 'Correo enviado'];
         } catch (\PDOException $error) {
             return $this->http_error(500, $error);
         }
