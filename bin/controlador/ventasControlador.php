@@ -20,7 +20,7 @@ if (isset($_POST['getPermiso']) && $permiso['Consultar'] == 1) {
 }
 
 if (isset($_POST['mostrar'], $_POST['bitacora']) && $permiso['Consultar']) {
-  $res = $objModel->getMostrarVentas($_POST['bitacora']);
+  $res = $objModel->getMostrarVentas($_POST['bitacora'] , $_SESSION['id_sede']);
   die(json_encode($res));
 }
 
@@ -45,7 +45,7 @@ if (isset($_POST['valorDolar'])) {
 }
 
 if (isset($_POST['selectProductos'])) {
-  $res = $objModel->selectProductos();
+  $res = $objModel->selectProductos($_SESSION['id_sede']);
   die(json_encode($res));
 }
 

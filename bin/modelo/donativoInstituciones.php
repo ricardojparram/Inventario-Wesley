@@ -17,7 +17,7 @@ class donativoInstituciones extends DBConnect
 	private $cantidad;
 
 
-	public function getMostrarDonativosInstituciones($bitacora = false , $id_sede)
+	public function getMostrarDonativosInstituciones($bitacora , $id_sede)
 	{
 		try {
 			parent::conectarDB();

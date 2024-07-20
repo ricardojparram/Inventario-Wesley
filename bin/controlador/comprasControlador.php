@@ -24,7 +24,7 @@ if (isset($_POST['getPermisos']) && $permiso['Consultar'] == 1) {
 }
 
 if (isset($_POST['mostrar']) && isset($_POST['bitacora'])) {
-	$res = $objModel->mostrarCompras($_POST['bitacora']);
+	$res = $objModel->mostrarCompras($_POST['bitacora'], $_SESSION['id_sede']);
 	die(json_encode($res));
 }
 
@@ -38,8 +38,8 @@ if (isset($_POST['select']) && $permiso['Consultar'] == 1) {
 	die(json_encode($res));
 }
 
-if (isset($_POST['proveedor'], $_POST['orden'], $_POST['fecha'], $_POST['monto'], $_POST['productos'], $permiso["Consultar"])) {
-	$res = $objModel->getRegistrarCompra($_POST['proveedor'], $_POST['orden'], $_POST['fecha'], $_POST['monto'], $_POST['productos']);
+if (isset($_POST['proveedor'], $_POST['orden'], $_POST['fecha'], $_POST['monto'], $_POST['productos'] ,$permiso["Consultar"])) {
+	$res = $objModel->getRegistrarCompra($_POST['proveedor'], $_POST['orden'], $_POST['fecha'], $_POST['monto'], $_POST['productos'] , $_SESSION['id_sede']);
 	die(json_encode($res));
 }
 

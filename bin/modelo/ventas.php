@@ -18,7 +18,7 @@ class ventas extends DBConnect
   private $datosProducto;
   private $datosTipoPago;
 
-  public function getMostrarVentas($bitacora = false)
+  public function getMostrarVentas($bitacora , $id_sede)
   {
     try {
 
@@ -28,20 +28,26 @@ class ventas extends DBConnect
          SELECT v.num_fact, v.monto_fact , pe.cedula AS cedula, pe.nombres AS nombre , v.fecha, (SELECT CONCAT(v.monto_dolares, ' ', m.nombre) FROM moneda m WHERE UPPER(m.nombre) = 'DOLAR') AS total_divisa
          FROM venta v 
          INNER JOIN venta_personal vpe ON vpe.num_fact = v.num_fact 
+         INNER JOIN venta_producto vpo ON vpo.num_fact = v.num_fact
+         INNER JOIN producto_sede ps ON ps.id_producto_sede = vpo.id_producto_sede 
          INNER JOIN pagos_recibidos pr ON pr.num_fact = v.num_fact
          LEFT JOIN personal pe ON pe.cedula = vpe.cedula 
-         WHERE v.status = 1 AND pr.status = 1
+         WHERE v.status = 1 AND pr.status = 1 AND ps.id_sede = ?
 
          UNION ALL
 
          SELECT v.num_fact, v.monto_fact,  pa.ced_pac AS cedula, pa.nombre AS nombre , v.fecha, (SELECT CONCAT(v.monto_dolares, ' ', m.nombre) FROM moneda m WHERE UPPER(m.nombre) = 'DOLAR') AS total_divisa
          FROM venta v 
          INNER JOIN venta_pacientes vpa ON vpa.num_fact = v.num_fact 
+         INNER JOIN venta_producto vpo ON vpo.num_fact = v.num_fact
+         INNER JOIN producto_sede ps ON ps.id_producto_sede = vpo.id_producto_sede 
          INNER JOIN pagos_recibidos pr ON pr.num_fact = v.num_fact
          LEFT JOIN pacientes pa ON pa.ced_pac = vpa.ced_pac 
-         WHERE v.status = 1 AND pr.status = 1;";
+         WHERE v.status = 1 AND pr.status = 1 AND ps.id_sede = ?";
 
       $new = $this->con->prepare($query);
+      $new->bindValue(1 , $id_sede);
+      $new->bindValue(2 , $id_sede);
       $new->execute();
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
 
@@ -147,15 +153,14 @@ class ventas extends DBConnect
     }
   }
 
-  public function selectProductos()
+  public function selectProductos($id_sede)
   {
     try {
       parent::conectarDB();
 
-      $query = "SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN compra_producto cp ON cp.id_producto_sede = ps.id_producto_sede INNER JOIN compra c ON c.orden_compra = cp.orden_compra WHERE p.status = 1 AND s.status = 1 AND c.status = 1 AND ps.cantidad > 0 ORDER BY ps.fecha_vencimiento;";
-
+      $query = "SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN compra_producto cp ON cp.id_producto_sede = ps.id_producto_sede INNER JOIN compra c ON c.orden_compra = cp.orden_compra WHERE p.status = 1 AND s.status = 1 AND c.status = 1 AND ps.cantidad > 0 AND ps.id_sede = ? ORDER BY ps.fecha_vencimiento;";
       $new = $this->con->prepare($query);
-
+      $new->bindValue(1, $id_sede);
       $new->execute();
       $data = $new->fetchAll(\PDO::FETCH_OBJ);
 

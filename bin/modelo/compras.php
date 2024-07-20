@@ -17,6 +17,7 @@ class compras extends DBConnect
 	private $fecha;
 	private $montoT;
 	private $productos;
+	private $id_sede;
 
 
 	public function __construct()
@@ -24,7 +25,7 @@ class compras extends DBConnect
 		parent::__construct();
 	}
 
-	public function mostrarCompras($bitacora = false)
+	public function mostrarCompras($bitacora , $id_sede)
 	{
 
 		try {
@@ -32,9 +33,14 @@ class compras extends DBConnect
 			parent::conectarDB();
 
 
-			$query = "SELECT c.orden_compra, c.fecha, c.monto_total, c.ced_prove FROM compra c WHERE c.status = 1";
+			$query = "SELECT c.orden_compra, c.fecha, c.monto_total, c.ced_prove
+			FROM compra c
+			INNER JOIN compra_producto cp ON cp.orden_compra = c.orden_compra
+			INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede
+			WHERE c.status = 1 AND ps.id_sede = ?";
 
 			$new = $this->con->prepare($query);
+			$new->bindValue(1 , $id_sede);
 			$new->execute();
 			$data = $new->fetchAll();
 
@@ -72,13 +78,13 @@ class compras extends DBConnect
 		if (preg_match_all("/^[0-9]{1,10}$/", $id) != 1) {
 			die(json_encode(['error' => 'Id invalido.']));
 		}
-		$this->producto = $id;
+		$this->productos = $id;
 
 		try {
 			parent::conectarDB();
 			$new = $this->con->prepare("SELECT cp.cantidad, cp.precio_compra , CONCAT(tp.nombrepro,' ',pr.peso,'',m.nombre) AS producto,c.orden_compra FROM compra_producto cp INNER JOIN compra c ON cp.orden_compra = c.orden_compra INNER JOIN producto_sede ps ON ps.id_producto_sede = cp.id_producto_sede INNER JOIN producto p ON ps.cod_producto = p.cod_producto INNER JOIN tipo_producto tp ON p.id_tipoprod = tp.id_tipoprod INNER JOIN presentacion pr ON p.cod_pres = pr.cod_pres INNER JOIN medida m ON pr.id_medida = m.id_medida WHERE c.status = 1 AND c.orden_compra = ? ;
 		");
-			$new->bindValue(1, $this->producto);
+			$new->bindValue(1, $this->productos);
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
@@ -104,7 +110,7 @@ class compras extends DBConnect
 		}
 	}
 
-	public function getRegistrarCompra($proveedor, $orden, $fecha, $monto, $productos)
+	public function getRegistrarCompra($proveedor, $orden, $fecha, $monto, $productos, $id_sede)
 	{
 		if (!$this->validarString('rif', $proveedor))
 			return $this->http_error(400, 'Proveedor inválido.');
@@ -134,6 +140,7 @@ class compras extends DBConnect
 		$this->fecha = $fecha;
 		$this->montoT = $monto;
 		$this->productos = $productos;
+		$this->id_sede = $id_sede;
 
 		return $this->registrarCompra();
 	}
@@ -161,11 +168,12 @@ class compras extends DBConnect
 
 				$fecha_vencimiento = $this->convertirFecha($producto['fecha_vencimiento'], 'd/m/Y');
 
-				$new = $this->con->prepare("INSERT INTO `producto_sede`(`id_producto_sede`, `cod_producto`, `lote`, `fecha_vencimiento`, `id_sede`, `cantidad`) VALUES (DEFAULT,?,?,?,1,?)");
+				$new = $this->con->prepare("INSERT INTO `producto_sede`(`id_producto_sede`, `cod_producto`, `lote`, `fecha_vencimiento`, `id_sede`, `cantidad`) VALUES (DEFAULT,?,?,?,?,?)");
 				$new->bindValue(1, $producto['id_producto']);
 				$new->bindValue(2, $producto['lote']);
 				$new->bindValue(3, $fecha_vencimiento);
-				$new->bindValue(4, $producto['cantidad']);
+				$new->bindValue(4, $this->id_sede);
+				$new->bindValue(5, $producto['cantidad']);
 				$new->execute();
 				$this->id = $this->con->lastInsertId();
 

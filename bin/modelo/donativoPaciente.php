@@ -17,7 +17,7 @@ class donativoPaciente extends DBConnect
 	private $cantidad;
 
 
-	public function getMostrarDonativosPacientes($bitacora = false, $id_sede)
+	public function getMostrarDonativosPacientes($bitacora , $id_sede)
 	{
 		try {
 			parent::conectarDB();
