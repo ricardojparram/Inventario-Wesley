@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 use component\initcomponents as initcomponents;
 use component\header as header;
@@ -13,15 +13,15 @@ $objModel = new medida;
 $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Medida'];
 
-if (!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);
+    if(!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`); 
 
-if (isset($_POST['getPermisos']) && $permiso['Consultar'] == 1) {
-	die(json_encode($permiso));
-}
+     if(isset($_POST['getPermisos'])&& $permiso['Consultar'] == 1){
+    	die(json_encode($permiso));
+    }
+    
 
-
-if (isset($_POST["mostrar"]) && isset($_POST['bitacora'])) {
-	($_POST['bitacora'] == 'true')
+	if(isset($_POST["mostrar"]) && isset($_POST['bitacora'])){
+		($_POST['bitacora'] == 'true')
 		? $objModel->getMostrarMedida(true)
 		: $objModel->getMostrarMedida();
 }

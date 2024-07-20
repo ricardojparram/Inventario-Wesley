@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 use component\initcomponents as initcomponents;
 use component\header as header;
@@ -15,14 +15,16 @@ $permiso = $permisos['Bitacora'];
 
 if (!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);
 
-if (isset($_POST['mostrar']) && isset($permiso['Consultar'])) {
-	$objModel->mostrarBitacora();
-}
+	if(isset($_POST['mostrar']) && isset($permiso['Consultar'])){
+		$objModel->mostrarBitacora();
+	}
 
-$VarComp = new initcomponents();
-$header = new header();
-$menu = new menuLateral($permisos);
+	$VarComp = new initcomponents();
+	$header = new header();
+	$menu = new menuLateral($permisos);
 
-if (file_exists("vista/interno/bitacoraVista.php")) {
-	require_once("vista/interno/bitacoraVista.php");
-}
+	if(file_exists("vista/interno/bitacoraVista.php")){
+		require_once("vista/interno/bitacoraVista.php");
+	}
+
+?>
