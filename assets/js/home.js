@@ -10,7 +10,7 @@ $(document).ready(function(){
 
 
 		$.ajax({
-			method: 'POST',
+			method: 'GET',
 			url: '',
 			dataType: 'json',
 			data: {clien: 'lol'},

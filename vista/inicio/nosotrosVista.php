@@ -22,8 +22,8 @@
     <div class="container container-md row">
       <div class="col-12 col-md-6 row align-items-center">
         <div class="w-100">
-          <h1 class="fw-bold fs-3 titulos text-justify">En Farmacia Medisalud C.A, tu salud es nuestra prioridad.</h1>
-          <p class="fw-semibold" style="font-size:16px">Llevamos más de 16 años enfocándonos en brindar una experiencia de compra personalizada, garantizando la calidad, seguridad y eficiencia operativa de nuestros productos. Nuestro equipo está capacitado para ofrecer asesoría farmacéutica y un trato personalizado a cada cliente. Te invitamos a visitarnos y experimentar la diferencia en nuestro enfoque hacia la atención al paciente y la promoción del bienestar en la comunidad.
+          <h1 class="fw-bold fs-3 titulos text-justify">Fundación Centro Médico Wesley.</h1>
+          <p class="fw-semibold descripcion" style="font-size:16px">Nuestra institución se dedica a ofrecer un servicio integral de salud con excelencia y una profunda vocación de servicio. Contamos con un equipo de profesionales altamente cualificados en cada una de nuestras áreas de atención, garantizando la calidad y la autosustentabilidad económica de nuestro centro. Aspiramos a ser la primera institución de salud integral en Venezuela, destacándonos por nuestro alto nivel de excelencia en servicios médicos y transformando positivamente la imagen de la atención hospitalaria en el país.
           </p>
           
         </div>
@@ -49,7 +49,7 @@
             <div class="col-12 col-md-6 row align-items-center">
               <div class="w-100">
                 <h1 class="fw-bold fs-3 titulos text-justify">Nuestra misión y visión.</h1>
-                <p class="fw-semibold" style="font-size:16px">Tenemos como misión ser reconocidos por la alta calidad en la comercialización y distribución de productos farmacéuticos, ofreciendo los mejores precios y una de las mejores variedades de productos para el bienestar de la salud de todos los que lo requieran. Además, nos comprometemos a brindar una buena atención al cliente, asesoría farmacéutica, mejoramiento continuo, crecimiento del personal y estabilidad de la empresa. También nos enfocamos en fomentar el crecimiento y desarrollo de nuevas fuentes de empleo para los ciudadanos de la comunidad, y en ofrecer servicios de salud y farmacéuticos personalizados para satisfacer las necesidades de la comunidad.
+                <p class="fw-semibold descripcion" style="font-size:16px">Brindar a nuestros pacientes un servicio integral de salud con excelencia y vocación de servicio, con un equipo de profesionales de alto estándar en cada una de las áreas a brindar y con óptima autosustentabilidad económica de nuestra institución. Nuestra visión es ser la primera institución de salud integral con alto nivel de excelencia en servicios médicos, transformando la imagen de la atención hospitalaria en Venezuela.
                 </p>
 
               </div>

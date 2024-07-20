@@ -22,41 +22,32 @@ class personal extends DBConnect
     public function getAgregarPersonal($cedula, $nombre, $apellido, $correo, $edad, $direccion, $telefono, $sede, $tipo)
     {
 
-        if (preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
-            return $resultado;
+        if (!$this->validarString('nombre', $nombre)) {
+            return $this->http_error(400, 'Nombre inválido.');
         }
-        if (preg_match_all("/^[a-zA-ZÀ-ÿ]{0,30}$/", $nombre) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
-            return $resultado;
+        if (!$this->validarString('nombre', $apellido)) {
+            return $this->http_error(400, 'Apellido invalido.');
         }
-        if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $apellido) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
-            return $resultado;
+        if (!$this->validarString('documento', $cedula)) {
+            return $this->http_error(400, 'Documento invalido.');
         }
-        if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Correo invalido.'];
-            return $resultado;
+        if (!$this->validarString('correo', $correo)) {
+            return $this->http_error(400, 'Correo invalido.');
         }
-        if (preg_match_all("/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/", $edad) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Fecha invalida.'];
-            return $resultado;
+        if (!$this->validarString('fecha', $edad)) {
+            return $this->http_error(400, 'Fecha invalida.');
         }
-        if (preg_match_all("/[$%&|<>]/", $direccion) == true) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Direccion inválida.'];
-            return $resultado;
+        if (!$this->validarString('direccion', $direccion)) {
+            return $this->http_error(400, 'Direccion invalida.');
         }
-        if (preg_match_all("/^[0-9]{10,30}$/", $telefono) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Telefono Invalido'];
-            return $resultado;
+        if (!$this->validarString('numero', $telefono)) {
+            return $this->http_error(400, 'Telefono invalido.');
         }
-        if (preg_match_all("/^[0-9]{1,2}$/", $sede) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Sede invalida.'];
-            return $resultado;
+        if (!$this->validarString('numero', $sede)) {
+            return $this->http_error(400, 'Sede invalida.');
         }
-        if (preg_match_all("/^[0-9]{1,2}$/", $tipo) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Tipo de Empleado invalido.'];
-            return $resultado;
+        if (!$this->validarString('numero', $tipo)) {
+            return $this->http_error(400, 'Tipo de Empleado invalido.');
         }
 
         $this->cedula = $cedula;
@@ -118,11 +109,11 @@ class personal extends DBConnect
                 $this->binnacle("", $_SESSION['cedula'], "Registró un personal");
                 parent::desconectarDB();
             } else {
-                $resultado = ['resultado' => 'Error', 'error' => 'error desconocido.'];
+                return $this->http_error(500, "error desconocido");
             }
             return $resultado;
         } catch (\PDOException $error) {
-            return $error;
+            return $this->http_error(500, $error);
         }
     }
 
@@ -130,14 +121,16 @@ class personal extends DBConnect
     {
         try {
             parent::conectarDB();
-            $new = $this->con->prepare("SELECT p.cedula, p.nombres, p.apellidos, p.direccion, s.nombre as sede, e.nombre_e as tipo FROM personal p INNER JOIN sede s ON p.id_sede = s.id_sede INNER JOIN tipo_empleado e ON p.tipo_em = e.tipo_em WHERE p.status = 1");
+            $new = $this->con->prepare("SELECT p.cedula, p.nombres, p.apellidos, p.direccion, s.nombre as sede, p.edad as fecha, e.nombre_e as tipo, p.telefono, p.correo FROM personal p INNER JOIN sede s ON p.id_sede = s.id_sede INNER JOIN tipo_empleado e ON p.tipo_em = e.tipo_em WHERE p.status = 1");
             $new->execute();
             $data = $new->fetchAll(\PDO::FETCH_OBJ);
+            $fecha = time() - strtotime($data[0]->fecha);
+            $data[0]->edad = floor($fecha / 31556926);
             if ($bitacora) $this->binnacle("", $_SESSION['cedula'], "Consultó listado Personal.");
             parent::desconectarDB();
             return $data;
-        } catch (\PDOException $e) {
-            return $e;
+        } catch (\PDOException $error) {
+            return $this->http_error(500, $error);
         }
     }
 
@@ -160,48 +153,42 @@ class personal extends DBConnect
             parent::desconectarDB();
             return $data;
         } catch (\PDOException $error) {
-            return $error;
+            return $this->http_error(500, $error);
         }
     }
 
     public function getEditarPersonal($cedula, $nombre, $apellido, $correo, $edad, $direccion, $telefono, $sede, $tipo, $id)
     {
 
-        if (preg_match_all("/^[VE]-[A-Z0-9]{7,12}$/", $cedula) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Documento invalido.'];
-            return $resultado;
+        if (!$this->validarString('nombre', $nombre)) {
+            return $this->http_error(400, 'Nombre inválido.');
         }
-        if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $nombre) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Nombre invalido.'];
-            return $resultado;
+        if (!$this->validarString('nombre', $apellido)) {
+            return $this->http_error(400, 'Apellido invalido.');
         }
-        if (preg_match_all("/^[a-zA-ZÀ-ÿ ]{0,30}$/", $apellido) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Apellido invalido.'];
-            return $resultado;
+        if (!$this->validarString('documento', $cedula)) {
+            return $this->http_error(400, 'Documento invalido.');
         }
-        if (preg_match_all("/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/", $correo) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Correo invalido.'];
-            return $resultado;
+        if (!$this->validarString('correo', $correo)) {
+            return $this->http_error(400, 'Correo invalido.');
         }
-        if (preg_match_all("/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/", $edad) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Fecha invalida.'];
-            return $resultado;
+        if (!$this->validarString('fecha', $edad)) {
+            return $this->http_error(400, 'Fecha invalida.');
         }
-        if (preg_match_all("/[$%&|<>]/", $direccion) == true) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Direccion inválida.'];
-            return $resultado;
+        if (!$this->validarString('direccion', $direccion)) {
+            return $this->http_error(400, 'Direccion invalida.');
         }
-        if (preg_match_all("/^[0-9]{10,30}$/", $telefono) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Telefono Invalido'];
-            return $resultado;
+        if (!$this->validarString('numero', $telefono)) {
+            return $this->http_error(400, 'Telefono invalido.');
         }
-        if (preg_match_all("/^[0-9]{1,2}$/", $sede) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Sede invalida.'];
-            return $resultado;
+        if (!$this->validarString('numero', $sede)) {
+            return $this->http_error(400, 'Sede invalida.');
         }
-        if (preg_match_all("/^[0-9]{1,2}$/", $tipo) == false) {
-            $resultado = ['resultado' => 'Error', 'error' => 'Tipo de Empleado invalido.'];
-            return $resultado;
+        if (!$this->validarString('numero', $tipo)) {
+            return $this->http_error(400, 'Tipo de Empleado invalido.');
+        }
+        if (!$this->validarString('documento', $id)) {
+            return $this->http_error(400, 'Documento invalido.');
         }
 
         $this->cedula = $cedula;
@@ -250,8 +237,8 @@ class personal extends DBConnect
             $this->binnacle("a", $_SESSION['cedula'], "Editó un personal");
             parent::desconectarDB();
             return $resultado;
-        } catch (\PDOException $e) {
-            return $e;
+        } catch (\PDOException $error) {
+            return $this->http_error(500, $error);
         }
     }
 
@@ -265,7 +252,7 @@ class personal extends DBConnect
     {
         try {
             $user = $this->validarPersonalUser($this->cedula);
-            if (!$user) return ['resultado' => 'Error', 'msj' => 'Elimine primero en Usuario'];
+            if ($user) return ['resultado' => 'error', 'msg' => 'Elimine primero en Usuario'];
 
             parent::conectarDB();
             $new = $this->con->prepare("UPDATE `personal` SET `status` = '0' WHERE `personal`.`cedula` = ?"); //"DELETE FROM `personal` WHERE `personal`.`cedula` = ?"
@@ -277,7 +264,7 @@ class personal extends DBConnect
             parent::desconectarDB();
             return $resultado;
         } catch (\PDOException $error) {
-            return $error;
+            return $this->http_error(500, $error);
         }
     }
 
@@ -300,9 +287,9 @@ class personal extends DBConnect
                 $data = $new->fetchAll();
                 parent::desconectarDB();
                 if (isset($data[0]['cedula'])) {
-                    $resultado = ['resultado' => 'Correcto', 'msj' => 'el documento está registrado.'];
+                    $resultado = ['resultado' => 'Correcto', 'msg' => 'el documento está registrado.'];
                 } else {
-                    $resultado = ['resultado' => 'Error', 'msj' => 'documento no Registrado'];
+                    $resultado = ['resultado' => 'error', 'msg' => 'documento no Registrado'];
                 }
             } elseif ($this->id == " ") {
 
@@ -313,7 +300,7 @@ class personal extends DBConnect
                 $data = $new->fetchAll();
                 parent::desconectarDB();
                 if (isset($data[0]['cedula'])) {
-                    $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya está registrado.'];
+                    $resultado = ['resultado' => 'error', 'msg' => 'El documento ya está registrado.'];
                 } else {
                     $resultado = ['resultado' => 'Correcto'];
                 }
@@ -326,9 +313,9 @@ class personal extends DBConnect
                 $data = $new->fetchAll();
                 parent::desconectarDB();
                 if (isset($data[0]['status']) && $data[0]['status'] == 0) {
-                    $resultado = ['resultado' => 'Error', 'msj' => 'No Puede Ser Registrado'];
+                    $resultado = ['resultado' => 'error', 'msg' => 'No Puede Ser Registrado'];
                 } elseif (isset($data[0]['cedula']) && $data[0]['cedula'] == $this->cedula && $data[0]['status'] == 1) {
-                    $resultado = ['resultado' => 'Error', 'msj' => 'El documento ya esta Registrado'];
+                    $resultado = ['resultado' => 'error', 'msg' => 'El documento ya esta Registrado'];
                 } else {
                     $resultado = ['resultado' => 'Correcto'];
                 }
@@ -337,7 +324,7 @@ class personal extends DBConnect
             }
             return $resultado;
         } catch (\PDOException $error) {
-            return $error;
+            return $this->http_error(500, $error);
         }
     }
 
@@ -361,17 +348,17 @@ class personal extends DBConnect
             $data = $new->fetchAll();
             parent::desconectarDB();
             if (isset($data[0]['correo']) && $data[0]['status'] === 1) {
-                $resultado = ['resultado' => 'Error', 'msj' => 'El Correo ya esta Registrado'];
+                $resultado = ['resultado' => 'error', 'msg' => 'El Correo ya esta Registrado'];
                 return $resultado;
             }
             // elseif (isset($data[0]['correo']) && $data[0]['status'] === 0 ) {
-            //     $resultado = ['resultado' => 'Error', 'msj' => 'El Correo no Puede Ser Registrado'];
+            //     $resultado = ['resultado' => 'error', 'msg' => 'El Correo no Puede Ser Registrado'];
             //     return $resultado;
             // } -------> Preguntar si dejo esta validacion <-------
             $resultado = ['resultado' => 'Correcto'];
             return $resultado;
-        } catch (\PDOException $e) {
-            return $e;
+        } catch (\PDOException $error) {
+            return $this->http_error(500, $error);
         }
     }
 
@@ -385,8 +372,7 @@ class personal extends DBConnect
             parent::desconectarDB();
             return $data;
         } catch (\PDOException $error) {
-
-            return $error;
+            return $this->http_error(500, $error);
         }
     }
 
@@ -401,7 +387,7 @@ class personal extends DBConnect
             return $data;
         } catch (\PDOException $error) {
 
-            return $error;
+            return $this->http_error(500, $error);
         }
     }
 
@@ -411,14 +397,14 @@ class personal extends DBConnect
             parent::conectarDB();
             $new = $this->con->prepare("SELECT nombre FROM usuario WHERE cedula = ?");
             $new->bindValue(1, $cedula);
-            $data = $new->fetchAll(\PDO::FETCH_OBJ);
             $new->execute();
-            if (isset($data)) return false;
+            $data = $new->fetchAll(\PDO::FETCH_OBJ);
+            if (isset($data)) {return false;}
             return true;
 
             parent::desconectarDB();
-        } catch (\PDOException $e) {
-            return $e;
+        } catch (\PDOException $error) {
+            return $this->http_error(500, $error);
         }
     }
 }

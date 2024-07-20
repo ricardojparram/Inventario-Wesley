@@ -73,7 +73,6 @@
                   </div><br>
                   <hr>
                   <div class="my-3 text-center asd">
-                    <span>No tiene cuenta? <a href="registro">Registrarse</a></span><br>
                     <span>Olvidaste tu contraseña? <a href="recuperar">Recuperar contraseña</a></span>
                   </div>
                 </div>

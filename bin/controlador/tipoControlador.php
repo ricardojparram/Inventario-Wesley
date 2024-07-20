@@ -13,8 +13,6 @@ $objModel = new tipo();
 $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Tipo'];
 
-if (!isset($permiso['Consultar'])) die(`<script> window.location = "home" </script>`);
-
 
 if (isset($_POST['getPermisos']) && $permiso['Consultar'] == 1) {
 	die(json_encode($permiso));

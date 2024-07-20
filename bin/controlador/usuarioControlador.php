@@ -12,11 +12,11 @@ $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Usuarios'];
 
 if (!isset($_SESSION['nivel'])) {
-	die('<script> window.location = "login" </script>');
+	die('<script> window.location = "?url=login" </script>');
 }
 
 if (!isset($permiso["Consultar"]))
-	die('<script> window.location = "home" </script>');
+	die('<script> window.location = "?url=home" </script>');
 
 if (isset($_POST['getPermisos'], $permiso["Consultar"])) {
 	die(json_encode($permiso));

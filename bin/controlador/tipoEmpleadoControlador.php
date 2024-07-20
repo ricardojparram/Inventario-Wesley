@@ -12,7 +12,7 @@ $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Tipo empleado'];
 
 if (!isset($_SESSION['nivel'])) {
-  die('<script> window.location = "login" </script>');
+  die('<script> window.location = "?url=login" </script>');
 }
 
 if (!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);

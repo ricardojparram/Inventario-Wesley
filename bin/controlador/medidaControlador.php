@@ -6,7 +6,7 @@ use component\menuLateral as menuLateral;
 use modelo\medida as medida;
 
 if (!isset($_SESSION['nivel'])) {
-	die('<script> window.location = "login" </script>');
+	die('<script> window.location = "?url=login" </script>');
 }
 
 $objModel = new medida;
