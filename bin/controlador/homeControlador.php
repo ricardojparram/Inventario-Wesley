@@ -9,15 +9,16 @@ use utils\JWTService;
 
 $JWToken = JWTService::validateSession();
 
-if (isset($_SESSION['nivel'])) {
-  if ($_SESSION['nivel'] == 4) {
+$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
+
+if (isset($nivel)) {
+  if ($nivel == 4) {
     die('<script> window.location = "login" </script>');
   }
 } else {
   die('<script> window.location = "login" </script>');
 }
 
-$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
 
 $objModel = new home();
 $permisos = $objModel->getPermisosRol($nivel);

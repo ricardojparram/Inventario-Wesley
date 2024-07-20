@@ -17,13 +17,14 @@ class donativoPersonal extends DBConnect
 	private $cantidad;
 
 
-	public function getMostrarDonativosPersonal($bitacora = false)
+	public function getMostrarDonativosPersonal($bitacora = false , $id_sede)
 	{
 		try {
 			parent::conectarDB();
 
-			$query = "SELECT d.id_donaciones, d.fecha , dp.cedula , CONCAT(p.nombres, ' ',p.apellidos) AS beneficiario FROM donaciones d INNER JOIN donativo_per dp ON dp.id_donaciones = d.id_donaciones INNER JOIN personal p ON p.cedula = dp.cedula WHERE d.status = 1";
+			$query = "SELECT d.id_donaciones, d.fecha , dp.cedula , CONCAT(p.nombres, ' ',p.apellidos) AS beneficiario FROM donaciones d INNER JOIN donativo_per dp ON dp.id_donaciones = d.id_donaciones INNER JOIN det_donacion dd ON dd.id_donaciones = d.id_donaciones INNER JOIN producto_sede ps ON ps.id_producto_sede = dd.id_producto_sede INNER JOIN personal p ON p.cedula = dp.cedula WHERE d.status = 1 AND ps.id_sede = ?";
 			$new = $this->con->prepare($query);
+			$new->bindValue(1, $id_sede);
 			$new->execute();
 			$data = $new->fetchAll(\PDO::FETCH_OBJ);
 
@@ -145,7 +146,7 @@ class donativoPersonal extends DBConnect
 	{
 		try {
 			parent::conectarDB();
-			$new = $this->con->prepare("SELECT ps.id_producto_sede, CONCAT(tp.nombrepro, ' ',pr.peso , '',m.nombre) AS producto , ps.lote FROM producto_sede ps INNER JOIN producto p ON p.cod_producto = ps.cod_producto INNER JOIN tipo_producto tp ON tp.id_tipoprod = p.id_tipoprod INNER JOIN sede s ON s.id_sede = ps.id_sede INNER JOIN presentacion pr ON pr.cod_pres = p.cod_pres INNER JOIN medida m ON m.id_medida = pr.id_medida INNER JOIN detalle_recepcion_nacional drn ON drn.id_producto_sede = ps.id_producto_sede INNER JOIN recepcion_nacional rn ON rn.id_rep_nacional = drn.id_rep_nacional WHERE p.status = 1 AND s.status = 1 AND ps.cantidad > 0 AND s.id_sede = ? ORDER BY ps.fecha_vencimiento;");
+			$new = $this->con->prepare("SELECT ps.id_producto_sede, ps.presentacion_producto AS producto, ps.lote FROM vw_producto_sede_detallado ps INNER JOIN sede s ON s.id_sede = ps.id_sede WHERE s.status = 1 AND ps.cantidad > 0 AND s.id_sede = ? AND ps.id_producto_sede NOT IN ( SELECT cp.id_producto_sede FROM compra_producto cp ) ORDER BY ps.fecha_vencimiento");
 
 			$new->bindValue(1, $id_sede);
 			$new->execute();

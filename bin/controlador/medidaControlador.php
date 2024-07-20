@@ -54,10 +54,8 @@
 	$menu = new menuLateral($permisos);
 
 
-	if(file_exists("vista/interno/productos/medidaVista.php")){
-		require_once("vista/interno/productos/medidaVista.php");
-	}else{
-		die('La vista no existe.');
-	}
-
-?>
+if (file_exists("vista/interno/productos/medidaVista.php")) {
+	require_once("vista/interno/productos/medidaVista.php");
+} else {
+	die('La vista no existe.');
+}

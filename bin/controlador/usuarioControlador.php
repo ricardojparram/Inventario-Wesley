@@ -69,5 +69,3 @@ $menu = new menuLateral($permisos);
 if (file_exists("vista/interno/usuarioVista.php")) {
 	require_once("vista/interno/usuarioVista.php");
 }
-
-?>

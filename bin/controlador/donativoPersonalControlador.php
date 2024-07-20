@@ -25,7 +25,7 @@ if (isset($_POST['getPermiso']) && $permiso['Consultar'] == 1) {
 }
 
 if (isset($_POST['mostrar']) && isset($_POST['bitacora'])) {
-  $res = $objModel->getMostrarDonativosPersonal($_POST['bitacora']);
+  $res = $objModel->getMostrarDonativosPersonal($_POST['bitacora'] ,$_SESSION['id_sede']);
   die(json_encode($res));
 }
 
