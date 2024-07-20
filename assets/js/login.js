@@ -58,7 +58,7 @@ $(document).ready(function () {
           icon: "success",
         });
         setTimeout(function () {
-          window.location = "?url=login";
+          window.location = "login";
         }, 1600);
       },
       "json"

@@ -14,27 +14,24 @@ if (isset($_GET['mostrar'], $_GET['bitacora'])) {
 
 $JWToken = JWTService::validateSession();
 if (!isset($_SESSION['nivel']) && !$JWToken) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 
-$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
+$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
 $permisos = $model->getPermisosRol($nivel);
 $permiso = $permisos['Sedes'];
 
 if (!isset($permiso["Consultar"])) {
-    die('<script> window.location = "?url=home" </script>');
-}
-
-
-if (isset($_POST['notificacion'])) {
-    $objModel->getNotificacion();
+    die('<script> window.location = "home" </script>');
 }
 
 if (isset($_POST['getPermisos'], $permiso['Consultar'])) {
     die(json_encode($permiso));
 }
 
-
+if (isset($_POST['cambiarSede'])) {
+    return $model->cambiarSede($_POST['cambiarSede']);
+}
 
 if (isset($_POST['registrar'], $_POST['nombre'], $_POST['telefono'], $_POST['direccion'], $permiso['Registrar'])) {
     $res = $model->getAgregarSede($_POST['nombre'], $_POST['telefono'], $_POST['direccion']);

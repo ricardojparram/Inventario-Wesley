@@ -631,9 +631,7 @@ $(document).ready(function(){
        referencia = validarReferencia();
        $('.precioPorTipo input').each(function(){ validarValoresPositivos($(this)); });
        valid_precioTipo = $('.precio-tipo').is('[valid="false"]')? false : true;
-
-       console.log(cedula && montoTotal && valid_productos && valid_tipoPago && stock && precio && referencia && valid_precioTipo && validarTotal($("#monto"), $('.precio-tipo')));
-       
+   
        if(cedula && montoTotal && valid_productos && valid_tipoPago && stock && precio && referencia && valid_precioTipo && validarTotal($("#monto"), $('.precio-tipo'))){
         
         cedula = $('#cedula').val();
@@ -660,7 +658,7 @@ $(document).ready(function(){
             $('.removeRowPagoTipo').click(); 
             $('.error').text('');
             addNewRow()
-            addNewRowPago()
+            addNewRowPago();
             Toast.fire({ icon: 'success', title: data.msg }) // ALERTA 
             }
           }

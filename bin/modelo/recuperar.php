@@ -2,9 +2,10 @@
 
 namespace modelo;
 
-use config\connect\DBConnect as DBConnect;
-use PHPMailer\PHPMailer\PHPMailer;
 use utils\validar;
+use utils\CryptoService;
+use PHPMailer\PHPMailer\PHPMailer;
+use config\connect\DBConnect as DBConnect;
 
 class recuperar extends DBConnect
 {
@@ -13,13 +14,30 @@ class recuperar extends DBConnect
 
     public function getRecuperarSistema($email)
     {
-        if(!$this->validarString('correo', $email)) {
+        if (!$this->validarString('correo', $email)) {
             return $this->http_error(400, 'Correo inválido.');
         }
 
         $this->email = $email;
 
-        $this->recuperarSistema();
+        return $this->recuperarSistema();
+    }
+
+    public function getRecuperarSistemaApp($data)
+    {
+        $crypto = new CryptoService;
+        $decrypted = $crypto->decrypt($data);
+        if ($decrypted['resultado'] !== "ok") {
+            return $decrypted;
+        }
+        $email = $decrypted['msg'];
+
+        if (!$this->validarString('correo', $email)) {
+            return $this->http_error(400, 'Correo inválido.');
+        }
+        $this->email = $email;
+
+        return $this->recuperarSistema();
     }
 
     protected function recuperarSistema()
@@ -31,7 +49,7 @@ class recuperar extends DBConnect
             $new->execute();
             $data = $new->fetchAll();
 
-            if(!isset($data[0]['correo'])) {
+            if (!isset($data[0]['correo'])) {
                 return $this->http_error(400, 'El correo no está registrado.');
             }
 
@@ -39,7 +57,7 @@ class recuperar extends DBConnect
 
             $date = date('m/d/Yh:i:sa', time());
             $rand = rand(10000, 99999);
-            $str = $date.$rand;
+            $str = $date . $rand;
             $generatedPass = hash('crc32b', $str);
             $pass = password_hash($generatedPass, PASSWORD_BCRYPT);
 
@@ -50,11 +68,12 @@ class recuperar extends DBConnect
             $new->execute();
             $this->desconectarDB();
 
-            return ($this->enviarEmail($this->email, $generatedPass, $nombre))
-            ? ['resultado' => 'ok', 'msg' => 'Correo enviado']
-            : $this->http_error(500, 'Error al enviar correo');
+            if (!$this->enviarEmail($this->email, $generatedPass, $nombre)) {
+                return $this->http_error(500, 'Error al enviar correo');
+            }
 
-        } catch(\PDOException $error) {
+            return ['resultado' => 'ok', 'msg' => 'Correo enviado'];
+        } catch (\PDOException $error) {
             return $this->http_error(500, $error);
         }
     }
@@ -73,7 +92,7 @@ class recuperar extends DBConnect
 							<p>Usted ha solicitado una contraseña para ingresar al sistema de la Fundación Centro Médico Wesley. Se generó una nueva contraseña para que pueda ingresar, por favor siga los pasos indicados para crear una nueva contraseña.</p>
 
 							<h4>Contraseña generada: </h4>
-							<h2>'.$pass.'</h2>
+							<h2>' . $pass . '</h2>
 
 							<h4>Pasos a seguir: </h4>
 							<ol>
@@ -108,4 +127,3 @@ class recuperar extends DBConnect
         return !!$mail->send();
     }
 }
-

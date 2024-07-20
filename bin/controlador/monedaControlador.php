@@ -12,14 +12,11 @@ $permiso = $permisos['Moneda'];
 //$objModel->actualizarMoneda();
 
 if (!isset($_SESSION['nivel'])) {
-  die('<script> window.location = "?url=login" </script>');
+  die('<script> window.location = "login" </script>');
 }
 
-if (!isset($permiso['Consultar'])) die('<script> window.location = "?url=home" </script>');
+if (!isset($permiso['Consultar'])) die('<script> window.location = "home" </script>');
 
-// if(isset($_POST['notificacion'])) {
-//   $objModel->getNotificacion();
-// }
 
 if (isset($_POST['getPermisos']) && isset($permiso['Consultar'])) {
   die(json_encode($permiso));
@@ -80,8 +77,8 @@ if (isset($_POST["cambioEdit"]) && isset($_POST["tipoEdit"]) && isset($_POST["un
   die(json_encode($res));
 }
 
-if (isset($_GET["id"],$_GET["nomMoneda"],$_GET["validar"])){
-  $res = $objModel->getValidarMon($_GET["id"],$_GET["nomMoneda"]);
+if (isset($_GET["id"], $_GET["nomMoneda"], $_GET["validar"])) {
+  $res = $objModel->getValidarMon($_GET["id"], $_GET["nomMoneda"]);
   die(json_encode($res));
 }
 

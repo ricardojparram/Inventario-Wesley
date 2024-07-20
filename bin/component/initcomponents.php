@@ -39,9 +39,9 @@ class initcomponents
               <div class="col-6 col-lg-2 mb-3">
                 <h5 class="lh-lg fw-bold text-white">Enlaces Utiles</h5>
                 <ul class="list-unstyled mb-md-4 mb-lg-0">
-                  <li class="lh-lg"><a class="text-white link" href="?url=inicio">Inicio</a></li>
-                  <li class="lh-lg"><a class="text-white link" href="#!">Nosotros</a></li>
-                  <li class="lh-lg"><a class="text-white link" href="#!">Catalogo</a></li>
+                  <li class="lh-lg"><a class="text-white link" href="inicio">Inicio</a></li>
+                  <li class="lh-lg"><a class="text-white link" href="nosotros">Nosotros</a></li>
+                  <li class="lh-lg"><a class="text-white link" href="catalogo">Catalogo</a></li>
                    <li class="lh-lg"><a class="text-white link" href="#!">contactos</a></li>
                 </ul>
               </div>
@@ -121,7 +121,7 @@ class initcomponents
               <!-- Page level custom scripts -->
               <script src="' . _URL_ . 'assets/js/datatables-demo.js"></script>
               <script src="' . _URL_ . 'assets/js/validar.js"></script> 
-              <script src="' . _URL_ . 'assets/js/notificaciones.js"></script>
+              <script src="' . _URL_ . 'assets/js/barraNotificaciones.js"></script>
               <script src="' . _URL_ . 'assets/js/lib/jquery.inputmask.min.js"></script>
               <script src="' . _URL_ . 'assets/js/lib/inputmask.extend.js"></script>
               ';

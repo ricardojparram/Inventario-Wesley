@@ -1,11 +1,13 @@
-<?php  
+<?php
 
 namespace component;
 
 
-class footerInicio{
-	
-	public function footer(){
+class footerInicio
+{
+
+	public function footer()
+	{
 		$footer = '
 	       <footer class="footer fw-bold">
 	          <!-- <section> begin ============================-->
@@ -15,9 +17,9 @@ class footerInicio{
 	            <div class="col-6 col-lg-2 mb-3">
 	              <h5 class="lh-lg fw-bold text-white">Enlaces Utiles</h5>
 	              <ul class="list-unstyled mb-md-4 mb-lg-0">
-	                <li class="lh-lg"><a class="text-white link" href="?url=inicio">Inicio</a></li>
-	                <li class="lh-lg"><a class="text-white link" href="?url=nosotros">Nosotros</a></li>
-	                <li class="lh-lg"><a class="text-white link" href="?url=catalogo">Catalogo</a></li>
+	                <li class="lh-lg"><a class="text-white link" href="' . _URL_ . '">Inicio</a></li>
+	                <li class="lh-lg"><a class="text-white link" href="' . _URL_ . 'nosotros">Nosotros</a></li>
+	                <li class="lh-lg"><a class="text-white link" href="' . _URL_ . 'catalogo">Catalogo</a></li>
 	              </ul>
 	            </div>
 	            <div class="col-6 col-lg-2 mb-3">
@@ -67,12 +69,6 @@ class footerInicio{
 	        <!-- end of .container-->
 	    </footer>';
 
-	    echo $footer;
+		echo $footer;
 	}
-	
 }
-
-
-
-
-?>

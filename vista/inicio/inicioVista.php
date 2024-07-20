@@ -24,7 +24,7 @@
           <h1 class="fw-bold">Fundación Centro Médico Wesley</h1>
           <p class="fs-6" style="text-align: justify;"><strong>Somos un centro médico dedicado a brindar atención de calidad a nuestros clientes, con un enfoque en la comodidad y la conveniencia. Nos enorgullecemos de ofrecer una amplia gama de servicios médicos, desde consultas regulares hasta procedimientos especializados, todo en un ambiente cálido y acogedor.</strong></p>
           <span class="row gap-4 align-items-center justify-content-center">
-            <a href="?url=nosotros" class="btn btn-light col-6">Más informacion</a>
+            <a href="nosotros" class="btn btn-light col-6">Más informacion</a>
           </span>
 
         </div>
@@ -95,50 +95,6 @@
 
     </section>
     <!-- ====== Service section end -->
-
-    <!-- ====== Productos section ====== -->
-    <section class="container-fluid my-4 p-0">
-      <div class="productos-head w-100">
-        <header class="text-white py-3">
-          <h2 class="text-center fs-2 p-3 mt-3 fw-bold">Productos</h3>
-            <p class="fs-5 text-center fw-bold">Éstos son los distintos tipos de medicamentos que tenemos a la venta.</p>
-        </header>
-        <div class="categorias">
-          <div id="categoriaSlider" class="carousel slide carousel-fade">
-            <div class="carousel-inner">
-
-
-
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#categoriaSlider" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#categoriaSlider" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-
-        </div>
-      </div>
-      <!--- Productos listados -->
-      <div class="productos-populares">
-        <h3 class="w-100 text-center fs-3 fw-bold mb-4">Los productos más comprados en nuestra tienda</h3>
-        <div class="row mx-auto justify-content-center align-items-center" id="catalogo">
-
-        </div>
-      </div>
-      <!--- Productos listados end -->
-
-      <!--- Botón de ir al catálogo -->
-      <div class="w-100 mt-4 mb-5 d-flex justify-content-center">
-        <a class="btn btn-lg btn-outline-success ir_catalogo" href="?url=catalogo"><strong>Ir al catálogo </strong><span><i class="bi bi-arrow-right"></i></span></a>
-      </div>
-      <!--- Botón de ir al catálogo end -->
-
-    </section>
-    <!-- ====== Productos section end ====== -->
 
   </main>
 

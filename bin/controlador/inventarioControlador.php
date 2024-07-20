@@ -9,19 +9,19 @@ use utils\JWTService;
 
 $JWToken = JWTService::validateSession();
 if (!isset($_SESSION['nivel']) && !$JWToken) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 
-$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
-$sede = (isset($_SESSION['id_sede'])) ? $_SESSION['id_sede'] : $JWToken->id_sede;
-$cedula = (isset($_SESSION['cedula'])) ? $_SESSION['cedula'] : $JWToken->cedula;
+$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
+$sede = (isset($_SESSION['id_sede'])) ? $_SESSION['id_sede'] : $JWToken['id_sede'];
+$cedula = (isset($_SESSION['cedula'])) ? $_SESSION['cedula'] : $JWToken['cedula'];
 
 $objModel = new inventario(['cedula' => $cedula, 'sede' => $sede]);
 $permisos = $objModel->getPermisosRol($nivel);
 $permiso = $permisos['Inventario'];
 
 if (!isset($permiso["Consultar"])) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 
 if (isset($_POST['getPermisos'], $permiso["Consultar"])) {

@@ -51,7 +51,7 @@ class ventas extends DBConnect
       parent::desconectarDB();
 
       return $data;
-    } catch (\PDOexection $e) {
+    } catch (\PDOException $e) {
 
       return $this->http_error(500, $e->getMessage());
     }
@@ -596,7 +596,7 @@ class ventas extends DBConnect
       parent::desconectarDB();
 
       return ['resultado' => 'Venta eliminada'];
-    } catch (\PDOexection $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }
@@ -609,10 +609,6 @@ class ventas extends DBConnect
 
     $this->id = $id;
 
-    $validarFactura = $this->validFactura();
-
-    if ($validarFactura['res'] === false) return $this->http_error(400, $validarFactura['msg']);
-
     return $this->exportar();
   }
 
@@ -620,6 +616,15 @@ class ventas extends DBConnect
   {
     try {
       parent::conectarDB();
+
+      $this->con->beginTransaction();
+
+      $validarFactura = $this->validFactura();
+
+      if ($validarFactura['res'] === false){
+        $this->con->rollBack();
+        return $this->http_error(400, $validarFactura['msg']);
+      } 
 
       $query = "SELECT v.num_fact, v.monto_fact, pe.cedula AS cedula, pe.nombres AS nombre, pe.apellidos AS apellido, v.fecha, pe.telefono AS telefono, pe.direccion AS direccion, v.monto_dolares AS total_divisa
           FROM venta v 
@@ -651,93 +656,94 @@ class ventas extends DBConnect
       $pdf = new FPDF();
       $pdf->SetMargins(4, 10, 4);
       $pdf->AddPage();
-
+      
       $pdf->SetFont('Arial', 'B', 10);
       $pdf->SetTextColor(0, 0, 0);
-      $pdf->MultiCell(0, 5, utf8_decode(strtoupper('Centro Medico Wesley')), 0, 'C', false);
+      $pdf->MultiCell(0, 5, mb_convert_encoding(strtoupper('Centro Medico Wesley'), 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
       $pdf->SetFont('Arial', '', 9);
-      $pdf->MultiCell(0, 5, utf8_decode('Rif: 1234567'), 0, 'C', false);
-      $pdf->MultiCell(0, 5, utf8_decode('Dirreción: Barrio José Félix Ribas, Barquisimeto-Estado Lara.'), 0, 'C', false);
-      $pdf->MultiCell(0, 5, utf8_decode('Teléfono: 04120502369'), 0, 'C', false);
-      $pdf->MultiCell(0, 5, utf8_decode('Correo: MediSalud@gmail.com'), 0, 'C', false);
-
+      $pdf->MultiCell(0, 5, mb_convert_encoding('Rif: 1234567', 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      $pdf->MultiCell(0, 5, mb_convert_encoding('Dirreción: Barrio José Félix Ribas, Barquisimeto-Estado Lara.', 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      $pdf->MultiCell(0, 5, mb_convert_encoding('Teléfono: 04120502369', 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      $pdf->MultiCell(0, 5, mb_convert_encoding('Correo: MediSalud@gmail.com', 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      
       $pdf->Ln(1);
-      $pdf->Cell(0, 5, utf8_decode("------------------------------------------------------"), 0, 0, 'C');
+      $pdf->Cell(0, 5, mb_convert_encoding("------------------------------------------------------", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
       $pdf->Ln(5);
-
-      $pdf->MultiCell(0, 5, utf8_decode('Fecha: ' . $dataV[0]['fecha']), 0, 'C', false);
+      
+      $pdf->MultiCell(0, 5, mb_convert_encoding('Fecha: ' . $dataV[0]['fecha'], 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
       $pdf->SetFont('Arial', 'B', 10);
-      $pdf->MultiCell(0, 5, utf8_decode(strtoupper("Ticket Nro: " . $dataV[0]['num_fact'])), 0, 'C', false);
+      $pdf->MultiCell(0, 5, mb_convert_encoding(strtoupper("Ticket Nro: " . $dataV[0]['num_fact']), 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
       $pdf->SetFont('Arial', '', 9);
-
+      
       $pdf->Ln(1);
-      $pdf->Cell(0, 5, utf8_decode("------------------------------------------------------"), 0, 0, 'C');
+      $pdf->Cell(0, 5, mb_convert_encoding("------------------------------------------------------", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
       $pdf->Ln(5);
-
-      $pdf->MultiCell(0, 5, utf8_decode("Cliente: " . $dataV[0]['nombre'] . ' ' . $dataV[0]['apellido']), 0, 'C', false);
-      $pdf->MultiCell(0, 5, utf8_decode("Documento: " . $dataV[0]['cedula']), 0, 'C', false);
-      $pdf->MultiCell(0, 5, utf8_decode("Teléfono: " . $dataV[0]['telefono']), 0, 'C', false);
-      $pdf->MultiCell(0, 5, utf8_decode("Dirección: " . $dataV[0]['direccion']), 0, 'C', false);
-
+      
+      $pdf->MultiCell(0, 5, mb_convert_encoding("Cliente: " . $dataV[0]['nombre'] . ' ' . $dataV[0]['apellido'], 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      $pdf->MultiCell(0, 5, mb_convert_encoding("Documento: " . $dataV[0]['cedula'], 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      $pdf->MultiCell(0, 5, mb_convert_encoding("Teléfono: " . $dataV[0]['telefono'], 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      $pdf->MultiCell(0, 5, mb_convert_encoding("Dirección: " . $dataV[0]['direccion'], 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      
       $pdf->Ln(1);
-      $pdf->Cell(0, 5, utf8_decode("-------------------------------------------------------------------"), 0, 0, 'C');
+      $pdf->Cell(0, 5, mb_convert_encoding("-------------------------------------------------------------------", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
       $pdf->Ln(3);
-
+      
       $tableWidth = 74;
       $pdf->SetLeftMargin(($pdf->GetPageWidth() - $tableWidth) / 2);
-
-      $pdf->Cell(18, 4, utf8_decode('Articulo'), 0, 0, 'C');
-      $pdf->Cell(19, 5, utf8_decode('Cant.'), 0, 0, 'C');
-      $pdf->Cell(15, 5, utf8_decode('Precio'), 0, 0, 'C');
-      $pdf->Cell(28, 5, utf8_decode('Total'), 0, 0, 'C');
-
+      
+      $pdf->Cell(18, 4, mb_convert_encoding('Articulo', 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      $pdf->Cell(19, 5, mb_convert_encoding('Cant.', 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      $pdf->Cell(15, 5, mb_convert_encoding('Precio', 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      $pdf->Cell(28, 5, mb_convert_encoding('Total', 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      
       $pdf->Ln(3);
-      $pdf->Cell($tableWidth, 5, utf8_decode("-------------------------------------------------------------------"), 0, 0, 'C');
+      $pdf->Cell($tableWidth, 5, mb_convert_encoding("-------------------------------------------------------------------", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
       $pdf->Ln(5);
-
+      
       foreach ($dataP as $col => $value) {
-        $pdf->Cell(18, 4, utf8_decode($value[0]), 0, 0, 'C');
-        $pdf->Cell(19, 4, utf8_decode($value[1]), 0, 0, 'C');
-        $pdf->Cell(19, 4, utf8_decode($value[2]), 0, 0, 'C');
-        $pdf->Cell(28, 4, utf8_decode($value[1] * $value[2]), 0, 1, 'C');
+          $pdf->Cell(18, 4, mb_convert_encoding($value[0], 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+          $pdf->Cell(19, 4, mb_convert_encoding($value[1], 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+          $pdf->Cell(19, 4, mb_convert_encoding($value[2], 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+          $pdf->Cell(28, 4, mb_convert_encoding($value[1] * $value[2], 'ISO-8859-1', 'UTF-8'), 0, 1, 'C');
       }
       $pdf->Ln(4);
-
-      $pdf->Cell($tableWidth, 5, utf8_decode("-------------------------------------------------------------------"), 0, 0, 'C');
-
+      
+      $pdf->Cell($tableWidth, 5, mb_convert_encoding("-------------------------------------------------------------------", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      
       $pdf->Ln(5);
-
+      
       $montoTotal = $dataV[0]['monto_fact'];
-
-      $pdf->Cell(18, 5, utf8_decode(""), 0, 0, 'C');
-      $pdf->Cell(22, 5, utf8_decode("TOTAL"), 0, 0, 'C');
-      $pdf->Cell(32, 5, utf8_decode($montoTotal), 0, 0, 'C');
-
+      
+      $pdf->Cell(18, 5, mb_convert_encoding("", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      $pdf->Cell(22, 5, mb_convert_encoding("TOTAL", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      $pdf->Cell(32, 5, mb_convert_encoding($montoTotal, 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      
       $pdf->Ln(5);
-
-      $pdf->Cell(18, 5, utf8_decode(""), 0, 0, 'C');
-      $pdf->Cell(22, 5, utf8_decode("Dolar"), 0, 0, 'C');
-      $pdf->Cell(32, 5, utf8_decode($dataV[0]['total_divisa'] . '$'), 0, 0, 'C');
-
+      
+      $pdf->Cell(18, 5, mb_convert_encoding("", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      $pdf->Cell(22, 5, mb_convert_encoding("Dolar", 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      $pdf->Cell(32, 5, mb_convert_encoding($dataV[0]['total_divisa'] . '$', 'ISO-8859-1', 'UTF-8'), 0, 0, 'C');
+      
       $pdf->Ln(10);
-
-      $pdf->MultiCell($tableWidth, 5, utf8_decode('*** Precios de productos no incluyen impuestos. Para poder realizar un reclamo o devolución debe de presentar este ticket ***'), 0, 'C', false);
-
+      
+      $pdf->MultiCell($tableWidth, 5, mb_convert_encoding('*** Precios de productos no incluyen impuestos. Para poder realizar un reclamo o devolución debe de presentar este ticket ***', 'ISO-8859-1', 'UTF-8'), 0, 'C', false);
+      
       $pdf->SetFont('Arial', 'B', 9);
-      $pdf->Cell($tableWidth, 7, utf8_decode('Gracias por su compra'), '', 0, 'C');
-
+      $pdf->Cell($tableWidth, 7, mb_convert_encoding('Gracias por su compra', 'ISO-8859-1', 'UTF-8'), '', 0, 'C');
+      
       $pdf->Ln(9);
-
+      
       $repositorio = 'assets/tickets/' . $nombre;
       $pdf->Output('F', $repositorio);
-
+      
       $respuesta = ['respuesta' => 'Archivo guardado', 'ruta' => $repositorio];
-
+      
+      $this->con->commit();
       $this->binnacle("Venta", $_SESSION['cedula'], "Exporto Ticket de Venta");
       parent::desconectarDB();
 
       return $respuesta;
-    } catch (\PDOexection $e) {
+    } catch (\PDOException $e) {
       return $this->http_error(500, $e->getMessage());
     }
   }

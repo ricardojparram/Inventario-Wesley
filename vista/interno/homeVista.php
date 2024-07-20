@@ -1,45 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
-    <?php $VarComp->header(); ?>
-    <link rel="stylesheet" href="assets/css/estiloInterno.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio</title>
+  <?php $VarComp->header(); ?>
+  <link rel="stylesheet" href="assets/css/estiloInterno.css">
 
 </head>
+
 <body>
 
-<!-- ======= Header ======= -->
+  <!-- ======= Header ======= -->
 
-      <?php 
-      
-        $header->Header();
-                
-      ?>
-      
-<!-- End Header -->
+  <?php
+
+  $header->Header();
+
+  ?>
+
+  <!-- End Header -->
 
 
-<!-- ======= Sidebar ======= -->
+  <!-- ======= Sidebar ======= -->
 
-      <?php 
-      
-        $menu->Menu();
-                
-      ?>
-         
+  <?php
+
+  $menu->Menu();
+
+  ?>
+
   <!-- End Sidebar-->
 
- 
+
   <main id="main" class="main">
 
     <div class="pagetitle">
       <h1>Resumen</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+          <li class="breadcrumb-item"><a href="home">Inicio</a></li>
           <li class="breadcrumb-item active">Resumen</li>
         </ol>
       </nav>
@@ -133,7 +135,7 @@
                     </div>
                     <div class="ps-3">
                       <h6 id="producto"></h6>
-                      
+
 
                     </div>
                   </div>
@@ -156,9 +158,9 @@
                     </div>
                     <div class="ps-3">
                       <h6 id="usuarios"></h6>
-                      
 
-                    </div> 
+
+                    </div>
                   </div>
                 </div>
 
@@ -179,7 +181,7 @@
                     </div>
                     <div class="ps-3">
                       <h6 id="proveedores"></h6>
-                      
+
 
                     </div>
                   </div>
@@ -195,14 +197,14 @@
               <div class="card info-card customers-card">
 
                 <div class="card-body">
-                  <h5 class="card-title">Clientes <span></span></h5>
+                  <h5 class="card-title">Personal<span></span></h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3">
-                      <h6 id="clientes"></h6>
+                      <h6 id="personal"></h6>
 
                     </div>
                   </div>
@@ -216,7 +218,7 @@
             <div class="col-12">
               <div class="card">
 
-                
+
 
                 <div class="card-body">
                   <h5 class="card-title text-center"><b>Gráfico de la semana actual</b></h5>
@@ -231,13 +233,13 @@
               </div>
             </div><!-- End Reports -->
 
-           
+
 
           </div>
         </div><!-- End Left side columns -->
 
         <!-- Right side columns -->
-      
+
       </div>
     </section>
 
@@ -245,15 +247,16 @@
 
   <!-- Footer -->
 
-  <?php $footer->Footer();?>
-    
+  <?php $footer->Footer(); ?>
+
   <!-- End Footer -->
 
 </body>
-<?php $VarComp->js();?>
+<?php $VarComp->js(); ?>
 
 <!-- <script type="text/javascript" src="assets/js/notificaciones.js"></script> -->
 
 <script src="assets/js/chart.min.js"></script>
 <script type="text/javascript" src="assets/js/home.js"></script>
+
 </html>

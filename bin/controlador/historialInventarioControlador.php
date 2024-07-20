@@ -9,16 +9,16 @@ use utils\JWTService;
 
 $JWToken = JWTService::validateSession();
 if (!isset($_SESSION['nivel']) && !$JWToken) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 
-$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken->nivel;
+$nivel = (isset($_SESSION['nivel'])) ? $_SESSION['nivel'] : $JWToken['nivel'];
 $objModel = new inventario();
 $permisos = $objModel->getPermisosRol($nivel);
 $permiso = $permisos['Inventario'];
 
 if (!isset($permiso["Consultar"])) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 
 if (isset($_GET['mostrar'], $_GET['bitacora'])) {

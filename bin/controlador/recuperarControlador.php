@@ -6,8 +6,13 @@ use component\tienda;
 
 $obj_Model = new recuperar();
 
-if(isset($_POST['email'])) {
+if (isset($_POST['email'])) {
     $respuesta = $obj_Model->getRecuperarSistema($_POST['email']);
+    die(json_encode($respuesta));
+}
+
+if (isset($_POST['data'])) {
+    $respuesta = $obj_Model->getRecuperarSistemaApp($_POST['data']);
     die(json_encode($respuesta));
 }
 
@@ -15,9 +20,8 @@ $VarComp = new initcomponents();
 $Nav = new tienda();
 
 
-if(file_exists("vista/sesion/recuperarVista.php")) {
+if (file_exists("vista/sesion/recuperarVista.php")) {
     require_once("vista/sesion/recuperarVista.php");
 } else {
     die("La vista no existe.");
 }
-

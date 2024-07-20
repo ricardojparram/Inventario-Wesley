@@ -1,29 +1,33 @@
 <?php
-	use component\initcomponents as initcomponents;
-	use component\header as header;
-	use component\menuLateral as menuLateral;
-	use modelo\notificaciones;
 
-	$model = new notificaciones();
+use component\initcomponents as initcomponents;
+use component\header as header;
+use component\menuLateral as menuLateral;
+use modelo\notificaciones as notificaciones;
 
+if (!isset($_SESSION['nivel'])) {
+    die(`<script> window.location = "?url=login" </script>`);
+}
 
-	if (isset($_POST['notificaciones'])) {
-	$res = $model->getNotificaciones();
-	die(json_encode($res));
-	}
+$objModel = new notificaciones();
+$permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 
+if (isset($_GET['consultar'])) {
+    $res = $objModel->mostrarNotificaciones();
+    die(json_encode($res));
+}
 
-	if (isset($_GET['detalleNotificacion'], $_GET['notificationId'])) {
-	$res = $model->mostrarDetalleNotificacion($_GET['notificationId']);
-	die(json_encode($res));
-	}
+if (isset($_POST['id'], $_POST['status'])) {
+    $res = $objModel->getActualizarStatus($_POST['id'], $_POST['status']);
+    die(json_encode($res));
+}
 
-	if(isset($_POST['notificacionVista'], $_POST['notificationId'])) {
-		$model->notificacionVista($_POST['notificationId']);
-	}
+$VarComp = new initcomponents();
+$header = new header();
+$menu = new menuLateral($permisos);
 
-
-
-	die("<script> window.location = '?url=login' </script>");
-
-?>
+if (file_exists("vista/interno/notificacionesVista.php")) {
+    require_once('vista/interno/notificacionesVista.php');
+} else {
+    echo 'Error no existe la vista';
+}

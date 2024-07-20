@@ -63,7 +63,7 @@ $(document).ready(function(){
 		let producto = getProdDetalle(id);
 		let precio_dolar = (Number(producto.p_venta) / getDolar()).toFixed(2);
 
-		$('.tipo_medicamento').html(producto.des_clase).attr('href', `?url=catalogo&filtro=${producto.des_clase}`)	
+		$('.tipo_medicamento').html(producto.des_clase).attr('href', `catalogo&filtro=${producto.des_clase}`)	
 		$('.nombre_medicamento').html(producto.nombre);
 		$('.descripcion_medicamento').html(producto.descripcion);
 		$('.precio_bs').html(producto.p_venta);
@@ -87,7 +87,7 @@ $(document).ready(function(){
 				${principioSlide}
 					<div class="categoria-item">
 	                    <div class="card-body">
-	                      <a href="?url=catalogo&filtro=${row.des_clase}" class="text-dark">
+	                      <a href="catalogo&filtro=${row.des_clase}" class="text-dark">
 	                        <div class="mt-1 mb-0">
 	                          <img src="${row.img}" alt='Imagen de un producto tipo "${row.des_clase}"' class="img-fluid">
 	                        </div>

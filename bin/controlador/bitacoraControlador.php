@@ -1,23 +1,19 @@
 <?php 
 
-	use component\initcomponents as initcomponents;
-	use component\header as header;
-	use component\menuLateral as menuLateral;
-	use modelo\bitacora as bitacora;
+use component\initcomponents as initcomponents;
+use component\header as header;
+use component\menuLateral as menuLateral;
+use modelo\bitacora as bitacora;
 
-	if(!isset($_SESSION['nivel'])){
-		die('<script> window.location = "?url=login" </script>');
-	}
-		
-	$objModel = new bitacora();
-	$permisos = $objModel->getPermisosRol($_SESSION['nivel']);
-	$permiso = $permisos['Bitacora'];
+if (!isset($_SESSION['nivel'])) {
+	die('<script> window.location = "?url=login" </script>');
+}
 
-	 if(!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);
+$objModel = new bitacora();
+$permisos = $objModel->getPermisosRol($_SESSION['nivel']);
+$permiso = $permisos['Bitacora'];
 
-	 if(isset($_POST['notificacion'])) {
-	 	$objModel->getNotificacion();
-	 }
+if (!isset($permiso['Consultar'])) die(`<script> window.location = "?url=home" </script>`);
 
 	if(isset($_POST['mostrar']) && isset($permiso['Consultar'])){
 		$objModel->mostrarBitacora();

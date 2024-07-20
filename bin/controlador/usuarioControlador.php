@@ -18,10 +18,6 @@ if (!isset($_SESSION['nivel'])) {
 if (!isset($permiso["Consultar"]))
 	die('<script> window.location = "?url=home" </script>');
 
-// if (isset($_POST['notificacion'])) {
-// 	$objModel->getNotificacion();
-// }
-
 if (isset($_POST['getPermisos'], $permiso["Consultar"])) {
 	die(json_encode($permiso));
 }
@@ -61,7 +57,7 @@ if (isset($_POST['cedulaEdit']) && isset($_POST['nameEdit']) && isset($_POST['ap
 	die(json_encode($res));
 }
 
-if (isset($_GET['cedula'], $_GET['persona'])){
+if (isset($_GET['cedula'], $_GET['persona'])) {
 	$res = $objModel->getPersonal($_GET['cedula']);
 	die(json_encode($res));
 }
@@ -73,5 +69,3 @@ $menu = new menuLateral($permisos);
 if (file_exists("vista/interno/usuarioVista.php")) {
 	require_once("vista/interno/usuarioVista.php");
 }
-
-?>

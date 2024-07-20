@@ -158,11 +158,11 @@
                       <label for="Job" class="col-md-4 col-lg-3 col-form-label">N° Documento</label>
                       <div class="col-md-8 col-lg-9">
                         <div class="input-group">
-                          <select class="input-group-text " id="preDocument">
+                          <select class="input-group-text " id="preDocument" disabled>
                             <option value="V">V</option>
                             <option value="E">E</option>
                           </select>
-                          <input type="text" class="form-control" id="cedulaEdit" >
+                          <input type="text" class="form-control" id="cedulaEdit" disabled>
                         </div>
                         <p id="errorCedu" style="color:#ff0000;text-align: center;"></p>
                       </div>

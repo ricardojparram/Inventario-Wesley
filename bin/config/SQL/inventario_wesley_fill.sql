@@ -3,13 +3,13 @@ use wesley;
 INSERT INTO
   moneda (id_moneda, nombre, valor, status)
 VALUES
-  (1, 'Dolar', 0, 1),
+  (1, 'Dolar', 38, 1),
   (2, 'Euro', 0, 1);
 
- INSERT INTO 
- cambio (id_cambio, cambio, fecha, moneda, status) 
- VALUES
- (1, 38.00, '2024-06-09 14:23:28', 1, 1);
+INSERT INTO
+  cambio (id_cambio, cambio, fecha, moneda, status)
+VALUES
+  (1, 38.00, '2024-06-09 14:23:28', 1, 1);
 
 INSERT INTO
   sede (id_sede, nombre, telefono, direccion, status)
@@ -181,19 +181,31 @@ VALUES
   );
 
 INSERT INTO
-  personal (
-    cedula,
-    nombres,
-    apellidos,
-    direccion,
-    id_sede,
-    edad,
-    telefono,
-    correo,
-    tipo_em,
-    status
+  `personal` (
+    `cedula`,
+    `nombres`,
+    `apellidos`,
+    `direccion`,
+    `id_sede`,
+    `edad`,
+    `telefono`,
+    `correo`,
+    `tipo_em`,
+    `status`
   )
 VALUES
+  (
+    'V-16794406',
+    'Jose',
+    'Ramon',
+    'Cabudare ',
+    1,
+    '1980-01-23',
+    '042145699810',
+    'Jose33@gmail.com',
+    2,
+    1
+  ),
   (
     'V-30125380',
     'Roberto',
@@ -205,7 +217,28 @@ VALUES
     'ricardo.prxr16@gmail.com',
     2,
     1
+  ),
+  (
+    'V-30233547',
+    'Enmanuel Josue',
+    'Torres Rodriguez',
+    'Tierra Negra',
+    1,
+    '2001-07-20',
+    '04123799406',
+    'enmanuel.josue.torres13@gmail.com',
+    1,
+    1
   );
+
+INSERT INTO
+  `pacientes` (`ced_pac`, `nombre`, `apellido`, `status`)
+VALUES
+  ('21727935', 'Eduardo', 'Torres', 1),
+  ('28256649', 'Yelimar ', 'Hernández', 1),
+  ('30125380', 'Ricardo ', 'Parra ', 1),
+  ('30233547', 'Enmanuel', 'Torres', 1),
+  ('30349137', 'Aparicio', 'Víctor ', 1);
 
 INSERT INTO
   usuario (
@@ -264,7 +297,8 @@ VALUES
   (29, 'Cargo', 1),
   (30, 'Descargo', 1),
   (31, 'Mantenimiento', 1),
-  (32, 'Tipo producto', 1);
+  (32, 'Tipo producto', 1),
+  (33, 'Instituciones', 1);
 
 INSERT INTO
   permisos (id_rol, id_modulo, nombre_accion, status)
@@ -365,13 +399,15 @@ VALUES
   (1, 30, 'Eliminar', 1),
   (1, 30, 'Consultar', 1),
   (1, 31, 'Backup', 1),
-  (1, 31, 'Editar', 1),
-  (1, 31, 'Eliminar', 1),
   (1, 31, 'Consultar', 1),
   (1, 32, 'Registrar', 1),
   (1, 32, 'Editar', 1),
   (1, 32, 'Eliminar', 1),
   (1, 32, 'Consultar', 1),
+  (1, 33, 'Registrar', 1),
+  (1, 33, 'Editar', 1),
+  (1, 33, 'Eliminar', 1),
+  (1, 33, 'Consultar', 1),
   -- siguiente rol
   (2, 1, 'Registrar', 1),
   (2, 1, 'Editar', 1),
@@ -469,13 +505,15 @@ VALUES
   (2, 30, 'Eliminar', 1),
   (2, 30, 'Consultar', 1),
   (2, 31, 'Backup', 1),
-  (2, 31, 'Editar', 1),
-  (2, 31, 'Eliminar', 1),
   (2, 31, 'Consultar', 1),
   (2, 32, 'Registrar', 1),
   (2, 32, 'Editar', 1),
   (2, 32, 'Eliminar', 1),
   (2, 32, 'Consultar', 1),
+  (2, 33, 'Registrar', 1),
+  (2, 33, 'Editar', 1),
+  (2, 33, 'Eliminar', 1),
+  (2, 33, 'Consultar', 1),
   -- siguiente rol
   (3, 1, 'Registrar', 1),
   (3, 1, 'Editar', 1),
@@ -573,10 +611,12 @@ VALUES
   (3, 30, 'Eliminar', 1),
   (3, 30, 'Consultar', 1),
   (3, 31, 'Backup', 1),
-  (3, 31, 'Editar', 1),
-  (3, 31, 'Eliminar', 1),
   (3, 31, 'Consultar', 1),
   (3, 32, 'Registrar', 1),
   (3, 32, 'Editar', 1),
   (3, 32, 'Eliminar', 1),
-  (3, 32, 'Consultar', 1);
+  (3, 32, 'Consultar', 1),
+  (3, 33, 'Registrar', 1),
+  (3, 33, 'Editar', 1),
+  (3, 33, 'Eliminar', 1),
+  (3, 33, 'Consultar', 1);

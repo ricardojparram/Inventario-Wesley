@@ -7,7 +7,7 @@ use component\menuLateral as menuLateral;
 use modelo\reportes as reportes;
 
 if (!isset($_SESSION['nivel'])) {
-    die('<script> window.location = "?url=login" </script>');
+    die('<script> window.location = "login" </script>');
 }
 
 $objModel = new reportes();
@@ -19,7 +19,7 @@ $header = new header();
 $menu = new menuLateral($permisos);
 
 if (!isset($permiso["Consultar"])) {
-    die('<script> window.location = "?url=home" </script>');
+    die('<script> window.location = "home" </script>');
 }
 $tipo_reporte = $objModel->tiposDeReporte();
 

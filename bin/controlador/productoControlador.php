@@ -11,7 +11,7 @@ $permisos = $objModel->getPermisosRol($_SESSION['nivel']);
 $permiso = $permisos['Producto'];
 
 if (!isset($permiso["Consultar"])) {
-    die('<script> window.location = "?url=home" </script>');
+    die('<script> window.location = "home" </script>');
 }
 
 if (isset($_POST['getPermisos']) && $permiso['Consultar'] == 1) {
